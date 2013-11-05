@@ -1,4 +1,4 @@
-// Solenoids.h
+// solenoids.h
 
 #ifndef SOLENOIDS_H
 #define SOLENOIDS_H
@@ -19,11 +19,11 @@ class Solenoids
 public:
 	Solenoids();
 	void setSolenoid( byte solenoid, bool state);
-	void setSolenoid( uint16 state );
+	void setSolenoids( uint16 state );
 
 private:
 	uint16 solenoidState;
-	void write( byte, byte );
+	void write( uint16 state );
 
 };
 

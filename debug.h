@@ -9,23 +9,19 @@
 /*
  *
  */
-#define NL Serial.print("\n\r")
 #ifdef DEBUG
 	#define ERROR(module, out) \
 		Serial.print(#module); \
 		Serial.print(":ERROR:"); \
-		Serial.print(#out); \
-		NL
+		Serial.println(#out);
 	#define WARNING(module, out) \
 		Serial.print(#module); \
 		Serial.print(":WARNING:"); \
-		Serial.print(#out); \
-		NL
+		Serial.println(#out);
 	#define INFO(module, out) \
 		Serial.print(#module); \
 		Serial.print(":INFO:"); \
-		Serial.print(#out); \
-		NL
+		Serial.println(#out);
 #else
 	#define ERROR(module, out)
 	#define WARNING(module, out )
