@@ -7,9 +7,7 @@
 
 Solenoids::Solenoids()
 {
-	#define THIS "Solenoids::Solenoids"
-
-	INFO(THIS,"constructor");
+	INFO(__func__,"constructor");
 
 	solenoidState = 0x00;
 
@@ -19,8 +17,6 @@ Solenoids::Solenoids()
 
 void Solenoids::setSolenoid( byte solenoid, bool state )
 {
-	#define THIS Solenoids::setSolenoid
-
 	if( solenoid >= 0 && solenoid <= 15 )
 	{
 		if( state )
@@ -31,7 +27,7 @@ void Solenoids::setSolenoid( byte solenoid, bool state )
 		setSolenoids(solenoidState);
 	}
 	else
-		WARNING(THIS,"solenoid number out of range");
+		WARNING(__this__,"solenoid number out of range");
 }
 
 
@@ -54,9 +50,7 @@ void Solenoids::setSolenoids( uint16 state )
  */
 void Solenoids::write( uint16 newState )
 {
-	#define THIS "Solenoids::write"
-
-	INFO(THIS, "writing to I2C" );
+	INFO(__func__, "writing to I2C" );
 
 	Wire.beginTransmission( I2Caddr_sol1_8 );
 	Wire.write( lowByte(newState) );

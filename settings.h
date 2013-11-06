@@ -3,16 +3,40 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
-#define uint16 unsigned int
+#define SERIAL_BAUDRATE 115200
 
+#define EOL_PIN_R 0	// Analog
+#define EOL_PIN_L 1	// Analog
 
-#define EOL_R_PIN 0	// Analog
-#define EOL_L_PIN 1	// Analog
-
-#define ENC_A_PIN 2
-#define ENC_B_PIN 3
-#define ENC_C_PIN 4
+#define ENC_PIN_A 2
+#define ENC_PIN_B 3
+#define ENC_PIN_C 4
 
 #define PIEZO_PIN 9
+
+#define FILTER_L_MIN 10
+#define FILTER_L_MAX 460
+#define FILTER_R_MIN 10
+#define FILTER_R_MAX 460
+
+/*
+ * Can't touch this!
+ */
+#define uint16 unsigned int
+
+#define BEEPDELAY 50 // ms
+
+typedef enum Direction{
+	NoDirection	= 0,
+	Left  		= 1,
+	Right 		= 2
+} Direction_t;
+
+typedef enum Phaseshift{
+	NoPhase     = 0,
+	Regular 	= 1, // 
+	Goofy   	= 2
+} Phaseshift_t;
+
 
 #endif

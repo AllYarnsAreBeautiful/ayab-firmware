@@ -25,6 +25,8 @@
 SerialCommand SCmd;   // The SerialCommand object
 Beeper        beeper;
 Solenoids     solenoids;
+
+bool bInterruptEnabled = false;
 /*
  * SETUP
  */
@@ -32,9 +34,9 @@ void setup() {
 
 	Serial.begin(9600);
 
-  pinMode(ENC_A_PIN,INPUT);
-  pinMode(ENC_B_PIN,INPUT);
-  pinMode(ENC_C_PIN,INPUT);
+  pinMode(ENC_PIN_A,INPUT);
+  pinMode(ENC_PIN_B,INPUT);
+  pinMode(ENC_PIN_C,INPUT);
 
 	// Setup callbacks for SerialCommand commands
   SCmd.addCommand("setSingleSolenoid", setSingleSolenoid);
@@ -42,12 +44,13 @@ void setup() {
   SCmd.addCommand("readEOLsensors", readEOLsensors);
   SCmd.addCommand("readEncoders", readEncoders);
   SCmd.addCommand("beep", beep);
+  SCmd.addCommand("setEncoderInterrupt", setEncoderInterrupt);
   SCmd.addCommand("autoRead", autoRead);
-	SCmd.addDefaultHandler(unrecognized);  // Handler for command that isn't matched  (says "What?") 
+	SCmd.addDefaultHandler(unrecognized);  // Handler for command that isn't matched 
 	
-  attachInterrupt(ENC_A_PIN, encoderAChange, CHANGE);
+  attachInterrupt(ENC_PIN_A, encoderAChange, CHANGE);
 
-  INFO("setup", "ready");
+  INFO(__func__, "ready");
 }
 
 
@@ -64,9 +67,8 @@ void loop() {
  */
 void encoderAChange()
 {
-  #define THIS "encoderAChange"
-
-  INFO(THIS, "INTERRUPT");
+  if(bInterruptEnabled)
+    INFO(__func__, "INTERRUPT");
 }
 
 
@@ -75,15 +77,13 @@ void encoderAChange()
  */
 void setSingleSolenoid()    
 {
-  #define THIS "setSingleSolenoid"
-
   int aNumber;  
   char *arg;
 
   byte solenoidNumber = 0;
   byte solenoidState  = 0;
 
-  INFO(THIS,""); 
+  INFO(__func__,""); 
   arg = SCmd.next(); 
   if (arg != NULL) 
   {
@@ -98,7 +98,7 @@ void setSingleSolenoid()
       }
       else
       {
-        WARNING(THIS,"invalid arguments");
+        WARNING(__func__,"invalid arguments");
       }
     }
   }
@@ -110,14 +110,12 @@ void setSingleSolenoid()
  */
 void setSolenoids()
 {
-  #define THIS "setSolenoids"
-
   int aNumber;  
   char *arg;
 
   byte solenoidState  = 0;
 
-  INFO(THIS,""); 
+  INFO(__func__,""); 
   arg = SCmd.next(); 
 
   if(arg != NULL)
@@ -129,7 +127,7 @@ void setSolenoids()
     }
     else
     {
-      WARNING(THIS,"invalid arguments");
+      WARNING(__func__,"invalid arguments");
     }
   }
 }
@@ -140,12 +138,10 @@ void setSolenoids()
  */
 void readEOLsensors()
 {
-  #define THIS "readEOLsensors"
-
-  INFO(THIS, "EOL_R");
-  INFO(THIS, atoi(analogRead(EOL_R_PIN)) );
-  INFO(THIS, "EOL_L");
-  INFO(THIS, atoi(analogRead(EOL_L_PIN)) );
+  INFO(__func__, "EOL_R");
+  INFO(__func__, atoi(analogRead(EOL_PIN_R)) );
+  INFO(__func__, "EOL_L");
+  INFO(__func__, atoi(analogRead(EOL_PIN_L)) );
 }
 
 
@@ -154,28 +150,26 @@ void readEOLsensors()
  */
 void readEncoders()
 {
-  #define THIS "readEncoders"
-
-  if( HIGH == digitalRead(ENC_A_PIN) )
+  if( HIGH == digitalRead(ENC_PIN_A) )
   {
-    INFO(THIS, "ENC_A: HIGH");
+    INFO(__func__, "ENC_A: HIGH");
   }
   else
-    INFO(THIS, "ENC_A: LOW");
+    INFO(__func__, "ENC_A: LOW");
 
-  if( HIGH == digitalRead(ENC_B_PIN) )
+  if( HIGH == digitalRead(ENC_PIN_B) )
   {
-    INFO(THIS, "ENC_B: HIGH");
+    INFO(__func__, "ENC_B: HIGH");
   }
   else
-    INFO(THIS, "ENC_B: LOW");
+    INFO(__func__, "ENC_B: LOW");
 
-  if( HIGH == digitalRead(ENC_C_PIN) )
+  if( HIGH == digitalRead(ENC_PIN_C) )
   {
-    INFO(THIS, "ENC_C: HIGH");
+    INFO(__func__, "ENC_C: HIGH");
   }
   else
-    INFO(THIS, "ENC_C: LOW");
+    INFO(__func__, "ENC_C: LOW");
 }
 
 
@@ -184,9 +178,7 @@ void readEncoders()
  */
 void beep()
 {
-  #define THIS "beep"
-
-  INFO(THIS, "beep!");
+  INFO(__func__, "beep!");
   beeper.start();
 }
 
@@ -194,10 +186,30 @@ void beep()
 /*
  *
  */
+void setEncoderInterrupt()
+{
+  int aNumber;  
+  char *arg;
+
+  INFO(__func__,""); 
+
+  arg = SCmd.next(); 
+  if(arg != NULL)
+  {
+    bInterruptEnabled = atoi(arg) ? true : false;
+  }
+  else
+  {
+    WARNING(__func__,"invalid arguments");
+  }
+}
+
+
+ /*
+ *
+ */
 void autoRead()
 {
-  #define THIS "autoRead"
-
   readEOLsensors();
   readEncoders();
   delay(200);
@@ -215,5 +227,6 @@ void unrecognized()
   Serial.println("readEOLsensors");
   Serial.println("readEncoders");
   Serial.println("beep");
+  Serial.println("setEncoderInterrupt");
   Serial.println("autoRead");
 }

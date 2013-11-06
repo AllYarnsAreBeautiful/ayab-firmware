@@ -7,7 +7,6 @@
 #include "settings.h"
 #include "debug.h"
 
-#define DELAYMS 50
 
 class Beeper{
 public:
