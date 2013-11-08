@@ -65,3 +65,38 @@ void isr_encA_falling()
 {
 	encoders.encA_falling();
 }
+
+
+/*
+ * Serial Command handling
+ */
+
+ void handle_reqInit()
+ {
+ 	INFO(__func__,"");
+ }
+
+ void handle_reqStart()
+ {
+ 	INFO(__func__,"");
+ }
+
+ void handle_cnfLine()
+ {
+ 	INFO(__func__,"");
+ }
+
+ void handle_reqStop()
+ {
+ 	INFO(__func__,"");
+ }
+
+ void handle_reqInfo()
+ {
+ 	INFO(__func__,"");
+ }
+
+void handle_unrecognized()
+{
+	INFO(__func__,"cmd unrecognized");
+}
