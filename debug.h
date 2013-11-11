@@ -4,7 +4,7 @@
 #define DEBUG_H
 
 
-#define DEBUG
+#define DEBUG 1
 
 /*
  *

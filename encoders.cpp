@@ -7,7 +7,7 @@
 Encoders::Encoders()
 {
 	m_direction    = NoDirection;
-	m_beltShift    = NoPhase;
+	m_beltShift    = Unknown;
 	m_encoderPos   = 0xFF;
 }
 
@@ -15,19 +15,19 @@ Encoders::Encoders()
 void Encoders::encA_rising()
 {
 	INFO(__func__, "");
+	// Direction only decided on rising edge of encoder A
 	m_direction = digitalRead(ENC_PIN_B) ? Right : Left;
 
 	// Left Hall Sensor
 	if( Right == m_direction )
 	{
-		INFO(__func__, "Right direction");
 		uint16 hallValue = analogRead(EOL_PIN_L);
 		if( hallValue < FILTER_L_MIN || 
 			hallValue > FILTER_L_MAX)
 		{ 
-			INFO(__func__, "Left rest position");
-			m_beltShift = digitalRead(ENC_PIN_C) ? Goofy : Regular;
-			m_encoderPos = 0; // 0 = Left reset position
+			// Belt shift signal only decided in rest position
+			m_beltShift = digitalRead(ENC_PIN_C) ? Shifted : Regular;
+			m_encoderPos = 0; // = Left rest position
       	}
       	else
       	{
@@ -43,14 +43,12 @@ void Encoders::encA_falling()
 	// Right Hall Sensor
 	if( Left == m_direction )
 	{
-		INFO(__func__, "Left direction");
 		uint16 hallValue = analogRead(EOL_PIN_R);
 		if( hallValue < FILTER_R_MIN || 
 			hallValue > FILTER_R_MAX)
 		{ 
-			INFO(__func__, "Right rest position");
-	        m_beltShift = digitalRead(ENC_PIN_C) ? Regular : Goofy;
-	        m_encoderPos = 201; // 201 = Right reset position
+	        m_beltShift = digitalRead(ENC_PIN_C) ? Regular : Shifted;
+	        m_encoderPos = 201; // = Right rest position
       	}
       	else
       	{
@@ -69,6 +67,12 @@ byte Encoders::getPosition()
 Phaseshift_t Encoders::getPhaseshift()
 {
 	return m_beltShift;
+}
+
+
+Direction_t Encoders::getDirection()
+{
+	return m_direction;
 }
 
 

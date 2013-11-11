@@ -14,8 +14,9 @@ public:
 	void encA_rising();
 	void encA_falling();
 
-	byte getPosition();
-	Phaseshift_t getPhaseshift();
+	byte 			getPosition();
+	Phaseshift_t 	getPhaseshift();
+	Direction_t 	getDirection();
 
 private:
 	Direction_t 	m_direction;

@@ -3,6 +3,8 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
+#define VERSION_STRING "01.00"
+
 #define SERIAL_BAUDRATE 115200
 
 #define EOL_PIN_R 0	// Analog
@@ -19,12 +21,12 @@
 #define FILTER_R_MIN 10
 #define FILTER_R_MAX 460
 
-/*
- * Can't touch this!
- */
-#define uint16 unsigned int
+#define NEEDLE_OFFSET 15
 
 #define BEEPDELAY 50 // ms
+
+
+#define uint16 unsigned int
 
 typedef enum Direction{
 	NoDirection	= 0,
@@ -33,9 +35,9 @@ typedef enum Direction{
 } Direction_t;
 
 typedef enum Phaseshift{
-	NoPhase     = 0,
-	Regular 	= 1, // 
-	Goofy   	= 2
+	Unknown     = 0,
+	Regular 	= 1, 
+	Shifted   	= 2
 } Phaseshift_t;
 
 

@@ -10,8 +10,8 @@
 #include "settings.h"
 
 #include "beeper.h"
-#include "solenoids.h"
 #include "encoders.h"
+#include "knitter.h"
 
 /*
  * DEFINES
@@ -21,8 +21,8 @@
  *	DECLARATIONS
  */ 
 Beeper        beeper;
-Solenoids     solenoids;
 Encoders      encoders;
+Knitter		  knitter;
 
 byte needlePos, oldNeedlePos;
 
@@ -94,6 +94,9 @@ void isr_encA_falling()
  void handle_reqInfo()
  {
  	INFO(__func__,"");
+ 	Serial.print(0xC5); //cnfInfo
+ 	Serial.print(" ");
+ 	Serial.println(VERSION_STRING);
  }
 
 void handle_unrecognized()
