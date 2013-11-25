@@ -24,7 +24,7 @@ public:
 private:
 	uint16 solenoidState;
 	void write( uint16 state );
-
 };
+
 
 #endif

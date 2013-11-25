@@ -14,7 +14,6 @@
 #include "solenoids.h"
 
 
-
 /*
  * DEFINES
  */
@@ -26,7 +25,7 @@ SerialCommand SCmd;   // The SerialCommand object
 Beeper        beeper;
 Solenoids     solenoids;
 
-bool bInterruptEnabled = false;
+
 /*
  * SETUP
  */
@@ -39,16 +38,15 @@ void setup() {
   pinMode(ENC_PIN_C,INPUT);
 
 	// Setup callbacks for SerialCommand commands
-  SCmd.addCommand("setSingleSolenoid", setSingleSolenoid);
+  SCmd.addCommand("setSingle", setSingleSolenoid);
   SCmd.addCommand("setSolenoids", setSolenoids);
   SCmd.addCommand("readEOLsensors", readEOLsensors);
   SCmd.addCommand("readEncoders", readEncoders);
   SCmd.addCommand("beep", beep);
-  SCmd.addCommand("setEncoderInterrupt", setEncoderInterrupt);
   SCmd.addCommand("autoRead", autoRead);
 	SCmd.addDefaultHandler(unrecognized);  // Handler for command that isn't matched 
 	
-  attachInterrupt(ENC_PIN_A, encoderAChange, CHANGE);
+  attachInterrupt(0, encoderAChange, RISING); //Attaching ENC_PIN_A (2)
 
   INFO(__func__, "ready");
 }
@@ -67,8 +65,7 @@ void loop() {
  */
 void encoderAChange()
 {
-  if(bInterruptEnabled)
-    INFO(__func__, "INTERRUPT");
+    beep();
 }
 
 
@@ -83,7 +80,6 @@ void setSingleSolenoid()
   byte solenoidNumber = 0;
   byte solenoidState  = 0;
 
-  INFO(__func__,""); 
   arg = SCmd.next(); 
   if (arg != NULL) 
   {
@@ -121,14 +117,8 @@ void setSolenoids()
   if(arg != NULL)
   {
     solenoidState = atoi(arg);
-    if( 0 == solenoidState || 1 == solenoidState )
-    {
-      solenoids.setSolenoids( solenoidState );
-    }
-    else
-    {
-      WARNING(__func__,"invalid arguments");
-    }
+    // TODO fix for numbers >255
+    solenoids.setSolenoids( solenoidState );    
   }
 }
 
@@ -138,10 +128,10 @@ void setSolenoids()
  */
 void readEOLsensors()
 {
-  INFO(__func__, "EOL_R");
-  INFO(__func__, atoi(analogRead(EOL_PIN_R)) );
-  INFO(__func__, "EOL_L");
-  INFO(__func__, atoi(analogRead(EOL_PIN_L)) );
+  Serial.println("EOL_R");
+  Serial.println(analogRead(EOL_PIN_R));
+  Serial.println("EOL_L");
+  Serial.println(analogRead(EOL_PIN_L));
 }
 
 
@@ -178,30 +168,7 @@ void readEncoders()
  */
 void beep()
 {
-  INFO(__func__, "beep!");
   beeper.start();
-}
-
-
-/*
- *
- */
-void setEncoderInterrupt()
-{
-  int aNumber;  
-  char *arg;
-
-  INFO(__func__,""); 
-
-  arg = SCmd.next(); 
-  if(arg != NULL)
-  {
-    bInterruptEnabled = atoi(arg) ? true : false;
-  }
-  else
-  {
-    WARNING(__func__,"invalid arguments");
-  }
 }
 
 
@@ -210,10 +177,13 @@ void setEncoderInterrupt()
  */
 void autoRead()
 {
-  readEOLsensors();
-  readEncoders();
-  delay(200);
-  Serial.print(0x0C);
+  while(1)
+  {
+    readEOLsensors();
+    readEncoders();
+    delay(1000);
+    //TODO fix clearscreen Serial.write(0x0C);
+  }
 }
 
 
@@ -227,6 +197,5 @@ void unrecognized()
   Serial.println("readEOLsensors");
   Serial.println("readEncoders");
   Serial.println("beep");
-  Serial.println("setEncoderInterrupt");
   Serial.println("autoRead");
 }

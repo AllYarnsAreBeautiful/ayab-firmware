@@ -16,10 +16,12 @@
 
 #define PIEZO_PIN 9
 
+// TODO probably calibrate to each device
 #define FILTER_L_MIN 10
 #define FILTER_L_MAX 460
 #define FILTER_R_MIN 10
 #define FILTER_R_MAX 460
+// end TODO
 
 #define NEEDLE_OFFSET 15
 

@@ -3,20 +3,19 @@
 #include "Arduino.h"
 #include "solenoids.h"
 
-#include <Wire.h>
+#include "SoftI2CMaster.h"
+
+SoftI2CMaster i2cMaster(A4,A5,1);
 
 Solenoids::Solenoids()
 {
-	INFO(__func__,"constructor");
-
 	solenoidState = 0x00;
-
-	Wire.begin();
 }
 
 
 void Solenoids::setSolenoid( byte solenoid, bool state )
-{
+{	
+   Serial.println(solenoid);
 	if( solenoid >= 0 && solenoid <= 15 )
 	{
 		if( state )
@@ -27,7 +26,9 @@ void Solenoids::setSolenoid( byte solenoid, bool state )
 		setSolenoids(solenoidState);
 	}
 	else
+	{
 		WARNING(__this__,"solenoid number out of range");
+	}
 }
 
 
@@ -52,11 +53,11 @@ void Solenoids::write( uint16 newState )
 {
 	INFO(__func__, "writing to I2C" );
 
-	Wire.beginTransmission( I2Caddr_sol1_8 );
-	Wire.write( lowByte(newState) );
-	Wire.endTransmission();
+	i2cMaster.beginTransmission( I2Caddr_sol1_8 );
+	i2cMaster.send( lowByte(newState) );
+	i2cMaster.endTransmission();
 
-	Wire.beginTransmission( I2Caddr_sol9_16);
-	Wire.write( highByte(newState) );
-	Wire.endTransmission();
+	i2cMaster.beginTransmission( I2Caddr_sol9_16);
+	i2cMaster.send( highByte(newState) );
+	i2cMaster.endTransmission(); 
 }
