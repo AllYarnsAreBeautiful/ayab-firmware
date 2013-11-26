@@ -4,29 +4,24 @@
 #define DEBUG_H
 
 
-#define DEBUG 1
+#define DEBUG
 
 /*
  *
  */
 #ifdef DEBUG
-	#define ERROR(module, out) \
-		Serial.print(#module); \
-		Serial.print(":ERROR:"); \
-		Serial.println(#out);
-	#define WARNING(module, out) \
-		Serial.print(#module); \
-		Serial.print(":WARNING:"); \
-		Serial.println(#out);
-	#define INFO(module, out) \
-		Serial.print(#module); \
-		Serial.print(":INFO:"); \
-		Serial.println(#out);
+	#define DEBUG_PRINT(str) \
+	    Serial.print(millis()); \
+	    Serial.print(": "); \
+	    Serial.print(__FUNCTION__); \
+	    Serial.print("() in "); \
+	    Serial.print(__FILE__); \
+	    Serial.print(':'); \ 
+	    Serial.print(__LINE__); \
+	    Serial.print(' '); \
+	    Serial.println(str);
 #else
-	#define ERROR(module, out)
-	#define WARNING(module, out )
-	#define INFO(module, out)
+	#define DEBUG_PRINT(str)
 #endif
-
 
 #endif

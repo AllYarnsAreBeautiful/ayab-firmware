@@ -5,14 +5,16 @@
 
 
 Knitter::Knitter()
-{
-	if(DEBUG)
-	{
+{ 
+	#ifdef DEBUG
 		for( int i = 0; i < 25; i++ )
 		{
 			m_currentLine[i] = (i%2) ? 0xFF : 0x00;
+			Serial.print(i);
+			Serial.print(": ");
+			Serial.println(m_currentLine[i]);
 		}
-	}
+	#endif //DEBUG 
 }
 
 void Knitter::knit( byte position, 
@@ -22,9 +24,9 @@ void Knitter::knit( byte position,
 	if( m_oldPosition != position )
 	{ // Only act if there is an actual change of position
 
-		if( 0 == position || 201 == position )
+		if( 0 == position || 255 == position )
 		{ // Turn solenoids off on end of line
-			m_solenoids.setSolenoids( 0x00 );
+			m_solenoids.setSolenoids( 0x0000 );
 			return;
 		}
 
@@ -48,7 +50,7 @@ void Knitter::knit( byte position,
 				break;
 
 			case Left:
-				if( position < (200-NEEDLE_OFFSET) )
+				if( position < (255-NEEDLE_OFFSET) )
 				{
 					m_pixelToSet = position + NEEDLE_OFFSET; // TODO CHECK!
 					if( Regular == phaseshift )
@@ -76,5 +78,8 @@ void Knitter::knit( byte position,
 
 		// Store current Encoder position for next call of this function
 		m_oldPosition = position;
+
+		// Check position and decide whether to get a new Line from Host
+		// TODO
 	}
 }

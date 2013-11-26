@@ -14,16 +14,19 @@
 #define ENC_PIN_B 3
 #define ENC_PIN_C 4
 
+#define LED_PIN_A 5 // green LED
+#define LED_PIN_B 6 // yellow LED
+
 #define PIEZO_PIN 9
 
-// TODO probably calibrate to each device
+// Should be calibrated to each device
 #define FILTER_L_MIN 10
 #define FILTER_L_MAX 460
 #define FILTER_R_MIN 10
-#define FILTER_R_MAX 460
-// end TODO
+#define FILTER_R_MAX 600
+//
 
-#define NEEDLE_OFFSET 15
+#define NEEDLE_OFFSET 28
 
 #define BEEPDELAY 50 // ms
 

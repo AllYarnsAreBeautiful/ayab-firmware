@@ -22,7 +22,7 @@
  */ 
 Beeper        beeper;
 Encoders      encoders;
-Knitter		  knitter;
+Knitter		  *knitter;
 
 byte needlePos, oldNeedlePos;
 
@@ -36,23 +36,31 @@ void setup() {
   pinMode(ENC_PIN_B,INPUT);
   pinMode(ENC_PIN_C,INPUT);
 
-  attachInterrupt(ENC_PIN_A, isr_encA_rising, RISING);
-  attachInterrupt(ENC_PIN_A, isr_encA_falling, FALLING);
+  pinMode(LED_PIN_A,OUTPUT);
+  pinMode(LED_PIN_B,OUTPUT); 
 
-  INFO(__func__,"ready");
+  //Attaching ENC_PIN_A(=2), Interrupt No. 0
+  attachInterrupt(0, isr_encA_rising, RISING);
+  attachInterrupt(0, isr_encA_falling, FALLING);
+
+  DEBUG_PRINT("ayab ready");
+
+  knitter = new Knitter();
 }
 
 
 void loop() {
-	needlePos = encoders.getPosition();
-	if ( oldNeedlePos != needlePos )
-	{
-		INFO(__func__, "Needle Position:");
-		INFO(__func__, needlePos);
-		INFO(__func__, "BeltShift:");
-		INFO(__func__, getPhaseshift() );
-	}
-	oldNeedlePos = needlePos;
+	#ifdef DEBUG
+		needlePos = encoders.getPosition();
+		if ( oldNeedlePos != needlePos )
+		{
+			Serial.print("Needle Position: ");
+			Serial.println(needlePos);
+			Serial.print("BeltShift: ");
+			Serial.println( encoders.getPhaseshift() );
+		}
+		oldNeedlePos = needlePos;
+	#endif
 }
 
 
@@ -71,35 +79,35 @@ void isr_encA_falling()
  * Serial Command handling
  */
 
- void handle_reqInit()
+ void h_reqInit()
  {
- 	INFO(__func__,"");
+ 	DEBUG_PRINT("");
  }
 
- void handle_reqStart()
+ void h_reqStart()
  {
- 	INFO(__func__,"");
+ 	DEBUG_PRINT("");
  }
 
- void handle_cnfLine()
+ void h_cnfLine()
  {
- 	INFO(__func__,"");
+ 	DEBUG_PRINT("");
  }
 
- void handle_reqStop()
+ void h_reqStop()
  {
- 	INFO(__func__,"");
+ 	DEBUG_PRINT("");
  }
 
- void handle_reqInfo()
+ void h_reqInfo()
  {
- 	INFO(__func__,"");
+ 	DEBUG_PRINT("");
  	Serial.print(0xC5); //cnfInfo
  	Serial.print(" ");
  	Serial.println(VERSION_STRING);
  }
 
-void handle_unrecognized()
+void h_unrecognized()
 {
-	INFO(__func__,"cmd unrecognized");
+	DEBUG_PRINT("cmd unrecognized");
 }

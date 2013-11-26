@@ -14,10 +14,19 @@ Encoders::Encoders()
 
 void Encoders::encA_rising()
 {
-	INFO(__func__, "");
 	// Direction only decided on rising edge of encoder A
 	m_direction = digitalRead(ENC_PIN_B) ? Right : Left;
+	if( Right == m_direction )
+	{
+		digitalWrite(LED_PIN_B, 0);
+	}
+	else
+	{
+		digitalWrite(LED_PIN_B, 1);
+	}
 
+	//reset Hall-LED
+	digitalWrite(LED_PIN_A, 1);
 	// Left Hall Sensor
 	if( Right == m_direction )
 	{
@@ -27,11 +36,15 @@ void Encoders::encA_rising()
 		{ 
 			// Belt shift signal only decided in rest position
 			m_beltShift = digitalRead(ENC_PIN_C) ? Shifted : Regular;
-			m_encoderPos = 0; // = Left rest position
+			// indicate Hall Sensor Contact
+			digitalWrite(LED_PIN_A, 0);
       	}
       	else
       	{
-      		m_encoderPos++;
+      		if( m_encoderPos < 255 )
+      		{
+      			m_encoderPos++;
+      		}
       	}
 	}
 }
@@ -39,7 +52,8 @@ void Encoders::encA_rising()
 
 void Encoders::encA_falling()
 {
-	INFO(__func__, "");
+	//reset Hall-LED
+	digitalWrite(LED_PIN_A, 0);
 	// Right Hall Sensor
 	if( Left == m_direction )
 	{
@@ -48,11 +62,15 @@ void Encoders::encA_falling()
 			hallValue > FILTER_R_MAX)
 		{ 
 	        m_beltShift = digitalRead(ENC_PIN_C) ? Regular : Shifted;
-	        m_encoderPos = 201; // = Right rest position
+	        // indicate Hall Sensor Contact
+	        digitalWrite(LED_PIN_A, 1);
       	}
       	else
       	{
-      		m_encoderPos--;
+      		if( m_encoderPos > 0 )
+      		{
+      			m_encoderPos--;
+      		}
       	}
 	}
 }

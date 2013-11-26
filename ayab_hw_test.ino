@@ -31,24 +31,27 @@ Solenoids     solenoids;
  */
 void setup() {
 
-	Serial.begin(9600);
+	Serial.begin(SERIAL_BAUDRATE);
 
   pinMode(ENC_PIN_A,INPUT);
   pinMode(ENC_PIN_B,INPUT);
   pinMode(ENC_PIN_C,INPUT);
 
+  pinMode(LED_PIN_A,OUTPUT);
+  pinMode(LED_PIN_B,OUTPUT); 
+
 	// Setup callbacks for SerialCommand commands
-  SCmd.addCommand("setSingle", setSingleSolenoid);
-  SCmd.addCommand("setSolenoids", setSolenoids);
+  SCmd.addCommand("setSingle", setSingle);
+  SCmd.addCommand("setAll", setAll);
   SCmd.addCommand("readEOLsensors", readEOLsensors);
   SCmd.addCommand("readEncoders", readEncoders);
   SCmd.addCommand("beep", beep);
   SCmd.addCommand("autoRead", autoRead);
 	SCmd.addDefaultHandler(unrecognized);  // Handler for command that isn't matched 
 	
-  attachInterrupt(0, encoderAChange, RISING); //Attaching ENC_PIN_A (2)
+  attachInterrupt(0, encoderAChange, RISING); //Attaching ENC_PIN_A(=2)
 
-  INFO(__func__, "ready");
+  DEBUG_PRINT("ready");
 }
 
 
@@ -72,7 +75,7 @@ void encoderAChange()
 /*
  *
  */
-void setSingleSolenoid()    
+void setSingle()    
 {
   int aNumber;  
   char *arg;
@@ -94,7 +97,7 @@ void setSingleSolenoid()
       }
       else
       {
-        WARNING(__func__,"invalid arguments");
+        DEBUG_PRINT("invalid arguments");
       }
     }
   }
@@ -104,14 +107,14 @@ void setSingleSolenoid()
 /*
  *
  */
-void setSolenoids()
+void setAll()
 {
   int aNumber;  
   char *arg;
 
   byte solenoidState  = 0;
 
-  INFO(__func__,""); 
+  DEBUG_PRINT(""); 
   arg = SCmd.next(); 
 
   if(arg != NULL)
@@ -128,10 +131,10 @@ void setSolenoids()
  */
 void readEOLsensors()
 {
-  Serial.println("EOL_R");
-  Serial.println(analogRead(EOL_PIN_R));
-  Serial.println("EOL_L");
+  Serial.print("EOL_L: ");
   Serial.println(analogRead(EOL_PIN_L));
+  Serial.print("EOL_R: ");
+  Serial.println(analogRead(EOL_PIN_R));
 }
 
 
@@ -142,24 +145,24 @@ void readEncoders()
 {
   if( HIGH == digitalRead(ENC_PIN_A) )
   {
-    INFO(__func__, "ENC_A: HIGH");
+    Serial.println("ENC_A: HIGH");
   }
   else
-    INFO(__func__, "ENC_A: LOW");
+    Serial.println("ENC_A: LOW");
 
   if( HIGH == digitalRead(ENC_PIN_B) )
   {
-    INFO(__func__, "ENC_B: HIGH");
+    Serial.println("ENC_B: HIGH");
   }
   else
-    INFO(__func__, "ENC_B: LOW");
+    Serial.println("ENC_B: LOW");
 
   if( HIGH == digitalRead(ENC_PIN_C) )
   {
-    INFO(__func__, "ENC_C: HIGH");
+    Serial.println("ENC_C: HIGH");
   }
   else
-    INFO(__func__, "ENC_C: LOW");
+    Serial.println("ENC_C: LOW");
 }
 
 
@@ -192,8 +195,8 @@ void autoRead()
  */
 void unrecognized()
 {
-  Serial.println("setSingleSolenoid [0..15] [1/0]");
-  Serial.println("setSolenoids [1/0]");
+  Serial.println("setSingle [0..15] [1/0]");
+  Serial.println("setAll [0..255] [0..255]");
   Serial.println("readEOLsensors");
   Serial.println("readEncoders");
   Serial.println("beep");

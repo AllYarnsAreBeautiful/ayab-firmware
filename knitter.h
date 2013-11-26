@@ -9,8 +9,6 @@
 
 #include "solenoids.h"
 
-typedef byte Line[25];
-
 class Knitter
 {
 public:
@@ -23,7 +21,7 @@ public:
 private:
 	Solenoids   m_solenoids;
 
-	Line		m_currentLine;
+	byte		m_currentLine[25];
 
 	byte 		m_oldPosition;
 	byte		m_solenoidToSet;

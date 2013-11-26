@@ -14,8 +14,7 @@ Solenoids::Solenoids()
 
 
 void Solenoids::setSolenoid( byte solenoid, bool state )
-{	
-   Serial.println(solenoid);
+{
 	if( solenoid >= 0 && solenoid <= 15 )
 	{
 		if( state )
@@ -27,7 +26,7 @@ void Solenoids::setSolenoid( byte solenoid, bool state )
 	}
 	else
 	{
-		WARNING(__this__,"solenoid number out of range");
+		DEBUG_PRINT("solenoid number out of range");
 	}
 }
 
@@ -51,8 +50,7 @@ void Solenoids::setSolenoids( uint16 state )
  */
 void Solenoids::write( uint16 newState )
 {
-	INFO(__func__, "writing to I2C" );
-
+	DEBUG_PRINT("Writing to I2C");
 	i2cMaster.beginTransmission( I2Caddr_sol1_8 );
 	i2cMaster.send( lowByte(newState) );
 	i2cMaster.endTransmission();
