@@ -7,6 +7,8 @@
 
 #define SERIAL_BAUDRATE 115200
 
+#define BEEPDELAY 50 // ms
+
 #define EOL_PIN_R 0	// Analog
 #define EOL_PIN_L 1	// Analog
 
@@ -28,8 +30,9 @@
 
 #define NEEDLE_OFFSET 28
 
-#define BEEPDELAY 50 // ms
 
+#define END_LEFT  0
+#define END_RIGHT 255
 
 #define uint16 unsigned int
 
@@ -39,11 +42,17 @@ typedef enum Direction{
 	Right 		= 2
 } Direction_t;
 
-typedef enum Phaseshift{
+typedef enum Beltshift{
 	Unknown     = 0,
 	Regular 	= 1, 
 	Shifted   	= 2
-} Phaseshift_t;
+} Beltshift_t;
+
+typedef enum OpState{
+	s_init      = 0,
+	s_ready     = 1,
+	s_operate   = 2
+} OpState_t;
 
 
 #endif

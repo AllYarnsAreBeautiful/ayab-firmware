@@ -6,6 +6,10 @@
 
 Knitter::Knitter()
 { 
+	m_opState = s_init;
+
+	digitalWrite( LED_PIN_B, 1 ); // indicates ready/operation state
+
 	#ifdef DEBUG
 		for( int i = 0; i < 25; i++ )
 		{
@@ -17,14 +21,89 @@ Knitter::Knitter()
 	#endif //DEBUG 
 }
 
-void Knitter::knit( byte position, 
-					Direction_t direction, 
-					Phaseshift_t phaseshift )
+
+void Knitter::fsm(byte position, Direction_t direction, Beltshift_t beltshift)
 {
-	if( m_oldPosition != position )
+	switch( m_opState ) {
+		case s_init:
+			state_init(position);
+			break;
+
+		case s_ready:
+			state_ready();
+			break;
+
+		case s_operate:
+			state_operate(position, direction, beltshift);
+			break;
+
+		default: 
+			break;
+	}
+}
+
+bool Knitter::startOperation()
+{
+	if( s_ready == m_opState )
+	{
+		m_opState = s_operate;
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+/*
+ * PRIVATE METHODS
+ */
+void Knitter::state_init(byte position)
+{
+	digitalWrite( LED_PIN_B, 1 );
+
+	static Direction_t _sInitialPos = NoDirection;
+
+	// Check where the sled was inserted (Left or right of the middle)
+	if( _sInitialPos == NoDirection )
+	{
+		_sInitialPos = position < 127 ? Left : Right;
+	}
+
+	// Check if the sled has reached the other side of the machine
+	// Human has to make sure the sled is moved to the very end
+	if( (_sInitialPos == Left && position == END_RIGHT )
+		|| ( _sInitialPos == Right && position == END_LEFT ) )
+	{
+		// Reset variable and move to next state
+		_sInitialPos   = NoDirection;
+		m_opState    = s_ready;
+	}
+
+}
+
+
+void Knitter::state_ready()
+{
+	digitalWrite( LED_PIN_B, 0 );
+	// This state is left by the startOperation() method called by main
+}
+
+
+void Knitter::state_operate( byte position, 
+					Direction_t direction, 
+					Beltshift_t beltshift )
+{
+	static byte _sOldPosition = 0;
+	byte _solenoidToSet = 0;
+	byte _pixelToSet    = 0;
+
+	digitalWrite( LED_PIN_B, !digitalRead(LED_PIN_B) );
+
+	if( _sOldPosition != position )
 	{ // Only act if there is an actual change of position
 
-		if( 0 == position || 255 == position )
+		if( END_LEFT == position || END_RIGHT == position )
 		{ // Turn solenoids off on end of line
 			m_solenoids.setSolenoids( 0x0000 );
 			return;
@@ -35,14 +114,14 @@ void Knitter::knit( byte position,
 			case Right:
 				if( position > NEEDLE_OFFSET )
 				{ 
-					m_pixelToSet = position - NEEDLE_OFFSET; // TODO CHECK!
-					if( Regular == phaseshift )
+					_pixelToSet = position - NEEDLE_OFFSET; // TODO CHECK!
+					if( Regular == beltshift )
 					{
-						m_solenoidToSet = position % 16;
+						_solenoidToSet = position % 16;
 					}
-					else if ( Shifted == phaseshift )
+					else if ( Shifted == beltshift )
 					{
-						m_solenoidToSet = (position-8) % 16;
+						_solenoidToSet = (position-8) % 16;
 					}
 				}
 				else
@@ -50,16 +129,16 @@ void Knitter::knit( byte position,
 				break;
 
 			case Left:
-				if( position < (255-NEEDLE_OFFSET) )
+				if( position < (END_RIGHT-NEEDLE_OFFSET) )
 				{
-					m_pixelToSet = position + NEEDLE_OFFSET; // TODO CHECK!
-					if( Regular == phaseshift )
+					_pixelToSet = position + NEEDLE_OFFSET; // TODO CHECK!
+					if( Regular == beltshift )
 					{
-						m_solenoidToSet = (position+8) % 16;
+						_solenoidToSet = (position+8) % 16;
 					}
-					else if ( Shifted == phaseshift )
+					else if ( Shifted == beltshift )
 					{
-						m_solenoidToSet = position % 16;
+						_solenoidToSet = position % 16;
 					}
 				}
 				else
@@ -72,12 +151,12 @@ void Knitter::knit( byte position,
 
 		// Find the right byte from the currentLine array,
 		// then read the appropriate Pixel(Bit) for the current needle to set
-		bool _pixelValue = bitRead( m_currentLine[(int)(m_pixelToSet/8)], m_solenoidToSet );
+		bool _pixelValue = bitRead( m_currentLine[(int)(_pixelToSet/8)], _solenoidToSet );
 		// Write Pixel state to the appropriate needle
-		m_solenoids.setSolenoid( m_solenoidToSet, _pixelValue );
+		m_solenoids.setSolenoid( _solenoidToSet, _pixelValue );
 
 		// Store current Encoder position for next call of this function
-		m_oldPosition = position;
+		_sOldPosition = position;
 
 		// Check position and decide whether to get a new Line from Host
 		// TODO

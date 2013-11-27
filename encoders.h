@@ -15,12 +15,12 @@ public:
 	void encA_falling();
 
 	byte 			getPosition();
-	Phaseshift_t 	getPhaseshift();
+	Beltshift_t 	getBeltshift();
 	Direction_t 	getDirection();
 
 private:
 	Direction_t 	m_direction;
-	Phaseshift_t 	m_beltShift;
+	Beltshift_t 	m_beltShift;
 	byte 			m_encoderPos;
 };
 

@@ -57,7 +57,7 @@ void loop() {
 			Serial.print("Needle Position: ");
 			Serial.println(needlePos);
 			Serial.print("BeltShift: ");
-			Serial.println( encoders.getPhaseshift() );
+			Serial.println( encoders.getBeltshift() );
 		}
 		oldNeedlePos = needlePos;
 	#endif

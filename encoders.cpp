@@ -34,14 +34,14 @@ void Encoders::encA_rising()
 		if( hallValue < FILTER_L_MIN || 
 			hallValue > FILTER_L_MAX)
 		{ 
-			// Belt shift signal only decided in rest position
+			// Belt shift signal only decided in front of hall sensor
 			m_beltShift = digitalRead(ENC_PIN_C) ? Shifted : Regular;
 			// indicate Hall Sensor Contact
 			digitalWrite(LED_PIN_A, 0);
       	}
       	else
       	{
-      		if( m_encoderPos < 255 )
+      		if( m_encoderPos < END_RIGHT )
       		{
       			m_encoderPos++;
       		}
@@ -67,7 +67,7 @@ void Encoders::encA_falling()
       	}
       	else
       	{
-      		if( m_encoderPos > 0 )
+      		if( m_encoderPos > END_LEFT )
       		{
       			m_encoderPos--;
       		}
@@ -82,7 +82,7 @@ byte Encoders::getPosition()
 }
 
 
-Phaseshift_t Encoders::getPhaseshift()
+Beltshift_t Encoders::getBeltshift()
 {
 	return m_beltShift;
 }

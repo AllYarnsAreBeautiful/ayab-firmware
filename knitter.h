@@ -14,18 +14,23 @@ class Knitter
 public:
 	Knitter();
 
-	void knit(byte position, 
-				Direction_t direction, 
-				Phaseshift_t phaseshift);
+	void fsm(byte position, 
+		Direction_t direction, 
+		Beltshift_t beltshift);
+	bool startOperation();
 
 private:
 	Solenoids   m_solenoids;
 
+	OpState_t   m_opState;
+
 	byte		m_currentLine[25];
 
-	byte 		m_oldPosition;
-	byte		m_solenoidToSet;
-	byte		m_pixelToSet;
+	void state_init(byte position);
+	void state_ready(void);
+	void state_operate(byte position, 
+				Direction_t direction, 
+				Beltshift_t beltshift);
 };
 
 
