@@ -14,19 +14,18 @@ Solenoids::Solenoids()
 
 
 void Solenoids::setSolenoid( byte solenoid, bool state )
-{
+{ 
 	if( solenoid >= 0 && solenoid <= 15 )
-	{
+	{ 
 		if( state )
+		{
 			bitSet(solenoidState, solenoid);
+		}
 		else
+		{
 			bitClear(solenoidState,solenoid);
-
-		setSolenoids(solenoidState);
-	}
-	else
-	{
-		DEBUG_PRINT("solenoid number out of range");
+		}	
+		setSolenoids(solenoidState); 
 	}
 }
 
@@ -50,7 +49,6 @@ void Solenoids::setSolenoids( uint16 state )
  */
 void Solenoids::write( uint16 newState )
 {
-	DEBUG_PRINT("Writing to I2C");
 	i2cMaster.beginTransmission( I2Caddr_sol1_8 );
 	i2cMaster.send( lowByte(newState) );
 	i2cMaster.endTransmission();

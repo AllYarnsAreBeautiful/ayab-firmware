@@ -22,13 +22,14 @@
 #define PIEZO_PIN 9
 
 // Should be calibrated to each device
-#define FILTER_L_MIN 10
-#define FILTER_L_MAX 460
-#define FILTER_R_MIN 10
-#define FILTER_R_MAX 600
+#define FILTER_L_MIN 0
+#define FILTER_L_MAX 600
+#define FILTER_R_MIN 200
+#define FILTER_R_MAX 1023
 //
 
 #define NEEDLE_OFFSET 28
+#define CAM_OFFSET    28
 
 
 #define END_LEFT  0
@@ -44,7 +45,7 @@ typedef enum Direction{
 
 typedef enum Beltshift{
 	Unknown     = 0,
-	Regular 	= 1, 
+	Regular 	   = 1, 
 	Shifted   	= 2
 } Beltshift_t;
 

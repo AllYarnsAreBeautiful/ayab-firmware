@@ -16,7 +16,8 @@ public:
 
 	void fsm(byte position, 
 		Direction_t direction, 
-		Beltshift_t beltshift);
+		Beltshift_t beltshift,
+		Direction_t hallActive);
 	bool startOperation();
 
 private:
@@ -26,7 +27,7 @@ private:
 
 	byte		m_currentLine[25];
 
-	void state_init(byte position);
+	void state_init(Direction_t direction, Direction_t hallActive);
 	void state_ready(void);
 	void state_operate(byte position, 
 				Direction_t direction, 

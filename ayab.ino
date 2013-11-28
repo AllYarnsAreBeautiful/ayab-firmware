@@ -38,18 +38,19 @@ void setup() {
 
   pinMode(LED_PIN_A,OUTPUT);
   pinMode(LED_PIN_B,OUTPUT); 
+  digitalWrite(LED_PIN_A, 1);
+  digitalWrite(LED_PIN_B, 1);
 
   //Attaching ENC_PIN_A(=2), Interrupt No. 0
-  attachInterrupt(0, isr_encA_rising, RISING);
-  attachInterrupt(0, isr_encA_falling, FALLING);
+  attachInterrupt(0, isr_encA, CHANGE);
 
   DEBUG_PRINT("ayab ready");
-
   knitter = new Knitter();
 }
 
 
 void loop() {
+   /*
 	#ifdef DEBUG
 		needlePos = encoders.getPosition();
 		if ( oldNeedlePos != needlePos )
@@ -60,18 +61,18 @@ void loop() {
 			Serial.println( encoders.getBeltshift() );
 		}
 		oldNeedlePos = needlePos;
-	#endif
+	#endif */
 }
 
 
-void isr_encA_rising()
+void isr_encA()
 {
-	encoders.encA_rising();
-}
-
-void isr_encA_falling()
-{
-	encoders.encA_falling();
+	encoders.encA_interrupt();
+   
+   knitter->fsm( encoders.getPosition(),
+                encoders.getDirection(),
+                encoders.getBeltshift(),
+                encoders.getHallActive() ); 
 }
 
 
