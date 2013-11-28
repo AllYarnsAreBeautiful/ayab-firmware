@@ -63,7 +63,7 @@ void Encoders::encA_rising()
          m_hallActive = Left;
 
 			// Belt shift signal only decided in front of hall sensor
-			m_beltShift = digitalRead(ENC_PIN_C) ? Shifted : Regular;			
+			m_beltShift = digitalRead(ENC_PIN_C) ? Regular : Shifted;			
 
          // Known position of the sled -> overwrite position
          m_encoderPos = END_LEFT + 28;
@@ -89,7 +89,7 @@ void Encoders::encA_falling()
          m_hallActive = Right;
 
          // Belt shift signal only decided in front of hall sensor
-	      m_beltShift = digitalRead(ENC_PIN_C) ? Regular : Shifted;
+	      m_beltShift = digitalRead(ENC_PIN_C) ? Shifted : Regular;
 
          // Known position of the sled -> overwrite position
          m_encoderPos = END_RIGHT - 28;

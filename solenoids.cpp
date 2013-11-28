@@ -25,7 +25,7 @@ void Solenoids::setSolenoid( byte solenoid, bool state )
 		{
 			bitClear(solenoidState,solenoid);
 		}	
-		setSolenoids(solenoidState); 
+		write(solenoidState); 
 	}
 }
 
