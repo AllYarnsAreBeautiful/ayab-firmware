@@ -21,7 +21,7 @@
 
 #define PIEZO_PIN 9
 
-#define LINE_BUF_SIZE 2
+#define NUM_LINE_BUFS 2
 
 // Should be calibrated to each device
 #define FILTER_L_MIN 0

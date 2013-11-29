@@ -54,6 +54,8 @@ private:
 	void state_operate();
 
 	bool calculatePixelAndSolenoid();
+
+	void reqLine( byte lineNumber );
 };
 
 

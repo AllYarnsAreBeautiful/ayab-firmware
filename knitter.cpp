@@ -164,8 +164,7 @@ void Knitter::state_operate()
 				
 				if( !m_lineRequested )
 				{	// request new Line from Host	
-					// TODO reqLine(m_currentLine++);
-					m_lineRequested = true;
+					reqLine(m_currentLine++);
 
 					_workedOnLine   = false;
 				}
@@ -225,4 +224,13 @@ bool Knitter::calculatePixelAndSolenoid()
 			break;
 	}
 	return true;
+}
+
+
+void Knitter::reqLine( byte lineNumber )
+{
+	Serial.print(0x82);
+	Serial.println(lineNumber);
+
+	m_lineRequested = true;
 }

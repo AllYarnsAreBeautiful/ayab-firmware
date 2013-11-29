@@ -11,6 +11,7 @@
  */
 #ifdef DEBUG
 	#define DEBUG_PRINT(str) \
+	    Serial.print("#"); \
 	    Serial.print(millis()); \
 	    Serial.print(": "); \
 	    Serial.print(__FUNCTION__); \
