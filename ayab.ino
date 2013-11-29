@@ -9,8 +9,6 @@
 #include "debug.h"
 #include "settings.h"
 
-#include "beeper.h"
-#include "encoders.h"
 #include "knitter.h"
 
 /*
@@ -20,11 +18,8 @@
 /*
  *	DECLARATIONS
  */ 
-Beeper        beeper;
-Encoders      encoders;
 Knitter		  *knitter;
-
-byte needlePos, oldNeedlePos;
+byte        lineBuffer[LINE_BUF_SIZE][25];
 
 /*
  * SETUP
@@ -44,35 +39,40 @@ void setup() {
   //Attaching ENC_PIN_A(=2), Interrupt No. 0
   attachInterrupt(0, isr_encA, CHANGE);
 
-  DEBUG_PRINT("ayab ready");
+  resetLineBuffer();
+
   knitter = new Knitter();
+  
+  DEBUG_PRINT("# AYAB ready");
 }
 
 
-void loop() {
-   /*
+void loop() {   
 	#ifdef DEBUG
-		needlePos = encoders.getPosition();
-		if ( oldNeedlePos != needlePos )
-		{
-			Serial.print("Needle Position: ");
-			Serial.println(needlePos);
-			Serial.print("BeltShift: ");
-			Serial.println( encoders.getBeltshift() );
-		}
-		oldNeedlePos = needlePos;
-	#endif */
+  static byte oldNeedlePos;
+	byte needlePos = encoders.getPosition();
+	if ( oldNeedlePos != needlePos )
+	{
+		Serial.print("Needle Position: ");
+		Serial.print(needlePos);
+		Serial.print(" BeltShift: ");
+		Serial.println( encoders.getBeltshift() );
+	}
+	oldNeedlePos = needlePos;
+	#endif
 }
 
 
 void isr_encA()
+{   
+   knitter->fsm(); 
+}
+
+
+void resetLineBuffer()
 {
-	encoders.encA_interrupt();
-   
-   knitter->fsm( encoders.getPosition(),
-                encoders.getDirection(),
-                encoders.getBeltshift(),
-                encoders.getHallActive() ); 
+    // TODO verify operation
+    memset(lineBuffer,0,sizeof(lineBuffer));
 }
 
 

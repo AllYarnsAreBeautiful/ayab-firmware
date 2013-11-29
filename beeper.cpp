@@ -9,15 +9,20 @@ Beeper::Beeper()
 }
 
 
-void Beeper::start()
+void Beeper::ready()
 {
 	beep(3);
 }
 
 
-void Beeper::endline()
+void Beeper::finishedLine()
 {
 	beep(5);
+}
+
+void Beeper::endWork()
+{
+  beep(5);
 }
 
 

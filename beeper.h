@@ -14,6 +14,7 @@ public:
 
 	void start();
 	void endline();
+	void endWork();
 
 private:
 	void beep(byte length);

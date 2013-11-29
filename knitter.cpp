@@ -6,32 +6,26 @@
 
 Knitter::Knitter()
 { 
-	m_opState = s_init;
-
-	digitalWrite( LED_PIN_B, 1 ); // indicates ready/operation state
-
-	#ifdef DEBUG
-		for( int i = 0; i < 25; i++ )
-		{
-			//m_currentLine[i] = (i%2) ? 0x00 : 0xFF;
-			m_currentLine[i] = 0;
-
-			Serial.print(i);
-			Serial.print(": ");
-			Serial.println(m_currentLine[i]);
-		} 
-
-		m_currentLine[3] = 0xA5;
-		m_currentLine[17] = 0x5A;
-	#endif //DEBUG 
+	m_opState           = s_init;
+	m_startNeedle       = 0;
+	m_stopNeedle        = 0;
+	m_currentLineNumber = 0;
+	m_lineRequested     = false;
 }
 
 
-void Knitter::fsm(byte position, Direction_t direction, Beltshift_t beltshift, Direction_t hallActive)
+void Knitter::fsm()
 {
+	// Update machine state data
+	encoders.encA_interrupt();
+	m_position   = encoders.getPosition();
+	m_direction  = encoders.getDirection();
+	m_hallActive = encoders.getHallActive();
+	m_beltshift  = encoders.getBeltshift();
+
 	switch( m_opState ) {
 		case s_init:
-			state_init(direction, hallActive);
+			state_init();
 			break;
 
 		case s_ready:
@@ -39,7 +33,7 @@ void Knitter::fsm(byte position, Direction_t direction, Beltshift_t beltshift, D
 			break;
 
 		case s_operate:
-			state_operate(position, direction, beltshift);
+			state_operate();
 			break;
 
 		default: 
@@ -47,11 +41,16 @@ void Knitter::fsm(byte position, Direction_t direction, Beltshift_t beltshift, D
 	}
 }
 
-bool Knitter::startOperation()
+bool Knitter::startOperation(byte startNeedle, byte stopNeedle)
 {
 	if( s_ready == m_opState )
 	{
-		m_opState = s_operate;
+		m_startNeedle 	= startNeedle;
+		m_stopNeedle  	= stopNeedle;
+		m_currentLine 	= 0;
+		m_lineRequested = false;
+		m_lastLine		= false;
+		m_opState 	  	= s_operate;
 		return true;
 	}
 	else
@@ -60,13 +59,33 @@ bool Knitter::startOperation()
 	}
 }
 
+
+void Knitter::setNextLine(byte (*line)[25])
+{
+	m_lineRequested = false;
+	
+	// Set nextLine pointer to buffer
+	m_nextLine = line;
+
+	beeper.ready();
+}
+
+
+void Knitter::endWork()
+{
+	m_opState = s_ready;
+	
+	beeper.endWork();
+}
+
+
 /*
  * PRIVATE METHODS
  */
-void Knitter::state_init(Direction_t direction, Direction_t hallActive)
+void Knitter::state_init()
 {
 	// Machine is initialized when left hall sensor is passed in Right direction
-	if( Right == direction && Left == hallActive )
+	if( Right == m_direction && Left == m_hallActive )
 	{
 		m_opState = s_ready;
 	}
@@ -81,105 +100,129 @@ void Knitter::state_ready()
 {
 	// This state is left by the startOperation() method called by main
 	//DEBUG> jump over state
-	m_opState = s_operate;
+		//m_opState = s_operate;
+		//m_startNeedle = 0;
+		//m_stopNeedle  = 199;
+	//end DEBUG
 }
 
 
-void Knitter::state_operate( byte position, 
-					Direction_t direction, 
-					Beltshift_t beltshift )
+void Knitter::state_operate()
 {
 	static byte _sOldPosition = 0;
-	byte _solenoidToSet = 0;
-	byte _pixelToSet    = 0;
+	static bool _workedOnLine = false;
 
-	digitalWrite( LED_PIN_B, !digitalRead(LED_PIN_B) );
-	digitalWrite( LED_PIN_A, (Shifted == beltshift) );
-
-	if( _sOldPosition != position ) 
+	if( _sOldPosition != m_position ) 
 	{ // Only act if there is an actual change of position
-
-		if( END_LEFT == position || END_RIGHT == position )
-		{ // Turn solenoids off on end of line
-			m_solenoids.setSolenoids( 0x0000 );
-			return;
-		}
-		switch( direction )
-		{ // Calculate the solenoid and pixel to be set
-			case Right:
-				if( position >= 40 /*((2*NEEDLE_OFFSET)-24) */ ) 
-				{ 
-					_pixelToSet = position - 40 /*((2*NEEDLE_OFFSET)-24) */;
-
-					if( Regular == beltshift )
-					{
-						_solenoidToSet = position % 16;
-					}
-					else if ( Shifted == beltshift )
-					{
-						_solenoidToSet = (position-8) % 16;
-					}
-				}
-				else
-				{
-					return;
-				}
-				break;
-
-			case Left:
-				if( position <= 239 /*(END_RIGHT-((2*NEEDLE_OFFSET)-CAM_OFFSET)) */ )
-				{ 
-					_pixelToSet = position - 16;
-					if( Regular == beltshift )
-					{
-						_solenoidToSet = (position+8) % 16;
-					}
-					else if ( Shifted == beltshift )
-					{
-						_solenoidToSet = position % 16;
-					}
-				}
-				else
-				{
-					return;
-				}
-				break;
-
-			default:
-				break;
-		}
+		digitalWrite( LED_PIN_B, !digitalRead(LED_PIN_B) );
 		// Store current Encoder position for next call of this function
-		_sOldPosition = position;
+		_sOldPosition = m_position;	
 
-		if( _pixelToSet > 199 )
+		
+		if( !calculatePixelAndSolenoid() )
 		{
+			// No valid/useful position calculated
 			return;
 		}
 
 		#ifdef DEBUG
 		Serial.print("PixelToSet: ");
-		Serial.println(_pixelToSet);
-		Serial.print("SolenoidToSet: ");
-		Serial.println(_solenoidToSet);
-		#endif
-
-		// Find the right byte from the currentLine array,
-		// then read the appropriate Pixel(Bit) for the current needle to set
-		int _currentByte = (int)(_pixelToSet/8);
-
-		#ifdef DEBUG
-		Serial.print("byte: ");
+		Serial.print(m_pixelToSet);
+		Serial.print(" SolenoidToSet: ");
+		Serial.print(m_solenoidToSet);
+		Serial.print(" - byte: ");
 		Serial.print(_currentByte);
-		Serial.print("value: ");
-		Serial.println(m_currentLine[_currentByte]);
+		Serial.print(" value: ");
+		Serial.println(&m_currentLine[_currentByte]);
 		#endif
 
-		bool _pixelValue = bitRead( m_currentLine[_currentByte], _pixelToSet-(8*_currentByte) );
+		if( (m_pixelToSet >= m_startNeedle)
+				&& (m_pixelToSet =< m_stopNeedle))
+		{	// When inside the active needles
+			_workedOnLine = true;
 
-		// Write Pixel state to the appropriate needle
-		m_solenoids.setSolenoid( _solenoidToSet, _pixelValue );
+			// Find the right byte from the currentLine array,
+			// then read the appropriate Pixel(/Bit) for the current needle to set
+			int _currentByte = (int)(m_pixelToSet/8);
+			bool _pixelValue = bitRead( &m_currentLine[_currentByte], 
+										m_pixelToSet-(8*_currentByte) );
+			// Write Pixel state to the appropriate needle
+			m_solenoids.setSolenoid( m_solenoidToSet, _pixelValue );
+		}
+		else
+		{	// Outside of the active needles
+			// Turn solenoids off
+			// TODO verify if this is ok here
+			m_solenoids.setSolenoids( 0x0000 );
+			
+			if( _workedOnLine )
+			{	// already worked on the current line -> finished the line
+				beeper.finishedLine();
 
-		// Check position and decide whether to get a new Line from Host
-		// TODO 
+				// load nextLine pointer
+				m_currentLine = m_nextLine;
+				
+				if( !m_lineRequested )
+				{	// request new Line from Host	
+					// TODO reqLine(m_currentLine++);
+					m_lineRequested = true;
+
+					_workedOnLine   = false;
+				}
+			}
+		}
 	}
+}
+
+
+bool Knitter::calculatePixelAndSolenoid()
+{
+	switch( m_direction )
+	{ // Calculate the solenoid and pixel to be set
+	  // Implemented according to machine manual
+	  // Magic numbers result from manual	
+		case Right:
+			if( m_position >= START_OFFSET_L ) 
+			{ 
+				m_pixelToSet = m_position - START_OFFSET_L;
+				
+				if( Regular == m_beltshift )
+				{
+					m_solenoidToSet = m_position % 16;
+				}
+				else if ( Shifted == m_beltshift )
+				{
+					m_solenoidToSet = (m_position-8) % 16;
+				}
+			}
+			else
+			{
+				return false;
+			}
+			break;
+
+		case Left:
+			if( m_position <= (END_R - START_OFFSET_R) )
+			{ 
+				m_pixelToSet = m_position - START_OFFSET_R;
+				if( Regular == m_beltshift )
+				{
+					m_solenoidToSet = (m_position+8) % 16;
+				}
+				else if ( Shifted == m_beltshift )
+				{
+					m_solenoidToSet = m_position % 16;
+				}
+			}
+			else
+			{
+				return false;
+			}
+			break;
+
+		default:
+			return false;
+			break;
+	}
+	return true;
 }

@@ -21,20 +21,22 @@
 
 #define PIEZO_PIN 9
 
+#define LINE_BUF_SIZE 2
+
 // Should be calibrated to each device
 #define FILTER_L_MIN 0
 #define FILTER_L_MAX 600
 #define FILTER_R_MIN 200
 #define FILTER_R_MAX 1023
 //
+// Machine constants
+#define NUM_NEEDLES    200
+#define END_LEFT       0
+#define END_RIGHT      255
+#define START_OFFSET_L 40
+#define START_OFFSET_R 16
 
-#define NEEDLE_OFFSET 28
-#define CAM_OFFSET    28
-
-
-#define END_LEFT  0
-#define END_RIGHT 255
-
+// Dont touch
 #define uint16 unsigned int
 
 typedef enum Direction{
@@ -45,7 +47,7 @@ typedef enum Direction{
 
 typedef enum Beltshift{
 	Unknown     = 0,
-	Regular 	   = 1, 
+	Regular 	= 1, 
 	Shifted   	= 2
 } Beltshift_t;
 
@@ -54,6 +56,6 @@ typedef enum OpState{
 	s_ready     = 1,
 	s_operate   = 2
 } OpState_t;
-
+//
 
 #endif
