@@ -17,11 +17,11 @@ Knitter::Knitter()
 void Knitter::fsm()
 {
 	// Update machine state data
-	encoders.encA_interrupt();
-	m_position   = encoders.getPosition();
-	m_direction  = encoders.getDirection();
-	m_hallActive = encoders.getHallActive();
-	m_beltshift  = encoders.getBeltshift();
+	m_encoders.encA_interrupt();
+	m_position   = m_encoders.getPosition();
+	m_direction  = m_encoders.getDirection();
+	m_hallActive = m_encoders.getHallActive();
+	m_beltshift  = m_encoders.getBeltshift();
 
 	switch( m_opState ) {
 		case s_init:
@@ -47,11 +47,12 @@ bool Knitter::startOperation(byte startNeedle, byte stopNeedle)
 	{
 		m_startNeedle 	= startNeedle;
 		m_stopNeedle  	= stopNeedle;
-		m_currentLine 	= 0;
+		m_currentLineNumber	= 0;
 		m_lineRequested = false;
-		m_lastLine		= false;
 		m_opState 	  	= s_operate;
 		return true;
+
+		// TODO request 1 or 2 lines immediately?
 	}
 	else
 	{
@@ -60,14 +61,31 @@ bool Knitter::startOperation(byte startNeedle, byte stopNeedle)
 }
 
 
-void Knitter::setNextLine(byte (*line)[25])
+void Knitter::setNextLine(byte lineNumber, byte (*line))
 {
-	m_lineRequested = false;
-	
-	// Set nextLine pointer to buffer
-	m_nextLine = line;
+	if( m_lineRequested )
+	{	// Is there even a need for a new line?
+		if( lineNumber == m_currentLineNumber )
+		{
+			m_lineRequested = false;
+			
+			// Set nextLine pointer to buffer
+			m_nextLine = line;
 
-	beeper.ready();
+			m_beeper.ready();
+			
+			/* #ifdef DEBUG
+			for(int i = 0; i < 25; i++)
+			{
+				Serial.println(m_nextLine[i]);
+			}
+			#endif */
+		}
+		else
+		{	// line numbers didnt match -> request again
+			reqLine(m_currentLineNumber);
+		}
+	}
 }
 
 
@@ -75,7 +93,7 @@ void Knitter::endWork()
 {
 	m_opState = s_ready;
 	
-	beeper.endWork();
+	m_beeper.endWork();
 }
 
 
@@ -99,11 +117,6 @@ void Knitter::state_init()
 void Knitter::state_ready()
 {
 	// This state is left by the startOperation() method called by main
-	//DEBUG> jump over state
-		//m_opState = s_operate;
-		//m_startNeedle = 0;
-		//m_stopNeedle  = 199;
-	//end DEBUG
 }
 
 
@@ -125,29 +138,29 @@ void Knitter::state_operate()
 			return;
 		}
 
-		#ifdef DEBUG
-		Serial.print("PixelToSet: ");
-		Serial.print(m_pixelToSet);
-		Serial.print(" SolenoidToSet: ");
-		Serial.print(m_solenoidToSet);
-		Serial.print(" - byte: ");
-		Serial.print(_currentByte);
-		Serial.print(" value: ");
-		Serial.println(&m_currentLine[_currentByte]);
-		#endif
-
 		if( (m_pixelToSet >= m_startNeedle)
-				&& (m_pixelToSet =< m_stopNeedle))
+				&& (m_pixelToSet <= m_stopNeedle))
 		{	// When inside the active needles
 			_workedOnLine = true;
 
 			// Find the right byte from the currentLine array,
 			// then read the appropriate Pixel(/Bit) for the current needle to set
 			int _currentByte = (int)(m_pixelToSet/8);
-			bool _pixelValue = bitRead( &m_currentLine[_currentByte], 
+			bool _pixelValue = bitRead( m_currentLine[_currentByte], 
 										m_pixelToSet-(8*_currentByte) );
 			// Write Pixel state to the appropriate needle
 			m_solenoids.setSolenoid( m_solenoidToSet, _pixelValue );
+
+			#ifdef DEBUG
+			Serial.print("PixelToSet: ");
+			Serial.print(m_pixelToSet);
+			Serial.print(" SolenoidToSet: ");
+			Serial.print(m_solenoidToSet);
+			Serial.print(" - byte: ");
+			Serial.print(_currentByte);
+			Serial.print(" value: ");
+			Serial.println(m_currentLine[_currentByte]);
+			#endif
 		}
 		else
 		{	// Outside of the active needles
@@ -157,14 +170,14 @@ void Knitter::state_operate()
 			
 			if( _workedOnLine )
 			{	// already worked on the current line -> finished the line
-				beeper.finishedLine();
+				m_beeper.finishedLine();
 
 				// load nextLine pointer
 				m_currentLine = m_nextLine;
 				
 				if( !m_lineRequested )
 				{	// request new Line from Host	
-					reqLine(m_currentLine++);
+					reqLine(++m_currentLineNumber);
 
 					_workedOnLine   = false;
 				}
@@ -201,7 +214,7 @@ bool Knitter::calculatePixelAndSolenoid()
 			break;
 
 		case Left:
-			if( m_position <= (END_R - START_OFFSET_R) )
+			if( m_position <= (END_RIGHT - START_OFFSET_R) )
 			{ 
 				m_pixelToSet = m_position - START_OFFSET_R;
 				if( Regular == m_beltshift )
@@ -229,8 +242,9 @@ bool Knitter::calculatePixelAndSolenoid()
 
 void Knitter::reqLine( byte lineNumber )
 {
-	Serial.print(0x82);
-	Serial.println(lineNumber);
+	Serial.write(0x82);
+	Serial.write(lineNumber);
+	Serial.println("");
 
 	m_lineRequested = true;
 }

@@ -19,8 +19,7 @@ public:
 	void fsm();
 	bool startOperation(byte startNeedle,
 						byte stopNeedle);
-	void setNextLine(byte (*line)[25],
-					 bool lastLine);
+	void setNextLine(byte lineNumber, byte (*line));
 	void endWork();
 
 private:
@@ -35,14 +34,14 @@ private:
 	byte		m_stopNeedle;
 	bool		m_lineRequested;
 	uint16 		m_currentLineNumber;
-	byte		(*m_currentLine)[25];
-	byte		(*m_nextLine)[25];
+	byte		(*m_currentLine);
+	byte		(*m_nextLine);
 
 	// current machine state
 	byte 		m_position;
 	Direction_t	m_direction;
 	Direction_t m_hallActive;
-	Beltshift_t m_beltShift;
+	Beltshift_t m_beltshift;
 
 	// Resulting needle data
 	byte 		m_solenoidToSet;

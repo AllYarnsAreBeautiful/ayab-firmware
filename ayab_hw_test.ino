@@ -124,7 +124,7 @@ void setAll()
     arg = SCmd.next(); 
     if(arg != NULL)
     {
-      lowByte = atoi(arg);#
+      lowByte = atoi(arg);
       solenoidState = (highByte << 8) + lowByte;
       solenoids.setSolenoids( solenoidState );    
     }    
@@ -183,7 +183,7 @@ void readEncoders()
  */
 void beep()
 {
-  beeper.start();
+  beeper.ready();
 }
 
 

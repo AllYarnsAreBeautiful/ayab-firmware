@@ -12,8 +12,8 @@ class Beeper{
 public:
 	Beeper();
 
-	void start();
-	void endline();
+	void ready();
+	void finishedLine();
 	void endWork();
 
 private:

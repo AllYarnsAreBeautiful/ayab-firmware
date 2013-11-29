@@ -41,12 +41,11 @@ void setup() {
 
   knitter = new Knitter();
   
-  DEBUG_PRINT("#AYAB ready");
+  //DEBUG_PRINT("#AYAB ready");
 }
 
 
-void loop() {   
-
+void loop() { 
   if( Serial.available() )
   {
     char inChar = (char)Serial.read();
@@ -56,7 +55,8 @@ void loop() {
         h_reqStart();
         break;
 
-      case 0x42:  // cnfLine
+      case 0x42:  // cnfLine        
+        h_cnfLine();
         break;
 
       case 0x03:  // reqInfo
@@ -68,19 +68,6 @@ void loop() {
         break;
     }
   }
-
-	#ifdef DEBUG
-  static byte oldNeedlePos;
-	byte needlePos = encoders.getPosition();
-	if ( oldNeedlePos != needlePos )
-	{
-		Serial.print("Needle Position: ");
-		Serial.print(needlePos);
-		Serial.print(" BeltShift: ");
-		Serial.println( encoders.getBeltshift() );
-	}
-	oldNeedlePos = needlePos;
-	#endif
 }
 
 
@@ -95,30 +82,36 @@ void isr_encA()
  */
  void h_reqStart()
  {
-  DEBUG_PRINT("");
-  char _startNeedle = (char)Serial.read();
-  char _stopNeedle  = (char)Serial.read();
+  delay(50); //DEBUG wait for data to arrive
+  byte _startNeedle = Serial.read();
+  byte _stopNeedle  = Serial.read();
   
   // TODO verify operation
   memset(lineBuffer,0,sizeof(lineBuffer));
 
-  knitter->startOperation(_startNeedle, _stopNeedle);
+  bool _success = knitter->startOperation(_startNeedle, _stopNeedle);
+  Serial.write(0xC1);
+  Serial.write(_success);
+  Serial.println("");
  }
 
 
  void h_cnfLine()
  {
- 	DEBUG_PRINT("");
-  static _currentBuffer = 0;
+  delay(50); //DEBUG wait for data to arrive
+  static byte _currentBuffer = 0;
+  byte _lineNumber = 0;
   byte _flags = 0;
   byte _crc8  = 0;
   bool _flagLastLine = false;
+
+  _lineNumber = Serial.read();
 
   if( ++_currentBuffer >= NUM_LINE_BUFS)
   {
     _currentBuffer = 0;
   }
-  
+
   for( int i = 0; i < 25; i++ )
   {
     lineBuffer[_currentBuffer][i] = Serial.read();
@@ -128,22 +121,25 @@ void isr_encA()
 
   // TODO insert CRC8 check
 
-  _flagLastLine = BitRead(_flags, 0);
+  knitter->setNextLine(_lineNumber, &(lineBuffer[_currentBuffer][0]));
 
-  knitter->setNextLine(&lineBuffer[_currentBuffer][0], _flagLastLine);
+  _flagLastLine = bitRead(_flags, 0);
+  if( _flagLastLine )
+  {
+    knitter->endWork();
+  }
  }
 
 
  void h_reqInfo()
  {
- 	DEBUG_PRINT("");
- 	Serial.print(0xC5); //cnfInfo
- 	Serial.print(" ");
- 	Serial.println(VERSION_STRING);
+ 	Serial.write(0xC3); //cnfInfo
+  Serial.write(VERSION);
+ 	Serial.println("");
  }
 
 
 void h_unrecognized()
 {
-	DEBUG_PRINT("cmd unrecognized");
+  return;
 }

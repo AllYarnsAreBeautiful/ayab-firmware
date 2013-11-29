@@ -3,7 +3,7 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
-#define VERSION_STRING "01.00"
+#define VERSION 1
 
 #define SERIAL_BAUDRATE 115200
 
