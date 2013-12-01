@@ -17,7 +17,7 @@ void Beeper::ready()
 
 void Beeper::finishedLine()
 {
-	beep(5);
+	beep(3);
 }
 
 void Beeper::endWork()

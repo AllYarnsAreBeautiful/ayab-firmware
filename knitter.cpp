@@ -50,6 +50,13 @@ bool Knitter::startOperation(byte startNeedle, byte stopNeedle)
 		m_currentLineNumber	= 0;
 		m_lineRequested = false;
 		m_opState 	  	= s_operate;
+
+/*
+		Serial.write(0xFF);
+		Serial.print("#startNeedle: ");
+		Serial.print(startNeedle);
+		Serial.print(" stopNeedle: ");
+		Serial.println(stopNeedle); */
 		return true;
 
 		// TODO request 1 or 2 lines immediately?
@@ -116,18 +123,19 @@ void Knitter::state_init()
 
 void Knitter::state_ready()
 {
+	digitalWrite(LED_PIN_A,0);
 	// This state is left by the startOperation() method called by main
 }
 
 
 void Knitter::state_operate()
 {
+	digitalWrite(LED_PIN_A,!digitalRead(LED_PIN_A));
 	static byte _sOldPosition = 0;
 	static bool _workedOnLine = false;
 
 	if( _sOldPosition != m_position ) 
 	{ // Only act if there is an actual change of position
-		digitalWrite( LED_PIN_B, !digitalRead(LED_PIN_B) );
 		// Store current Encoder position for next call of this function
 		_sOldPosition = m_position;	
 
@@ -138,9 +146,10 @@ void Knitter::state_operate()
 			return;
 		}
 
-		if( (m_pixelToSet >= m_startNeedle)
-				&& (m_pixelToSet <= m_stopNeedle))
+		if( (m_pixelToSet >= m_startNeedle-20)
+				&& (m_pixelToSet <= m_stopNeedle+20)) // TODO ADD OFFSET
 		{	// When inside the active needles
+			digitalWrite(LED_PIN_B, 1);
 			_workedOnLine = true;
 
 			// Find the right byte from the currentLine array,
@@ -151,6 +160,7 @@ void Knitter::state_operate()
 			// Write Pixel state to the appropriate needle
 			m_solenoids.setSolenoid( m_solenoidToSet, _pixelValue );
 
+			/*
 			#ifdef DEBUG
 			Serial.print("PixelToSet: ");
 			Serial.print(m_pixelToSet);
@@ -160,17 +170,21 @@ void Knitter::state_operate()
 			Serial.print(_currentByte);
 			Serial.print(" value: ");
 			Serial.println(m_currentLine[_currentByte]);
-			#endif
+			#endif */
 		}
 		else
 		{	// Outside of the active needles
 			// Turn solenoids off
 			// TODO verify if this is ok here
 			m_solenoids.setSolenoids( 0x0000 );
-			
+			digitalWrite(LED_PIN_B, 0);
 			if( _workedOnLine )
 			{	// already worked on the current line -> finished the line
+				//TODO fixme!
 				m_beeper.finishedLine();
+
+			/*	Serial.write(0xFF);
+				Serial.println("#finished Line! ");*/
 
 				// load nextLine pointer
 				m_currentLine = m_nextLine;
@@ -241,7 +255,7 @@ bool Knitter::calculatePixelAndSolenoid()
 
 
 void Knitter::reqLine( byte lineNumber )
-{
+{	
 	Serial.write(0x82);
 	Serial.write(lineNumber);
 	Serial.println("");

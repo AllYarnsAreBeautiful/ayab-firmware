@@ -39,14 +39,15 @@ void Encoders::encA_rising()
 {
 	// Direction only decided on rising edge of encoder A
 	m_direction = digitalRead(ENC_PIN_B) ? Right : Left;
-	if( Right == m_direction )
+	/*
+   if( Right == m_direction )
 	{
 		digitalWrite(LED_PIN_B, 0);
 	}
 	else
 	{
 		digitalWrite(LED_PIN_B, 1);
-	}
+	} */
 
 	// Left Hall Sensor
 	if( Right == m_direction )
