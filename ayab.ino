@@ -11,15 +11,17 @@
 
 #include "knitter.h"
 
+
 /*
  * DEFINES
  */
-
+class LiquidCrystal_I2C;
 /*
  *	DECLARATIONS
  */ 
 Knitter		  *knitter;
 byte        lineBuffer[NUM_LINE_BUFS][25];
+
 
 /*
  * SETUP
@@ -40,8 +42,6 @@ void setup() {
   attachInterrupt(0, isr_encA, CHANGE);
 
   knitter = new Knitter();
-  
-  //DEBUG_PRINT("#AYAB ready");
 }
 
 
@@ -121,12 +121,17 @@ void isr_encA()
 
   // TODO insert CRC8 check
 
-  knitter->setNextLine(_lineNumber, &(lineBuffer[_currentBuffer][0]));
-
-  _flagLastLine = bitRead(_flags, 0);
-  if( _flagLastLine )
-  {
-    knitter->endWork();
+  if(!knitter->setNextLine(_lineNumber, &(lineBuffer[_currentBuffer][0])))
+  { // Line was not accepted
+    _currentBuffer--;
+  }
+  else
+  { // Line was accepted
+    _flagLastLine = bitRead(_flags, 0);
+    if( _flagLastLine )
+    {
+      knitter->setLastLine();
+    }
   }
  }
 

@@ -7,6 +7,8 @@
 Knitter::Knitter()
 { 
 	m_opState           = s_init;
+	m_lastLineFlag		= false;
+	m_lastLinesCountdown= 2;
 	m_startNeedle       = 0;
 	m_stopNeedle        = 0;
 	m_currentLineNumber = 0;
@@ -43,64 +45,59 @@ void Knitter::fsm()
 
 bool Knitter::startOperation(byte startNeedle, byte stopNeedle)
 {
-	if( s_ready == m_opState )
+	if( startNeedle >= 0 
+		&& stopNeedle < 200 
+		&& startNeedle < stopNeedle)
 	{
-		m_startNeedle 	= startNeedle;
-		m_stopNeedle  	= stopNeedle;
-		m_currentLineNumber	= 0;
-		m_lineRequested = false;
-		m_opState 	  	= s_operate;
-
-/*
-		Serial.write(0xFF);
-		Serial.print("#startNeedle: ");
-		Serial.print(startNeedle);
-		Serial.print(" stopNeedle: ");
-		Serial.println(stopNeedle); */
-		return true;
-
-		// TODO request 1 or 2 lines immediately?
+		if( s_ready == m_opState )
+		{
+			m_startNeedle 		= startNeedle;
+			m_stopNeedle  		= stopNeedle;
+			m_currentLineNumber	= 255; // Necessary to request line 0 at beginning
+			m_lineRequested 	= false;
+			m_opState 	  		= s_operate;
+			m_lastLineFlag		= false;
+			m_lastLinesCountdown = 2;
+			return true;
+		}
 	}
-	else
-	{
-		return false;
-	}
+	return false;
 }
 
 
-void Knitter::setNextLine(byte lineNumber, byte (*line))
+bool Knitter::setNextLine(byte lineNumber, byte (*line))
 {
 	if( m_lineRequested )
 	{	// Is there even a need for a new line?
-		if( lineNumber == m_currentLineNumber )
+		if( lineNumber == m_currentLineNumber+1 )
 		{
 			m_lineRequested = false;
 			
 			// Set nextLine pointer to buffer
 			m_nextLine = line;
-
-			m_beeper.ready();
+			m_currentLineNumber++;			
 			
+			m_beeper.ready();
 			/* #ifdef DEBUG
 			for(int i = 0; i < 25; i++)
 			{
 				Serial.println(m_nextLine[i]);
 			}
 			#endif */
+			return true;
 		}
 		else
 		{	// line numbers didnt match -> request again
-			reqLine(m_currentLineNumber);
+			reqLine(m_currentLineNumber+1);
 		}
 	}
+	return false;
 }
 
 
-void Knitter::endWork()
+void Knitter::setLastLine()
 {
-	m_opState = s_ready;
-	
-	m_beeper.endWork();
+	m_lastLineFlag = true;
 }
 
 
@@ -108,7 +105,8 @@ void Knitter::endWork()
  * PRIVATE METHODS
  */
 void Knitter::state_init()
-{
+{	
+	m_solenoids.resetSolenoids();
 	// Machine is initialized when left hall sensor is passed in Right direction
 	if( Right == m_direction && Left == m_hallActive )
 	{
@@ -132,13 +130,12 @@ void Knitter::state_operate()
 {
 	digitalWrite(LED_PIN_A,!digitalRead(LED_PIN_A));
 	static byte _sOldPosition = 0;
-	static bool _workedOnLine = false;
+	static bool _workedOnLine = true; // Necessary to trigger line request in first run
 
 	if( _sOldPosition != m_position ) 
 	{ // Only act if there is an actual change of position
 		// Store current Encoder position for next call of this function
 		_sOldPosition = m_position;	
-
 		
 		if( !calculatePixelAndSolenoid() )
 		{
@@ -146,10 +143,10 @@ void Knitter::state_operate()
 			return;
 		}
 
-		if( (m_pixelToSet >= m_startNeedle-20)
-				&& (m_pixelToSet <= m_stopNeedle+20)) // TODO ADD OFFSET
+		if( (m_pixelToSet >= (m_startNeedle-END_OF_LINE_OFFSET))
+				&& (m_pixelToSet <= (m_stopNeedle+END_OF_LINE_OFFSET)) ) // TODO ADD OFFSET
 		{	// When inside the active needles
-			digitalWrite(LED_PIN_B, 1);
+			digitalWrite(LED_PIN_B, 0);
 			_workedOnLine = true;
 
 			// Find the right byte from the currentLine array,
@@ -174,27 +171,33 @@ void Knitter::state_operate()
 		}
 		else
 		{	// Outside of the active needles
+			digitalWrite(LED_PIN_B, 1);
+
 			// Turn solenoids off
-			// TODO verify if this is ok here
-			m_solenoids.setSolenoids( 0x0000 );
-			digitalWrite(LED_PIN_B, 0);
+			m_solenoids.resetSolenoids();
+			
 			if( _workedOnLine )
 			{	// already worked on the current line -> finished the line
-				//TODO fixme!
+				// TODO Fix the beep in this situation, may conflict with ISR
 				m_beeper.finishedLine();
-
-			/*	Serial.write(0xFF);
-				Serial.println("#finished Line! ");*/
-
 				// load nextLine pointer
 				m_currentLine = m_nextLine;
-				
-				if( !m_lineRequested )
+								
+				if( !m_lineRequested && !m_lastLineFlag )
 				{	// request new Line from Host	
-					reqLine(++m_currentLineNumber);
+					reqLine(m_currentLineNumber+1);
 
 					_workedOnLine   = false;
 				}
+				else if( m_lastLineFlag )
+				{
+					m_lastLinesCountdown--;
+					if(0 == m_lastLinesCountdown)
+					{	// All lines are processed, go back to ready state
+						m_beeper.endWork();
+						m_opState = s_ready;						
+					}
+				}				
 			}
 		}
 	}

@@ -20,6 +20,7 @@ public:
 	Solenoids();
 	void setSolenoid( byte solenoid, bool state);
 	void setSolenoids( uint16 state );
+    void resetSolenoids();
 
 private:
 	uint16 solenoidState;

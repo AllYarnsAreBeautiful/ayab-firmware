@@ -25,17 +25,24 @@ void Solenoids::setSolenoid( byte solenoid, bool state )
 		{
 			bitClear(solenoidState,solenoid);
 		}	
-		write(solenoidState); 
+		setSolenoids(solenoidState); 
 	}
 }
 
 
 void Solenoids::setSolenoids( uint16 state )
 {
-	solenoidState = state;
-	write( state );
+	if (state != solenoidState)
+	{
+		solenoidState = state;
+		write( state );
+	}
 }
 
+void Solenoids::resetSolenoids()
+{
+	setSolenoids( 0xFFFF ); // = all off
+}
 
 /*
  * Private Methods

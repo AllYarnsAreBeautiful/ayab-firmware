@@ -35,6 +35,7 @@
 #define END_RIGHT      255
 #define START_OFFSET_L 40
 #define START_OFFSET_R 16
+#define END_OF_LINE_OFFSET 20
 
 // Dont touch
 #define uint16 unsigned int
@@ -57,5 +58,6 @@ typedef enum OpState{
 	s_operate   = 2
 } OpState_t;
 //
+
 
 #endif
