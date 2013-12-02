@@ -11,17 +11,15 @@
 
 #include "knitter.h"
 
-
 /*
  * DEFINES
  */
-class LiquidCrystal_I2C;
-/*
- *	DECLARATIONS
- */ 
-Knitter		  *knitter;
-byte        lineBuffer[NUM_LINE_BUFS][25];
 
+/*
+ *  DECLARATIONS
+ */ 
+Knitter     *knitter;
+byte        lineBuffer[NUM_LINE_BUFS][25];
 
 /*
  * SETUP
@@ -42,6 +40,8 @@ void setup() {
   attachInterrupt(0, isr_encA, CHANGE);
 
   knitter = new Knitter();
+  
+  //DEBUG_PRINT("#AYAB ready");
 }
 
 
@@ -87,9 +87,19 @@ void isr_encA()
   byte _stopNeedle  = Serial.read();
   
   // TODO verify operation
-  memset(lineBuffer,0,sizeof(lineBuffer));
+  //memset(lineBuffer,0,sizeof(lineBuffer));
+  // temporary
+  for( int i = 0; i < NUM_LINE_BUFS; i++)
+  {
+    for( int j = 0; j < 25; j++)
+    {
+      lineBuffer[i][j] = 0xFF;
+    }
+  }
 
-  bool _success = knitter->startOperation(_startNeedle, _stopNeedle);
+  bool _success = knitter->startOperation(_startNeedle, 
+                                          _stopNeedle, 
+                                          &(lineBuffer[0][0]));
   Serial.write(0xC1);
   Serial.write(_success);
   Serial.println("");
@@ -114,7 +124,7 @@ void isr_encA()
 
   for( int i = 0; i < 25; i++ )
   {
-    lineBuffer[_currentBuffer][i] = Serial.read();
+    lineBuffer[_currentBuffer][i] = ~Serial.read();
   }
   _flags = Serial.read();
   _crc8  = Serial.read();
@@ -123,7 +133,8 @@ void isr_encA()
 
   if(!knitter->setNextLine(_lineNumber, &(lineBuffer[_currentBuffer][0])))
   { // Line was not accepted
-    _currentBuffer--;
+    // TODO make safe decrease
+    //_currentBuffer--;
   }
   else
   { // Line was accepted
@@ -138,9 +149,9 @@ void isr_encA()
 
  void h_reqInfo()
  {
- 	Serial.write(0xC3); //cnfInfo
+  Serial.write(0xC3); //cnfInfo
   Serial.write(VERSION);
- 	Serial.println("");
+  Serial.println("");
  }
 
 

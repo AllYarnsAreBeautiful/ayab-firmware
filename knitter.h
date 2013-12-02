@@ -11,9 +11,6 @@
 #include "encoders.h"
 #include "beeper.h"
 
-#define LCD_ENABLED
-
-
 class Knitter
 {
 public:
@@ -21,7 +18,8 @@ public:
 
 	void fsm();
 	bool startOperation(byte startNeedle,
-						byte stopNeedle);
+						byte stopNeedle,
+						byte (*line));
 	bool setNextLine(byte lineNumber, byte (*line));
 	void setLastLine();
 
@@ -31,6 +29,7 @@ private:
 	Beeper      m_beeper;
 
 	OpState_t   m_opState;
+	bool		m_firstLineFlag;
 	bool		m_lastLineFlag;
 	byte		m_lastLinesCountdown;
 
@@ -38,7 +37,7 @@ private:
 	byte		m_startNeedle;
 	byte		m_stopNeedle;
 	bool		m_lineRequested;
-	uint16 		m_currentLineNumber;
+	byte 		m_currentLineNumber;
 	byte		(*m_currentLine);
 	byte		(*m_nextLine);
 
