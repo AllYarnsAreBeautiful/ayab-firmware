@@ -16,6 +16,7 @@ class Knitter
 public:
 	Knitter();
 
+	void isr();
 	void fsm();
 	bool startOperation(byte startNeedle,
 						byte stopNeedle,

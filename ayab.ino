@@ -46,6 +46,9 @@ void setup() {
 
 
 void loop() { 
+
+  knitter->fsm();
+
   if( Serial.available() )
   {
     char inChar = (char)Serial.read();
@@ -73,7 +76,7 @@ void loop() {
 
 void isr_encA()
 {
-   knitter->fsm(); 
+   knitter->isr(); 
 }
 
 

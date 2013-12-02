@@ -13,8 +13,7 @@ Knitter::Knitter()
 	m_lineRequested     = false;
 }
 
-
-void Knitter::fsm()
+void Knitter::isr()
 {
 	// Update machine state data
 	m_encoders.encA_interrupt();
@@ -22,7 +21,10 @@ void Knitter::fsm()
 	m_direction  = m_encoders.getDirection();
 	m_hallActive = m_encoders.getHallActive();
 	m_beltshift  = m_encoders.getBeltshift();
+}
 
+void Knitter::fsm()
+{
 	switch( m_opState ) {
 		case s_init:
 			state_init();
