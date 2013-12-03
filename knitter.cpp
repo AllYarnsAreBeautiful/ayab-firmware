@@ -45,29 +45,29 @@ void Knitter::fsm()
 
 bool Knitter::startOperation(byte startNeedle, byte stopNeedle, byte (*line))
 {
-	if( s_ready == m_opState )
+	if( startNeedle >= 0 
+		&& stopNeedle < NUM_NEEDLES
+		&& startNeedle < stopNeedle)
 	{
-		m_startNeedle 	= startNeedle;
-		m_stopNeedle  	= stopNeedle;
-		m_currentLineNumber	= 255; // necessary to start with line 0
-		m_lineRequested = false;
-		m_opState 	  	= s_operate;
-		m_firstLineFlag	= true;
-		m_lastLineFlag		= false;
-		m_lastLinesCountdown= 2;
-		m_currentLine 		= line;
-		m_nextLine 			= line;
+		if( s_ready == m_opState )
+		{
+			// Assign image width
+			m_startNeedle 		= startNeedle;
+			m_stopNeedle  		= stopNeedle;
+			// Reset pixel data
+			m_currentLine 		= line;	
+			m_nextLine 			= line;
 
-/*
-		Serial.write(0xFF);
-		Serial.print("#startNeedle: ");
-		Serial.print(startNeedle);
-		Serial.print(" stopNeedle: ");
-		Serial.println(stopNeedle); */
-		return true;
-
-		// TODO request 1 or 2 lines immediately?
-	}
+			// Reset variables to start conditions
+			m_opState 	  		= s_operate;
+			m_currentLineNumber	= 255; // necessary to request line 0 at start
+			m_lineRequested 	= false;			
+			m_firstLineFlag		= true;
+			m_lastLineFlag		= false;
+			m_lastLinesCountdown= 2;
+			
+			return true;			
+		}
 	else
 	{
 		return false;
@@ -81,19 +81,12 @@ bool Knitter::setNextLine(byte lineNumber, byte (*line))
 	{	// Is there even a need for a new line?
 		if( lineNumber == m_currentLineNumber )
 		{
-			m_lineRequested = false;
-			
-			// Set nextLine pointer to buffer
+			m_lineRequested = false;			
+			// Set nextLine pointer to given line buffer
 			m_nextLine = line;
 
 			m_beeper.ready();
-			
-			/* #ifdef DEBUG
-			for(int i = 0; i < 25; i++)
-			{
-				Serial.println(m_nextLine[i]);
-			}
-			#endif */
+
 			return true;
 		}
 		else
@@ -106,7 +99,7 @@ bool Knitter::setNextLine(byte lineNumber, byte (*line))
 
 
 void Knitter::setLastLine()
-{
+{	// lastLineFlag is evaluated in s_operate
 	m_lastLineFlag = true;
 }
 
@@ -132,7 +125,8 @@ void Knitter::state_init()
 void Knitter::state_ready()
 {
 	digitalWrite(LED_PIN_A,0);	
-	// This state is left by the startOperation() method called by main
+	// This state is left when the startOperation() method
+	// is called successfully by main()
 }
 
 
@@ -146,7 +140,6 @@ void Knitter::state_operate()
 	{ // Only act if there is an actual change of position
 		// Store current Encoder position for next call of this function
 		_sOldPosition = m_position;	
-
 		
 		if( !calculatePixelAndSolenoid() )
 		{
@@ -154,8 +147,9 @@ void Knitter::state_operate()
 			return;
 		}
 
-		if( (m_pixelToSet >= m_startNeedle-20)
-				&& (m_pixelToSet <= m_stopNeedle+20)) // TODO ADD OFFSET
+
+		if( (m_pixelToSet >= m_startNeedle-END_OF_LINE_OFFSET)
+				&& (m_pixelToSet <= m_stopNeedle+END_OF_LINE_OFFSET)) // TODO ADD OFFSET
 		{	// When inside the active needles
 			digitalWrite(LED_PIN_B, 1);
 			_workedOnLine = true;
@@ -167,18 +161,6 @@ void Knitter::state_operate()
 										m_pixelToSet-(8*_currentByte) );
 			// Write Pixel state to the appropriate needle
 			m_solenoids.setSolenoid( m_solenoidToSet, _pixelValue );
-
-			/*
-			#ifdef DEBUG
-			Serial.print("PixelToSet: ");
-			Serial.print(m_pixelToSet);
-			Serial.print(" SolenoidToSet: ");
-			Serial.print(m_solenoidToSet);
-			Serial.print(" - byte: ");
-			Serial.print(_currentByte);
-			Serial.print(" value: ");
-			Serial.println(m_currentLine[_currentByte]);
-			#endif */
 		}
 		else
 		{	// Outside of the active needles
@@ -186,16 +168,13 @@ void Knitter::state_operate()
 			if( _workedOnLine )
 			{	// already worked on the current line -> finished the line
 				_workedOnLine   = false;
-			/*	Serial.write(0xFF);
-				Serial.println("#finished Line! ");*/
 
 				if( m_firstLineFlag )
-				{
+				{	// pixel data will be available next time
 					m_firstLineFlag = false;
 				}
 				else
-				{
-					// load nextLine pointer
+				{	// load nextLine pointer
 					m_currentLine = m_nextLine;
 				}
 
