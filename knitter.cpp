@@ -51,23 +51,23 @@ bool Knitter::startOperation(byte startNeedle, byte stopNeedle, byte (*line))
 	{
 		if( s_ready == m_opState )
 		{
+			// Proceed to next state
+			m_opState 	  		= s_operate;
 			// Assign image width
 			m_startNeedle 		= startNeedle;
 			m_stopNeedle  		= stopNeedle;
-			// Reset pixel data
-			m_currentLine 		= line;	
-			m_nextLine 			= line;
+			// Set pixel data source
+			m_lineBuffer 		= line;
 
-			// Reset variables to start conditions
-			m_opState 	  		= s_operate;
+			// Reset variables to start conditions			
 			m_currentLineNumber	= 255; // necessary to request line 0 at start
-			m_lineRequested 	= false;			
-			m_firstLineFlag		= true;
+			m_lineRequested 	= false;
 			m_lastLineFlag		= false;
 			m_lastLinesCountdown= 2;
 			
 			return true;			
 		}
+	}
 	else
 	{
 		return false;
@@ -75,18 +75,14 @@ bool Knitter::startOperation(byte startNeedle, byte stopNeedle, byte (*line))
 }
 
 
-bool Knitter::setNextLine(byte lineNumber, byte (*line))
+bool Knitter::setNextLine(byte lineNumber)
 {
 	if( m_lineRequested )
 	{	// Is there even a need for a new line?
 		if( lineNumber == m_currentLineNumber )
 		{
 			m_lineRequested = false;			
-			// Set nextLine pointer to given line buffer
-			m_nextLine = line;
-
 			m_beeper.ready();
-
 			return true;
 		}
 		else
@@ -134,7 +130,7 @@ void Knitter::state_operate()
 {
 	digitalWrite(LED_PIN_A,1);
 	static byte _sOldPosition = 0;
-	static bool _workedOnLine = false; // Necessary to start with a line request
+	static bool _workedOnLine = false;
 
 	if( _sOldPosition != m_position ) 
 	{ // Only act if there is an actual change of position
@@ -157,7 +153,7 @@ void Knitter::state_operate()
 			// Find the right byte from the currentLine array,
 			// then read the appropriate Pixel(/Bit) for the current needle to set
 			int _currentByte = (int)(m_pixelToSet/8);
-			bool _pixelValue = bitRead( m_currentLine[_currentByte], 
+			bool _pixelValue = bitRead( m_lineBuffer[_currentByte], 
 										m_pixelToSet-(8*_currentByte) );
 			// Write Pixel state to the appropriate needle
 			m_solenoids.setSolenoid( m_solenoidToSet, _pixelValue );
@@ -168,15 +164,6 @@ void Knitter::state_operate()
 			if( _workedOnLine )
 			{	// already worked on the current line -> finished the line
 				_workedOnLine   = false;
-
-				if( m_firstLineFlag )
-				{	// pixel data will be available next time
-					m_firstLineFlag = false;
-				}
-				else
-				{	// load nextLine pointer
-					m_currentLine = m_nextLine;
-				}
 
 				if( !m_lineRequested && !m_lastLineFlag )
 				{	// request new Line from Host	
@@ -203,7 +190,7 @@ bool Knitter::calculatePixelAndSolenoid()
 	switch( m_direction )
 	{ // Calculate the solenoid and pixel to be set
 	  // Implemented according to machine manual
-	  // Magic numbers result from manual	
+	  // Magic numbers result from machine manual	
 		case Right:
 			if( m_position >= START_OFFSET_L ) 
 			{ 

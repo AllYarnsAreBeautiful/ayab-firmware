@@ -21,7 +21,7 @@ public:
 	bool startOperation(byte startNeedle,
 						byte stopNeedle,
 						byte (*line));
-	bool setNextLine(byte lineNumber, byte (*line));
+	bool setNextLine(byte lineNumber);
 	void setLastLine();
 
 private:
@@ -30,7 +30,6 @@ private:
 	Beeper      m_beeper;
 
 	OpState_t   m_opState;
-	bool		m_firstLineFlag;
 	bool		m_lastLineFlag;
 	byte		m_lastLinesCountdown;
 
@@ -39,8 +38,7 @@ private:
 	byte		m_stopNeedle;
 	bool		m_lineRequested;
 	byte 		m_currentLineNumber;
-	byte		(*m_currentLine);
-	byte		(*m_nextLine);
+	byte		(*m_lineBuffer);
 
 	// current machine state
 	byte 		m_position;

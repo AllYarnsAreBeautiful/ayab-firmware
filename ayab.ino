@@ -19,7 +19,7 @@
  *  DECLARATIONS
  */ 
 Knitter     *knitter;
-byte        lineBuffer[NUM_LINE_BUFS][25];
+byte        lineBuffer[25];
 
 /*
  * SETUP
@@ -91,18 +91,16 @@ void isr_encA()
   
   // TODO verify operation
   //memset(lineBuffer,0,sizeof(lineBuffer));
-  // temporary
-  for( int i = 0; i < NUM_LINE_BUFS; i++)
+  // temporary solution
+  for( int i = 0; i < 25; i++)
   {
-    for( int j = 0; j < 25; j++)
-    {
-      lineBuffer[i][j] = 0xFF;
-    }
+    lineBuffer[i] = 0xFF;
   }
+  
 
   bool _success = knitter->startOperation(_startNeedle, 
                                           _stopNeedle, 
-                                          &(lineBuffer[0][0]));
+                                          &(lineBuffer[0]));
   Serial.write(0xC1);
   Serial.write(_success);
   Serial.println("");
@@ -112,7 +110,6 @@ void isr_encA()
  void h_cnfLine()
  {
   delay(50); //DEBUG wait for data to arrive
-  static byte _currentBuffer = 0;
   byte _lineNumber = 0;
   byte _flags = 0;
   byte _crc8  = 0;
@@ -120,26 +117,16 @@ void isr_encA()
 
   _lineNumber = Serial.read();
 
-  if( ++_currentBuffer >= NUM_LINE_BUFS)
-  {
-    _currentBuffer = 0;
-  }
-
   for( int i = 0; i < 25; i++ )
-  {
-    lineBuffer[_currentBuffer][i] = ~Serial.read();
+  { // Values have to be inverted because of needle states
+    lineBuffer[i] = ~Serial.read();
   }
   _flags = Serial.read();
   _crc8  = Serial.read();
 
   // TODO insert CRC8 check
 
-  if(!knitter->setNextLine(_lineNumber, &(lineBuffer[_currentBuffer][0])))
-  { // Line was not accepted
-    // TODO make safe decrease
-    //_currentBuffer--;
-  }
-  else
+  if(knitter->setNextLine(_lineNumber))
   { // Line was accepted
     _flagLastLine = bitRead(_flags, 0);
     if( _flagLastLine )

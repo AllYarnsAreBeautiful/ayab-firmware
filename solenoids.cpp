@@ -65,10 +65,18 @@ void Solenoids::setSolenoids( uint16 state )
 void Solenoids::write( uint16 newState )
 {
 	Wire.beginTransmission( I2Caddr_sol1_8 );
-	Wire.send( lowByte(newState) );
+	#ifdef IIC_HARD
+		Wire.write( lowByte(newState) );
+	#else
+		Wire.send( lowByte(newState) );
+	#endif //IIC_HARD
 	Wire.endTransmission();
 
 	Wire.beginTransmission( I2Caddr_sol9_16);
-	Wire.send( highByte(newState) );
+	#ifdef IIC_HARD
+		Wire.write( highByte(newState) );
+	#else
+		Wire.send( highByte(newState) );
+	#endif //IIC_HARD
 	Wire.endTransmission(); 
 }
