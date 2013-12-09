@@ -11,7 +11,7 @@ Beeper::Beeper()
 
 void Beeper::ready()
 {
-	beep(3);
+	beep(5);
 }
 
 

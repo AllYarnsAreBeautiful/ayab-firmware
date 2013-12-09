@@ -64,6 +64,8 @@ bool Knitter::startOperation(byte startNeedle, byte stopNeedle, byte (*line))
 			m_lineRequested 	= false;
 			m_lastLineFlag		= false;
 			m_lastLinesCountdown= 2;
+
+			m_beeper.ready();
 			
 			return true;			
 		}
@@ -82,7 +84,7 @@ bool Knitter::setNextLine(byte lineNumber)
 		if( lineNumber == m_currentLineNumber )
 		{
 			m_lineRequested = false;			
-			m_beeper.ready();
+			m_beeper.finishedLine();
 			return true;
 		}
 		else
@@ -144,8 +146,8 @@ void Knitter::state_operate()
 		}
 
 
-		if( (m_pixelToSet >= m_startNeedle-END_OF_LINE_OFFSET)
-				&& (m_pixelToSet <= m_stopNeedle+END_OF_LINE_OFFSET)) // TODO ADD OFFSET
+		if( (m_pixelToSet >= m_startNeedle-END_OF_LINE_OFFSET_L)
+				&& (m_pixelToSet <= m_stopNeedle+END_OF_LINE_OFFSET_R)) // TODO ADD OFFSET
 		{	// When inside the active needles
 			digitalWrite(LED_PIN_B, 1);
 			_workedOnLine = true;
@@ -177,6 +179,10 @@ void Knitter::state_operate()
 						m_beeper.endWork();
 						m_opState = s_ready;		
 						m_solenoids.setSolenoids(0xFFFF);				
+					}
+					else
+					{  // Inform user to proceed
+						m_beeper.finishedLine();
 					}
 				}	
 			}

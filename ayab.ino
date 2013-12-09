@@ -49,6 +49,7 @@ void loop() {
 
   knitter->fsm();
 
+
   if( Serial.available() )
   {
     char inChar = (char)Serial.read();

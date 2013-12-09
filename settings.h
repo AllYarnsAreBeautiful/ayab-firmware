@@ -21,8 +21,6 @@
 
 #define PIEZO_PIN 9
 
-#define NUM_LINE_BUFS 2
-
 // Should be calibrated to each device
 #define FILTER_L_MIN 0
 #define FILTER_L_MAX 600
@@ -35,7 +33,8 @@
 #define END_RIGHT      255
 #define START_OFFSET_L 40
 #define START_OFFSET_R 16
-#define END_OF_LINE_OFFSET 20
+#define END_OF_LINE_OFFSET_L 32
+#define END_OF_LINE_OFFSET_R 12
 
 // Dont touch
 #define uint16 unsigned int
