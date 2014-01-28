@@ -39,6 +39,7 @@ public:
 	void fsm();
 	bool startOperation(byte startNeedle,
 						byte stopNeedle,
+						byte startLine,
 						byte (*line));
 	bool setNextLine(byte lineNumber);
 	void setLastLine();

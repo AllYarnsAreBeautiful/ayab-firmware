@@ -107,6 +107,7 @@ void isr_encA()
   delay(50); //DEBUG wait for data to arrive
   byte _startNeedle = Serial.read();
   byte _stopNeedle  = Serial.read();
+  byte _startLine   = Serial.read();
   
   // TODO verify operation
   //memset(lineBuffer,0,sizeof(lineBuffer));
@@ -114,11 +115,11 @@ void isr_encA()
   for( int i = 0; i < 25; i++)
   {
     lineBuffer[i] = 0xFF;
-  }
-  
+  }  
 
   bool _success = knitter->startOperation(_startNeedle, 
-                                          _stopNeedle, 
+                                          _stopNeedle,
+                                          _startLine, 
                                           &(lineBuffer[0]));
   Serial.write(0xC1);
   Serial.write(_success);
