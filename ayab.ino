@@ -160,7 +160,7 @@ void isr_encA()
  void h_reqInfo()
  {
   Serial.write(0xC3); //cnfInfo
-  Serial.write(VERSION);
+  Serial.write(API_VERSION);
   Serial.println("");
  }
 
