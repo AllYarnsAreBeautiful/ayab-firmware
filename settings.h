@@ -22,7 +22,7 @@ This file is part of AYAB.
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
-#define API_VERSION 2
+#define API_VERSION 3
 
 #define SERIAL_BAUDRATE 115200
 

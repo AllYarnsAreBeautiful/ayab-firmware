@@ -63,8 +63,7 @@ void Knitter::fsm()
 }
 
 bool Knitter::startOperation(byte startNeedle, 
-							byte stopNeedle,
-							byte startLine, 
+							byte stopNeedle, 
 							byte (*line))
 {
 	if( startNeedle >= 0 
@@ -82,8 +81,8 @@ bool Knitter::startOperation(byte startNeedle,
 			m_lineBuffer 		= line;
 
 			// Reset variables to start conditions			
-			m_currentLineNumber	= startLine-1; // -1 because counter will 
-											   // be increased before request
+			m_currentLineNumber	= 255; // because counter will 
+									   // be increased before request
 			m_lineRequested 	= false;
 			m_lastLineFlag		= false;
 			m_lastLinesCountdown= 2;
