@@ -153,8 +153,17 @@ void Knitter::state_ready()
 void Knitter::state_operate()
 {
 	digitalWrite(LED_PIN_A,1);
+	static bool _firstRun     = true;
 	static byte _sOldPosition = 0;
 	static bool _workedOnLine = false;
+
+	if (true == _firstRun)
+	{
+		_firstRun = false;
+		delay(2000);
+		m_beeper.finishedLine();
+		reqLine(++m_currentLineNumber);
+	}
 
 	if( _sOldPosition != m_position ) 
 	{ // Only act if there is an actual change of position
