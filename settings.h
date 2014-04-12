@@ -22,6 +22,9 @@ This file is part of AYAB.
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
+//#define KH910
+#define KH930
+
 #define API_VERSION 3
 
 #define SERIAL_BAUDRATE 115200
@@ -33,6 +36,7 @@ This file is part of AYAB.
 
 #define ENC_PIN_A 2
 #define ENC_PIN_B 3
+
 #define ENC_PIN_C 4
 
 #define LED_PIN_A 5 // green LED
@@ -41,11 +45,18 @@ This file is part of AYAB.
 #define PIEZO_PIN 9
 
 // Should be calibrated to each device
-#define FILTER_L_MIN 0
-#define FILTER_L_MAX 600
-#define FILTER_R_MIN 200
-#define FILTER_R_MAX 1023
-//
+#ifdef KH910
+    #define FILTER_L_MIN 0
+    #define FILTER_L_MAX 600
+    #define FILTER_R_MIN 200
+    #define FILTER_R_MAX 1023
+#elif KH930
+    #define FILTER_L_MIN 0
+    #define FILTER_L_MAX 600
+    #define FILTER_R_MIN 0
+    #define FILTER_R_MAX 600
+#endif
+
 // Machine constants
 #define NUM_NEEDLES    200
 #define END_LEFT       0
