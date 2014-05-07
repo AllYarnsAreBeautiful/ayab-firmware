@@ -56,6 +56,8 @@ void setup() {
   digitalWrite(LED_PIN_A, 1);
   digitalWrite(LED_PIN_B, 1);
 
+  pinMode(DBG_BTN_PIN, INPUT);
+
   //Attaching ENC_PIN_A(=2), Interrupt No. 0
   attachInterrupt(0, isr_encA, CHANGE);
 

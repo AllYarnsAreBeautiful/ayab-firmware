@@ -129,16 +129,32 @@ void Knitter::setLastLine()
  */
 void Knitter::state_init()
 {
-	// Machine is initialized when left hall sensor is passed in Right direction
-	if( Right == m_direction && Left == m_hallActive )
+	if(DBG_NOMACHINE)
 	{
-		m_opState = s_ready;
-		m_solenoids.setSolenoids(0xFFFF);
+		static bool _prevState = false;
+		bool state = digitalRead(DBG_BTN_PIN);
+
+		// TODO Check if debounce is needed
+		if( _prevState && !state )
+		{
+			m_opState = s_ready;
+			return;
+		}
+
+		_prevState = state;
 	}
 	else
 	{
-		m_opState = s_init;
+		// Machine is initialized when left hall sensor is passed in Right direction
+		if( Right == m_direction && Left == m_hallActive )
+		{
+			m_opState = s_ready;
+			m_solenoids.setSolenoids(0xFFFF);
+			return;
+		}
 	}
+
+	m_opState = s_init;
 }
 
 
@@ -160,62 +176,83 @@ void Knitter::state_operate()
 	if (true == _firstRun)
 	{
 		_firstRun = false;
+		// Optimize Delay for various Arduino Models
 		delay(2000);
 		m_beeper.finishedLine();
 		reqLine(++m_currentLineNumber);
 	}
 
-	if( _sOldPosition != m_position ) 
-	{ // Only act if there is an actual change of position
-		// Store current Encoder position for next call of this function
-		_sOldPosition = m_position;	
-		
-		if( !calculatePixelAndSolenoid() )
+
+	if(DBG_NOMACHINE)
+	{
+		static bool _prevState = false;
+		bool state = digitalRead(DBG_BTN_PIN);
+
+		// TODO Check if debounce is needed
+		if( _prevState && !state )
 		{
-			// No valid/useful position calculated
-			return;
+			if( !m_lineRequested )
+			{
+				reqLine(++m_currentLineNumber);
+			}			
 		}
+		_prevState = state;
+		return;
+	}
+	else
+	{
+		if( _sOldPosition != m_position ) 
+		{ // Only act if there is an actual change of position
+			// Store current Encoder position for next call of this function
+			_sOldPosition = m_position;	
+			
+			if( !calculatePixelAndSolenoid() )
+			{
+				// No valid/useful position calculated
+				return;
+			}
 
 
-		if( (m_pixelToSet >= m_startNeedle-END_OF_LINE_OFFSET_L)
-				&& (m_pixelToSet <= m_stopNeedle+END_OF_LINE_OFFSET_R)) // TODO ADD OFFSET
-		{	// When inside the active needles
-			digitalWrite(LED_PIN_B, 1);
-			_workedOnLine = true;
+			if( (m_pixelToSet >= m_startNeedle-END_OF_LINE_OFFSET_L)
+					&& (m_pixelToSet <= m_stopNeedle+END_OF_LINE_OFFSET_R)) // TODO ADD OFFSET
+			{	// When inside the active needles
+				digitalWrite(LED_PIN_B, 1);
+				_workedOnLine = true;
 
-			// Find the right byte from the currentLine array,
-			// then read the appropriate Pixel(/Bit) for the current needle to set
-			int _currentByte = (int)(m_pixelToSet/8);
-			bool _pixelValue = bitRead( m_lineBuffer[_currentByte], 
-										m_pixelToSet-(8*_currentByte) );
-			// Write Pixel state to the appropriate needle
-			m_solenoids.setSolenoid( m_solenoidToSet, _pixelValue );
-		}
-		else
-		{	// Outside of the active needles
-			digitalWrite(LED_PIN_B, 0);
-			if( _workedOnLine )
-			{	// already worked on the current line -> finished the line
-				_workedOnLine   = false;
+				// Find the right byte from the currentLine array,
+				// then read the appropriate Pixel(/Bit) for the current needle to set
+				int _currentByte = (int)(m_pixelToSet/8);
+				bool _pixelValue = bitRead( m_lineBuffer[_currentByte], 
+											m_pixelToSet-(8*_currentByte) );
+				// Write Pixel state to the appropriate needle
+				m_solenoids.setSolenoid( m_solenoidToSet, _pixelValue );
+			}
+			else
+			{	// Outside of the active needles
+				digitalWrite(LED_PIN_B, 0);
+				if( _workedOnLine )
+				{	// already worked on the current line -> finished the line
+					_workedOnLine   = false;
 
-				if( !m_lineRequested && !m_lastLineFlag )
-				{	// request new Line from Host	
-					reqLine(++m_currentLineNumber);					
+					if( !m_lineRequested && !m_lastLineFlag )
+					{	// request new Line from Host	
+						reqLine(++m_currentLineNumber);					
+					}
+					else if( m_lastLineFlag )
+					{
+						m_lastLinesCountdown--;
+						if(0 == m_lastLinesCountdown)
+						{	// All lines are processed, go back to ready state
+							m_beeper.endWork();
+							m_opState = s_ready;		
+							m_solenoids.setSolenoids(0xFFFF);				
+						}
+						else
+						{  // Inform user to proceed
+							m_beeper.finishedLine();
+						}
+					}	
 				}
-				else if( m_lastLineFlag )
-				{
-					m_lastLinesCountdown--;
-					if(0 == m_lastLinesCountdown)
-					{	// All lines are processed, go back to ready state
-						m_beeper.endWork();
-						m_opState = s_ready;		
-						m_solenoids.setSolenoids(0xFFFF);				
-					}
-					else
-					{  // Inform user to proceed
-						m_beeper.finishedLine();
-					}
-				}	
 			}
 		}
 	}
