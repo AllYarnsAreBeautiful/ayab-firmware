@@ -22,6 +22,17 @@ This file is part of AYAB.
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
+// Determine board type
+#if defined(__AVR_ATmega168__) || defined(__AVR_ATmega328P__)
+  // Regular Arduino
+  #include <Wire.h>
+#elif defined(__AVR_ATmega2560__) || defined(__AVR_ATmega1280__)
+  // Arduino Mega
+  #include <SoftI2CMaster.h>
+#else
+    //untested board - please check your I2C ports
+#endif
+
 /*
  * USERSETTINGS
  */

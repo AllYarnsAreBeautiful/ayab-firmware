@@ -23,19 +23,19 @@ This file is part of AYAB.
 #include "Arduino.h"
 #include "solenoids.h"
 
+
 // Determine board type
 #if defined(__AVR_ATmega168__) || defined(__AVR_ATmega328P__)
-	// Regular Arduino
-	#include <Wire.h>
-	#define IIC_HARD
+  // Regular Arduino
+  #include <Wire.h>
+  #define IIC_HARD
 #elif defined(__AVR_ATmega2560__) || defined(__AVR_ATmega1280__)
-	// Arduino Mega
-	#include "SoftI2CMaster.h"
-	SoftI2CMaster Wire(A4,A5,1);
+  // Arduino Mega
+  #include <SoftI2CMaster.h>
+  SoftI2CMaster Wire(A4,A5,1);
 #else
     //untested board - please check your I2C ports
 #endif
-
 
 
 Solenoids::Solenoids()

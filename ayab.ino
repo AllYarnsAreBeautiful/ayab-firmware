@@ -35,65 +35,12 @@ This file is part of AYAB.
  * DEFINES
  */
 
+
 /*
  *  DECLARATIONS
  */ 
 Knitter     *knitter;
 byte        lineBuffer[25];
-
-/*
- * SETUP
- */
-void setup() {
-  Serial.begin(SERIAL_BAUDRATE);
-
-  pinMode(ENC_PIN_A,INPUT);
-  pinMode(ENC_PIN_B,INPUT);
-  pinMode(ENC_PIN_C,INPUT);
-
-  pinMode(LED_PIN_A,OUTPUT);
-  pinMode(LED_PIN_B,OUTPUT); 
-  digitalWrite(LED_PIN_A, 1);
-  digitalWrite(LED_PIN_B, 1);
-
-  pinMode(DBG_BTN_PIN, INPUT);
-
-  //Attaching ENC_PIN_A(=2), Interrupt No. 0
-  attachInterrupt(0, isr_encA, CHANGE);
-
-  knitter = new Knitter();
-}
-
-
-void loop() { 
-
-  knitter->fsm();
-
-
-  if( Serial.available() )
-  {
-    char inChar = (char)Serial.read();
-    switch( inChar )
-    {
-      case 0x01:  // reqStart
-        h_reqStart();
-        break;
-
-      case 0x42:  // cnfLine        
-        h_cnfLine();
-        break;
-
-      case 0x03:  // reqInfo
-        h_reqInfo();
-        break;
-
-      default:
-        h_unrecognized();
-        break;
-    }
-  }
-}
-
 
 void isr_encA()
 {
@@ -169,3 +116,59 @@ void h_unrecognized()
 {
   return;
 }
+
+
+/*
+ * SETUP
+ */
+void setup() {
+  Serial.begin(SERIAL_BAUDRATE);
+
+  pinMode(ENC_PIN_A,INPUT);
+  pinMode(ENC_PIN_B,INPUT);
+  pinMode(ENC_PIN_C,INPUT);
+
+  pinMode(LED_PIN_A,OUTPUT);
+  pinMode(LED_PIN_B,OUTPUT); 
+  digitalWrite(LED_PIN_A, 1);
+  digitalWrite(LED_PIN_B, 1);
+
+  pinMode(DBG_BTN_PIN, INPUT);
+
+  //Attaching ENC_PIN_A(=2), Interrupt No. 0
+  attachInterrupt(0, isr_encA, CHANGE);
+
+  knitter = new Knitter();
+}
+
+
+void loop() { 
+
+  knitter->fsm();
+
+
+  if( Serial.available() )
+  {
+    char inChar = (char)Serial.read();
+    switch( inChar )
+    {
+      case 0x01:  // reqStart
+        h_reqStart();
+        break;
+
+      case 0x42:  // cnfLine        
+        h_cnfLine();
+        break;
+
+      case 0x03:  // reqInfo
+        h_reqInfo();
+        break;
+
+      default:
+        h_unrecognized();
+        break;
+    }
+  }
+}
+
+

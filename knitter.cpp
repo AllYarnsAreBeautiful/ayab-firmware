@@ -92,10 +92,8 @@ bool Knitter::startOperation(byte startNeedle,
 			return true;			
 		}
 	}
-	else
-	{
-		return false;
-	}
+
+	return false;
 }
 
 

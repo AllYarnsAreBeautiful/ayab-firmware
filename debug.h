@@ -36,7 +36,7 @@ This file is part of AYAB.
 	    Serial.print(__FUNCTION__); \
 	    Serial.print("() in "); \
 	    Serial.print(__FILE__); \
-	    Serial.print(':'); \ 
+	    Serial.print(':'); \
 	    Serial.print(__LINE__); \
 	    Serial.print(' '); \
 	    Serial.println(str);
