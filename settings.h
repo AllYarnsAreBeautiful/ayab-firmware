@@ -37,7 +37,7 @@ This file is part of AYAB.
  * USERSETTINGS
  */
 
-#define DBG_NOMACHINE 0  // Turn on to use DBG_BTN as EOL Trigger
+#define DBG_NOMACHINE 1  // Turn on to use DBG_BTN as EOL Trigger
 
 //#define KH910
 #define KH930
