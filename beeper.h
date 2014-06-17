@@ -24,15 +24,19 @@ This file is part of AYAB.
 
 #include "Arduino.h"
 #include "settings.h"
-#include "debug.h"
 
-
+/*!
+ *  Class to actuate a beeper connected to PIEZO_PIN
+ */
 class Beeper{
 public:
 	Beeper();
 
+    /*! Beep to indicate readiness */
 	void ready();
+    /*! Beep to indicate the end of a line */
 	void finishedLine();
+    /*! Beep to indicate the end the knitting pattern */
 	void endWork();
 
 private:
