@@ -160,14 +160,17 @@
 #
 
 # default arduino software directory, check software exists
-ifndef ARDUINODIR
-ARDUINODIR := $(firstword $(wildcard ~/opt/arduino /usr/share/arduino \
-	/Applications/Arduino.app/Contents/Resources/Java \
-	$(HOME)/Applications/Arduino.app/Contents/Resources/Java))
-endif
-ifeq "$(wildcard $(ARDUINODIR)/hardware/arduino/boards.txt)" ""
-$(error ARDUINODIR is not set correctly; arduino software not found)
-endif
+#ifndef ARDUINODIR
+#ARDUINODIR := $(firstword $(wildcard ~/opt/arduino /usr/share/arduino \
+#	/Applications/Arduino.app/Contents/Resources/Java \
+#	$(HOME)/Applications/Arduino.app/Contents/Resources/Java))
+#endif
+#ifeq "$(wildcard $(ARDUINODIR)/hardware/arduino/boards.txt)" ""
+#$(error ARDUINODIR is not set correctly; arduino software not found)
+#endif
+
+ARDUINODIR := /home/tian/devel/arduino-1.0.5/
+
 
 # default arduino version
 ARDUINOCONST ?= 100
