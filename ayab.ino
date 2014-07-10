@@ -42,6 +42,9 @@ This file is part of AYAB.
 Knitter     *knitter;
 byte        lineBuffer[25];
 
+/*! Mapping of Pin EncA to its ISR
+ *
+ */
 void isr_encA()
 {
    knitter->isr(); 

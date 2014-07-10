@@ -22,9 +22,10 @@ This file is part of AYAB.
 #include "Arduino.h"
 #include "beeper.h"
 
+
 Beeper::Beeper()
 {
-
+  // Intentionally left blank
 }
 
 
@@ -38,6 +39,7 @@ void Beeper::finishedLine()
 {
 	beep(3);
 }
+
 
 void Beeper::endWork()
 {
