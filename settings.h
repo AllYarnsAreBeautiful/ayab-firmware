@@ -43,6 +43,7 @@ This file is part of AYAB.
 #define KH930
 
 // Should be calibrated to each device
+// These values are for the K carriage
 #ifdef KH910
     #define FILTER_L_MIN 0
     #define FILTER_L_MAX 600
@@ -55,6 +56,10 @@ This file is part of AYAB.
     #define FILTER_R_MIN 0
     #define FILTER_R_MAX 600
 #endif
+
+// L carriage:
+// Active Left: < 150-200
+// Active Right: not used
 
 /*
  * END OF USERSETTINGS
