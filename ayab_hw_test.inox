@@ -58,6 +58,8 @@ void setup() {
   pinMode(LED_PIN_A,OUTPUT);
   pinMode(LED_PIN_B,OUTPUT); 
 
+  //pinMode(PIEZO_PIN,OUTPUT);
+
   // Setup callbacks for SerialCommand commands
   SCmd.addCommand("setSingle", setSingle);
   SCmd.addCommand("setAll", setAll);
@@ -69,7 +71,8 @@ void setup() {
   SCmd.addDefaultHandler(unrecognized);  // Handler for command that isn't matched 
   
   attachInterrupt(0, encoderAChange, RISING); //Attaching ENC_PIN_A(=2)
-
+  
+  //analogWrite(PIEZO_PIN, 100);
   DEBUG_PRINT("ready");
 }
 
@@ -156,10 +159,10 @@ void setAll()
  */
 void readEOLsensors()
 {
-  Serial.print("EOL_L: ");
-  Serial.println(analogRead(EOL_PIN_L));
-  Serial.print("EOL_R: ");
-  Serial.println(analogRead(EOL_PIN_R));
+  Serial.print("  EOL_L: ");
+  Serial.print(analogRead(EOL_PIN_L));
+  Serial.print("  EOL_R: ");
+  Serial.print(analogRead(EOL_PIN_R));
 }
 
 
@@ -168,31 +171,34 @@ void readEOLsensors()
  */
 void readEncoders()
 {
+  Serial.print("  ENC_A: ");
   if( HIGH == digitalRead(ENC_PIN_A) )
   {
-    Serial.println("ENC_A: HIGH");
+    Serial.print("HIGH");
   }
   else
   {
-    Serial.println("ENC_A: LOW");   
+    Serial.print("LOW");   
   }
 
+  Serial.print("  ENC_B: ");
   if( HIGH == digitalRead(ENC_PIN_B) )
   {
-    Serial.println("ENC_B: HIGH");
+    Serial.print("HIGH");
   }
   else
   {
-    Serial.println("ENC_B: LOW");
+    Serial.print("LOW");
   }
 
+  Serial.print("  ENC_C: ");
   if( HIGH == digitalRead(ENC_PIN_C) )
   {
-    Serial.println("ENC_C: HIGH");
+    Serial.print("HIGH");
   }
   else
   {
-    Serial.println("ENC_C: LOW");
+    Serial.print("LOW");
   }
 }
 
@@ -216,6 +222,7 @@ void autoRead()
     readEOLsensors();
     readEncoders();
     delay(1000);
+    Serial.println();
     //TODO fix clearscreen Serial.write(0x0C);
   }
 }
