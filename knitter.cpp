@@ -214,7 +214,7 @@ void Knitter::state_operate()
 			if( (m_pixelToSet >= m_startNeedle-END_OF_LINE_OFFSET_L)
 					&& (m_pixelToSet <= m_stopNeedle+END_OF_LINE_OFFSET_R)) // TODO ADD OFFSET
 			{	// When inside the active needles
-				digitalWrite(LED_PIN_B, 1);
+				//digitalWrite(LED_PIN_B, 1);
 				_workedOnLine = true;
 
 				// Find the right byte from the currentLine array,
@@ -227,7 +227,7 @@ void Knitter::state_operate()
 			}
 			else
 			{	// Outside of the active needles
-				digitalWrite(LED_PIN_B, 0);
+				//digitalWrite(LED_PIN_B, 0);
 				if( _workedOnLine )
 				{	// already worked on the current line -> finished the line
 					_workedOnLine   = false;

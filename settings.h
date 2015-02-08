@@ -37,21 +37,21 @@ This file is part of AYAB.
  * USERSETTINGS
  */
 
-#define DBG_NOMACHINE 1  // Turn on to use DBG_BTN as EOL Trigger
+#define DBG_NOMACHINE 0  // Turn on to use DBG_BTN as EOL Trigger
 
-//#define KH910
-#define KH930
+#define KH910
+//#define KH930
 
 // Should be calibrated to each device
 // These values are for the K carriage
 #ifdef KH910
-    #define FILTER_L_MIN 0
-    #define FILTER_L_MAX 600
+    #define FILTER_L_MIN 200 // below: L Carriage
+    #define FILTER_L_MAX 600 // above: K Carriage
     #define FILTER_R_MIN 200
     #define FILTER_R_MAX 1023
 #endif
 #ifdef KH930
-    #define FILTER_L_MIN 0
+    #define FILTER_L_MIN 200
     #define FILTER_L_MAX 600
     #define FILTER_R_MIN 0
     #define FILTER_R_MAX 600

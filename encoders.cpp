@@ -73,20 +73,29 @@ void Encoders::encA_rising()
 	{
       if( m_encoderPos < END_RIGHT )
       {
-         m_encoderPos++;
+        m_encoderPos++;
       }
 
 		uint16 hallValue = analogRead(EOL_PIN_L);
 		if( hallValue < FILTER_L_MIN || 
 			hallValue > FILTER_L_MAX)
 		{ 
-         m_hallActive = Left;
+      m_hallActive = Left;
 
-			// Belt shift signal only decided in front of hall sensor
-			m_beltShift = digitalRead(ENC_PIN_C) ? Regular : Shifted;			
+      // Belt shift signal only decided in front of hall sensor
+      if( hallValue < FILTER_L_MIN )
+      { // L carriage
+        m_beltShift = Regular;
+        digitalWrite(LED_PIN_B, 1);
+      }
+      else 
+      { // K carriage
+  			m_beltShift = digitalRead(ENC_PIN_C) ? Regular : Shifted;	
+        digitalWrite(LED_PIN_B, 0);		
+      }
 
-         // Known position of the sled -> overwrite position
-         m_encoderPos = END_LEFT + 28;
+      // Known position of the sled -> overwrite position
+      m_encoderPos = END_LEFT + 28;
       }
 	}
 }
