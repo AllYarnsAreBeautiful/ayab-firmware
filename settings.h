@@ -15,7 +15,7 @@ This file is part of AYAB.
     You should have received a copy of the GNU General Public License
     along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
 
-    Copyright 2013 Christian Obersteiner, Andreas Müller
+    Copyright 2013-2015 Christian Obersteiner, Andreas Müller
     https://bitbucket.org/chris007de/ayab-apparat/
 */
 
@@ -37,7 +37,7 @@ This file is part of AYAB.
  * USERSETTINGS
  */
 
-#define DBG_NOMACHINE 0  // Turn on to use DBG_BTN as EOL Trigger
+//#define DBG_NOMACHINE  // Turn on to use DBG_BTN as EOL Trigger
 
 #define KH910
 //#define KH930
@@ -51,15 +51,12 @@ This file is part of AYAB.
     #define FILTER_R_MAX 1023
 #endif
 #ifdef KH930
-    #define FILTER_L_MIN 200
-    #define FILTER_L_MAX 600
+    #define FILTER_L_MIN 200 // below: L Carriage
+    #define FILTER_L_MAX 600 // above: K Carriage
     #define FILTER_R_MIN 0
     #define FILTER_R_MAX 600
 #endif
 
-// L carriage:
-// Active Left: < 150-200
-// Active Right: not used
 
 /*
  * END OF USERSETTINGS

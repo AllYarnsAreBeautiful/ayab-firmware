@@ -15,7 +15,7 @@ This file is part of AYAB.
     You should have received a copy of the GNU General Public License
     along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
 
-    Copyright 2013 Christian Obersteiner, Andreas Müller
+    Copyright 2013-2015 Christian Obersteiner, Andreas Müller
     https://bitbucket.org/chris007de/ayab-apparat/
 */
 
