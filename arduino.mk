@@ -169,7 +169,7 @@
 #$(error ARDUINODIR is not set correctly; arduino software not found)
 #endif
 
-ARDUINODIR := /home/tian/devel/arduino-1.0.5/
+ARDUINODIR := ${HOME}/tools/arduino-1.0.5/
 
 
 # default arduino version
