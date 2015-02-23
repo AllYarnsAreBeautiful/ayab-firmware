@@ -64,6 +64,7 @@ private:
 	Direction_t	m_direction;
 	Direction_t m_hallActive;
 	Beltshift_t m_beltshift;
+  Carriage_t  m_carriage;
 
 	// Resulting needle data
 	byte 		m_solenoidToSet;

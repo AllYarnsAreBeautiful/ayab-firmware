@@ -101,10 +101,18 @@ typedef enum Direction{
 	Right 		= 2
 } Direction_t;
 
+typedef enum Carriage{
+    NoCarriage = 0,
+    K        = 1,
+    L        = 2
+} Carriage_t;
+
 typedef enum Beltshift{
 	Unknown     = 0,
 	Regular 	= 1, 
-	Shifted   	= 2
+	Shifted   	= 2,
+    Lace_Regular = 3,
+    Lace_Shifted = 4
 } Beltshift_t;
 
 typedef enum OpState{

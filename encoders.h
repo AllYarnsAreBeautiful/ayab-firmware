@@ -35,11 +35,13 @@ public:
 	Beltshift_t 	getBeltshift();
 	Direction_t 	getDirection();
   Direction_t   getHallActive();
+  Carriage_t    getCarriage();
 
 private:
 	Direction_t 	m_direction;
   Direction_t   m_hallActive;
 	Beltshift_t 	m_beltShift;
+  Carriage_t    m_carriage;
 	byte   m_encoderPos;
 
   void encA_rising();

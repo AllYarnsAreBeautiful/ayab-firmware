@@ -26,8 +26,9 @@ This file is part of AYAB.
 Encoders::Encoders()
 {
 	m_direction    = NoDirection;
-   m_hallActive   = NoDirection;
+  m_hallActive   = NoDirection;
 	m_beltShift    = Unknown;
+  m_carriage     = NoCarriage;
 	m_encoderPos   = 0x00;
 }
 
@@ -85,16 +86,20 @@ void Encoders::encA_rising()
       // Belt shift signal only decided in front of hall sensor
       if( hallValue < FILTER_L_MIN )
       { // L carriage
-        m_beltShift = Regular;
-        digitalWrite(LED_PIN_B, 1);
+        m_carriage = L;
       }
       else 
       { // K carriage
-  			m_beltShift = digitalRead(ENC_PIN_C) ? Regular : Shifted;	
-        digitalWrite(LED_PIN_B, 0);		
+        m_carriage = K;
       }
 
-      // Known position of the sled -> overwrite position
+      m_beltShift = digitalRead(ENC_PIN_C) ? Regular : Shifted;
+      if (Regular == m_beltShift)
+        { digitalWrite(LED_PIN_B, 1); }
+      else if (Shifted == m_beltShift)
+        { digitalWrite(LED_PIN_B, 0); }
+
+      // Known position of the carriage -> overwrite position
       m_encoderPos = END_LEFT + 28;
       }
 	}
@@ -117,10 +122,12 @@ void Encoders::encA_falling()
 		{ 
          m_hallActive = Right;
 
+         m_carriage = K;
+
          // Belt shift signal only decided in front of hall sensor
 	      m_beltShift = digitalRead(ENC_PIN_C) ? Shifted : Regular;
 
-         // Known position of the sled -> overwrite position
+         // Known position of the carriage -> overwrite position
          m_encoderPos = END_RIGHT - 28;
       }
    }
@@ -147,6 +154,11 @@ Direction_t Encoders::getDirection()
 Direction_t Encoders::getHallActive()
 {
    return m_hallActive;
+}
+
+Carriage_t Encoders::getCarriage()
+{
+  return m_carriage;
 }
 
 

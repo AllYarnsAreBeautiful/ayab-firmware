@@ -40,6 +40,7 @@ void Knitter::isr()
 	m_direction  = m_encoders.getDirection();
 	m_hallActive = m_encoders.getHallActive();
 	m_beltshift  = m_encoders.getBeltshift();
+	m_carriage   = m_encoders.getCarriage();
 }
 
 void Knitter::fsm()
@@ -261,13 +262,18 @@ bool Knitter::calculatePixelAndSolenoid()
 			{ 
 				m_pixelToSet = m_position - START_OFFSET_L;
 				
-				if( Regular == m_beltshift )
+				if ( Regular == m_beltshift )
 				{
 					m_solenoidToSet = m_position % 16;
 				}
 				else if ( Shifted == m_beltshift )
 				{
 					m_solenoidToSet = (m_position-8) % 16;
+				}
+				
+				if ( L == m_carriage )
+				{
+					m_pixelToSet = m_pixelToSet + 8;
 				}
 			}
 			else
@@ -280,13 +286,19 @@ bool Knitter::calculatePixelAndSolenoid()
 			if( m_position <= (END_RIGHT - START_OFFSET_R) )
 			{ 
 				m_pixelToSet = m_position - START_OFFSET_R;
-				if( Regular == m_beltshift )
+				
+				if ( Regular == m_beltshift )
 				{
 					m_solenoidToSet = (m_position+8) % 16;
 				}
 				else if ( Shifted == m_beltshift )
 				{
 					m_solenoidToSet = m_position % 16;
+				}
+				
+				if ( L == m_carriage )
+				{
+					m_pixelToSet = m_pixelToSet - 16;
 				}
 			}
 			else
