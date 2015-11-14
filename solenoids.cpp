@@ -23,29 +23,44 @@ This file is part of AYAB.
 #include "Arduino.h"
 #include "solenoids.h"
 
-
 // Determine board type
 #if defined(__AVR_ATmega168__) || defined(__AVR_ATmega328P__)
   // Regular Arduino
+  #warning Using Hardware I2C
   #include <Wire.h>
-  #define IIC_HARD
+  #ifndef IIC_HARD
+    #define IIC_HARD
+  #endif
 #elif defined(__AVR_ATmega2560__) || defined(__AVR_ATmega1280__)
   // Arduino Mega
+  #warning Using Software I2C
   #include <SoftI2CMaster.h>
   SoftI2CMaster Wire(A4,A5,1);
 #else
-    //untested board - please check your I2C ports
+  #warning untested board - please check your I2C ports
 #endif
 
+#include "Adafruit_MCP23008.h"
+
+Adafruit_MCP23008 mcp_0;
+Adafruit_MCP23008 mcp_1;
 
 Solenoids::Solenoids()
 {
 	solenoidState = 0x00;
-	#ifdef IIC_HARD
-		Wire.begin();
-	#endif //IIC_HARD
 }
 
+void Solenoids::init(void)
+{
+    mcp_0.begin(I2Caddr_sol1_8);
+    mcp_1.begin(I2Caddr_sol9_16);
+
+    for (int i = 0; i<8; i++)
+    {
+        mcp_0.pinMode(i, OUTPUT);
+        mcp_1.pinMode(i, OUTPUT);
+    }
+}
 
 void Solenoids::setSolenoid( byte solenoid, bool state )
 { 	
@@ -84,19 +99,6 @@ void Solenoids::setSolenoids( uint16 state )
  */
 void Solenoids::write( uint16 newState )
 {
-	Wire.beginTransmission( I2Caddr_sol1_8 );
-	#ifdef IIC_HARD
-		Wire.write( lowByte(newState) );
-	#else
-		Wire.send( lowByte(newState) );
-	#endif //IIC_HARD
-	Wire.endTransmission();
-
-	Wire.beginTransmission( I2Caddr_sol9_16);
-	#ifdef IIC_HARD
-		Wire.write( highByte(newState) );
-	#else
-		Wire.send( highByte(newState) );
-	#endif //IIC_HARD
-	Wire.endTransmission(); 
+    mcp_0.writeGPIO(lowByte(newState));
+    mcp_1.writeGPIO(highByte(newState));
 }

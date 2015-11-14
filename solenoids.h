@@ -28,8 +28,8 @@ This file is part of AYAB.
 #include "debug.h"
 
 
-#define I2Caddr_sol1_8  0x20
-#define I2Caddr_sol9_16 0x21
+#define I2Caddr_sol1_8  0x0
+#define I2Caddr_sol9_16 0x1
 
 
 class Solenoids
@@ -37,6 +37,7 @@ class Solenoids
 
 public:
    Solenoids();
+   void init(void);
    void setSolenoid( byte solenoid, bool state);
    void setSolenoids( uint16 state );
 
