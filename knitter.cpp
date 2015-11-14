@@ -30,6 +30,8 @@ Knitter::Knitter()
 	m_stopNeedle        = 0;
 	m_currentLineNumber = 0;
 	m_lineRequested     = false;
+
+	m_solenoids.init();
 }
 
 void Knitter::isr()
@@ -222,6 +224,10 @@ void Knitter::state_operate()
 		else
 		{	// Outside of the active needles
 			//digitalWrite(LED_PIN_B, 0);
+			
+			// Reset Solenoids when out of range
+			m_solenoids.setSolenoid( m_solenoidToSet, true);
+			
 			if( _workedOnLine )
 			{	// already worked on the current line -> finished the line
 				_workedOnLine   = false;
