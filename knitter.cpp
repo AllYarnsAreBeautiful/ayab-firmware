@@ -128,27 +128,33 @@ void Knitter::setLastLine()
  */
 void Knitter::state_init()
 {
+	static bool _ready = false;
+
 #ifdef DBG_NOMACHINE
-		static bool _prevState = false;
-		bool state = digitalRead(DBG_BTN_PIN);
+	static bool _prevState = false;
+	bool state = digitalRead(DBG_BTN_PIN);
 
-		// TODO Check if debounce is needed
-		if( _prevState && !state )
-		{
-			m_opState = s_ready;
-			return;
-		}
-
-		_prevState = state;
+	// TODO Check if debounce is needed
+	if( _prevState && !state )
+	{
+		_ready = true;
+	}
+	_prevState = state;
 #else
-		// Machine is initialized when left hall sensor is passed in Right direction
-		if( Right == m_direction && Left == m_hallActive )
-		{
-			m_opState = s_ready;
-			m_solenoids.setSolenoids(0xFFFF);
-			return;
-		}
+	// Machine is initialized when left hall sensor is passed in Right direction
+	if( Right == m_direction && Left == m_hallActive )
+	{
+		_ready = true;
+	}
 #endif //DBG_NOMACHINE
+	
+	if (_ready)
+	{
+		m_opState = s_ready;
+		m_solenoids.setSolenoids(0xFFFF);
+		indInit(true);
+		return;
+	}
 
 	m_opState = s_init;
 }
@@ -322,4 +328,11 @@ void Knitter::reqLine( byte lineNumber )
 	Serial.println("");
 
 	m_lineRequested = true;
+}
+
+void Knitter::indInit( bool state )
+{	
+	Serial.write(0x84);
+	Serial.write((int)state);
+	Serial.println("");
 }
