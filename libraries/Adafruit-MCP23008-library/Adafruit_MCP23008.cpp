@@ -10,7 +10,6 @@
   Written by Limor Fried/Ladyada for Adafruit Industries.  
   BSD license, all text above must be included in any redistribution
  ****************************************************/
-
 #if ARDUINO >= 100
  #include "Arduino.h"
 #else
@@ -24,7 +23,7 @@
 #endif
 #include "Adafruit_MCP23008.h"
 
-
+#ifdef HARD_I2C
 ////////////////////////////////////////////////////////////////////////////////
 // RTC_DS1307 implementation
 
@@ -170,7 +169,7 @@ uint8_t Adafruit_MCP23008::read8(uint8_t addr) {
 
 void Adafruit_MCP23008::write8(uint8_t addr, uint8_t data) {
   Wire.beginTransmission(MCP23008_ADDRESS | i2caddr);
-#ifdef IIC_HARD
+#if ARDUINO >= 100
   Wire.write((byte)addr);
   Wire.write((byte)data);
 #else
@@ -179,3 +178,5 @@ void Adafruit_MCP23008::write8(uint8_t addr, uint8_t data) {
 #endif
   Wire.endTransmission();
 }
+
+#endif // HARD_I2C

@@ -27,23 +27,25 @@ This file is part of AYAB.
 #if defined(__AVR_ATmega168__) || defined(__AVR_ATmega328P__)
   // Regular Arduino
   #warning Using Hardware I2C
-  #include <Wire.h>
-  #ifndef IIC_HARD
-    #define IIC_HARD
+  #ifndef HARD_I2C
+    #define HARD_I2C
   #endif
+  #include <Wire.h>
+  #include "Adafruit_MCP23008.h"
+
+  Adafruit_MCP23008 mcp_0;
+  Adafruit_MCP23008 mcp_1;
 #elif defined(__AVR_ATmega2560__) || defined(__AVR_ATmega1280__)
   // Arduino Mega
   #warning Using Software I2C
+  #ifndef SOFT_I2C
+    #define SOFT_I2C
+  #endif
   #include <SoftI2CMaster.h>
   SoftI2CMaster Wire(A4,A5,1);
 #else
   #warning untested board - please check your I2C ports
 #endif
-
-#include "Adafruit_MCP23008.h"
-
-Adafruit_MCP23008 mcp_0;
-Adafruit_MCP23008 mcp_1;
 
 Solenoids::Solenoids()
 {
@@ -52,6 +54,7 @@ Solenoids::Solenoids()
 
 void Solenoids::init(void)
 {
+  #ifdef HARD_I2C
     mcp_0.begin(I2Caddr_sol1_8);
     mcp_1.begin(I2Caddr_sol9_16);
 
@@ -60,6 +63,8 @@ void Solenoids::init(void)
         mcp_0.pinMode(i, OUTPUT);
         mcp_1.pinMode(i, OUTPUT);
     }
+  #endif
+  // No Action needed for SOFT_I2C
 }
 
 void Solenoids::setSolenoid( byte solenoid, bool state )
@@ -99,6 +104,15 @@ void Solenoids::setSolenoids( uint16 state )
  */
 void Solenoids::write( uint16 newState )
 {
+  #ifdef HARD_I2C
     mcp_0.writeGPIO(lowByte(newState));
     mcp_1.writeGPIO(highByte(newState));
+  #elif defined SOFT_I2C
+    Wire.beginTransmission( I2Caddr_sol1_8 );
+    Wire.send( lowByte(newState) );
+    Wire.endTransmission();
+    Wire.beginTransmission( I2Caddr_sol9_16);
+    Wire.send( highByte(newState) );
+    Wire.endTransmission(); 
+  #endif
 }
