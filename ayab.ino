@@ -111,6 +111,8 @@ void isr_encA()
  {
   Serial.write(0xC3); //cnfInfo
   Serial.write(API_VERSION);
+  Serial.write(FW_VERSION_MAJ);
+  Serial.write(FW_VERSION_MIN);
   Serial.println("");
  }
 
