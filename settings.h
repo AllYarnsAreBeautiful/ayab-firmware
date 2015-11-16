@@ -52,7 +52,9 @@ This file is part of AYAB.
  */
 
 // DO NOT TOUCH
-#define API_VERSION 3
+#define FW_VERSION_MAJ 0
+#define FW_VERSION_MIN 80
+#define API_VERSION 4
 
 #define SERIAL_BAUDRATE 115200
 
