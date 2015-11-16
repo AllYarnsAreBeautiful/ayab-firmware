@@ -54,12 +54,13 @@ This file is part of AYAB.
 // DO NOT TOUCH
 #define FW_VERSION_MAJ 0
 #define FW_VERSION_MIN 80
-#define API_VERSION 4
+#define API_VERSION 4 // for message description, see below
 
 #define SERIAL_BAUDRATE 115200
 
 #define BEEPDELAY 50 // ms
 
+// Pin Assignments
 #define EOL_PIN_R 0	// Analog
 #define EOL_PIN_L 1	// Analog
 
@@ -84,7 +85,19 @@ This file is part of AYAB.
 #define END_OF_LINE_OFFSET_L 32
 #define END_OF_LINE_OFFSET_R 12
 
+// Typedefs
 #define uint16 unsigned int
+
+typedef enum AYAB_API{
+    reqStart_msgid    = 0x01,
+    cnfStart_msgid    = 0xC1,
+    reqLine_msgid     = 0x82,
+    cnfLine_msgid     = 0x42,
+    reqInfo_msgid     = 0x03,
+    cnfInfo_msgid     = 0xC3,
+    indInit_msgid     = 0x84,
+    debug_msgid       = 0xFF
+} AYAB_API_t;
 
 typedef enum Direction{
 	NoDirection	= 0,

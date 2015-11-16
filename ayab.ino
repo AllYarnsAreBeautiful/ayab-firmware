@@ -71,7 +71,7 @@ void isr_encA()
   bool _success = knitter->startOperation(_startNeedle, 
                                           _stopNeedle, 
                                           &(lineBuffer[0]));
-  Serial.write(0xC1);
+  Serial.write(cnfStart_msgid);
   Serial.write(_success);
   Serial.println("");
  }
@@ -109,7 +109,7 @@ void isr_encA()
 
  void h_reqInfo()
  {
-  Serial.write(0xC3); //cnfInfo
+  Serial.write(cnfInfo_msgid); //cnfInfo
   Serial.write(API_VERSION);
   Serial.write(FW_VERSION_MAJ);
   Serial.write(FW_VERSION_MIN);
@@ -157,15 +157,15 @@ void loop() {
     char inChar = (char)Serial.read();
     switch( inChar )
     {
-      case 0x01:  // reqStart
+      case reqStart_msgid:
         h_reqStart();
         break;
 
-      case 0x42:  // cnfLine        
+      case cnfLine_msgid:
         h_cnfLine();
         break;
 
-      case 0x03:  // reqInfo
+      case reqInfo_msgid:
         h_reqInfo();
         break;
 

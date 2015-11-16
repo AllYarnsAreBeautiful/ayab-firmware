@@ -329,7 +329,7 @@ bool Knitter::calculatePixelAndSolenoid()
 
 void Knitter::reqLine( byte lineNumber )
 {	
-	Serial.write(0x82);
+	Serial.write(reqLine_msgid);
 	Serial.write(lineNumber);
 	Serial.println("");
 
@@ -338,7 +338,7 @@ void Knitter::reqLine( byte lineNumber )
 
 void Knitter::indInit( bool state )
 {	
-	Serial.write(0x84);
+	Serial.write(indInit_msgid);
 	Serial.write((int)state);
 	Serial.println("");
 }
