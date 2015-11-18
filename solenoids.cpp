@@ -108,10 +108,10 @@ void Solenoids::write( uint16 newState )
     mcp_0.writeGPIO(lowByte(newState));
     mcp_1.writeGPIO(highByte(newState));
   #elif defined SOFT_I2C
-    Wire.beginTransmission( I2Caddr_sol1_8 );
+    Wire.beginTransmission( I2Caddr_sol1_8 | 0x20 );
     Wire.send( lowByte(newState) );
     Wire.endTransmission();
-    Wire.beginTransmission( I2Caddr_sol9_16);
+    Wire.beginTransmission( I2Caddr_sol9_16 | 0x20);
     Wire.send( highByte(newState) );
     Wire.endTransmission(); 
   #endif
