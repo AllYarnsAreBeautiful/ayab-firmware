@@ -116,6 +116,14 @@ void isr_encA()
   Serial.println("");
  }
 
+ void h_reqTest()
+ {
+    bool _success = knitter->startTest();
+    Serial.write(cnfTest_msgid);
+    Serial.write(_success);
+    Serial.println("");
+ }
+
 
 void h_unrecognized()
 {
@@ -167,6 +175,10 @@ void loop() {
 
       case reqInfo_msgid:
         h_reqInfo();
+        break;
+
+      case reqTest_msgid:
+        h_reqTest();
         break;
 
       default:

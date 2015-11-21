@@ -60,6 +60,10 @@ void Knitter::fsm()
 			state_operate();
 			break;
 
+		case s_test:
+			state_test();
+			break;
+
 		default: 
 			break;
 	}
@@ -99,6 +103,15 @@ bool Knitter::startOperation(byte startNeedle,
 	return false;
 }
 
+bool Knitter::startTest()
+{
+	if (s_init == m_opState)
+	{
+		m_opState = s_test;
+		return true;
+	}
+	return false;
+}
 
 bool Knitter::setNextLine(byte lineNumber)
 {
@@ -260,6 +273,25 @@ void Knitter::state_operate()
 		}
 	}
 #endif // DBG_NOMACHINE
+}
+
+
+void Knitter::state_test()
+{
+	static byte _sOldPosition = 0;
+
+	if( _sOldPosition != m_position ) 
+	{ // Only act if there is an actual change of position
+		// Store current Encoder position for next call of this function
+		_sOldPosition = m_position;	
+		
+		if( !calculatePixelAndSolenoid() )
+		{
+			// No valid/useful position calculated
+			return;
+		}
+		indState();
+	}	
 }
 
 

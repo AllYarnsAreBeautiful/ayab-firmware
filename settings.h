@@ -95,6 +95,8 @@ typedef enum AYAB_API{
     cnfLine_msgid     = 0x42,
     reqInfo_msgid     = 0x03,
     cnfInfo_msgid     = 0xC3,
+    reqTest_msgid     = 0x04,
+    cnfTest_msgid     = 0xC4,
     indState_msgid    = 0x84,
     debug_msgid       = 0xFF
 } AYAB_API_t;
@@ -122,7 +124,8 @@ typedef enum Beltshift{
 typedef enum OpState{
 	s_init      = 0,
 	s_ready     = 1,
-	s_operate   = 2
+	s_operate   = 2,
+    s_test      = 3
 } OpState_t;
 //
 
