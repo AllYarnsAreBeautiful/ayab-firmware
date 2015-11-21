@@ -154,7 +154,7 @@ void Knitter::state_init()
 	{
 		m_opState = s_ready;
 		m_solenoids.setSolenoids(0xFFFF);
-		indInit(true);
+		indState(true);
 		return;
 	}
 
@@ -336,9 +336,12 @@ void Knitter::reqLine( byte lineNumber )
 	m_lineRequested = true;
 }
 
-void Knitter::indInit( bool state )
+void Knitter::indState( bool initState )
 {	
-	Serial.write(indInit_msgid);
-	Serial.write((int)state);
+	Serial.write(indState_msgid);
+	Serial.write((byte)initState);
+	Serial.write((byte)m_encoders.getHallActive());
+	Serial.write((byte)m_encoders.getCarriage());
+	Serial.write((byte)m_pixelToSet);
 	Serial.println("");
 }

@@ -95,7 +95,7 @@ typedef enum AYAB_API{
     cnfLine_msgid     = 0x42,
     reqInfo_msgid     = 0x03,
     cnfInfo_msgid     = 0xC3,
-    indInit_msgid     = 0x84,
+    indState_msgid    = 0x84,
     debug_msgid       = 0xFF
 } AYAB_API_t;
 

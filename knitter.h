@@ -78,7 +78,7 @@ private:
 	bool calculatePixelAndSolenoid();
 
 	void reqLine( byte lineNumber );
-    void indInit( bool state );
+    void indState( bool initState );
 };
 
 
