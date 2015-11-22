@@ -161,7 +161,18 @@ Carriage_t Encoders::getCarriage()
   return m_carriage;
 }
 
-
+uint16 Encoders::getHallValue(Direction_t pSensor)
+{
+  switch(pSensor)
+  {
+    case Left:
+      return analogRead(EOL_PIN_L);
+    case Right:
+      return analogRead(EOL_PIN_R);
+    default:
+      return 0;
+  }
+}
 /*
  * PRIVATE METHODS
  */

@@ -105,7 +105,8 @@ bool Knitter::startOperation(byte startNeedle,
 
 bool Knitter::startTest()
 {
-	if (s_init == m_opState)
+	if (s_init == m_opState
+		|| s_ready == m_opState)
 	{
 		m_opState = s_test;
 		return true;
@@ -288,10 +289,13 @@ void Knitter::state_test()
 		if( !calculatePixelAndSolenoid() )
 		{
 			// No valid/useful position calculated
-			return;
+			//return;
 		}
-		indState();
-	}	
+	}
+	// Sending not only when Position has changed for better feedback 
+	// in GUI when in Front of Hall Sensors
+	delay(500);
+	indState();
 }
 
 
@@ -372,7 +376,15 @@ void Knitter::indState( bool initState )
 {	
 	Serial.write(indState_msgid);
 	Serial.write((byte)initState);
-	Serial.write((byte)m_encoders.getHallActive());
+
+
+	uint16 hallValue = m_encoders.getHallValue(Left);
+	Serial.write((byte)(hallValue >> 8) & 0xFF);
+	Serial.write((byte)hallValue & 0xFF);	
+	hallValue = m_encoders.getHallValue(Right);
+	Serial.write((byte)(hallValue >> 8) & 0xFF);
+	Serial.write((byte)hallValue & 0xFF);
+	
 	Serial.write((byte)m_encoders.getCarriage());
 	Serial.write((byte)m_pixelToSet);
 	Serial.println("");

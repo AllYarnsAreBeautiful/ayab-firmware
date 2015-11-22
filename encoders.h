@@ -37,6 +37,8 @@ public:
   Direction_t   getHallActive();
   Carriage_t    getCarriage();
 
+  uint16 getHallValue(Direction_t);
+
 private:
 	Direction_t 	m_direction;
   Direction_t   m_hallActive;
