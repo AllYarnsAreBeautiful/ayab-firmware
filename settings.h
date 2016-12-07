@@ -87,8 +87,8 @@ This file is part of AYAB.
 #define NUM_NEEDLES    200
 #define END_LEFT       0
 #define END_RIGHT      255
-#define START_OFFSET_L 40
-#define START_OFFSET_R 16
+#define START_OFFSET_L 8 //40
+#define START_OFFSET_R 32 //16
 #define END_OF_LINE_OFFSET_L 32
 #define END_OF_LINE_OFFSET_R 12
 
