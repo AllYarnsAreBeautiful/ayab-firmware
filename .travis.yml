@@ -10,9 +10,15 @@ before_install:
     - mkdir /home/travis/tools
     - mv arduino-1.0.6 /home/travis/tools/arduino-1.0.6
     - ls /home/travis/tools/
+    - mkdir build
 install:
 script:
     - make BOARD=uno
+    - mv ayab-firmware.hex build/uno.hex
+    - make clean
+    - make BOARD=mega
+    - mv ayab-firmware.hex build/mega.hex
+    - ls build
 notifications:
     email:
         on_success: change
