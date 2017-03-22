@@ -169,11 +169,10 @@
 #$(error ARDUINODIR is not set correctly; arduino software not found)
 #endif
 
-ARDUINODIR := ${HOME}/tools/arduino-1.0.5
-
+ARDUINODIR := ${HOME}/tools/arduino-1.0.6
 
 # default arduino version
-ARDUINOCONST ?= 105
+ARDUINOCONST ?= 106
 
 # default path for avr tools
 AVRTOOLSPATH ?= $(subst :, , $(PATH)) $(ARDUINODIR)/hardware/tools \
