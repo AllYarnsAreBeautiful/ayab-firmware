@@ -6,7 +6,7 @@ before_install:
     - wget http://downloads.arduino.cc/arduino-1.0.6-linux64.tgz
     - tar xf arduino-1.0.6-linux64.tgz
     - mkdir tools
-    - mv arduino-1.0.6 ${HOME}/tools/
+    - mv arduino-1.0.6 /home/travis/tools/
 install:
 script:
     - make BOARD=uno
