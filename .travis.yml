@@ -5,8 +5,11 @@ before_install:
     - export DISPLAY=:1.0
     - wget http://downloads.arduino.cc/arduino-1.0.6-linux64.tgz
     - tar xf arduino-1.0.6-linux64.tgz
+    - pwd
+    - ls
     - mkdir tools
     - mv arduino-1.0.6 /home/travis/tools/
+    - ls /home/travis/tools/
 install:
 script:
     - make BOARD=uno
