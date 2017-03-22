@@ -7,7 +7,7 @@ before_install:
     - tar xf arduino-1.0.6-linux64.tgz
     - pwd
     - ls
-    - mkdir tools
+    - mkdir /home/travis/tools
     - mv arduino-1.0.6 /home/travis/tools/arduino-1.0.6
     - ls /home/travis/tools/
 install:
