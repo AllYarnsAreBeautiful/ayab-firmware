@@ -8,7 +8,7 @@ before_install:
     - pwd
     - ls
     - mkdir tools
-    - mv arduino-1.0.6 /home/travis/tools/
+    - mv arduino-1.0.6 /home/travis/tools/arduino-1.0.6
     - ls /home/travis/tools/
 install:
 script:
