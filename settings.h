@@ -28,8 +28,15 @@ This file is part of AYAB.
 
 //#define DBG_NOMACHINE  // Turn on to use DBG_BTN as EOL Trigger
 
-#define KH910
-//#define KH930
+#ifdef KH910
+	#warning USING MACHINETYPE KH910
+#else
+	#ifdef KH930
+		#warning USING MACHINETYPE KH930
+	#else
+		#error KH910 or KH930 has the be defined as preprocessor variable!
+	#endif
+#endif
 
 // Should be calibrated to each device
 // These values are for the K carriage

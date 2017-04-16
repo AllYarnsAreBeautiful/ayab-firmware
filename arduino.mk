@@ -169,11 +169,10 @@
 #$(error ARDUINODIR is not set correctly; arduino software not found)
 #endif
 
-ARDUINODIR := ${HOME}/tools/arduino-1.0.5
-
+ARDUINODIR := ${HOME}/tools/arduino-1.0.6
 
 # default arduino version
-ARDUINOCONST ?= 105
+ARDUINOCONST ?= 106
 
 # default path for avr tools
 AVRTOOLSPATH ?= $(subst :, , $(PATH)) $(ARDUINODIR)/hardware/tools \
@@ -193,8 +192,21 @@ endif
 # no board?
 ifndef BOARD
 ifneq "$(MAKECMDGOALS)" "boards"
+ifneq "$(MAKECMDGOALS)" "machinetypes"
 ifneq "$(MAKECMDGOALS)" "clean"
 $(error BOARD is unset.  Type 'make boards' to see possible values)
+endif
+endif
+endif
+endif
+
+# no machine type set?
+ifndef MACHINETYPE
+ifneq "$(MAKECMDGOALS)" "boards"
+ifneq "$(MAKECMDGOALS)" "machinetypes"
+ifneq "$(MAKECMDGOALS)" "clean"
+$(error BOARD is unset.  Type 'make machinetypes' to see possible values)
+endif
 endif
 endif
 endif
@@ -299,6 +311,15 @@ CPPFLAGS += -DUSB_VID=$(BOARD_USB_VID) -DUSB_PID=$(BOARD_USB_PID)
 CPPFLAGS += -I. -Iutil -Iutility -I $(ARDUINOCOREDIR)
 CPPFLAGS += -I $(ARDUINODIR)/hardware/arduino/variants/$(BOARD_BUILD_VARIANT)/
 CPPFLAGS += $(addprefix -I , $(LIBRARYDIRS))
+
+ifeq "$(MACHINETYPE)" "KH910"
+CPPFLAGS += -DKH910
+else
+	ifeq "$(MACHINETYPE)" "KH930"
+		CPPFLAGS += -DKH930
+	endif
+endif
+
 CPPDEPFLAGS = -MMD -MP -MF .dep/$<.dep
 CPPINOFLAGS := -x c++ -include $(ARDUINOCOREDIR)/Arduino.h
 AVRDUDEFLAGS += $(addprefix -C , $(AVRDUDECONF)) -DV
@@ -353,6 +374,9 @@ boards:
 	@sed -nEe '/^#/d; /^[^.]+\.name=/p' $(BOARDSFILE) | \
 		sed -Ee 's/([^.]+)\.name=(.*)/\1            \2/' \
 			-e 's/(.{12}) *(.*)/\1 \2/'
+
+machinetypes:
+	@echo "Available values for MACHINETYPE: KH910 KH930"
 
 monitor:
 	@test -n "$(SERIALDEV)" || { \
