@@ -258,17 +258,10 @@ void Knitter::state_operate()
 				}
 				else if( m_lastLineFlag )
 				{
-					m_lastLinesCountdown--;
-					if(0 == m_lastLinesCountdown)
-					{	// All lines are processed, go back to ready state
-						m_beeper.endWork();
-						m_opState = s_ready;		
-						m_solenoids.setSolenoids(0xFFFF);				
-					}
-					else
-					{  // Inform user to proceed
-						m_beeper.finishedLine();
-					}
+					m_beeper.endWork();
+					m_opState = s_ready;
+					m_solenoids.setSolenoids(0xFFFF);
+					m_beeper.finishedLine();
 				}	
 			}
 		}
