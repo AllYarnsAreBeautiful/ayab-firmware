@@ -43,7 +43,7 @@ void Beeper::finishedLine()
 
 void Beeper::endWork()
 {
-  beep(5);
+  beep(10);
 }
 
 
@@ -54,8 +54,6 @@ void Beeper::beep( byte length )
 {	
     for(int i=0;i<length;i++)
     {
-      analogWrite(PIEZO_PIN, 0);
-      delay(BEEPDELAY);
       analogWrite(PIEZO_PIN, 20);       
       delay(BEEPDELAY);
     }
