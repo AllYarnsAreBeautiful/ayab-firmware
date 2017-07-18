@@ -43,7 +43,7 @@ void Beeper::finishedLine()
 
 void Beeper::endWork()
 {
-  beep(5);
+  beep(10);
 }
 
 
