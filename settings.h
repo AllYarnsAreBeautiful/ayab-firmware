@@ -27,6 +27,7 @@ This file is part of AYAB.
  */
 
 //#define DBG_NOMACHINE  // Turn on to use DBG_BTN as EOL Trigger
+
 #ifdef KH910
 	#warning USING MACHINETYPE KH910
 #else
@@ -64,7 +65,7 @@ This file is part of AYAB.
 
 #define SERIAL_BAUDRATE 115200
 
-#define BEEPDELAY 100 // ms
+#define BEEPDELAY 50 // ms
 
 // Pin Assignments
 #define EOL_PIN_R 0	// Analog
