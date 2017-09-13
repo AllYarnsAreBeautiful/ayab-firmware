@@ -45,6 +45,21 @@ void Alt_MCP23008::begin(uint8_t addr) {
 
   Wire.begin();
 
+  // Test type of I2C I/O expander IC that we have.
+  Mode8574 = 0; // Momentarily assume that we have the MCP23008.
+ 
+  uint8_t iocon = readIOCON();
+  writeIOCON(0x03);
+  iocon = readIOCON();
+
+  if (iocon == 2){
+        Mode8574 = 0;     // MCP23008 detected.
+        writeIOCON(0x00); // Write again, to put it back in usable state.
+      }
+ else {
+        Mode8574 = 1;     // PCF8574 detected.
+  }
+  
   // set defaults!
   Wire.beginTransmission(MCP23008_ADDRESS | i2caddr);
 #if ARDUINO >= 100
@@ -110,6 +125,14 @@ void Alt_MCP23008::writeGPIO(uint8_t gpio) {
   write8(MCP23008_GPIO, gpio);
 }
 
+uint8_t Alt_MCP23008::readIOCON(void) {
+  // read the current IOCON register 
+  return read8(MCP23008_IOCON);
+}
+
+void Alt_MCP23008::writeIOCON(uint8_t gpio) {
+  write8(MCP23008_IOCON, gpio);
+}
 
 void Alt_MCP23008::digitalWrite(uint8_t p, uint8_t d) {
   uint8_t gpio;
@@ -162,9 +185,11 @@ uint8_t Alt_MCP23008::digitalRead(uint8_t p) {
 uint8_t Alt_MCP23008::read8(uint8_t addr) {
   Wire.beginTransmission(MCP23008_ADDRESS | i2caddr);
 #if ARDUINO >= 100
-  Wire.write((byte)addr);	
+  if (Mode8574 == 0)
+      Wire.write((byte)addr);	
 #else
-  Wire.send(addr);	
+  if (Mode8574 == 0)
+      Wire.send(addr);	
 #endif
   Wire.endTransmission();
   Wire.requestFrom(MCP23008_ADDRESS | i2caddr, 1);
@@ -180,10 +205,12 @@ uint8_t Alt_MCP23008::read8(uint8_t addr) {
 void Alt_MCP23008::write8(uint8_t addr, uint8_t data) {
   Wire.beginTransmission(MCP23008_ADDRESS | i2caddr);
 #if ARDUINO >= 100
-  Wire.write((byte)addr);
+  if (Mode8574 == 0)
+      Wire.write((byte)addr);
   Wire.write((byte)data);
 #else
-  Wire.send(addr);	
+  if (Mode8574 == 0)
+      Wire.send(addr);	
   Wire.send(data);
 #endif
   Wire.endTransmission();
