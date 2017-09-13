@@ -9,9 +9,17 @@
 
   Written by Limor Fried/Ladyada for Adafruit Industries.  
   BSD license, all text above must be included in any redistribution
+  
+  https://github.com/adafruit/Adafruit-MCP23008-library
+  
+  --------------------------------------------------
+
+  This version: Forked by Windell H. Oskay to improve
+  support for PCF8574 I2C expander
+  
  ****************************************************/
-#ifndef _ADAFRUIT_MCP23008_H
-#define _ADAFRUIT_MCP23008_H
+#ifndef _ALT_MCP23008_H
+#define _ALT_MCP23008_H
 
 
 
@@ -36,7 +44,7 @@
 
 #include <Wire.h>
 
-class Adafruit_MCP23008 {
+class Alt_MCP23008 {
 public:
   void begin(uint8_t addr);
   void begin(void);
