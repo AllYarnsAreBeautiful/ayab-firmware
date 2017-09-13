@@ -1,8 +1,13 @@
-AYAB
-All yarns are beautiful
+AYAB - All Yarns Are Beautiful
 
-Custom control hard- and software for
-Brother KH-9xx Knitting machines.
 
-Further information:
-https://bitbucket.org/chris007de/ayab-apparat/
+_The goal of the AYAB project is to provide an alternative way to control the famous Brother KH-9xx range of knitting machines using a computer_
+
+http://ayab-knitting.com
+
+
+-----
+
+**AYAB Firmware**
+
+This is the firmware for the Arduino-based hardware that is part of the AYAB project.
