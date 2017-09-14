@@ -16,7 +16,7 @@ This file is part of AYAB.
     along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
 
     Copyright 2013 Christian Obersteiner, Andreas Müller
-    https://bitbucket.org/chris007de/ayab-apparat/
+    http://ayab-knitting.com
 */
 
 #include "Arduino.h"
