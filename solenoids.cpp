@@ -16,7 +16,7 @@ This file is part of AYAB.
     along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
 
     Copyright 2013 Christian Obersteiner, Andreas Müller
-    https://bitbucket.org/chris007de/ayab-apparat/
+    http://ayab-knitting.com
 */
 
 
@@ -31,10 +31,10 @@ This file is part of AYAB.
     #define HARD_I2C
   #endif
   #include <Wire.h>
-  #include "Adafruit_MCP23008.h"
+  #include "Alt_MCP23008.h"
 
-  Adafruit_MCP23008 mcp_0;
-  Adafruit_MCP23008 mcp_1;
+  Alt_MCP23008 mcp_0;
+  Alt_MCP23008 mcp_1;
 #elif defined(__AVR_ATmega2560__) || defined(__AVR_ATmega1280__)
   // Arduino Mega
   #warning Using Software I2C

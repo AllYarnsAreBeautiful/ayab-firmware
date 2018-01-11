@@ -9,6 +9,16 @@
 
   Written by Limor Fried/Ladyada for Adafruit Industries.  
   BSD license, all text above must be included in any redistribution
+  
+  https://github.com/adafruit/Adafruit-MCP23008-library
+  
+  --------------------------------------------------
+
+  This version: Forked by Windell H. Oskay to improve
+  support for PCF8574 I2C expander
+  
+  
+  
  ****************************************************/
 #if ARDUINO >= 100
  #include "Arduino.h"
@@ -21,13 +31,13 @@
 #elif defined(ESP8266)
   #include <pgmspace.h>
 #endif
-#include "Adafruit_MCP23008.h"
+#include "Alt_MCP23008.h"
 
 #ifdef HARD_I2C
 ////////////////////////////////////////////////////////////////////////////////
 // RTC_DS1307 implementation
 
-void Adafruit_MCP23008::begin(uint8_t addr) {
+void Alt_MCP23008::begin(uint8_t addr) {
   if (addr > 7) {
     addr = 7;
   }
@@ -35,6 +45,21 @@ void Adafruit_MCP23008::begin(uint8_t addr) {
 
   Wire.begin();
 
+  // Test type of I2C I/O expander IC that we have.
+  Mode8574 = 0; // Momentarily assume that we have the MCP23008.
+ 
+  uint8_t iocon = readIOCON();
+  writeIOCON(0x03);
+  iocon = readIOCON();
+
+  if (iocon == 2){
+        Mode8574 = 0;     // MCP23008 detected.
+        writeIOCON(0x00); // Write again, to put it back in usable state.
+      }
+ else {
+        Mode8574 = 1;     // PCF8574 detected.
+  }
+  
   // set defaults!
   Wire.beginTransmission(MCP23008_ADDRESS | i2caddr);
 #if ARDUINO >= 100
@@ -66,11 +91,11 @@ void Adafruit_MCP23008::begin(uint8_t addr) {
 
 }
 
-void Adafruit_MCP23008::begin(void) {
+void Alt_MCP23008::begin(void) {
   begin(0);
 }
 
-void Adafruit_MCP23008::pinMode(uint8_t p, uint8_t d) {
+void Alt_MCP23008::pinMode(uint8_t p, uint8_t d) {
   uint8_t iodir;
   
 
@@ -91,17 +116,25 @@ void Adafruit_MCP23008::pinMode(uint8_t p, uint8_t d) {
   write8(MCP23008_IODIR, iodir);
 }
 
-uint8_t Adafruit_MCP23008::readGPIO(void) {
+uint8_t Alt_MCP23008::readGPIO(void) {
   // read the current GPIO input 
   return read8(MCP23008_GPIO);
 }
 
-void Adafruit_MCP23008::writeGPIO(uint8_t gpio) {
+void Alt_MCP23008::writeGPIO(uint8_t gpio) {
   write8(MCP23008_GPIO, gpio);
 }
 
+uint8_t Alt_MCP23008::readIOCON(void) {
+  // read the current IOCON register 
+  return read8(MCP23008_IOCON);
+}
 
-void Adafruit_MCP23008::digitalWrite(uint8_t p, uint8_t d) {
+void Alt_MCP23008::writeIOCON(uint8_t gpio) {
+  write8(MCP23008_IOCON, gpio);
+}
+
+void Alt_MCP23008::digitalWrite(uint8_t p, uint8_t d) {
   uint8_t gpio;
   
   // only 8 bits!
@@ -122,7 +155,7 @@ void Adafruit_MCP23008::digitalWrite(uint8_t p, uint8_t d) {
   writeGPIO(gpio);
 }
 
-void Adafruit_MCP23008::pullUp(uint8_t p, uint8_t d) {
+void Alt_MCP23008::pullUp(uint8_t p, uint8_t d) {
   uint8_t gppu;
   
   // only 8 bits!
@@ -140,7 +173,7 @@ void Adafruit_MCP23008::pullUp(uint8_t p, uint8_t d) {
   write8(MCP23008_GPPU, gppu);
 }
 
-uint8_t Adafruit_MCP23008::digitalRead(uint8_t p) {
+uint8_t Alt_MCP23008::digitalRead(uint8_t p) {
   // only 8 bits!
   if (p > 7)
     return 0;
@@ -149,12 +182,14 @@ uint8_t Adafruit_MCP23008::digitalRead(uint8_t p) {
   return (readGPIO() >> p) & 0x1;
 }
 
-uint8_t Adafruit_MCP23008::read8(uint8_t addr) {
+uint8_t Alt_MCP23008::read8(uint8_t addr) {
   Wire.beginTransmission(MCP23008_ADDRESS | i2caddr);
 #if ARDUINO >= 100
-  Wire.write((byte)addr);	
+  if (Mode8574 == 0)
+      Wire.write((byte)addr);	
 #else
-  Wire.send(addr);	
+  if (Mode8574 == 0)
+      Wire.send(addr);	
 #endif
   Wire.endTransmission();
   Wire.requestFrom(MCP23008_ADDRESS | i2caddr, 1);
@@ -167,13 +202,15 @@ uint8_t Adafruit_MCP23008::read8(uint8_t addr) {
 }
 
 
-void Adafruit_MCP23008::write8(uint8_t addr, uint8_t data) {
+void Alt_MCP23008::write8(uint8_t addr, uint8_t data) {
   Wire.beginTransmission(MCP23008_ADDRESS | i2caddr);
 #if ARDUINO >= 100
-  Wire.write((byte)addr);
+  if (Mode8574 == 0)
+      Wire.write((byte)addr);
   Wire.write((byte)data);
 #else
-  Wire.send(addr);	
+  if (Mode8574 == 0)
+      Wire.send(addr);	
   Wire.send(data);
 #endif
   Wire.endTransmission();
