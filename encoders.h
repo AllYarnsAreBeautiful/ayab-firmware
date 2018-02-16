@@ -19,35 +19,35 @@ This file is part of AYAB.
     http://ayab-knitting.com
 */
 
-#ifndef ENCODERS_H
-#define ENCODERS_H
+#ifndef ENCODERS_H_
+#define ENCODERS_H_
 
 #include "Arduino.h"
-#include "settings.h"
+#include "./settings.h"
 
 class Encoders{
-public:
-	Encoders();
+ public:
+  Encoders();
 
   void encA_interrupt();
 
-	byte 			getPosition();
-	Beltshift_t 	getBeltshift();
-	Direction_t 	getDirection();
+  byte          getPosition();
+  Beltshift_t   getBeltshift();
+  Direction_t   getDirection();
   Direction_t   getHallActive();
   Carriage_t    getCarriage();
 
   uint16 getHallValue(Direction_t);
 
-private:
-	Direction_t 	m_direction;
+ private:
+  Direction_t   m_direction;
   Direction_t   m_hallActive;
-	Beltshift_t 	m_beltShift;
+  Beltshift_t   m_beltShift;
   Carriage_t    m_carriage;
-	byte   m_encoderPos;
+  byte          m_encoderPos;
 
   void encA_rising();
   void encA_falling();
 };
 
-#endif
+#endif  // ENCODERS_H_

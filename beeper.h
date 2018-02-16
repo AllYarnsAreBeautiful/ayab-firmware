@@ -19,28 +19,28 @@ This file is part of AYAB.
     http://ayab-knitting.com
 */
 
-#ifndef BEEPER_H
-#define BEEPER_H
+#ifndef BEEPER_H_
+#define BEEPER_H_
 
 #include "Arduino.h"
-#include "settings.h"
+#include "./settings.h"
 
 /*!
  *  Class to actuate a beeper connected to PIEZO_PIN
  */
-class Beeper{
-public:
-	Beeper();
+class Beeper {
+ public:
+  Beeper();
 
-    /*! Beep to indicate readiness */
-	void ready();
-    /*! Beep to indicate the end of a line */
-	void finishedLine();
-    /*! Beep to indicate the end the knitting pattern */
-	void endWork();
+  /*! Beep to indicate readiness */
+  void ready();
+  /*! Beep to indicate the end of a line */
+  void finishedLine();
+  /*! Beep to indicate the end the knitting pattern */
+  void endWork();
 
-private:
-	void beep(byte length);
+ private:
+  void beep(byte length);
 };
 
-#endif
+#endif  // BEEPER_H_
