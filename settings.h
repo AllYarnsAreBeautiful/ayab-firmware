@@ -87,8 +87,6 @@ This file is part of AYAB.
 #define NUM_NEEDLES    200
 #define END_LEFT       0
 #define END_RIGHT      255
-#define START_OFFSET_L 8 //40
-#define START_OFFSET_R 32 //16
 #define END_OF_LINE_OFFSET_L 32
 #define END_OF_LINE_OFFSET_R 12
 
@@ -117,7 +115,8 @@ typedef enum Direction {
 typedef enum Carriage {
   NoCarriage = 0,
   K          = 1,
-  L          = 2
+  L          = 2,
+  G          = 3
 } Carriage_t;
 
 typedef enum Beltshift {

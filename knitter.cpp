@@ -272,8 +272,8 @@ bool Knitter::calculatePixelAndSolenoid() {
     // Implemented according to machine manual
     // Magic numbers result from machine manual
     case Right:
-      if (m_position >= START_OFFSET_L) {
-        m_pixelToSet = m_position - START_OFFSET_L;
+      if (m_position >= getStartOffset(Left)) {
+        m_pixelToSet = m_position - getStartOffset(Left);
 
         if (Regular == m_beltshift) {
           m_solenoidToSet = m_position % 16;
@@ -290,8 +290,8 @@ bool Knitter::calculatePixelAndSolenoid() {
       break;
 
       case Left:
-        if (m_position <= (END_RIGHT - START_OFFSET_R)) {
-          m_pixelToSet = m_position - START_OFFSET_R;
+        if (m_position <= (END_RIGHT - getStartOffset(Right))) {
+          m_pixelToSet = m_position - getStartOffset(Right);
 
           if (Regular == m_beltshift) {
             m_solenoidToSet = (m_position+8) % 16;
@@ -312,6 +312,33 @@ bool Knitter::calculatePixelAndSolenoid() {
       break;
   }
   return true;
+}
+
+byte Knitter::getStartOffset(Direction_t direction) {
+  switch (direction) {
+    case Left:
+      if (m_carriage == G) {
+        // G carriage
+        return 8;
+      } else {
+        // K and L carriage
+        return 40;
+      }
+      break;
+
+    case Right:
+      if (m_carriage == G) {
+        // G carriage
+        return 32;
+      } else {
+        // K and L carriage
+        return 16;
+      }
+      break;
+
+    default:
+      return 0;
+  }
 }
 
 

@@ -58,7 +58,7 @@ class Knitter {
   byte m_stopNeedle;
   bool m_lineRequested;
   byte m_currentLineNumber;
-  byte (*m_lineBuffer);
+  byte(*m_lineBuffer);
 
   // current machine state
   byte        m_position;
@@ -78,6 +78,7 @@ class Knitter {
   void state_test();
 
   bool calculatePixelAndSolenoid();
+  byte getStartOffset(Direction_t);
 
   void reqLine(byte lineNumber);
   void indState(bool initState = false);
