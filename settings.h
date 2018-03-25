@@ -89,7 +89,7 @@ This file is part of AYAB.
 #define END_RIGHT      255
 #define START_OFFSET_L 40
 #define START_OFFSET_R 16
-#define END_OF_LINE_OFFSET_L 32
+#define END_OF_LINE_OFFSET_L 12
 #define END_OF_LINE_OFFSET_R 12
 
 // Typedefs
