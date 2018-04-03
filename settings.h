@@ -60,7 +60,7 @@ This file is part of AYAB.
 
 // DO NOT TOUCH
 #define FW_VERSION_MAJ 0
-#define FW_VERSION_MIN 90
+#define FW_VERSION_MIN 91
 #define API_VERSION 4 // for message description, see below
 
 #define SERIAL_BAUDRATE 115200
