@@ -1,3 +1,5 @@
 build/
+.dep/
 *.o
 *.hex
+*.a
