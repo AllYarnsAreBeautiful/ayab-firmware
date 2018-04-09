@@ -21,7 +21,7 @@ This file is part of AYAB.
 
 
 #include "Arduino.h"
-#include "solenoids.h"
+#include "./solenoids.h"
 
 // Determine board type
 #if defined(__AVR_ATmega168__) || defined(__AVR_ATmega328P__)
@@ -42,14 +42,13 @@ This file is part of AYAB.
     #define SOFT_I2C
   #endif
   #include <SoftI2CMaster.h>
-  SoftI2CMaster Wire(A4,A5,1);
+  SoftI2CMaster Wire(A4, A5, 1);
 #else
   #warning untested board - please check your I2C ports
 #endif
 
-Solenoids::Solenoids()
-{
-	solenoidState = 0x00;
+Solenoids::Solenoids() {
+  solenoidState = 0x00;
 }
 
 void Solenoids::init(void)
@@ -58,8 +57,7 @@ void Solenoids::init(void)
     mcp_0.begin(I2Caddr_sol1_8);
     mcp_1.begin(I2Caddr_sol9_16);
 
-    for (int i = 0; i<8; i++)
-    {
+    for (int i = 0; i < 8; i++) {
         mcp_0.pinMode(i, OUTPUT);
         mcp_1.pinMode(i, OUTPUT);
     }
@@ -67,28 +65,22 @@ void Solenoids::init(void)
   // No Action needed for SOFT_I2C
 }
 
-void Solenoids::setSolenoid( byte solenoid, bool state )
-{ 	
-	if( solenoid >= 0 && solenoid <= 15 )
-	{ 
-		if( state )
-		{
-			bitSet(solenoidState, solenoid);
-		}
-		else
-		{
-			bitClear(solenoidState,solenoid);
-		}	
-		// TODO optimize to act only when there is an actual change of state
-		write(solenoidState); 
-	}
+void Solenoids::setSolenoid(byte solenoid, bool state) {
+  if (solenoid >= 0 && solenoid <= 15) {
+    if (state) {
+      bitSet(solenoidState, solenoid);
+    } else {
+      bitClear(solenoidState, solenoid);
+    }
+    // TODO optimize to act only when there is an actual change of state
+    write(solenoidState);
+  }
 }
 
 
-void Solenoids::setSolenoids( uint16 state )
-{
-	solenoidState = state;
-	write( state );
+void Solenoids::setSolenoids(uint16 state) {
+  solenoidState = state;
+  write(state);
 }
 
 
@@ -102,17 +94,16 @@ void Solenoids::setSolenoids( uint16 state )
  * Low level function, mapping to actual wiring
  * is done here.
  */
-void Solenoids::write( uint16 newState )
-{
+void Solenoids::write(uint16 newState) {
   #ifdef HARD_I2C
     mcp_0.writeGPIO(lowByte(newState));
     mcp_1.writeGPIO(highByte(newState));
   #elif defined SOFT_I2C
-    Wire.beginTransmission( I2Caddr_sol1_8 | 0x20 );
-    Wire.send( lowByte(newState) );
+    Wire.beginTransmission(I2Caddr_sol1_8 | 0x20);
+    Wire.send(lowByte(newState));
     Wire.endTransmission();
-    Wire.beginTransmission( I2Caddr_sol9_16 | 0x20);
-    Wire.send( highByte(newState) );
-    Wire.endTransmission(); 
+    Wire.beginTransmission(I2Caddr_sol9_16 | 0x20);
+    Wire.send(highByte(newState));
+    Wire.endTransmission();
   #endif
 }

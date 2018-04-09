@@ -19,32 +19,29 @@ This file is part of AYAB.
     http://ayab-knitting.com
 */
 
-#ifndef SOLENOIDS_H
-#define SOLENOIDS_H
+#ifndef SOLENOIDS_H_
+#define SOLENOIDS_H_
 
 #include "Arduino.h"
 
-#include "settings.h"
-#include "debug.h"
+#include "./settings.h"
+#include "./debug.h"
 
 
 #define I2Caddr_sol1_8  0x0
 #define I2Caddr_sol9_16 0x1
 
 
-class Solenoids
-{
+class Solenoids {
+ public:
+  Solenoids();
+  void init(void);
+  void setSolenoid(byte solenoid, bool state);
+  void setSolenoids(uint16 state);
 
-public:
-   Solenoids();
-   void init(void);
-   void setSolenoid( byte solenoid, bool state);
-   void setSolenoids( uint16 state );
-
-private:
-   uint16 solenoidState;
-   void write( uint16 state );
+ private:
+  uint16 solenoidState;
+  void write(uint16 state);
 };
 
-
-#endif
+#endif  // SOLENOIDS_H_

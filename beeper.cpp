@@ -20,29 +20,25 @@ This file is part of AYAB.
 */
 
 #include "Arduino.h"
-#include "beeper.h"
+#include "./beeper.h"
 
 
-Beeper::Beeper()
-{
+Beeper::Beeper() {
   // Intentionally left blank
 }
 
 
-void Beeper::ready()
-{
-	beep(5);
+void Beeper::ready() {
+  beep(5);
 }
 
 
-void Beeper::finishedLine()
-{
-	beep(3);
+void Beeper::finishedLine() {
+  beep(3);
 }
 
 
-void Beeper::endWork()
-{
+void Beeper::endWork() {
   beep(10);
 }
 
@@ -50,14 +46,12 @@ void Beeper::endWork()
 /*
  * PRIVATE METHODS
  */
-void Beeper::beep( byte length )
-{	
-    for(int i=0;i<length;i++)
-    {
-      analogWrite(PIEZO_PIN, 0);
-      delay(BEEPDELAY);
-      analogWrite(PIEZO_PIN, 20);       
-      delay(BEEPDELAY);
-    }
-    analogWrite(PIEZO_PIN, 255);
+void Beeper::beep(byte length) {
+  for (int i=0; i < length; i++) {
+    analogWrite(PIEZO_PIN, 0);
+    delay(BEEPDELAY);
+    analogWrite(PIEZO_PIN, 20);
+    delay(BEEPDELAY);
+  }
+  analogWrite(PIEZO_PIN, 255);
 }

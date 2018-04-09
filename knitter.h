@@ -19,69 +19,69 @@ This file is part of AYAB.
     http://ayab-knitting.com
 */
 
-#ifndef KNITTER_H
-#define KNITTER_H
+#ifndef KNITTER_H_
+#define KNITTER_H_
 
 #include "Arduino.h"
-#include "settings.h"
-#include "debug.h"
+#include "./settings.h"
+#include "./debug.h"
 
-#include "solenoids.h"
-#include "encoders.h"
-#include "beeper.h"
+#include "./solenoids.h"
+#include "./encoders.h"
+#include "./beeper.h"
 
-class Knitter
-{
-public:
-	Knitter();
+class Knitter {
+ public:
+  Knitter();
 
-	void isr();
-	void fsm();
-	bool startOperation(byte startNeedle,
-						byte stopNeedle,
-						byte (*line));
-    bool startTest(void);
-	bool setNextLine(byte lineNumber);
-	void setLastLine();
+  void isr();
+  void fsm();
+  bool startOperation(byte startNeedle,
+                      byte stopNeedle,
+                      byte(*line));
+  bool startTest(void);
+  bool setNextLine(byte lineNumber);
+  void setLastLine();
 
-private:
-	Solenoids   m_solenoids;
-	Encoders    m_encoders;
-	Beeper      m_beeper;
+ private:
+  Solenoids   m_solenoids;
+  Encoders    m_encoders;
+  Beeper      m_beeper;
 
-	OpState_t   m_opState;
-	bool		m_lastLineFlag;
-	byte		m_lastLinesCountdown;
+  OpState_t m_opState;
 
-	// Job Parameters
-	byte		m_startNeedle;
-	byte		m_stopNeedle;
-	bool		m_lineRequested;
-	byte 		m_currentLineNumber;
-	byte		(*m_lineBuffer);
+  bool m_lastLineFlag;
+  byte m_lastLinesCountdown;
 
-	// current machine state
-	byte 		m_position;
-	Direction_t	m_direction;
-	Direction_t m_hallActive;
-	Beltshift_t m_beltshift;
+  // Job Parameters
+  byte m_startNeedle;
+  byte m_stopNeedle;
+  bool m_lineRequested;
+  byte m_currentLineNumber;
+  byte(*m_lineBuffer);
+
+  // current machine state
+  byte        m_position;
+  Direction_t m_direction;
+  Direction_t m_hallActive;
+  Beltshift_t m_beltshift;
   Carriage_t  m_carriage;
 
-	// Resulting needle data
-	byte 		m_solenoidToSet;
-	byte 		m_pixelToSet;
+  // Resulting needle data
+  byte  m_solenoidToSet;
+  byte  m_pixelToSet;
 
 
-	void state_init();
-	void state_ready();
-	void state_operate();
-    void state_test();
+  void state_init();
+  void state_ready();
+  void state_operate();
+  void state_test();
 
-	bool calculatePixelAndSolenoid();
+  bool calculatePixelAndSolenoid();
+  byte getStartOffset(Direction_t);
 
-	void reqLine( byte lineNumber );
-    void indState( bool initState = false);
+  void reqLine(byte lineNumber);
+  void indState(bool initState = false);
 };
 
-
-#endif // KNITTER_H
+#endif  // KNITTER_H_
