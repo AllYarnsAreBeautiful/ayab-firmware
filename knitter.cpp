@@ -211,10 +211,10 @@ void Knitter::state_operate() {
 
     if ((m_pixelToSet >= m_startNeedle-END_OF_LINE_OFFSET_L)
         && (m_pixelToSet <= m_stopNeedle+END_OF_LINE_OFFSET_R)) {
-      // TODO ADD OFFSET
-      // When inside the active needles
-      // digitalWrite(LED_PIN_B, 1);
-      _workedOnLine = true;
+      
+      if ((m_pixelToSet >= m_startNeedle) && (m_pixelToSet <= m_stopNeedle)) {
+        _workedOnLine = true;
+      }
 
       // Find the right byte from the currentLine array,
       // then read the appropriate Pixel(/Bit) for the current needle to set
