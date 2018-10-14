@@ -257,15 +257,9 @@ void Knitter::state_test() {
     // Store current Encoder position for next call of this function
     _sOldPosition = m_position;
 
-    if (!calculatePixelAndSolenoid()) {
-      // No valid/useful position calculated
-      // return;
-    }
+    calculatePixelAndSolenoid();
+    indState();
   }
-  // Sending not only when Position has changed for better feedback
-  // in GUI when in Front of Hall Sensors
-  delay(500);
-  indState();
 }
 
 
