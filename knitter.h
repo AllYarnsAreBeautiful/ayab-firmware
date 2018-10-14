@@ -26,6 +26,7 @@ This file is part of AYAB.
 #include "./settings.h"
 #include "./debug.h"
 
+#include "./libraries/PacketSerial/src/PacketSerial.h"
 #include "./solenoids.h"
 #include "./encoders.h"
 #include "./beeper.h"
@@ -33,6 +34,7 @@ This file is part of AYAB.
 class Knitter {
  public:
   Knitter();
+  Knitter(SLIPPacketSerial*);
 
   void isr();
   void fsm();
@@ -44,6 +46,7 @@ class Knitter {
   void setLastLine();
 
  private:
+  SLIPPacketSerial* m_packetSerial;
   Solenoids   m_solenoids;
   Encoders    m_encoders;
   Beeper      m_beeper;

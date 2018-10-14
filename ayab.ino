@@ -26,6 +26,7 @@ This file is part of AYAB.
 #include "Arduino.h"
 #include "SerialCommand.h"
 
+#include "./libraries/PacketSerial/src/PacketSerial.h"
 #include "./debug.h"
 #include "./settings.h"
 
@@ -42,6 +43,8 @@ This file is part of AYAB.
 Knitter     *knitter;
 byte        lineBuffer[25];
 
+SLIPPacketSerial packetSerial;
+
 /*! Mapping of Pin EncA to its ISR
  *
  */
@@ -49,14 +52,12 @@ void isr_encA() {
   knitter->isr();
 }
 
-
 /*
  * Serial Command handling
  */
-void h_reqStart() {
-  delay(50);  // DEBUG wait for data to arrive
-  byte _startNeedle = Serial.read();
-  byte _stopNeedle  = Serial.read();
+void h_reqStart(const uint8_t* buffer, size_t size) {
+  byte _startNeedle = (byte)buffer[1];
+  byte _stopNeedle  = (byte)buffer[2];
 
   // TODO verify operation
   // memset(lineBuffer,0,sizeof(lineBuffer));
@@ -68,27 +69,28 @@ void h_reqStart() {
   bool _success = knitter->startOperation(_startNeedle,
                                           _stopNeedle,
                                           &(lineBuffer[0]));
-  Serial.write(cnfStart_msgid);
-  Serial.write(_success);
-  Serial.println("");
+
+  uint8_t payload[2];
+  payload[0] = cnfStart_msgid;
+  payload[1] = _success;
+  packetSerial.send(payload, 2);
 }
 
 
-void h_cnfLine() {
-  delay(50);  // DEBUG wait for data to arrive
+void h_cnfLine(const uint8_t* buffer, size_t size) {
   byte _lineNumber = 0;
   byte _flags = 0;
   byte _crc8  = 0;
   bool _flagLastLine = false;
 
-  _lineNumber = Serial.read();
+  _lineNumber = (byte)buffer[1];
 
-  for (int i = 0; i < 25; i++) {
+  for (int i = 2; i < 27; i++) {
     // Values have to be inverted because of needle states
-    lineBuffer[i] = ~Serial.read();
+    lineBuffer[i] = ~(byte)buffer[i];
   }
-  _flags = Serial.read();
-  _crc8  = Serial.read();
+  _flags = (byte)buffer[27];
+  _crc8  = (byte)buffer[28];
 
   // TODO insert CRC8 check
 
@@ -101,20 +103,22 @@ void h_cnfLine() {
   }
  }
 
-
 void h_reqInfo() {
-  Serial.write(cnfInfo_msgid);  // cnfInfo
-  Serial.write(API_VERSION);
-  Serial.write(FW_VERSION_MAJ);
-  Serial.write(FW_VERSION_MIN);
-  Serial.println("");
+  uint8_t payload[4];
+  payload[0] = cnfInfo_msgid;
+  payload[1] = API_VERSION;
+  payload[2] = FW_VERSION_MAJ;
+  payload[3] = FW_VERSION_MIN;
+  packetSerial.send(payload, 4);
 }
 
 void h_reqTest() {
     bool _success = knitter->startTest();
-    Serial.write(cnfTest_msgid);
-    Serial.write(_success);
-    Serial.println("");
+
+    uint8_t payload[2];
+    payload[0] = cnfTest_msgid;
+    payload[1] = _success;
+    packetSerial.send(payload, 2);
 }
 
 
@@ -122,12 +126,40 @@ void h_unrecognized() {
   return;
 }
 
+/*! Callback for PacketSerial
+ *
+ */
+void onPacketReceived(const uint8_t* buffer, size_t size)
+{
+  switch (buffer[0]) {
+    case reqStart_msgid:
+      h_reqStart(buffer, size);
+      break;
+
+    case cnfLine_msgid:
+      h_cnfLine(buffer, size);
+      break;
+
+    case reqInfo_msgid:
+      h_reqInfo();
+      break;
+
+    case reqTest_msgid:
+      h_reqTest();
+      break;
+
+    default:
+      h_unrecognized();
+      break;
+  }
+}
 
 /*
  * SETUP
  */
 void setup() {
-  Serial.begin(SERIAL_BAUDRATE);
+  packetSerial.begin(SERIAL_BAUDRATE);
+  packetSerial.setPacketHandler(&onPacketReceived);
 
   pinMode(ENC_PIN_A, INPUT);
   pinMode(ENC_PIN_B, INPUT);
@@ -143,35 +175,11 @@ void setup() {
   // Attaching ENC_PIN_A(=2), Interrupt No. 0
   attachInterrupt(0, isr_encA, CHANGE);
 
-  knitter = new Knitter();
+  knitter = new Knitter(&packetSerial);
 }
 
 
 void loop() {
   knitter->fsm();
-
-  if (Serial.available()) {
-    char inChar = (char)Serial.read();
-    switch (inChar) {
-      case reqStart_msgid:
-        h_reqStart();
-        break;
-
-      case cnfLine_msgid:
-        h_cnfLine();
-        break;
-
-      case reqInfo_msgid:
-        h_reqInfo();
-        break;
-
-      case reqTest_msgid:
-        h_reqTest();
-        break;
-
-      default:
-        h_unrecognized();
-        break;
-    }
-  }
+  packetSerial.update();
 }

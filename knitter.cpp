@@ -22,8 +22,11 @@ This file is part of AYAB.
 #include "Arduino.h"
 #include "./knitter.h"
 
+Knitter::Knitter() {}
 
-Knitter::Knitter() {
+Knitter::Knitter(SLIPPacketSerial* packetSerial) {
+  Knitter();
+  m_packetSerial = packetSerial;
   m_opState           = s_init;
   m_startNeedle       = 0;
   m_stopNeedle        = 0;
@@ -43,7 +46,7 @@ void Knitter::isr() {
   m_carriage   = m_encoders.getCarriage();
 }
 
-void Knitter::fsm() {
+void Knitter::fsm() {  
   switch (m_opState) {
     case s_init:
       state_init();
@@ -341,27 +344,29 @@ byte Knitter::getStartOffset(Direction_t direction) {
   }
 }
 
-
 void Knitter::reqLine(byte lineNumber) {
-  Serial.write(reqLine_msgid);
-  Serial.write(lineNumber);
-  Serial.println("");
+  uint8_t payload[2];
+  payload[0] = reqLine_msgid;
+  payload[1] = lineNumber;
+  m_packetSerial->send(payload, 2);
 
   m_lineRequested = true;
 }
 
 void Knitter::indState(bool initState) {
-  Serial.write(indState_msgid);
-  Serial.write((byte)initState);
+  uint8_t payload[8];
+  payload[0] = indState_msgid;
+  payload[1] = (byte)initState;
 
   uint16 hallValue = m_encoders.getHallValue(Left);
-  Serial.write((byte)(hallValue >> 8) & 0xFF);
-  Serial.write((byte)hallValue & 0xFF);
-  hallValue = m_encoders.getHallValue(Right);
-  Serial.write((byte)(hallValue >> 8) & 0xFF);
-  Serial.write((byte)hallValue & 0xFF);
+  payload[2] = (byte)(hallValue >> 8) & 0xFF;
+  payload[3] = (byte)hallValue & 0xFF;
 
-  Serial.write((byte)m_encoders.getCarriage());
-  Serial.write((byte)m_pixelToSet);
-  Serial.println("");
+  hallValue = m_encoders.getHallValue(Right);
+  payload[4] = (byte)(hallValue >> 8) & 0xFF;
+  payload[5] = (byte)hallValue & 0xFF;
+  
+  payload[6] = (byte)m_encoders.getCarriage();
+  payload[7] = (byte)m_pixelToSet;
+  m_packetSerial->send(payload, 8);
 }
