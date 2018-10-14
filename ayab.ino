@@ -85,9 +85,9 @@ void h_cnfLine(const uint8_t* buffer, size_t size) {
 
   _lineNumber = (byte)buffer[1];
 
-  for (int i = 2; i < 27; i++) {
+  for (int i = 0; i < 25; i++) {
     // Values have to be inverted because of needle states
-    lineBuffer[i] = ~(byte)buffer[i];
+    lineBuffer[i] = ~(byte)buffer[i+2];
   }
   _flags = (byte)buffer[27];
   _crc8  = (byte)buffer[28];
