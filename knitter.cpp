@@ -364,6 +364,6 @@ void Knitter::indState(bool initState) {
   
   payload[6] = (byte)m_carriage;
   payload[7] = (byte)m_position;
-  payload[8] = (byte)m_direction;
+  payload[8] = (byte)m_encoders.getDirection();
   m_packetSerial->send(payload, 9);
 }
