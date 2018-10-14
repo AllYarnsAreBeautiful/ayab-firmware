@@ -208,6 +208,8 @@ void Knitter::state_operate() {
       return;
     }
 
+    // Send current position to GUI
+    indState(true);
 
     if ((m_pixelToSet >= m_startNeedle-END_OF_LINE_OFFSET_L)
         && (m_pixelToSet <= m_stopNeedle+END_OF_LINE_OFFSET_R)) {
@@ -348,7 +350,7 @@ void Knitter::reqLine(byte lineNumber) {
 }
 
 void Knitter::indState(bool initState) {
-  uint8_t payload[8];
+  uint8_t payload[9];
   payload[0] = indState_msgid;
   payload[1] = (byte)initState;
 
@@ -360,7 +362,8 @@ void Knitter::indState(bool initState) {
   payload[4] = (byte)(hallValue >> 8) & 0xFF;
   payload[5] = (byte)hallValue & 0xFF;
   
-  payload[6] = (byte)m_encoders.getCarriage();
-  payload[7] = (byte)m_pixelToSet;
-  m_packetSerial->send(payload, 8);
+  payload[6] = (byte)m_carriage;
+  payload[7] = (byte)m_position;
+  payload[8] = (byte)m_direction;
+  m_packetSerial->send(payload, 9);
 }
