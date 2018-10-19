@@ -203,13 +203,13 @@ void Knitter::state_operate() {
     // Store current Encoder position for next call of this function
     _sOldPosition = m_position;
 
+    // Send current position to GUI
+    indState(true);
+    
     if (!calculatePixelAndSolenoid()) {
       // No valid/useful position calculated
       return;
     }
-
-    // Send current position to GUI
-    indState(true);
 
     if ((m_pixelToSet >= m_startNeedle-END_OF_LINE_OFFSET_L)
         && (m_pixelToSet <= m_stopNeedle+END_OF_LINE_OFFSET_R)) {
