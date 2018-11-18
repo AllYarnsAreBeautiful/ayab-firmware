@@ -71,6 +71,7 @@ void Knitter::fsm() {
 
 bool Knitter::startOperation(byte startNeedle,
                              byte stopNeedle,
+                             bool continuousReportingEnabled,
                              byte(*line)) {
   if (startNeedle >= 0
       && stopNeedle < NUM_NEEDLES
@@ -81,6 +82,8 @@ bool Knitter::startOperation(byte startNeedle,
       // Assign image width
       m_startNeedle  = startNeedle;
       m_stopNeedle   = stopNeedle;
+      // Continuous Reporting enabled?
+      m_continuousReportingEnabled = continuousReportingEnabled;
       // Set pixel data source
       m_lineBuffer   = line;
 
@@ -203,8 +206,10 @@ void Knitter::state_operate() {
     // Store current Encoder position for next call of this function
     _sOldPosition = m_position;
 
-    // Send current position to GUI
-    indState(true);
+    if (m_continuousReportingEnabled) {
+      // Send current position to GUI
+      indState(true);
+    }
     
     if (!calculatePixelAndSolenoid()) {
       // No valid/useful position calculated

@@ -40,6 +40,7 @@ class Knitter {
   void fsm();
   bool startOperation(byte startNeedle,
                       byte stopNeedle,
+                      bool continuousReportingEnabled,
                       byte(*line));
   bool startTest(void);
   bool setNextLine(byte lineNumber);
@@ -59,6 +60,7 @@ class Knitter {
   // Job Parameters
   byte m_startNeedle;
   byte m_stopNeedle;
+  bool m_continuousReportingEnabled;
   bool m_lineRequested;
   byte m_currentLineNumber;
   byte(*m_lineBuffer);

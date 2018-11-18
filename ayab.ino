@@ -58,6 +58,7 @@ void isr_encA() {
 void h_reqStart(const uint8_t* buffer, size_t size) {
   byte _startNeedle = (byte)buffer[1];
   byte _stopNeedle  = (byte)buffer[2];
+  bool _continuousReportingEnabled = (bool)buffer[3];
 
   // TODO verify operation
   // memset(lineBuffer,0,sizeof(lineBuffer));
@@ -68,6 +69,7 @@ void h_reqStart(const uint8_t* buffer, size_t size) {
 
   bool _success = knitter->startOperation(_startNeedle,
                                           _stopNeedle,
+                                          _continuousReportingEnabled,
                                           &(lineBuffer[0]));
 
   uint8_t payload[2];
