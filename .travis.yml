@@ -14,18 +14,7 @@ before_install:
 - mkdir build
 install: true
 script:
-- make BOARD=uno MACHINETYPE=KH910
-- mv ayab.hex build/kh910_uno.hex
-- make clean
-- make BOARD=uno MACHINETYPE=KH930
-- mv ayab.hex build/kh930_uno.hex
-- make clean
-- make BOARD=mega MACHINETYPE=KH910
-- mv ayab.hex build/kh910_mega.hex
-- make clean
-- make BOARD=mega MACHINETYPE=KH930
-- mv ayab.hex build/kh930_mega.hex
-- make clean
+- build.sh
 - ls build
 - cd build
 - zip ayab-firmware.zip *.hex
