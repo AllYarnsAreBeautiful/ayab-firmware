@@ -14,10 +14,10 @@ before_install:
 - mkdir build
 install: true
 script:
-- build.sh
+- ./build.sh
 - ls build
 - cd build
-- zip ayab-firmware.zip *.hex
+- zip ayab-firmware.zip ./*
 - pwd
 - ls
 notifications:
