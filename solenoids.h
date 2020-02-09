@@ -24,24 +24,22 @@ This file is part of AYAB.
 
 #include "Arduino.h"
 
-#include "./settings.h"
 #include "./debug.h"
+#include "./settings.h"
 
-
-#define I2Caddr_sol1_8  0x0
+#define I2Caddr_sol1_8 0x0
 #define I2Caddr_sol9_16 0x1
 
-
 class Solenoids {
- public:
+public:
   Solenoids();
   void init(void);
   void setSolenoid(byte solenoid, bool state);
   void setSolenoids(uint16 state);
 
- private:
+private:
   uint16 solenoidState;
   void write(uint16 state);
 };
 
-#endif  // SOLENOIDS_H_
+#endif // SOLENOIDS_H_

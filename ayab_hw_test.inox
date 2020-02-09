@@ -31,17 +31,16 @@ This file is part of AYAB.
 #include "beeper.h"
 #include "solenoids.h"
 
-
 /*
  * DEFINES
  */
 
 /*
  *  DECLARATIONS
- */ 
-SerialCommand SCmd;   // The SerialCommand object
-Beeper        beeper;
-Solenoids     solenoids;
+ */
+SerialCommand SCmd; // The SerialCommand object
+Beeper beeper;
+Solenoids solenoids;
 
 /*
  * SETUP
@@ -50,14 +49,14 @@ void setup() {
 
   Serial.begin(SERIAL_BAUDRATE);
 
-  pinMode(ENC_PIN_A,INPUT);
-  pinMode(ENC_PIN_B,INPUT);
-  pinMode(ENC_PIN_C,INPUT);
+  pinMode(ENC_PIN_A, INPUT);
+  pinMode(ENC_PIN_B, INPUT);
+  pinMode(ENC_PIN_C, INPUT);
 
-  pinMode(LED_PIN_A,OUTPUT);
-  pinMode(LED_PIN_B,OUTPUT); 
+  pinMode(LED_PIN_A, OUTPUT);
+  pinMode(LED_PIN_B, OUTPUT);
 
-  //pinMode(PIEZO_PIN,OUTPUT);
+  // pinMode(PIEZO_PIN,OUTPUT);
 
   solenoids.init();
 
@@ -69,187 +68,153 @@ void setup() {
   SCmd.addCommand("beep", beep);
   SCmd.addCommand("autoRead", autoRead);
   SCmd.addCommand("autoTest", autoTest);
-  SCmd.addDefaultHandler(unrecognized);  // Handler for command that isn't matched 
-  
-  attachInterrupt(0, encoderAChange, RISING); //Attaching ENC_PIN_A(=2)
-  
-  //analogWrite(PIEZO_PIN, 100);
+  SCmd.addDefaultHandler(
+      unrecognized); // Handler for command that isn't matched
+
+  attachInterrupt(0, encoderAChange, RISING); // Attaching ENC_PIN_A(=2)
+
+  // analogWrite(PIEZO_PIN, 100);
   DEBUG_PRINT("ready");
 }
 
-
 /*
  *  MAIN LOOP
- */ 
-void loop() {
-  SCmd.readSerial(); 
-}
-
-
-/*
- * 
  */
-void encoderAChange()
-{
-    beep();
+void loop() {
+  SCmd.readSerial();
 }
-
 
 /*
  *
  */
-void setSingle()    
-{
-  int aNumber;  
+void encoderAChange() {
+  beep();
+}
+
+/*
+ *
+ */
+void setSingle() {
+  int aNumber;
   char *arg;
 
   byte solenoidNumber = 0;
-  byte solenoidState  = 0;
+  byte solenoidState = 0;
 
-  arg = SCmd.next(); 
-  if (arg != NULL) 
-  {
-    solenoidNumber=atoi(arg);
+  arg = SCmd.next();
+  if (arg != NULL) {
+    solenoidNumber = atoi(arg);
     arg = SCmd.next();
-    if(arg != NULL)
-    {
+    if (arg != NULL) {
       solenoidState = atoi(arg);
-      if( 0 == solenoidState || 1 == solenoidState )
-      {
-        solenoids.setSolenoid( solenoidNumber, solenoidState );
-      }
-      else
-      {
+      if (0 == solenoidState || 1 == solenoidState) {
+        solenoids.setSolenoid(solenoidNumber, solenoidState);
+      } else {
         DEBUG_PRINT("invalid arguments");
       }
     }
   }
 }
 
-
 /*
  *
  */
-void setAll()
-{
-  int aNumber;  
+void setAll() {
+  int aNumber;
   char *arg;
 
-  byte lowByte        = 0;
-  byte highByte       = 0;
-  uint16 solenoidState  = 0;
- 
-  arg = SCmd.next(); 
-  if(arg != NULL)
-  {
+  byte lowByte = 0;
+  byte highByte = 0;
+  uint16 solenoidState = 0;
+
+  arg = SCmd.next();
+  if (arg != NULL) {
     highByte = atoi(arg);
 
-    arg = SCmd.next(); 
-    if(arg != NULL)
-    {
+    arg = SCmd.next();
+    if (arg != NULL) {
       lowByte = atoi(arg);
       solenoidState = (highByte << 8) + lowByte;
-      solenoids.setSolenoids( solenoidState );    
-    }    
+      solenoids.setSolenoids(solenoidState);
+    }
   }
 }
 
-
 /*
  *
  */
-void readEOLsensors()
-{
+void readEOLsensors() {
   Serial.print("  EOL_L: ");
   Serial.print(analogRead(EOL_PIN_L));
   Serial.print("  EOL_R: ");
   Serial.print(analogRead(EOL_PIN_R));
 }
 
-
 /*
  *
  */
-void readEncoders()
-{
+void readEncoders() {
   Serial.print("  ENC_A: ");
-  if( HIGH == digitalRead(ENC_PIN_A) )
-  {
+  if (HIGH == digitalRead(ENC_PIN_A)) {
     Serial.print("HIGH");
-  }
-  else
-  {
-    Serial.print("LOW");   
+  } else {
+    Serial.print("LOW");
   }
 
   Serial.print("  ENC_B: ");
-  if( HIGH == digitalRead(ENC_PIN_B) )
-  {
+  if (HIGH == digitalRead(ENC_PIN_B)) {
     Serial.print("HIGH");
-  }
-  else
-  {
+  } else {
     Serial.print("LOW");
   }
 
   Serial.print("  ENC_C: ");
-  if( HIGH == digitalRead(ENC_PIN_C) )
-  {
+  if (HIGH == digitalRead(ENC_PIN_C)) {
     Serial.print("HIGH");
-  }
-  else
-  {
+  } else {
     Serial.print("LOW");
   }
 }
 
+/*
+ *
+ */
+void beep() {
+  beeper.ready();
+}
 
 /*
  *
  */
-void beep()
-{
-  beeper.ready();
-}
-
-
- /*
- *
- */
-void autoRead()
-{
-  while(1)
-  {
+void autoRead() {
+  while (1) {
     readEOLsensors();
     readEncoders();
     delay(1000);
     Serial.println();
-    //TODO fix clearscreen Serial.write(0x0C);
+    // TODO fix clearscreen Serial.write(0x0C);
   }
 }
 
-void autoTest()
-{
-  while(1)
-  {
-      digitalWrite(LED_PIN_A, 1);
-      digitalWrite(LED_PIN_B, 1);
-      solenoids.setSolenoids( 0xAAAA ); 
-      delay(500);
+void autoTest() {
+  while (1) {
+    digitalWrite(LED_PIN_A, 1);
+    digitalWrite(LED_PIN_B, 1);
+    solenoids.setSolenoids(0xAAAA);
+    delay(500);
 
-      digitalWrite(LED_PIN_A, 0);
-      digitalWrite(LED_PIN_B, 0);
-      solenoids.setSolenoids( 0x5555 ); 
-      delay(500);
+    digitalWrite(LED_PIN_A, 0);
+    digitalWrite(LED_PIN_B, 0);
+    solenoids.setSolenoids(0x5555);
+    delay(500);
   }
 }
-
 
 /*
- * This gets set as the default handler, and gets called when no other command matches. 
+ * This gets set as the default handler, and gets called when no other command
+ * matches.
  */
-void unrecognized()
-{
+void unrecognized() {
   Serial.println("setSingle [0..15] [1/0]");
   Serial.println("setAll [0..255] [0..255]");
   Serial.println("readEOLsensors");

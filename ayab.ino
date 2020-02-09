@@ -19,15 +19,14 @@ This file is part of AYAB.
     http://ayab-knitting.com
 */
 
-
 /*
  * INCLUDES
  */
 #include "Arduino.h"
 #include "SerialCommand.h"
 
-#include "./libraries/PacketSerial/src/PacketSerial.h"
 #include "./debug.h"
+#include "./libraries/PacketSerial/src/PacketSerial.h"
 #include "./settings.h"
 
 #include "./knitter.h"
@@ -36,12 +35,11 @@ This file is part of AYAB.
  * DEFINES
  */
 
-
 /*
  *  DECLARATIONS
- */ 
-Knitter     *knitter;
-byte        lineBuffer[25];
+ */
+Knitter *knitter;
+byte lineBuffer[25];
 
 SLIPPacketSerial packetSerial;
 
@@ -55,9 +53,9 @@ void isr_encA() {
 /*
  * Serial Command handling
  */
-void h_reqStart(const uint8_t* buffer, size_t size) {
+void h_reqStart(const uint8_t *buffer, size_t size) {
   byte _startNeedle = (byte)buffer[1];
-  byte _stopNeedle  = (byte)buffer[2];
+  byte _stopNeedle = (byte)buffer[2];
   bool _continuousReportingEnabled = (bool)buffer[3];
 
   // TODO verify operation
@@ -67,10 +65,8 @@ void h_reqStart(const uint8_t* buffer, size_t size) {
     lineBuffer[i] = 0xFF;
   }
 
-  bool _success = knitter->startOperation(_startNeedle,
-                                          _stopNeedle,
-                                          _continuousReportingEnabled,
-                                          &(lineBuffer[0]));
+  bool _success = knitter->startOperation(
+      _startNeedle, _stopNeedle, _continuousReportingEnabled, &(lineBuffer[0]));
 
   uint8_t payload[2];
   payload[0] = cnfStart_msgid;
@@ -78,32 +74,31 @@ void h_reqStart(const uint8_t* buffer, size_t size) {
   packetSerial.send(payload, 2);
 }
 
-
-void h_cnfLine(const uint8_t* buffer, size_t size) {
+void h_cnfLine(const uint8_t *buffer, size_t size) {
   byte _lineNumber = 0;
   byte _flags = 0;
-  byte _crc8  = 0;
+  byte _crc8 = 0;
   bool _flagLastLine = false;
 
   _lineNumber = (byte)buffer[1];
 
   for (int i = 0; i < 25; i++) {
     // Values have to be inverted because of needle states
-    lineBuffer[i] = ~(byte)buffer[i+2];
+    lineBuffer[i] = ~(byte)buffer[i + 2];
   }
   _flags = (byte)buffer[27];
-  _crc8  = (byte)buffer[28];
+  _crc8 = (byte)buffer[28];
 
   // TODO insert CRC8 check
 
   if (knitter->setNextLine(_lineNumber)) {
     // Line was accepted
     _flagLastLine = bitRead(_flags, 0);
-    if ( _flagLastLine ) {
+    if (_flagLastLine) {
       knitter->setLastLine();
     }
   }
- }
+}
 
 void h_reqInfo() {
   uint8_t payload[4];
@@ -115,14 +110,13 @@ void h_reqInfo() {
 }
 
 void h_reqTest() {
-    bool _success = knitter->startTest();
+  bool _success = knitter->startTest();
 
-    uint8_t payload[2];
-    payload[0] = cnfTest_msgid;
-    payload[1] = _success;
-    packetSerial.send(payload, 2);
+  uint8_t payload[2];
+  payload[0] = cnfTest_msgid;
+  payload[1] = _success;
+  packetSerial.send(payload, 2);
 }
-
 
 void h_unrecognized() {
   return;
@@ -131,28 +125,27 @@ void h_unrecognized() {
 /*! Callback for PacketSerial
  *
  */
-void onPacketReceived(const uint8_t* buffer, size_t size)
-{
+void onPacketReceived(const uint8_t *buffer, size_t size) {
   switch (buffer[0]) {
-    case reqStart_msgid:
-      h_reqStart(buffer, size);
-      break;
+  case reqStart_msgid:
+    h_reqStart(buffer, size);
+    break;
 
-    case cnfLine_msgid:
-      h_cnfLine(buffer, size);
-      break;
+  case cnfLine_msgid:
+    h_cnfLine(buffer, size);
+    break;
 
-    case reqInfo_msgid:
-      h_reqInfo();
-      break;
+  case reqInfo_msgid:
+    h_reqInfo();
+    break;
 
-    case reqTest_msgid:
-      h_reqTest();
-      break;
+  case reqTest_msgid:
+    h_reqTest();
+    break;
 
-    default:
-      h_unrecognized();
-      break;
+  default:
+    h_unrecognized();
+    break;
   }
 }
 
@@ -179,7 +172,6 @@ void setup() {
 
   knitter = new Knitter(&packetSerial);
 }
-
 
 void loop() {
   knitter->fsm();

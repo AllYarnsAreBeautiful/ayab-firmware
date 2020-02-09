@@ -22,32 +22,32 @@ This file is part of AYAB.
 #ifndef ENCODERS_H_
 #define ENCODERS_H_
 
-#include "Arduino.h"
 #include "./settings.h"
+#include "Arduino.h"
 
-class Encoders{
- public:
+class Encoders {
+public:
   Encoders();
 
   void encA_interrupt();
 
-  byte          getPosition();
-  Beltshift_t   getBeltshift();
-  Direction_t   getDirection();
-  Direction_t   getHallActive();
-  Carriage_t    getCarriage();
+  byte getPosition();
+  Beltshift_t getBeltshift();
+  Direction_t getDirection();
+  Direction_t getHallActive();
+  Carriage_t getCarriage();
 
   uint16 getHallValue(Direction_t);
 
- private:
-  Direction_t   m_direction;
-  Direction_t   m_hallActive;
-  Beltshift_t   m_beltShift;
-  Carriage_t    m_carriage;
-  byte          m_encoderPos;
+private:
+  Direction_t m_direction;
+  Direction_t m_hallActive;
+  Beltshift_t m_beltShift;
+  Carriage_t m_carriage;
+  byte m_encoderPos;
 
   void encA_rising();
   void encA_falling();
 };
 
-#endif  // ENCODERS_H_
+#endif // ENCODERS_H_
