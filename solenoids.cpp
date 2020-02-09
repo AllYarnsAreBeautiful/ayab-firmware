@@ -29,7 +29,7 @@ This file is part of AYAB.
 #ifndef HARD_I2C
 #define HARD_I2C
 #endif
-#include "Alt_MCP23008.h"
+#include "./libraries/Alt_MCP23008/Alt_MCP23008.h"
 #include <Wire.h>
 
 Alt_MCP23008 mcp_0;

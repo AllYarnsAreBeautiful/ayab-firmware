@@ -23,7 +23,7 @@ This file is part of AYAB.
  * INCLUDES
  */
 #include "Arduino.h"
-#include "SerialCommand.h"
+#include "./libraries/SerialCommand/SerialCommand.h"
 
 #include "./debug.h"
 #include "./libraries/PacketSerial/src/PacketSerial.h"
