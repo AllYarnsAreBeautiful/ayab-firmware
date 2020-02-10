@@ -19,35 +19,30 @@ This file is part of AYAB.
     http://ayab-knitting.com
 */
 
-#include "Arduino.h"
 #include "./beeper.h"
-
+#include "Arduino.h"
 
 Beeper::Beeper() {
   // Intentionally left blank
 }
 
-
 void Beeper::ready() {
   beep(5);
 }
-
 
 void Beeper::finishedLine() {
   beep(3);
 }
 
-
 void Beeper::endWork() {
   beep(10);
 }
-
 
 /*
  * PRIVATE METHODS
  */
 void Beeper::beep(byte length) {
-  for (int i=0; i < length; i++) {
+  for (int i = 0; i < length; i++) {
     analogWrite(PIEZO_PIN, 0);
     delay(BEEPDELAY);
     analogWrite(PIEZO_PIN, 20);

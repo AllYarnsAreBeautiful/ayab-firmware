@@ -19,18 +19,16 @@ This file is part of AYAB.
     http://ayab-knitting.com
 */
 
-#include "Arduino.h"
 #include "./encoders.h"
-
+#include "Arduino.h"
 
 Encoders::Encoders() {
-  m_direction    = NoDirection;
-  m_hallActive   = NoDirection;
-  m_beltShift    = Unknown;
-  m_carriage     = NoCarriage;
-  m_encoderPos   = 0x00;
+  m_direction = NoDirection;
+  m_hallActive = NoDirection;
+  m_beltShift = Unknown;
+  m_carriage = NoCarriage;
+  m_encoderPos = 0x00;
 }
-
 
 void Encoders::encA_interrupt() {
   m_hallActive = NoDirection;
@@ -48,7 +46,7 @@ void Encoders::encA_interrupt() {
 
 /*
  * PRIVATE METHODS
- */ 
+ */
 void Encoders::encA_rising() {
   // Direction only decided on rising edge of encoder A
   m_direction = digitalRead(ENC_PIN_B) ? Right : Left;
@@ -62,8 +60,7 @@ void Encoders::encA_rising() {
 
   // In front of Left Hall Sensor?
   uint16 hallValue = analogRead(EOL_PIN_L);
-  if (hallValue < FILTER_L_MIN
-     || hallValue > FILTER_L_MAX) {
+  if (hallValue < FILTER_L_MIN || hallValue > FILTER_L_MAX) {
     m_hallActive = Left;
 
     // TODO(chris): Verify these decisions!
@@ -85,19 +82,17 @@ void Encoders::encA_rising() {
   }
 }
 
-
 void Encoders::encA_falling() {
   // Update carriage position
   if (Left == m_direction) {
     if (m_encoderPos > END_LEFT) {
-        m_encoderPos--;
+      m_encoderPos--;
     }
   }
 
   // In front of Right Hall Sensor?
   uint16 hallValue = analogRead(EOL_PIN_R);
-  if (hallValue < FILTER_R_MIN
-      || hallValue > FILTER_R_MAX) {
+  if (hallValue < FILTER_R_MIN || hallValue > FILTER_R_MAX) {
     m_hallActive = Right;
 
     if (hallValue < FILTER_R_MIN) {
@@ -134,11 +129,11 @@ Carriage_t Encoders::getCarriage() {
 
 uint16 Encoders::getHallValue(Direction_t pSensor) {
   switch (pSensor) {
-    case Left:
-      return analogRead(EOL_PIN_L);
-    case Right:
-      return analogRead(EOL_PIN_R);
-    default:
-      return 0;
+  case Left:
+    return analogRead(EOL_PIN_L);
+  case Right:
+    return analogRead(EOL_PIN_R);
+  default:
+    return 0;
   }
 }

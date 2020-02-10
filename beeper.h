@@ -22,14 +22,14 @@ This file is part of AYAB.
 #ifndef BEEPER_H_
 #define BEEPER_H_
 
-#include "Arduino.h"
 #include "./settings.h"
+#include "Arduino.h"
 
 /*!
  *  Class to actuate a beeper connected to PIEZO_PIN
  */
 class Beeper {
- public:
+public:
   Beeper();
 
   /*! Beep to indicate readiness */
@@ -39,8 +39,8 @@ class Beeper {
   /*! Beep to indicate the end the knitting pattern */
   void endWork();
 
- private:
+private:
   void beep(byte length);
 };
 
-#endif  // BEEPER_H_
+#endif // BEEPER_H_

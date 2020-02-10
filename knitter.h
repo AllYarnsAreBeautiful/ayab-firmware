@@ -22,35 +22,33 @@ This file is part of AYAB.
 #ifndef KNITTER_H_
 #define KNITTER_H_
 
-#include "Arduino.h"
-#include "./settings.h"
 #include "./debug.h"
+#include "./settings.h"
+#include "Arduino.h"
 
+#include "./beeper.h"
+#include "./encoders.h"
 #include "./libraries/PacketSerial/src/PacketSerial.h"
 #include "./solenoids.h"
-#include "./encoders.h"
-#include "./beeper.h"
 
 class Knitter {
- public:
+public:
   Knitter();
-  Knitter(SLIPPacketSerial*);
+  Knitter(SLIPPacketSerial *);
 
   void isr();
   void fsm();
-  bool startOperation(byte startNeedle,
-                      byte stopNeedle,
-                      bool continuousReportingEnabled,
-                      byte(*line));
+  bool startOperation(byte startNeedle, byte stopNeedle,
+                      bool continuousReportingEnabled, byte(*line));
   bool startTest(void);
   bool setNextLine(byte lineNumber);
   void setLastLine();
 
- private:
-  SLIPPacketSerial* m_packetSerial;
-  Solenoids   m_solenoids;
-  Encoders    m_encoders;
-  Beeper      m_beeper;
+private:
+  SLIPPacketSerial *m_packetSerial;
+  Solenoids m_solenoids;
+  Encoders m_encoders;
+  Beeper m_beeper;
 
   OpState_t m_opState;
 
@@ -66,16 +64,15 @@ class Knitter {
   byte(*m_lineBuffer);
 
   // current machine state
-  byte        m_position;
+  byte m_position;
   Direction_t m_direction;
   Direction_t m_hallActive;
   Beltshift_t m_beltshift;
-  Carriage_t  m_carriage;
+  Carriage_t m_carriage;
 
   // Resulting needle data
-  byte  m_solenoidToSet;
-  byte  m_pixelToSet;
-
+  byte m_solenoidToSet;
+  byte m_pixelToSet;
 
   void state_init();
   void state_ready();
@@ -89,4 +86,4 @@ class Knitter {
   void indState(bool initState = false);
 };
 
-#endif  // KNITTER_H_
+#endif // KNITTER_H_
