@@ -10,6 +10,6 @@ cmake ..
 make
 GTEST_COLOR=1 ctest --output-on-failure .
 cd ../..
-gcovr -r . -e test_* -e arduino_mock* --html-details ./test/build/coverage.html --html-title ayab-test
+gcovr -r . -e test_* -e arduino_mock* --html-details ./test/build/coverage.html
 gcovr -r . -e test_* -e arduino_mock*
 gcovr -r . --branches -e test_* -e arduino_mock*
