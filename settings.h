@@ -28,14 +28,16 @@ This file is part of AYAB.
 
 //  #define DBG_NOMACHINE  // Turn on to use DBG_BTN as EOL Trigger
 
-#ifdef KH910
+#if !defined(AYAB_QUIET)
+#if defined(KH910)
 #warning USING MACHINETYPE KH910
-#else
-#ifdef KH930
+#elif defined(KH930)
 #warning USING MACHINETYPE KH930
-#else
-#error KH910 or KH930 has the be defined as preprocessor variable!
-#endif
+#endif // machine warnings
+#endif // AYAB_QUIET
+
+#if !defined(KH910) && !defined(KH930)
+#error "KH910 or KH930 has the be defined as preprocessor variable!"
 #endif
 
 // Should be calibrated to each device

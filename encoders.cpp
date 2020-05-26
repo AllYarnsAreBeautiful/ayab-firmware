@@ -28,12 +28,12 @@ Encoders::Encoders() {
   m_beltShift = Unknown;
   m_carriage = NoCarriage;
   m_encoderPos = 0x00;
+  _oldState = false;
 }
 
 void Encoders::encA_interrupt() {
   m_hallActive = NoDirection;
 
-  static bool _oldState = false;
   bool _curState = digitalRead(ENC_PIN_A);
 
   if (!_oldState && _curState) {

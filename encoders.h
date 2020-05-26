@@ -48,6 +48,7 @@ private:
 
   void encA_rising();
   void encA_falling();
+  bool _oldState;
 };
 
 #endif // ENCODERS_H_
