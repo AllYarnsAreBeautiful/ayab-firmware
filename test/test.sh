@@ -4,7 +4,7 @@ set -e
 parent_path=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
 cd "$parent_path"
 
-# cmake -B ./build -S .
+cmake -B ./build -S .
 cmake --build ./build
 cd ./build
 GTEST_COLOR=1 ctest --output-on-failure .
