@@ -8,6 +8,7 @@ matrix:
         - ubuntu-toolchain-r-test
         packages:
         - g++
+        - gcovr
     env:
     - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
     before_install:
