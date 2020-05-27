@@ -1,9 +1,7 @@
-cmake_minimum_required(VERSION 2.8.8)
+cmake_minimum_required(VERSION 3.1)
 project(ayab_test)
 
 set(CMAKE_CXX_STANDARD 11 CACHE STRING "Set the C++ standard to be used for compiling")
-
-message("building all tests")
 
 find_package(Threads REQUIRED)
 
@@ -44,12 +42,6 @@ target_link_libraries(${PROJECT_NAME}
     )
 
 add_dependencies(${PROJECT_NAME} arduino_mock)
-
-# add_custom_command(TARGET ${PROJECT_NAME}
-#     POST_BUILD
-#     COMMAND gcovr -r . -e test_* -e arduino_mock*
-#     COMMAND gcovr -r . --branches -e test_* -e arduino_mock*
-#     )
 
 enable_testing()
 add_test(test_all ${PROJECT_NAME})

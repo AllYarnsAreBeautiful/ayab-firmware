@@ -1,5 +1,4 @@
 build/
-Testing/
 .dep/
 *.o
 *.hex

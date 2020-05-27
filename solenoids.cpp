@@ -29,7 +29,7 @@ This file is part of AYAB.
 #ifndef HARD_I2C
 #define HARD_I2C
 #endif
-#include "./libraries/Alt_MCP23008/Alt_MCP23008.h"
+#include <Alt_MCP23008.h>
 #include <Wire.h>
 
 Alt_MCP23008 mcp_0;
@@ -40,7 +40,7 @@ Alt_MCP23008 mcp_1;
 #ifndef SOFT_I2C
 #define SOFT_I2C
 #endif
-#include <SoftI2CMaster.h>
+#include "./libraries/SoftI2CMaster/SoftI2CMaster.h"
 SoftI2CMaster Wire(A4, A5, 1);
 #else
 #warning untested board - please check your I2C ports
