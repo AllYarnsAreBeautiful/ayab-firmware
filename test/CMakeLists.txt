@@ -19,6 +19,9 @@ add_executable(${PROJECT_NAME}
 
     ${PROJECT_SOURCE_DIR}/../encoders.cpp
     ${PROJECT_SOURCE_DIR}/./test_encoders.cpp
+
+    ${PROJECT_SOURCE_DIR}/../beeper.cpp
+    ${PROJECT_SOURCE_DIR}/./test_beeper.cpp
     )
 
 target_compile_definitions(${PROJECT_NAME}
