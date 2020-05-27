@@ -9,7 +9,7 @@ add_subdirectory(arduino_mock)
 
 # Includes arduino-mock files directly inplace of original Arduino headers.
 set(COMMON_INCLUDES
-    ${ARDUINO_MOCK_INCLUDE_DIRS}/arduino-mock
+    ${ARDUINO_MOCK_INCLUDE_DIRS}
     ${ARDUINO_MOCK_LIBS_DIR}/lib/gtest/gtest/src/gtest/googletest/include
     ${ARDUINO_MOCK_LIBS_DIR}/lib/gtest/gtest/src/gtest/googlemock/include
     ${PROJECT_SOURCE_DIR}/mocks
@@ -28,6 +28,9 @@ set(COMMON_SOURCES
 
     ${PROJECT_SOURCE_DIR}/../solenoids.cpp
     ${PROJECT_SOURCE_DIR}/./test_solenoids.cpp
+
+    ${PROJECT_SOURCE_DIR}/../knitter.cpp
+    ${PROJECT_SOURCE_DIR}/./test_knitter.cpp
     )
 set(COMMON_DEFINES
     ARDUINO=106

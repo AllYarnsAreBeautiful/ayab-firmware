@@ -46,12 +46,6 @@ Alt_MCP23008 mcp_1;
 #endif
 #include <SoftI2CMaster.h>
 
-#ifdef AYAB_TESTS
-// TODO(sl): Where should these be coming from? Arduino mock?
-#define A4 0
-#define A5 0
-#endif
-
 SoftI2CMaster SoftI2C(A4, A5, 1);
 #else
 #warning untested board - please check your I2C ports

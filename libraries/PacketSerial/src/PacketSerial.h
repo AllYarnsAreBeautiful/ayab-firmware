@@ -87,7 +87,7 @@ public:
     {
         Serial.begin(speed);
         #if ARDUINO >= 100 && !defined(CORE_TEENSY)
-        while (!Serial) {;}
+        while (!Serial.available()) {;}
         #endif
         setStream(&Serial);
     }
