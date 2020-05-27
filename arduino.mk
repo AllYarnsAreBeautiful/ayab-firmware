@@ -169,17 +169,17 @@
 #$(error ARDUINODIR is not set correctly; arduino software not found)
 #endif
 
-ARDUINODIR := ${HOME}/tools/arduino-1.0.6
+ARDUINODIR := ${HOME}/tools/arduino-1.6.13
 
 # default arduino version
-ARDUINOCONST ?= 106
+ARDUINOCONST ?= 1613
 
 # default path for avr tools
 AVRTOOLSPATH ?= $(subst :, , $(PATH)) $(ARDUINODIR)/hardware/tools \
 	$(ARDUINODIR)/hardware/tools/avr/bin
 
 # default path to find libraries
-LIBRARYPATH ?= libraries libs $(SKETCHBOOKDIR)/libraries $(ARDUINODIR)/libraries
+LIBRARYPATH ?= libraries libs $(SKETCHBOOKDIR)/libraries $(ARDUINODIR)/libraries $(ARDUINODIR)/hardware/arduino/avr/libraries
 
 # default serial device to a poor guess (something that might be an arduino)
 SERIALDEVGUESS := 0
@@ -212,8 +212,9 @@ endif
 endif
 
 # obtain board parameters from the arduino boards.txt file
-BOARDSFILE := $(ARDUINODIR)/hardware/arduino/boards.txt
+BOARDSFILE := $(ARDUINODIR)/hardware/arduino/avr/boards.txt
 readboardsparam = $(shell sed -ne "s/$(BOARD).$(1)=\(.*\)/\1/p" $(BOARDSFILE))
+$(info $(readboardsparam))
 BOARD_BUILD_MCU := $(call readboardsparam,build.mcu)
 BOARD_BUILD_FCPU := $(call readboardsparam,build.f_cpu)
 BOARD_BUILD_VARIANT := $(call readboardsparam,build.variant)
@@ -241,7 +242,7 @@ endif
 ifeq "$(BOARD_BUILD_MCU)" ""
 ifneq "$(MAKECMDGOALS)" "boards"
 ifneq "$(MAKECMDGOALS)" "clean"
-$(error BOARD is invalid.  Type 'make boards' to see possible values)
+$(error BOARD '$(BOARD)' is invalid.  Type 'make boards' to see possible values)
 endif
 endif
 endif
@@ -277,10 +278,11 @@ AVRDUDE := $(call findsoftware,avrdude)
 AVRSIZE := $(call findsoftware,avr-size)
 
 # directories
-ARDUINOCOREDIR := $(ARDUINODIR)/hardware/arduino/cores/arduino
+ARDUINOCOREDIR := $(ARDUINODIR)/hardware/arduino/avr/cores/arduino
 LIBRARYDIRS := $(foreach lib, $(LIBRARIES), \
 	$(firstword $(wildcard $(addsuffix /$(lib), $(LIBRARYPATH)))))
 LIBRARYDIRS += $(addsuffix /utility, $(LIBRARYDIRS))
+LIBRARYDIRS += $(addsuffix /src, $(LIBRARYDIRS))
 
 # files
 TARGET := $(if $(TARGET),$(TARGET),a.out)
@@ -309,8 +311,9 @@ CPPFLAGS += -mmcu=$(BOARD_BUILD_MCU)
 CPPFLAGS += -DF_CPU=$(BOARD_BUILD_FCPU) -DARDUINO=$(ARDUINOCONST)
 CPPFLAGS += -DUSB_VID=$(BOARD_USB_VID) -DUSB_PID=$(BOARD_USB_PID)
 CPPFLAGS += -I. -Iutil -Iutility -I $(ARDUINOCOREDIR)
-CPPFLAGS += -I $(ARDUINODIR)/hardware/arduino/variants/$(BOARD_BUILD_VARIANT)/
+CPPFLAGS += -I $(ARDUINODIR)/hardware/arduino/avr/variants/$(BOARD_BUILD_VARIANT)/
 CPPFLAGS += $(addprefix -I , $(LIBRARYDIRS))
+CPPFLAGS += -std=gnu++11
 
 ifeq "$(MACHINETYPE)" "KH910"
 CPPFLAGS += -DKH910
