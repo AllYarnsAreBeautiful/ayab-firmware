@@ -31,11 +31,11 @@ This file is part of AYAB.
 #ifndef HARD_I2C
 #define HARD_I2C
 #endif
-#include <Alt_MCP23008.h>
+#include <Adafruit_MCP23008.h>
 #include <Wire.h>
 
-Alt_MCP23008 mcp_0;
-Alt_MCP23008 mcp_1;
+Adafruit_MCP23008 mcp_0;
+Adafruit_MCP23008 mcp_1;
 #elif defined(__AVR_ATmega2560__) || defined(__AVR_ATmega1280__)
 // Arduino Mega
 #if !defined(AYAB_QUIET)

@@ -14,7 +14,7 @@ set(COMMON_INCLUDES
     ${ARDUINO_MOCK_LIBS_DIR}/lib/gtest/gtest/src/gtest/googlemock/include
     ${PROJECT_SOURCE_DIR}/mocks
     # External libraries
-    ${PROJECT_SOURCE_DIR}/../libraries/Alt_MCP23008
+    ${PROJECT_SOURCE_DIR}/../libraries/MCP23008
     ${PROJECT_SOURCE_DIR}/../libraries/SoftI2CMaster
     )
 set(COMMON_SOURCES
@@ -54,7 +54,7 @@ set(COMMON_LINKER_FLAGS
 add_executable(${PROJECT_NAME}_KH930_Uno
     ${COMMON_SOURCES}
     # External libraries
-    ${PROJECT_SOURCE_DIR}/../libraries/Alt_MCP23008/Alt_MCP23008.cpp
+    ${PROJECT_SOURCE_DIR}/../libraries/MCP23008/Adafruit_MCP23008.cpp
     )
 target_include_directories(${PROJECT_NAME}_KH930_Uno
     PRIVATE
@@ -78,7 +78,7 @@ add_dependencies(${PROJECT_NAME}_KH930_Uno arduino_mock)
 add_executable(${PROJECT_NAME}_KH910_Uno
     ${COMMON_SOURCES}
     # External libraries
-    ${PROJECT_SOURCE_DIR}/../libraries/Alt_MCP23008/Alt_MCP23008.cpp
+    ${PROJECT_SOURCE_DIR}/../libraries/MCP23008/Adafruit_MCP23008.cpp
     )
 target_include_directories(${PROJECT_NAME}_KH910_Uno
     PRIVATE
@@ -147,7 +147,7 @@ target_link_libraries(${PROJECT_NAME}_KH910_Mega
 add_dependencies(${PROJECT_NAME}_KH910_Mega arduino_mock)
 
 enable_testing()
-add_test(test_all ${PROJECT_NAME}_KH930_Uno)
-add_test(test_all ${PROJECT_NAME}_KH910_Uno)
-add_test(test_all ${PROJECT_NAME}_KH930_Mega)
-add_test(test_all ${PROJECT_NAME}_KH910_Mega)
+add_test(test_KH930_Uno ${PROJECT_NAME}_KH930_Uno)
+add_test(test_KH910_Uno ${PROJECT_NAME}_KH910_Uno)
+add_test(test_KH930_Mega ${PROJECT_NAME}_KH930_Mega)
+add_test(test_KH910_Mega ${PROJECT_NAME}_KH910_Mega)
