@@ -37,7 +37,7 @@ This file is part of AYAB.
 #endif // AYAB_QUIET
 
 #if !defined(KH910) && !defined(KH930)
-#error "KH910 or KH930 has the be defined as preprocessor variable!"
+#error "KH910 or KH930 has to be defined as a preprocessor variable!"
 #endif
 
 // Should be calibrated to each device
