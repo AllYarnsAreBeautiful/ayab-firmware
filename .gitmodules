@@ -1,3 +1,6 @@
 [submodule "libraries/MCP23008"]
 	path = libraries/MCP23008
 	url = git@github.com:adafruit/Adafruit-MCP23008-library.git
+[submodule "libraries/PacketSerial"]
+	path = libraries/PacketSerial
+	url = git@github.com:bakercp/PacketSerial.git
