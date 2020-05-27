@@ -110,7 +110,7 @@ TEST_F(EncodersTest, test_encA_falling_in_front) {
 
   EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_A)).WillOnce(Return(false));
   EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_R))
-      .WillOnce(Return(FILTER_R_MIN - 1));
+      .WillOnce(Return(FILTER_R_MAX + 1));
   // Beltshift is shifted
   EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_C)).WillOnce(Return(true));
 
@@ -119,7 +119,7 @@ TEST_F(EncodersTest, test_encA_falling_in_front) {
   ASSERT_EQ(e.getDirection(), Left);
   ASSERT_EQ(e.getHallActive(), Right);
   ASSERT_EQ(e.getPosition(), 227);
-  ASSERT_EQ(e.getCarriage(), K);
+  ASSERT_EQ(e.getCarriage(), NoCarriage);
   ASSERT_EQ(e.getBeltshift(), Shifted);
 }
 
