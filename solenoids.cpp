@@ -40,7 +40,7 @@ Alt_MCP23008 mcp_1;
 #ifndef SOFT_I2C
 #define SOFT_I2C
 #endif
-#include "./libraries/SoftI2CMaster/SoftI2CMaster.h"
+#include <SoftI2CMaster.h>
 SoftI2CMaster Wire(A4, A5, 1);
 #else
 #warning untested board - please check your I2C ports
