@@ -13,7 +13,8 @@ set(COMMON_INCLUDES
     ${ARDUINO_MOCK_LIBS_DIR}/lib/gtest/gtest/src/gtest/googletest/include
     ${ARDUINO_MOCK_LIBS_DIR}/lib/gtest/gtest/src/gtest/googlemock/include
     ${PROJECT_SOURCE_DIR}/mocks
-    # External libraries
+    )
+set(EXTERNAL_LIB_INCLUDES
     ${PROJECT_SOURCE_DIR}/../libraries/Adafruit_MCP23008
     ${PROJECT_SOURCE_DIR}/../libraries/SoftI2CMaster
     )
@@ -28,9 +29,6 @@ set(COMMON_SOURCES
 
     ${PROJECT_SOURCE_DIR}/../solenoids.cpp
     ${PROJECT_SOURCE_DIR}/./test_solenoids.cpp
-
-    ${PROJECT_SOURCE_DIR}/../knitter.cpp
-    ${PROJECT_SOURCE_DIR}/./test_knitter.cpp
     )
 set(COMMON_DEFINES
     ARDUINO=105
@@ -44,8 +42,9 @@ set(COMMON_FLAGS
     )
 set(COMMON_LINKER_FLAGS
     ${ARDUINO_MOCK_LIBS_DIR}/lib/gtest/gtest/src/gtest-build/googlemock/gtest/libgtest.a
-    ${ARDUINO_MOCK_LIBS_DIR}/lib/gtest/gtest/src/gtest-build/googlemock/libgmock.a
+    # For some reason the order of libarduinomock and libgmock matter, keep them this way.
     ${ARDUINO_MOCK_LIBS_DIR}/dist/lib/libarduino_mock.a
+    ${ARDUINO_MOCK_LIBS_DIR}/lib/gtest/gtest/src/gtest-build/googlemock/libgmock.a
     ${CMAKE_THREAD_LIBS_INIT}
     -lgcov
     )
@@ -65,6 +64,7 @@ add_executable(${PROJECT_NAME}_KH930_Uno
 target_include_directories(${PROJECT_NAME}_KH930_Uno
     PRIVATE
     ${COMMON_INCLUDES}
+    ${EXTERNAL_LIB_INCLUDES}
     )
 target_compile_definitions(${PROJECT_NAME}_KH930_Uno
     PRIVATE
@@ -89,6 +89,7 @@ add_executable(${PROJECT_NAME}_KH910_Uno
 target_include_directories(${PROJECT_NAME}_KH910_Uno
     PRIVATE
     ${COMMON_INCLUDES}
+    ${EXTERNAL_LIB_INCLUDES}
     )
 target_compile_definitions(${PROJECT_NAME}_KH910_Uno
     PRIVATE
@@ -113,6 +114,7 @@ add_executable(${PROJECT_NAME}_KH930_Mega
 target_include_directories(${PROJECT_NAME}_KH930_Mega
     PRIVATE
     ${COMMON_INCLUDES}
+    ${EXTERNAL_LIB_INCLUDES}
     )
 target_compile_definitions(${PROJECT_NAME}_KH930_Mega
     PRIVATE
@@ -137,6 +139,7 @@ add_executable(${PROJECT_NAME}_KH910_Mega
 target_include_directories(${PROJECT_NAME}_KH910_Mega
     PRIVATE
     ${COMMON_INCLUDES}
+    ${EXTERNAL_LIB_INCLUDES}
     )
 target_compile_definitions(${PROJECT_NAME}_KH910_Mega
     PRIVATE
@@ -152,8 +155,36 @@ target_link_libraries(${PROJECT_NAME}_KH910_Mega
     )
 add_dependencies(${PROJECT_NAME}_KH910_Mega arduino_mock)
 
+# Knitter (device independent)
+add_executable(${PROJECT_NAME}_knitter
+    ${PROJECT_SOURCE_DIR}/./test_all.cpp
+    ${PROJECT_SOURCE_DIR}/../knitter.cpp
+    ${PROJECT_SOURCE_DIR}/./test_knitter.cpp
+    ${PROJECT_SOURCE_DIR}/mocks/knitter/solenoids_mock.cpp
+    ${PROJECT_SOURCE_DIR}/mocks/knitter/encoders_mock.cpp
+    ${PROJECT_SOURCE_DIR}/mocks/knitter/beeper_mock.cpp
+)
+target_include_directories(${PROJECT_NAME}_knitter
+    PRIVATE
+    ${COMMON_INCLUDES}
+)
+target_compile_definitions(${PROJECT_NAME}_knitter
+    PRIVATE
+    ${COMMON_DEFINES}
+    KH910 # should not matter which one is chosen for knitter
+    __AVR_ATmega1280__ # should not matter which one is chosen for knitter
+)
+target_compile_options(${PROJECT_NAME}_knitter PRIVATE
+    ${COMMON_FLAGS}
+)
+target_link_libraries(${PROJECT_NAME}_knitter
+    ${COMMON_LINKER_FLAGS}
+)
+add_dependencies(${PROJECT_NAME}_knitter arduino_mock)
+
 enable_testing()
 add_test(test_KH930_Uno ${PROJECT_NAME}_KH930_Uno)
 add_test(test_KH910_Uno ${PROJECT_NAME}_KH910_Uno)
 add_test(test_KH930_Mega ${PROJECT_NAME}_KH930_Mega)
 add_test(test_KH910_Mega ${PROJECT_NAME}_KH910_Mega)
+add_test(test_knitter ${PROJECT_NAME}_knitter)

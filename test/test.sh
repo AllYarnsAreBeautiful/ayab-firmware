@@ -7,7 +7,7 @@ cd "$parent_path"
 mkdir -p build
 cd build
 cmake ..
-make
+make VERBOSE=1
 GTEST_COLOR=1 ctest --output-on-failure .
 cd ../..
 gcovr -r . -e test_* -e arduino_mock* -e libraries* --html-details -o ./test/build/coverage.html
