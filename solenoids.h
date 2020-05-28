@@ -30,6 +30,28 @@ This file is part of AYAB.
 #define I2Caddr_sol1_8 0x0
 #define I2Caddr_sol9_16 0x1
 
+// Determine board type
+#if defined(__AVR_ATmega168__) || defined(__AVR_ATmega328P__)
+// Regular Arduino
+#if !defined(AYAB_QUIET)
+#warning Using Hardware I2C
+#endif
+#ifndef HARD_I2C
+#define HARD_I2C
+#endif
+
+#elif defined(__AVR_ATmega2560__) || defined(__AVR_ATmega1280__)
+// Arduino Mega
+#if !defined(AYAB_QUIET)
+#warning Using Software I2C
+#endif
+#ifndef SOFT_I2C
+#define SOFT_I2C
+#endif
+#else
+#error "untested board - please check your I2C ports"
+#endif
+
 class Solenoids {
 public:
   Solenoids();
