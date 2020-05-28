@@ -22,14 +22,15 @@ This file is part of AYAB.
 #ifndef KNITTER_H_
 #define KNITTER_H_
 
-#include "./debug.h"
-#include "./settings.h"
-#include "Arduino.h"
+#include <Arduino.h>
 
-#include "./beeper.h"
-#include "./encoders.h"
-#include "./libraries/PacketSerial/src/PacketSerial.h"
-#include "./solenoids.h"
+#include "libraries/PacketSerial/src/PacketSerial.h"
+
+#include "beeper.h"
+#include "debug.h"
+#include "encoders.h"
+#include "settings.h"
+#include "solenoids.h"
 
 class Knitter {
 public:
