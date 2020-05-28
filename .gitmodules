@@ -4,3 +4,6 @@
 [submodule "libraries/PacketSerial"]
 	path = libraries/PacketSerial
 	url = git@github.com:bakercp/PacketSerial.git
+[submodule "libraries/SerialCommand"]
+	path = libraries/SerialCommand
+	url = git@github.com:kroimon/Arduino-SerialCommand.git

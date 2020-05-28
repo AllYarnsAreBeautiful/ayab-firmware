@@ -14,7 +14,7 @@ set(COMMON_INCLUDES
     ${ARDUINO_MOCK_LIBS_DIR}/lib/gtest/gtest/src/gtest/googlemock/include
     ${PROJECT_SOURCE_DIR}/mocks
     # External libraries
-    ${PROJECT_SOURCE_DIR}/../libraries/MCP23008
+    ${PROJECT_SOURCE_DIR}/../libraries/Adafruit_MCP23008
     ${PROJECT_SOURCE_DIR}/../libraries/SoftI2CMaster
     )
 set(COMMON_SOURCES
@@ -33,7 +33,7 @@ set(COMMON_SOURCES
     ${PROJECT_SOURCE_DIR}/./test_knitter.cpp
     )
 set(COMMON_DEFINES
-    ARDUINO=106
+    ARDUINO=1811
     AYAB_QUIET
     AYAB_TESTS
     )
@@ -49,12 +49,18 @@ set(COMMON_LINKER_FLAGS
     ${CMAKE_THREAD_LIBS_INIT}
     -lgcov
     )
+set(HARD_I2C_LIB
+    ${PROJECT_SOURCE_DIR}/../libraries/Adafruit_MCP23008/Adafruit_MCP23008.cpp
+    )
+set(SOFT_I2C_LIB
+    ${PROJECT_SOURCE_DIR}/../libraries/SoftI2CMaster/SoftI2CMaster.cpp
+    )
 
 # KH930 Uno
 add_executable(${PROJECT_NAME}_KH930_Uno
     ${COMMON_SOURCES}
     # External libraries
-    ${PROJECT_SOURCE_DIR}/../libraries/MCP23008/Adafruit_MCP23008.cpp
+    ${HARD_I2C_LIB}
     )
 target_include_directories(${PROJECT_NAME}_KH930_Uno
     PRIVATE
@@ -78,7 +84,7 @@ add_dependencies(${PROJECT_NAME}_KH930_Uno arduino_mock)
 add_executable(${PROJECT_NAME}_KH910_Uno
     ${COMMON_SOURCES}
     # External libraries
-    ${PROJECT_SOURCE_DIR}/../libraries/MCP23008/Adafruit_MCP23008.cpp
+    ${HARD_I2C_LIB}
     )
 target_include_directories(${PROJECT_NAME}_KH910_Uno
     PRIVATE
@@ -102,7 +108,7 @@ add_dependencies(${PROJECT_NAME}_KH910_Uno arduino_mock)
 add_executable(${PROJECT_NAME}_KH930_Mega
     ${COMMON_SOURCES}
     # External libraries
-    ${PROJECT_SOURCE_DIR}/../libraries/SoftI2CMaster/SoftI2CMaster.cpp
+    ${SOFT_I2C_LIB}
     )
 target_include_directories(${PROJECT_NAME}_KH930_Mega
     PRIVATE
@@ -126,7 +132,7 @@ add_dependencies(${PROJECT_NAME}_KH930_Mega arduino_mock)
 add_executable(${PROJECT_NAME}_KH910_Mega
     ${COMMON_SOURCES}
     # External libraries
-    ${PROJECT_SOURCE_DIR}/../libraries/SoftI2CMaster/SoftI2CMaster.cpp
+    ${SOFT_I2C_LIB}
     )
 target_include_directories(${PROJECT_NAME}_KH910_Mega
     PRIVATE
