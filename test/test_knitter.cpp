@@ -1,6 +1,9 @@
 #include "gtest/gtest.h"
 
 #include "../knitter.h"
+#include "knitter/beeper_mock.h"
+#include "knitter/encoders_mock.h"
+#include "knitter/solenoids_mock.h"
 
 using ::testing::Return;
 
@@ -8,14 +11,23 @@ class KnitterTest : public ::testing::Test {
 protected:
   void SetUp() override {
     arduinoMock = arduinoMockInstance();
+    beeperMock = beeperMockInstance();
+    solenoidsMock = solenoidsMockInstance();
+    encodersMock = encodersMockInstance();
     k = Knitter(test_packetSerial);
   }
 
   void TearDown() override {
     releaseArduinoMock();
+    releaseBeeperMock();
+    releaseSolenoidsMock();
+    releaseEncodersMock();
   }
 
   ArduinoMock *arduinoMock;
+  BeeperMock *beeperMock;
+  SolenoidsMock *solenoidsMock;
+  EncodersMock *encodersMock;
   Knitter k;
   SLIPPacketSerial *test_packetSerial;
 };
@@ -29,6 +41,7 @@ TEST_F(KnitterTest, test_constructor) {
 }
 
 TEST_F(KnitterTest, test_isr) {
+  EXPECT_CALL(*encodersMock, encA_interrupt).Times(1);
   k.isr();
 }
 
