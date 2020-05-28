@@ -1,5 +1,6 @@
 USER_LIB_PATH=./libraries
 
+TARGET = ayab
 ifeq "$(MACHINETYPE)" "KH910"
 CPPFLAGS += -DKH910
 else
