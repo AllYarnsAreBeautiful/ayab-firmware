@@ -1,6 +1,3 @@
-[submodule "libraries/MCP23008"]
-	path = libraries/Adafruit_MCP23008
-	url = git@github.com:adafruit/Adafruit-MCP23008-library.git
 [submodule "libraries/PacketSerial"]
 	path = libraries/PacketSerial
 	url = https://github.com/bakercp/PacketSerial.git
@@ -12,3 +9,4 @@
 	url = https://github.com/todbot/SoftI2CMaster.git
 [submodule "libraries/Adafruit_MCP23008"]
 	url = https://github.com/adafruit/Adafruit-MCP23008-library.git
+	path = libraries/Adafruit_MCP23008
