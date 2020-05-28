@@ -9,7 +9,6 @@ matrix:
         packages:
         - g++
         - gcovr
-        - arduino-mk
     env:
     - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
     before_install:
@@ -17,6 +16,11 @@ matrix:
     script:
     - "./test/test.sh"
   - language: c
+    dist: bionic
+    addons:
+        apt:
+            packages:
+            - arduino-mk
     before_install:
       - >-
         /sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_1.pid
@@ -24,12 +28,12 @@ matrix:
         1280x1024x16
       - sleep 3
       - 'export DISPLAY=:1.0'
-    install: true
-    script:
       - dpkg -L arduino-mk
       - find /usr -name Arduino.mk
       - 'export ARDMK_DIR=$(dirname $(find /usr -name Arduino.mk))'
       - 'export ARDUINO_DIR=$ARDMK_DIR'
+    install: true
+    script:
       - ./build.sh
       - ls build
       - cd build
