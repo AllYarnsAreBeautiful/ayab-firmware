@@ -7,3 +7,6 @@
 [submodule "libraries/SerialCommand"]
 	path = libraries/SerialCommand
 	url = git@github.com:kroimon/Arduino-SerialCommand.git
+[submodule "libraries/SoftI2CMaster"]
+	path = libraries/SoftI2CMaster
+	url = git@github.com:todbot/SoftI2CMaster.git
