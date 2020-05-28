@@ -28,8 +28,6 @@ matrix:
         1280x1024x16
       - sleep 3
       - 'export DISPLAY=:1.0'
-      - dpkg -L arduino-mk
-      - find /usr -name Arduino.mk
       - 'export ARDMK_DIR=$(dirname $(find /usr -name Arduino.mk))'
       - 'export ARDUINO_DIR=$ARDMK_DIR'
     install: true
