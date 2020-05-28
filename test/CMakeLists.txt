@@ -33,7 +33,7 @@ set(COMMON_SOURCES
     ${PROJECT_SOURCE_DIR}/./test_knitter.cpp
     )
 set(COMMON_DEFINES
-    ARDUINO=1811
+    ARDUINO=105
     AYAB_QUIET
     AYAB_TESTS
     )
