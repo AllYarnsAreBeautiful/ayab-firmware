@@ -34,13 +34,13 @@ To set up a working development environment follow these steps:
 
     `git clone --recurse-submodules https://github.com/AllYarnsAreBeautiful/ayab-firmware.git ayab`
 
- 1. Install the Arduino.mk package and setup environment variables
+ 1. Install the [Arduino.mk](https://github.com/sudar/Arduino-Makefile) package and setup environment variables
 
     Ubuntu:
     ```bash
     sudo apt install arduino-mk
     export ARDMK_DIR=/usr/share/arduino
-    export ARDUINO_DIR=ARDMK_DIR
+    export ARDUINO_DIR=$ARDMK_DIR
     ```
     Running ./build.sh should work now.
 
