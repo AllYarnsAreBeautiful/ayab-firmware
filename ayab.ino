@@ -22,14 +22,8 @@ This file is part of AYAB.
 /*
  * INCLUDES
  */
-#include "Arduino.h"
-#include "./libraries/SerialCommand/SerialCommand.h"
-
-#include "./debug.h"
-#include "./libraries/PacketSerial/src/PacketSerial.h"
-#include "./settings.h"
-
-#include "./knitter.h"
+#include "knitter.h"
+#include "libraries/PacketSerial/src/PacketSerial.h"
 
 /*
  * DEFINES
