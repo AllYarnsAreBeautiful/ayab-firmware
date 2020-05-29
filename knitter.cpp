@@ -25,6 +25,10 @@ This file is part of AYAB.
 Knitter::Knitter() {
 }
 
+OpState_t Knitter::getState() {
+  return m_opState;
+}
+
 Knitter::Knitter(SLIPPacketSerial *packetSerial) {
   Knitter();
   m_packetSerial = packetSerial;

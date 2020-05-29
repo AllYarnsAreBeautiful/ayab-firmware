@@ -45,6 +45,8 @@ public:
   bool setNextLine(byte lineNumber);
   void setLastLine();
 
+  OpState_t getState();
+
 private:
   SLIPPacketSerial *m_packetSerial;
   Solenoids m_solenoids;
