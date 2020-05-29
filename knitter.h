@@ -46,9 +46,10 @@ public:
   void setLastLine();
 
   OpState_t getState();
+  void send(uint8_t payload[], size_t length);
+  SLIPPacketSerial m_packetSerial;
 
 private:
-  SLIPPacketSerial *m_packetSerial;
   Solenoids m_solenoids;
   Encoders m_encoders;
   Beeper m_beeper;
