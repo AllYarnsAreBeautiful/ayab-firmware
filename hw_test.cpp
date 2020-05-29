@@ -1,4 +1,4 @@
-// ayab_hw_test.ino
+// hw_test.cpp
 /*
 This file is part of AYAB.
 
@@ -22,13 +22,13 @@ This file is part of AYAB.
 /*
  * INCLUDES
  */
-#include "Arduino.h"
+#include <Arduino.h>
+
 #include "SerialCommand.h"
 
+#include "beeper.h"
 #include "debug.h"
 #include "settings.h"
-
-#include "beeper.h"
 #include "solenoids.h"
 
 /*
@@ -43,45 +43,10 @@ Beeper beeper;
 Solenoids solenoids;
 
 /*
- * SETUP
+ *
  */
-void setup() {
-
-  Serial.begin(SERIAL_BAUDRATE);
-
-  pinMode(ENC_PIN_A, INPUT);
-  pinMode(ENC_PIN_B, INPUT);
-  pinMode(ENC_PIN_C, INPUT);
-
-  pinMode(LED_PIN_A, OUTPUT);
-  pinMode(LED_PIN_B, OUTPUT);
-
-  // pinMode(PIEZO_PIN,OUTPUT);
-
-  solenoids.init();
-
-  // Setup callbacks for SerialCommand commands
-  SCmd.addCommand("setSingle", setSingle);
-  SCmd.addCommand("setAll", setAll);
-  SCmd.addCommand("readEOLsensors", readEOLsensors);
-  SCmd.addCommand("readEncoders", readEncoders);
-  SCmd.addCommand("beep", beep);
-  SCmd.addCommand("autoRead", autoRead);
-  SCmd.addCommand("autoTest", autoTest);
-  SCmd.addDefaultHandler(
-      unrecognized); // Handler for command that isn't matched
-
-  attachInterrupt(0, encoderAChange, RISING); // Attaching ENC_PIN_A(=2)
-
-  // analogWrite(PIEZO_PIN, 100);
-  DEBUG_PRINT("ready");
-}
-
-/*
- *  MAIN LOOP
- */
-void loop() {
-  SCmd.readSerial();
+void beep() {
+  beeper.ready();
 }
 
 /*
@@ -179,13 +144,6 @@ void readEncoders() {
 /*
  *
  */
-void beep() {
-  beeper.ready();
-}
-
-/*
- *
- */
 void autoRead() {
   while (1) {
     readEOLsensors();
@@ -222,4 +180,46 @@ void unrecognized() {
   Serial.println("beep");
   Serial.println("autoRead");
   Serial.println("autoTest");
+}
+
+/*
+ * SETUP
+ */
+void hw_test_setup() {
+
+  Serial.begin(SERIAL_BAUDRATE);
+
+  pinMode(ENC_PIN_A, INPUT);
+  pinMode(ENC_PIN_B, INPUT);
+  pinMode(ENC_PIN_C, INPUT);
+
+  pinMode(LED_PIN_A, OUTPUT);
+  pinMode(LED_PIN_B, OUTPUT);
+
+  // pinMode(PIEZO_PIN,OUTPUT);
+
+  solenoids.init();
+
+  // Setup callbacks for SerialCommand commands
+  SCmd.addCommand("setSingle", setSingle);
+  SCmd.addCommand("setAll", setAll);
+  SCmd.addCommand("readEOLsensors", readEOLsensors);
+  SCmd.addCommand("readEncoders", readEncoders);
+  SCmd.addCommand("beep", beep);
+  SCmd.addCommand("autoRead", autoRead);
+  SCmd.addCommand("autoTest", autoTest);
+  SCmd.setDefaultHandler(
+      unrecognized); // Handler for command that isn't matched
+
+  attachInterrupt(0, encoderAChange, RISING); // Attaching ENC_PIN_A(=2)
+
+  // analogWrite(PIEZO_PIN, 100);
+  DEBUG_PRINT("ready");
+}
+
+/*
+ *  MAIN LOOP
+ */
+void hw_test_loop() {
+  SCmd.readSerial();
 }
