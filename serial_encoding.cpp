@@ -9,7 +9,7 @@ extern Knitter *knitter;
 /*
  * Serial Command handling
  */
-void h_reqStart(const uint8_t *buffer, size_t size) {
+static void h_reqStart(const uint8_t *buffer, size_t size) {
   byte _startNeedle = (byte)buffer[1];
   byte _stopNeedle = (byte)buffer[2];
   bool _continuousReportingEnabled = (bool)buffer[3];
@@ -30,7 +30,7 @@ void h_reqStart(const uint8_t *buffer, size_t size) {
   knitter->send(payload, 2);
 }
 
-void h_cnfLine(const uint8_t *buffer, size_t size) {
+static void h_cnfLine(const uint8_t *buffer, size_t size) {
   byte _lineNumber = 0;
   byte _flags = 0;
   byte _crc8 = 0;
@@ -56,7 +56,7 @@ void h_cnfLine(const uint8_t *buffer, size_t size) {
   }
 }
 
-void h_reqInfo() {
+static void h_reqInfo() {
   uint8_t payload[4];
   payload[0] = cnfInfo_msgid;
   payload[1] = API_VERSION;
@@ -65,7 +65,7 @@ void h_reqInfo() {
   knitter->send(payload, 4);
 }
 
-void h_reqTest() {
+static void h_reqTest() {
   bool _success = knitter->startTest();
 
   uint8_t payload[2];
@@ -74,7 +74,7 @@ void h_reqTest() {
   knitter->send(payload, 2);
 }
 
-void h_unrecognized() {
+static void h_unrecognized() {
   return;
 }
 

@@ -29,6 +29,10 @@ set(COMMON_SOURCES
 
     ${PROJECT_SOURCE_DIR}/../solenoids.cpp
     ${PROJECT_SOURCE_DIR}/./test_solenoids.cpp
+
+    ${PROJECT_SOURCE_DIR}/../serial_encoding.cpp
+    ${PROJECT_SOURCE_DIR}/./test_serial_encoding.cpp
+    ${PROJECT_SOURCE_DIR}/./mocks/serial_encoding/knitter_mock.cpp
     )
 set(COMMON_DEFINES
     ARDUINO=105

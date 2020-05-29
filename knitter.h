@@ -35,7 +35,6 @@ This file is part of AYAB.
 class Knitter {
 public:
   Knitter();
-  Knitter(SLIPPacketSerial *);
 
   void isr();
   void fsm();
