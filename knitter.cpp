@@ -19,19 +19,26 @@ This file is part of AYAB.
     http://ayab-knitting.com
 */
 
-#include "./knitter.h"
-#include "Arduino.h"
+#include <Arduino.h>
+
+#include "knitter.h"
+#include "serial_encoding.h"
 
 Knitter::Knitter() {
-}
+  m_packetSerial.begin(SERIAL_BAUDRATE);
+  m_packetSerial.setPacketHandler(&onPacketReceived);
 
-OpState_t Knitter::getState() {
-  return m_opState;
-}
+  pinMode(ENC_PIN_A, INPUT);
+  pinMode(ENC_PIN_B, INPUT);
+  pinMode(ENC_PIN_C, INPUT);
 
-Knitter::Knitter(SLIPPacketSerial *packetSerial) {
-  Knitter();
-  m_packetSerial = packetSerial;
+  pinMode(LED_PIN_A, OUTPUT);
+  pinMode(LED_PIN_B, OUTPUT);
+  digitalWrite(LED_PIN_A, 1);
+  digitalWrite(LED_PIN_B, 1);
+
+  pinMode(DBG_BTN_PIN, INPUT);
+
   m_opState = s_init;
   m_startNeedle = 0;
   m_stopNeedle = 0;
@@ -39,6 +46,14 @@ Knitter::Knitter(SLIPPacketSerial *packetSerial) {
   m_lineRequested = false;
 
   m_solenoids.init();
+}
+
+OpState_t Knitter::getState() {
+  return m_opState;
+}
+
+void Knitter::send(uint8_t payload[], size_t length) {
+  m_packetSerial.send(payload, length);
 }
 
 void Knitter::isr() {
@@ -72,6 +87,7 @@ void Knitter::fsm() {
   default:
     break;
   }
+  m_packetSerial.update();
 }
 
 bool Knitter::startOperation(byte startNeedle, byte stopNeedle,
@@ -343,7 +359,7 @@ void Knitter::reqLine(byte lineNumber) {
   uint8_t payload[2];
   payload[0] = reqLine_msgid;
   payload[1] = lineNumber;
-  m_packetSerial->send(payload, 2);
+  send(payload, 2);
 
   m_lineRequested = true;
 }
@@ -364,5 +380,5 @@ void Knitter::indState(bool initState) {
   payload[6] = (byte)m_carriage;
   payload[7] = (byte)m_position;
   payload[8] = (byte)m_encoders.getDirection();
-  m_packetSerial->send(payload, 9);
+  send(payload, 9);
 }
