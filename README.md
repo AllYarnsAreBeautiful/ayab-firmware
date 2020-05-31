@@ -15,7 +15,7 @@ This is the firmware for the Arduino-based hardware that is part of the AYAB pro
 ## Updating your AYAB firmware
 
 Clone this repository to a directory called ayab.
-`git clone https://github.com/AllYarnsAreBeautiful/ayab-firmware.git ayab`
+`git clone --recurse-submodules https://github.com/AllYarnsAreBeautiful/ayab-firmware.git ayab`
 
 Download the [Arduino IDE](https://www.arduino.cc/en/Main/Software) if you haven't before,
 in which case the [Arduino getting started guide](https://www.arduino.cc/en/Guide/ArduinoUno) is recommended.
@@ -30,12 +30,17 @@ Press 'upload' to update your AYAB hardware with new firmware.
 
 To set up a working development environment follow these steps:
 
- 1. Install the Arduino IDE version 1.0.6 into a tools directory in your $HOME directory.
+ 0. Clone the repository and update all submodules
 
+    `git clone --recurse-submodules https://github.com/AllYarnsAreBeautiful/ayab-firmware.git ayab`
+
+ 1. Install the [Arduino.mk](https://github.com/sudar/Arduino-Makefile) package and setup environment variables
+
+    Ubuntu:
     ```bash
-    cd ~/tools
-    wget http://downloads.arduino.cc/arduino-1.0.6-linux64.tgz
-    tar xf arduino-1.0.6-linux64.tgz
+    sudo apt install arduino-mk
+    export ARDMK_DIR=/usr/share/arduino
+    export ARDUINO_DIR=$ARDMK_DIR
     ```
     Running ./build.sh should work now.
 

@@ -16,6 +16,11 @@ matrix:
     script:
     - "./test/test.sh"
   - language: c
+    dist: bionic
+    addons:
+        apt:
+            packages:
+            - arduino-mk
     before_install:
       - >-
         /sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_1.pid
@@ -23,14 +28,8 @@ matrix:
         1280x1024x16
       - sleep 3
       - 'export DISPLAY=:1.0'
-      - 'wget http://downloads.arduino.cc/arduino-1.0.6-linux64.tgz'
-      - tar xf arduino-1.0.6-linux64.tgz
-      - pwd
-      - ls
-      - mkdir /home/travis/tools
-      - mv arduino-1.0.6 /home/travis/tools/arduino-1.0.6
-      - ls /home/travis/tools/
-      - mkdir build
+      - 'export ARDMK_DIR=$(dirname $(find /usr -name Arduino.mk))'
+      - 'export ARDUINO_DIR=$ARDMK_DIR'
     install: true
     script:
       - ./build.sh

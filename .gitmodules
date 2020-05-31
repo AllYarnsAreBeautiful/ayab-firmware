@@ -1,0 +1,12 @@
+[submodule "libraries/PacketSerial"]
+	path = libraries/PacketSerial
+	url = https://github.com/bakercp/PacketSerial.git
+[submodule "libraries/SerialCommand"]
+	path = libraries/SerialCommand
+	url = https://github.com/kroimon/Arduino-SerialCommand.git
+[submodule "libraries/SoftI2CMaster"]
+	path = libraries/SoftI2CMaster
+	url = https://github.com/todbot/SoftI2CMaster.git
+[submodule "libraries/Adafruit_MCP23008"]
+	url = https://github.com/adafruit/Adafruit-MCP23008-library.git
+	path = libraries/Adafruit_MCP23008

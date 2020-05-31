@@ -8,13 +8,16 @@ find_package(Threads REQUIRED)
 add_subdirectory(arduino_mock)
 
 # Includes arduino-mock files directly inplace of original Arduino headers.
-include_directories(
-    ${ARDUINO_MOCK_INCLUDE_DIRS}/arduino-mock
+set(COMMON_INCLUDES
+    ${ARDUINO_MOCK_INCLUDE_DIRS}
     ${ARDUINO_MOCK_LIBS_DIR}/lib/gtest/gtest/src/gtest/googletest/include
     ${ARDUINO_MOCK_LIBS_DIR}/lib/gtest/gtest/src/gtest/googlemock/include
+    ${PROJECT_SOURCE_DIR}/mocks
+    # External libraries
+    ${PROJECT_SOURCE_DIR}/../libraries/Adafruit_MCP23008
+    ${PROJECT_SOURCE_DIR}/../libraries/SoftI2CMaster
     )
-
-add_executable(${PROJECT_NAME}
+set(COMMON_SOURCES
     ${PROJECT_SOURCE_DIR}/./test_all.cpp
 
     ${PROJECT_SOURCE_DIR}/../encoders.cpp
@@ -22,29 +25,135 @@ add_executable(${PROJECT_NAME}
 
     ${PROJECT_SOURCE_DIR}/../beeper.cpp
     ${PROJECT_SOURCE_DIR}/./test_beeper.cpp
-    )
 
-target_compile_definitions(${PROJECT_NAME}
-    PRIVATE
-    AYAB_QUIET
-    KH910
+    ${PROJECT_SOURCE_DIR}/../solenoids.cpp
+    ${PROJECT_SOURCE_DIR}/./test_solenoids.cpp
+
+    ${PROJECT_SOURCE_DIR}/../knitter.cpp
+    ${PROJECT_SOURCE_DIR}/./test_knitter.cpp
     )
-target_compile_options(${PROJECT_NAME} PRIVATE
+set(COMMON_DEFINES
+    ARDUINO=105
+    AYAB_QUIET
+    AYAB_TESTS
+    )
+set(COMMON_FLAGS
     -Wall -Wextra -Wpedantic
-    -Werror
     -fprofile-arcs -ftest-coverage
     -g -Og
     )
-
-target_link_libraries(${PROJECT_NAME}
+set(COMMON_LINKER_FLAGS
     ${ARDUINO_MOCK_LIBS_DIR}/lib/gtest/gtest/src/gtest-build/googlemock/gtest/libgtest.a
     ${ARDUINO_MOCK_LIBS_DIR}/lib/gtest/gtest/src/gtest-build/googlemock/libgmock.a
     ${ARDUINO_MOCK_LIBS_DIR}/dist/lib/libarduino_mock.a
     ${CMAKE_THREAD_LIBS_INIT}
     -lgcov
     )
+set(HARD_I2C_LIB
+    ${PROJECT_SOURCE_DIR}/../libraries/Adafruit_MCP23008/Adafruit_MCP23008.cpp
+    )
+set(SOFT_I2C_LIB
+    ${PROJECT_SOURCE_DIR}/../libraries/SoftI2CMaster/SoftI2CMaster.cpp
+    )
 
-add_dependencies(${PROJECT_NAME} arduino_mock)
+# KH930 Uno
+add_executable(${PROJECT_NAME}_KH930_Uno
+    ${COMMON_SOURCES}
+    # External libraries
+    ${HARD_I2C_LIB}
+    )
+target_include_directories(${PROJECT_NAME}_KH930_Uno
+    PRIVATE
+    ${COMMON_INCLUDES}
+    )
+target_compile_definitions(${PROJECT_NAME}_KH930_Uno
+    PRIVATE
+    ${COMMON_DEFINES}
+    KH930
+    __AVR_ATmega168__
+    )
+target_compile_options(${PROJECT_NAME}_KH930_Uno PRIVATE
+    ${COMMON_FLAGS}
+    )
+target_link_libraries(${PROJECT_NAME}_KH930_Uno
+    ${COMMON_LINKER_FLAGS}
+    )
+add_dependencies(${PROJECT_NAME}_KH930_Uno arduino_mock)
+
+# KH910 Uno
+add_executable(${PROJECT_NAME}_KH910_Uno
+    ${COMMON_SOURCES}
+    # External libraries
+    ${HARD_I2C_LIB}
+    )
+target_include_directories(${PROJECT_NAME}_KH910_Uno
+    PRIVATE
+    ${COMMON_INCLUDES}
+    )
+target_compile_definitions(${PROJECT_NAME}_KH910_Uno
+    PRIVATE
+    ${COMMON_DEFINES}
+    KH910
+    __AVR_ATmega168__
+    )
+target_compile_options(${PROJECT_NAME}_KH910_Uno PRIVATE
+    ${COMMON_FLAGS}
+    )
+target_link_libraries(${PROJECT_NAME}_KH910_Uno
+    ${COMMON_LINKER_FLAGS}
+    )
+add_dependencies(${PROJECT_NAME}_KH910_Uno arduino_mock)
+
+# KH930 Mega
+add_executable(${PROJECT_NAME}_KH930_Mega
+    ${COMMON_SOURCES}
+    # External libraries
+    ${SOFT_I2C_LIB}
+    )
+target_include_directories(${PROJECT_NAME}_KH930_Mega
+    PRIVATE
+    ${COMMON_INCLUDES}
+    )
+target_compile_definitions(${PROJECT_NAME}_KH930_Mega
+    PRIVATE
+    ${COMMON_DEFINES}
+    KH930
+    __AVR_ATmega1280__
+    )
+target_compile_options(${PROJECT_NAME}_KH930_Mega PRIVATE
+    ${COMMON_FLAGS}
+    )
+target_link_libraries(${PROJECT_NAME}_KH930_Mega
+    ${COMMON_LINKER_FLAGS}
+    )
+add_dependencies(${PROJECT_NAME}_KH930_Mega arduino_mock)
+
+# KH910 Mega
+add_executable(${PROJECT_NAME}_KH910_Mega
+    ${COMMON_SOURCES}
+    # External libraries
+    ${SOFT_I2C_LIB}
+    )
+target_include_directories(${PROJECT_NAME}_KH910_Mega
+    PRIVATE
+    ${COMMON_INCLUDES}
+    )
+target_compile_definitions(${PROJECT_NAME}_KH910_Mega
+    PRIVATE
+    ${COMMON_DEFINES}
+    KH910
+    __AVR_ATmega1280__
+    )
+target_compile_options(${PROJECT_NAME}_KH910_Mega PRIVATE
+    ${COMMON_FLAGS}
+    )
+target_link_libraries(${PROJECT_NAME}_KH910_Mega
+    ${COMMON_LINKER_FLAGS}
+    )
+add_dependencies(${PROJECT_NAME}_KH910_Mega arduino_mock)
 
 enable_testing()
-add_test(test_all ${PROJECT_NAME})
+add_test(test_KH930_Uno ${PROJECT_NAME}_KH930_Uno)
+add_test(test_KH910_Uno ${PROJECT_NAME}_KH910_Uno)
+add_test(test_KH930_Mega ${PROJECT_NAME}_KH930_Mega)
+add_test(test_KH910_Mega ${PROJECT_NAME}_KH910_Mega)
