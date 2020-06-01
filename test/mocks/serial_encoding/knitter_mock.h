@@ -11,7 +11,7 @@ public:
   MOCK_METHOD0(startTest, bool(void));
   MOCK_METHOD1(setNextLine, bool(byte lineNumber));
   MOCK_METHOD0(setLastLine, void());
-  MOCK_METHOD1(send, void(uint8_t payload[]));
+  MOCK_METHOD2(send, void(uint8_t payload[], size_t length));
 };
 
 KnitterMock *knitterMockInstance();

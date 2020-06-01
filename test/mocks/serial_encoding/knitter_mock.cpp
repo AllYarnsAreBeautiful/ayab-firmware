@@ -36,9 +36,9 @@ void Knitter::setLastLine(void) {
   assert(gKnitterMock != NULL);
   gKnitterMock->setLastLine();
 }
-void Knitter::send(uint8_t payload[]) {
+void Knitter::send(uint8_t payload[], size_t length) {
   assert(gKnitterMock != NULL);
-  gKnitterMock->send(payload);
+  gKnitterMock->send(payload, length);
 }
 
 Knitter *knitter;
