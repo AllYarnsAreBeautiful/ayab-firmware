@@ -1,26 +1,28 @@
-// solenoids.cpp
-/*
-This file is part of AYAB.
+/*!
+ * \file solenoids.cpp
+ *
+ * This file is part of AYAB.
+ *
+ *    AYAB is free software: you can redistribute it and/or modify
+ *    it under the terms of the GNU General Public License as published by
+ *    the Free Software Foundation, either version 3 of the License, or
+ *    (at your option) any later version.
+ *
+ *    AYAB is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU General Public License for more details.
+ *
+ *    You should have received a copy of the GNU General Public License
+ *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *    Copyright 2013 Christian Obersteiner, Andreas Müller
+ *    http://ayab-knitting.com
+ */
 
-    AYAB is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+#include "solenoids.h"
 
-    AYAB is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
-
-    Copyright 2013 Christian Obersteiner, Andreas Müller
-    http://ayab-knitting.com
-*/
-
-#include "./solenoids.h"
-
+// TODO(sl): Make these globals static, or class members.
 #if defined(HARD_I2C)
 #include <Adafruit_MCP23008.h>
 #include <Wire.h>
@@ -35,6 +37,9 @@ Solenoids::Solenoids() {
   solenoidState = 0x00;
 }
 
+/*!
+ * Initialize I2C connection for solenoids.
+ */
 void Solenoids::init(void) {
 #ifdef HARD_I2C
   mcp_0.begin(I2Caddr_sol1_8);
@@ -48,6 +53,12 @@ void Solenoids::init(void) {
   // No Action needed for SOFT_I2C
 }
 
+/*!
+ * Set the state of a solenoid.
+ *
+ * \param solenoid The solenoid nr. to set. 0 to 15.
+ * \param state The state to set the solenoid to.
+ */
 void Solenoids::setSolenoid(byte solenoid, bool state) {
   if (solenoid >= 0 && solenoid <= 15) {
     if (state) {
@@ -60,6 +71,12 @@ void Solenoids::setSolenoid(byte solenoid, bool state) {
   }
 }
 
+/*!
+ * Set the state of all the solenoids.
+ *
+ * \param state Two bytes describing the state of the solenoids,
+ * one bit per solenoid.
+ */
 void Solenoids::setSolenoids(uint16 state) {
   solenoidState = state;
   write(state);
@@ -69,10 +86,14 @@ void Solenoids::setSolenoids(uint16 state) {
  * Private Methods
  */
 
-/*
- * Writes to the I2C port expanders
+/*!
+ * Write to the I2C port expanders.
+ *
  * Low level function, mapping to actual wiring
  * is done here.
+ *
+ * \param newState Two bytes describing the state of the solenoids,
+ * one bit per solenoid.
  */
 void Solenoids::write(uint16 newState) {
 #ifdef HARD_I2C

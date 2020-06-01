@@ -1,27 +1,34 @@
-// encoders.cpp
-/*
-This file is part of AYAB.
+/*!
+ * \file encoders.cpp
+ *
+ * This file is part of AYAB.
+ *
+ *    AYAB is free software: you can redistribute it and/or modify
+ *    it under the terms of the GNU General Public License as published by
+ *    the Free Software Foundation, either version 3 of the License, or
+ *    (at your option) any later version.
+ *
+ *    AYAB is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU General Public License for more details.
+ *
+ *    You should have received a copy of the GNU General Public License
+ *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *    Copyright 2013-2015 Christian Obersteiner, Andreas Müller
+ *    http://ayab-knitting.com
+ */
 
-    AYAB is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+#include <Arduino.h>
 
-    AYAB is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+#include "encoders.h"
 
-    You should have received a copy of the GNU General Public License
-    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
-
-    Copyright 2013-2015 Christian Obersteiner, Andreas Müller
-    http://ayab-knitting.com
-*/
-
-#include "./encoders.h"
-#include "Arduino.h"
-
+/*!
+ * \brief Construct encoder object.
+ *
+ * \todo sl: Initialize members in class definition.
+ */
 Encoders::Encoders() {
   m_direction = NoDirection;
   m_hallActive = NoDirection;
@@ -31,6 +38,12 @@ Encoders::Encoders() {
   _oldState = false;
 }
 
+/*!
+ * \brief Encoder A interrupt service routine.
+ *
+ * Determines edge of signal and deferres to private rising/falling
+ * functions.
+ */
 void Encoders::encA_interrupt() {
   m_hallActive = NoDirection;
 
@@ -44,8 +57,59 @@ void Encoders::encA_interrupt() {
   _oldState = _curState;
 }
 
-/*
- * PRIVATE METHODS
+/*!
+ * \brief Getter for position member.
+ */
+byte Encoders::getPosition() {
+  return m_encoderPos;
+}
+
+/*!
+ * \brief Getter for beltshift member.
+ */
+Beltshift_t Encoders::getBeltshift() {
+  return m_beltShift;
+}
+
+/*!
+ * \brief Getter for direction member.
+ */
+Direction_t Encoders::getDirection() {
+  return m_direction;
+}
+
+/*!
+ * \brief Getter for hallActive member.
+ */
+Direction_t Encoders::getHallActive() {
+  return m_hallActive;
+}
+
+/*!
+ * \brief Getter for carriage member.
+ */
+Carriage_t Encoders::getCarriage() {
+  return m_carriage;
+}
+
+/*!
+ * \brief Read hall sensor on left and right.
+ */
+uint16 Encoders::getHallValue(Direction_t pSensor) {
+  switch (pSensor) {
+  case Left:
+    return analogRead(EOL_PIN_L);
+  case Right:
+    return analogRead(EOL_PIN_R);
+  default:
+    return 0;
+  }
+}
+
+/* Private Methods */
+
+/*!
+ *
  */
 void Encoders::encA_rising() {
   // Direction only decided on rising edge of encoder A
@@ -82,6 +146,9 @@ void Encoders::encA_rising() {
   }
 }
 
+/*!
+ *
+ */
 void Encoders::encA_falling() {
   // Update carriage position
   if (Left == m_direction) {
@@ -104,36 +171,5 @@ void Encoders::encA_falling() {
 
     // Known position of the carriage -> overwrite position
     m_encoderPos = END_RIGHT - 28;
-  }
-}
-
-byte Encoders::getPosition() {
-  return m_encoderPos;
-}
-
-Beltshift_t Encoders::getBeltshift() {
-  return m_beltShift;
-}
-
-Direction_t Encoders::getDirection() {
-  return m_direction;
-}
-
-Direction_t Encoders::getHallActive() {
-  return m_hallActive;
-}
-
-Carriage_t Encoders::getCarriage() {
-  return m_carriage;
-}
-
-uint16 Encoders::getHallValue(Direction_t pSensor) {
-  switch (pSensor) {
-  case Left:
-    return analogRead(EOL_PIN_L);
-  case Right:
-    return analogRead(EOL_PIN_R);
-  default:
-    return 0;
   }
 }

@@ -1,3 +1,8 @@
+# Inspired by
+# https://github.com/sudar/Arduino-Makefile/blob/master/examples/MakefileExample/Makefile-example.mk
+# and
+# https://github.com/ladislas/Bare-Arduino-Project/blob/master/Makefile-Linux.mk
+
 PROJECT_DIR = $(shell dirname $(shell pwd))/..
 $(info $(PROJECT_DIR))
 

@@ -4,3 +4,4 @@ build*
 *.hex
 *.a
 .*/*
+html
