@@ -24,11 +24,23 @@ This file is part of AYAB.
 #include "knitter.h"
 #include "serial_encoding.h"
 
+#ifndef AYAB_TESTS
+void isr_wrapper() {
+  extern Knitter *knitter;
+  knitter->isr();
+}
+#endif
+
 Knitter::Knitter() {
   m_packetSerial.begin(SERIAL_BAUDRATE);
   m_packetSerial.setPacketHandler(&onPacketReceived);
 
   pinMode(ENC_PIN_A, INPUT);
+#ifndef AYAB_TESTS
+  // Attaching ENC_PIN_A(=2), Interrupt No. 0
+  attachInterrupt(0, isr_wrapper, CHANGE);
+#endif
+
   pinMode(ENC_PIN_B, INPUT);
   pinMode(ENC_PIN_C, INPUT);
 

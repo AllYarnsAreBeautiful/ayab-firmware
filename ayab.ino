@@ -29,19 +29,12 @@ This file is part of AYAB.
 #endif
 
 /*
- * DEFINES
- */
-
-/*
- *  DECLARATIONS
+ * GLOABAL DECLARATIONS
  */
 #if !defined(AYAB_HW_TEST)
 Knitter *knitter;
-
-void isr_wrapper() {
-  knitter->isr();
-}
 #endif
+
 /*
  * SETUP
  */
@@ -49,13 +42,13 @@ void setup() {
 #ifdef AYAB_HW_TEST
   hw_test_setup();
 #else
-  // Attaching ENC_PIN_A(=2), Interrupt No. 0
-  attachInterrupt(0, isr_wrapper, CHANGE);
-
   knitter = new Knitter();
 #endif
 }
 
+/*
+ * MAIN LOOP
+ */
 void loop() {
 #ifdef AYAB_HW_TEST
   hw_test_loop();
