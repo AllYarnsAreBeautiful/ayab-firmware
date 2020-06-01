@@ -1,27 +1,25 @@
-// hw_test.cpp
-/*
-This file is part of AYAB.
-
-    AYAB is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    AYAB is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
-
-    Copyright 2013 Christian Obersteiner, Andreas MÃ¼ller
-    http://ayab-knitting.com
-*/
-
-/*
- * INCLUDES
+/*!
+ * \file hw_test.cpp
+ * This file is part of AYAB.
+ *
+ *    AYAB is free software: you can redistribute it and/or modify
+ *    it under the terms of the GNU General Public License as published by
+ *    the Free Software Foundation, either version 3 of the License, or
+ *    (at your option) any later version.
+ *
+ *    AYAB is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU General Public License for more details.
+ *
+ *    You should have received a copy of the GNU General Public License
+ *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *    Copyright 2013 Christian Obersteiner, Andreas MÃ¼ller
+ *    http://ayab-knitting.com
  */
+
+/* Includes */
 #include <Arduino.h>
 
 #include <SerialCommand.h>
@@ -31,33 +29,27 @@ This file is part of AYAB.
 #include "settings.h"
 #include "solenoids.h"
 
-/*
- * DEFINES
- */
-
-/*
- *  DECLARATIONS
- */
-SerialCommand SCmd; // The SerialCommand object
+/* Global Declarations */
+SerialCommand SCmd; ///< The SerialCommand object
 Beeper beeper;
 Solenoids solenoids;
 
-/*
- *
+/*!
+ * \brief Beep command handler.
  */
 void beep() {
   beeper.ready();
 }
 
-/*
- *
+/*!
+ * \brief Interrupt service routine for encoder A.
  */
 void encoderAChange() {
   beep();
 }
 
-/*
- *
+/*!
+ * \brief Set single solenoid command handler.
  */
 void setSingle() {
   int aNumber;
@@ -81,8 +73,8 @@ void setSingle() {
   }
 }
 
-/*
- *
+/*!
+ * \brief Set all solenoids command handler.
  */
 void setAll() {
   int aNumber;
@@ -105,8 +97,8 @@ void setAll() {
   }
 }
 
-/*
- *
+/*!
+ * \brief Read EOL sensors command handler.
  */
 void readEOLsensors() {
   Serial.print("  EOL_L: ");
@@ -115,8 +107,8 @@ void readEOLsensors() {
   Serial.print(analogRead(EOL_PIN_R));
 }
 
-/*
- *
+/*!
+ * \brief Read encoders command handler.
  */
 void readEncoders() {
   Serial.print("  ENC_A: ");
@@ -141,8 +133,8 @@ void readEncoders() {
   }
 }
 
-/*
- *
+/*!
+ * \brief Auto read command handler.
  */
 void autoRead() {
   while (1) {
@@ -154,6 +146,9 @@ void autoRead() {
   }
 }
 
+/*!
+ * \brief Auto test command handler.
+ */
 void autoTest() {
   while (1) {
     digitalWrite(LED_PIN_A, 1);
@@ -168,7 +163,9 @@ void autoTest() {
   }
 }
 
-/*
+/*!
+ * \brief Unrecognized command handler.
+ *
  * This gets set as the default handler, and gets called when no other command
  * matches.
  */
@@ -182,8 +179,8 @@ void unrecognized() {
   Serial.println("autoTest");
 }
 
-/*
- * SETUP
+/*!
+ * \brief Setup for hw tests.
  */
 void hw_test_setup() {
 
@@ -217,8 +214,8 @@ void hw_test_setup() {
   DEBUG_PRINT("ready");
 }
 
-/*
- *  MAIN LOOP
+/*!
+ * \brief Main loop for hw tests.
  */
 void hw_test_loop() {
   SCmd.readSerial();

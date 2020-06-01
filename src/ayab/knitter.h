@@ -1,37 +1,44 @@
-// knitter.h
-/*
-This file is part of AYAB.
-
-    AYAB is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    AYAB is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
-
-    Copyright 2013 Christian Obersteiner, Andreas Müller
-    http://ayab-knitting.com
-*/
+/*!
+ * \file knitter.h
+ *
+ * This file is part of AYAB.
+ *
+ *    AYAB is free software: you can redistribute it and/or modify
+ *    it under the terms of the GNU General Public License as published by
+ *    the Free Software Foundation, either version 3 of the License, or
+ *    (at your option) any later version.
+ *
+ *    AYAB is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU General Public License for more details.
+ *
+ *    You should have received a copy of the GNU General Public License
+ *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *    Copyright 2013 Christian Obersteiner, Andreas Müller
+ *    http://ayab-knitting.com
+ */
 
 #ifndef KNITTER_H_
 #define KNITTER_H_
 
 #include <Arduino.h>
 
+// TODO(sl): Figure out how to make this include non-relative.
 #include "../../libraries/PacketSerial/src/PacketSerial.h"
 
 #include "beeper.h"
-#include "debug.h"
 #include "encoders.h"
 #include "settings.h"
 #include "solenoids.h"
 
+/*!
+ * \brief The knitting finite state machine.
+ *
+ * Orchestrates the beeper, hall sensors,
+ * encoders, and serial communication.
+ */
 class Knitter {
 public:
   Knitter();
@@ -46,7 +53,6 @@ public:
 
   OpState_t getState();
   void send(uint8_t payload[], size_t length);
-  SLIPPacketSerial m_packetSerial;
 
 private:
   Solenoids m_solenoids;
@@ -54,6 +60,7 @@ private:
   Beeper m_beeper;
 
   OpState_t m_opState;
+  SLIPPacketSerial m_packetSerial;
 
   bool m_lastLineFlag;
   byte m_lastLinesCountdown;
