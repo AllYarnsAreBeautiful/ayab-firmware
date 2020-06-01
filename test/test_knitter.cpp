@@ -55,7 +55,6 @@ protected:
   EncodersMock *encodersMock;
   SerialMock *serialMock;
   Knitter *k;
-  SLIPPacketSerial test_packetSerial;
 };
 
 TEST_F(KnitterTest, test_constructor) {
@@ -81,6 +80,12 @@ TEST_F(KnitterTest, test_setNextLine) {
 
 TEST_F(KnitterTest, test_setLastLine) {
   k->setLastLine();
+}
+
+TEST_F(KnitterTest, test_send) {
+  uint8_t p[] = {1, 2, 3, 4, 5};
+  EXPECT_CALL(*serialMock, write(_, _));
+  k->send(p, 5);
 }
 
 TEST_F(KnitterTest, test_fsm) {
