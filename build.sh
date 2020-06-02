@@ -8,11 +8,9 @@ verbose=0
 hw_tests=0
 
 # parse arguments
-while getopts "v" opt; do
+while getopts "w" opt; do
     case $opt in
-        v)   verbose=1
-             ;;
-        hw)   hw_tests=1
+        w)   hw_tests=1
              ;;
     esac
 done
@@ -46,7 +44,6 @@ if [[ $hw_tests -eq 1 ]]; then
 
   make BOARD_TAG=uno clean -j $(nproc)
   make BOARD_TAG=mega BOARD_SUB=atmega2560 clean -j $(nproc)
-
 fi
 
 function make_variant() {
