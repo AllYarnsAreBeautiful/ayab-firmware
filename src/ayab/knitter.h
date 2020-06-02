@@ -45,10 +45,10 @@ public:
 
   void isr();
   void fsm();
-  bool startOperation(byte startNeedle, byte stopNeedle,
-                      bool continuousReportingEnabled, byte(*line));
+  bool startOperation(uint8_t startNeedle, uint8_t stopNeedle,
+                      bool continuousReportingEnabled, uint8_t(*line));
   bool startTest(void);
-  bool setNextLine(byte lineNumber);
+  bool setNextLine(uint8_t lineNumber);
   void setLastLine();
 
   OpState_t getState();
@@ -59,30 +59,30 @@ private:
   Encoders m_encoders;
   Beeper m_beeper;
 
-  OpState_t m_opState;
+  OpState_t m_opState = s_init;
   SLIPPacketSerial m_packetSerial;
 
   bool m_lastLineFlag;
-  byte m_lastLinesCountdown;
+  uint8_t m_lastLinesCountdown;
 
   // Job Parameters
-  byte m_startNeedle;
-  byte m_stopNeedle;
+  uint8_t m_startNeedle = 0;
+  uint8_t m_stopNeedle = 0;
   bool m_continuousReportingEnabled;
-  bool m_lineRequested;
-  byte m_currentLineNumber;
-  byte *m_lineBuffer;
+  bool m_lineRequested = false;
+  uint8_t m_currentLineNumber = 0;
+  uint8_t *m_lineBuffer;
 
   // current machine state
-  byte m_position;
+  uint8_t m_position;
   Direction_t m_direction;
   Direction_t m_hallActive;
   Beltshift_t m_beltshift;
   Carriage_t m_carriage;
 
   // Resulting needle data
-  byte m_solenoidToSet;
-  byte m_pixelToSet;
+  uint8_t m_solenoidToSet;
+  uint8_t m_pixelToSet;
 
   void state_init();
   void state_ready();
@@ -90,9 +90,9 @@ private:
   void state_test();
 
   bool calculatePixelAndSolenoid();
-  byte getStartOffset(Direction_t);
+  uint8_t getStartOffset(Direction_t);
 
-  void reqLine(byte lineNumber);
+  void reqLine(uint8_t lineNumber);
   void indState(bool initState = false);
 };
 

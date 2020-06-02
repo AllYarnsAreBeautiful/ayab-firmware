@@ -59,12 +59,12 @@ class Solenoids {
 public:
   Solenoids();
   void init(void);
-  void setSolenoid(byte solenoid, bool state);
-  void setSolenoids(uint16 state);
+  void setSolenoid(uint8_t solenoid, bool state);
+  void setSolenoids(uint16_t state);
 
 private:
-  uint16 solenoidState;
-  void write(uint16 state);
+  uint16_t solenoidState = 0x00;
+  void write(uint16_t state);
 };
 
 #endif // SOLENOIDS_H_

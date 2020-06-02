@@ -22,7 +22,7 @@ void Encoders::encA_interrupt() {
   assert(gEncodersMock != NULL);
   gEncodersMock->encA_interrupt();
 }
-byte Encoders::getPosition() {
+uint8_t Encoders::getPosition() {
   assert(gEncodersMock != NULL);
   return gEncodersMock->getPosition();
 }
@@ -42,7 +42,7 @@ Carriage_t Encoders::getCarriage() {
   assert(gEncodersMock != NULL);
   return gEncodersMock->getCarriage();
 }
-uint16 Encoders::getHallValue(Direction_t dir) {
+uint16_t Encoders::getHallValue(Direction_t dir) {
   assert(gEncodersMock != NULL);
   return gEncodersMock->getHallValue(dir);
 }

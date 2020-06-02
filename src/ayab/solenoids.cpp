@@ -22,19 +22,17 @@
 
 #include "solenoids.h"
 
-// TODO(sl): Make these globals static, or class members.
 #if defined(HARD_I2C)
 #include <Adafruit_MCP23008.h>
 #include <Wire.h>
-Adafruit_MCP23008 mcp_0;
-Adafruit_MCP23008 mcp_1;
+static Adafruit_MCP23008 mcp_0;
+static Adafruit_MCP23008 mcp_1;
 #elif defined(SOFT_I2C)
 #include <SoftI2CMaster.h>
-SoftI2CMaster SoftI2C(A4, A5, 1);
+static SoftI2CMaster SoftI2C(A4, A5, 1);
 #endif
 
 Solenoids::Solenoids() {
-  solenoidState = 0x00;
 }
 
 /*!
@@ -59,7 +57,7 @@ void Solenoids::init(void) {
  * \param solenoid The solenoid nr. to set. 0 to 15.
  * \param state The state to set the solenoid to.
  */
-void Solenoids::setSolenoid(byte solenoid, bool state) {
+void Solenoids::setSolenoid(uint8_t solenoid, bool state) {
   if (solenoid > 15) {
     // Only 16 solenoids (zero-indexed).
     return;
@@ -81,7 +79,7 @@ void Solenoids::setSolenoid(byte solenoid, bool state) {
  * \param state Two bytes describing the state of the solenoids,
  * one bit per solenoid.
  */
-void Solenoids::setSolenoids(uint16 state) {
+void Solenoids::setSolenoids(uint16_t state) {
   solenoidState = state;
   write(state);
 }
@@ -99,7 +97,7 @@ void Solenoids::setSolenoids(uint16 state) {
  * \param newState Two bytes describing the state of the solenoids,
  * one bit per solenoid.
  */
-void Solenoids::write(uint16 newState) {
+void Solenoids::write(uint16_t newState) {
 #ifdef HARD_I2C
   mcp_0.writeGPIO(lowByte(newState));
   mcp_1.writeGPIO(highByte(newState));

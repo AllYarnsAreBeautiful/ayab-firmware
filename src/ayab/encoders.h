@@ -38,24 +38,24 @@ public:
 
   void encA_interrupt();
 
-  byte getPosition();
+  uint8_t getPosition();
   Beltshift_t getBeltshift();
   Direction_t getDirection();
   Direction_t getHallActive();
   Carriage_t getCarriage();
 
-  uint16 getHallValue(Direction_t);
+  uint16_t getHallValue(Direction_t);
 
 private:
-  Direction_t m_direction;
-  Direction_t m_hallActive;
-  Beltshift_t m_beltShift;
-  Carriage_t m_carriage;
-  byte m_encoderPos;
+  Direction_t m_direction = NoDirection;
+  Direction_t m_hallActive = NoDirection;
+  Beltshift_t m_beltShift = Unknown;
+  Carriage_t m_carriage = NoCarriage;
+  uint8_t m_encoderPos = 0x00;
+  bool _oldState = false;
 
   void encA_rising();
   void encA_falling();
-  bool _oldState;
 };
 
 #endif // ENCODERS_H_

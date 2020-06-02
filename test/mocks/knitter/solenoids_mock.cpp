@@ -22,11 +22,11 @@ void Solenoids::init(void) {
   assert(gSolenoidsMock != NULL);
   gSolenoidsMock->init();
 }
-void Solenoids::setSolenoid(byte solenoid, bool state) {
+void Solenoids::setSolenoid(uint8_t solenoid, bool state) {
   assert(gSolenoidsMock != NULL);
   gSolenoidsMock->setSolenoid(solenoid, state);
 }
-void Solenoids::setSolenoids(uint16 state) {
+void Solenoids::setSolenoids(uint16_t state) {
   assert(gSolenoidsMock != NULL);
   gSolenoidsMock->setSolenoids(state);
 }

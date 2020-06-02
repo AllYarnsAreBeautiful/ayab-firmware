@@ -22,13 +22,13 @@ bool Knitter::startTest(void) {
   assert(gKnitterMock != NULL);
   return gKnitterMock->startTest();
 }
-bool Knitter::startOperation(byte startNeedle, byte stopNeedle,
-                             bool continuousReportingEnabled, byte(*line)) {
+bool Knitter::startOperation(uint8_t startNeedle, uint8_t stopNeedle,
+                             bool continuousReportingEnabled, uint8_t *line) {
   assert(gKnitterMock != NULL);
   return gKnitterMock->startOperation(startNeedle, stopNeedle,
                                       continuousReportingEnabled, line);
 }
-bool Knitter::setNextLine(byte lineNumber) {
+bool Knitter::setNextLine(uint8_t lineNumber) {
   assert(gKnitterMock != NULL);
   return gKnitterMock->setNextLine(lineNumber);
 }

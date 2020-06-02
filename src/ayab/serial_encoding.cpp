@@ -23,7 +23,7 @@ This file is part of AYAB.
 
 #include "knitter.h"
 
-static byte lineBuffer[25];
+static uint8_t lineBuffer[25];
 
 extern Knitter *knitter;
 
@@ -40,8 +40,8 @@ static void h_reqStart(const uint8_t *buffer, size_t size) {
     return;
   }
 
-  byte _startNeedle = (byte)buffer[1];
-  byte _stopNeedle = (byte)buffer[2];
+  uint8_t _startNeedle = (uint8_t)buffer[1];
+  uint8_t _stopNeedle = (uint8_t)buffer[2];
   bool _continuousReportingEnabled = (bool)buffer[3];
 
   // TODO verify operation
@@ -72,19 +72,19 @@ static void h_cnfLine(const uint8_t *buffer, size_t size) {
     return;
   }
 
-  byte _lineNumber = 0;
-  byte _flags = 0;
-  // byte _crc8 = 0;
+  uint8_t _lineNumber = 0;
+  uint8_t _flags = 0;
+  // uint8_t _crc8 = 0;
   bool _flagLastLine = false;
 
-  _lineNumber = (byte)buffer[1];
+  _lineNumber = (uint8_t)buffer[1];
 
   for (int i = 0; i < 25; i++) {
     // Values have to be inverted because of needle states
-    lineBuffer[i] = ~(byte)buffer[i + 2];
+    lineBuffer[i] = ~(uint8_t)buffer[i + 2];
   }
-  _flags = (byte)buffer[27];
-  // _crc8 = (byte)buffer[28];
+  _flags = (uint8_t)buffer[27];
+  // _crc8 = (uint8_t)buffer[28];
 
   // TODO insert CRC8 check
 
