@@ -19,13 +19,17 @@ cd "$parent_path"
 mkdir -p build
 cd build
 cmake ..
+
+make_verbose=""
+ctest_verbose=""
 if [[ $verbose -eq 1 ]]; then
-make VERBOSE=1
-GTEST_COLOR=1 ctest -V --output-on-failure .
-else
-make
-GTEST_COLOR=1 ctest --output-on-failure .
+  make_verbose="VERBOSE=1"
+  ctest_verbose="-V"
 fi
+
+make $make_verbose
+GTEST_COLOR=1 ctest $ctest_verbose --output-on-failure .
+
 cd ../..
 gcovr -r . -e test_* -e arduino_mock* -e libraries* --html-details -o ./test/build/coverage.html
 gcovr -r . -e test_* -e arduino_mock* -e libraries*
