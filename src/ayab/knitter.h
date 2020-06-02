@@ -71,7 +71,7 @@ private:
   bool m_continuousReportingEnabled;
   bool m_lineRequested;
   byte m_currentLineNumber;
-  byte(*m_lineBuffer);
+  byte *m_lineBuffer;
 
   // current machine state
   byte m_position;

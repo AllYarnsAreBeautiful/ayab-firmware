@@ -27,10 +27,19 @@ static byte lineBuffer[25];
 
 extern Knitter *knitter;
 
-/*
- * Serial Command handling
+/* Serial Command handling */
+
+/*!
+ * \brief Handle start request command.
+ *
+ * \todo sl: Assert size? Handle error?
  */
 static void h_reqStart(const uint8_t *buffer, size_t size) {
+  if (size < 4) {
+    // Need 4 bytes from buffer below.
+    return;
+  }
+
   byte _startNeedle = (byte)buffer[1];
   byte _stopNeedle = (byte)buffer[2];
   bool _continuousReportingEnabled = (bool)buffer[3];
@@ -51,10 +60,21 @@ static void h_reqStart(const uint8_t *buffer, size_t size) {
   knitter->send(payload, 2);
 }
 
+/*!
+ * \brief Handle configure line command.
+ *
+ * \todo sl: CRC8
+ * \todo sl: Assert size? Handle error?
+ */
 static void h_cnfLine(const uint8_t *buffer, size_t size) {
+  if (size < 28) {
+    // Need 28 bytes from buffer below.
+    return;
+  }
+
   byte _lineNumber = 0;
   byte _flags = 0;
-  byte _crc8 = 0;
+  // byte _crc8 = 0;
   bool _flagLastLine = false;
 
   _lineNumber = (byte)buffer[1];
@@ -64,7 +84,7 @@ static void h_cnfLine(const uint8_t *buffer, size_t size) {
     lineBuffer[i] = ~(byte)buffer[i + 2];
   }
   _flags = (byte)buffer[27];
-  _crc8 = (byte)buffer[28];
+  // _crc8 = (byte)buffer[28];
 
   // TODO insert CRC8 check
 

@@ -60,15 +60,19 @@ void Solenoids::init(void) {
  * \param state The state to set the solenoid to.
  */
 void Solenoids::setSolenoid(byte solenoid, bool state) {
-  if (solenoid >= 0 && solenoid <= 15) {
-    if (state) {
-      bitSet(solenoidState, solenoid);
-    } else {
-      bitClear(solenoidState, solenoid);
-    }
-    // TODO optimize to act only when there is an actual change of state
-    write(solenoidState);
+  if (solenoid > 15) {
+    // Only 16 solenoids (zero-indexed).
+    return;
   }
+
+  if (state) {
+    bitSet(solenoidState, solenoid);
+  } else {
+    bitClear(solenoidState, solenoid);
+  }
+
+  // TODO optimize to act only when there is an actual change of state
+  write(solenoidState);
 }
 
 /*!

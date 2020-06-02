@@ -49,6 +49,8 @@ set(COMMON_DEFINES
     )
 set(COMMON_FLAGS
     -Wall -Wextra -Wpedantic
+    -Wno-vla
+    -Werror
     -fprofile-arcs -ftest-coverage
     -g -Og
     )
