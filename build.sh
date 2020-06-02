@@ -38,8 +38,10 @@ if [[ $hw_tests -eq 1 ]]; then
 
   # HW tests
   CPPFLAGS=-DAYAB_HW_TEST make BOARD_TAG=uno MACHINETYPE=KH910 -j $(nproc)
+  make BOARD_TAG=uno clean -j $(nproc)
   CPPFLAGS=-DAYAB_HW_TEST make BOARD_TAG=uno MACHINETYPE=KH930 -j $(nproc)
   CPPFLAGS=-DAYAB_HW_TEST make BOARD_TAG=mega BOARD_SUB=atmega2560 MACHINETYPE=KH910 -j $(nproc)
+  make BOARD_TAG=mega BOARD_SUB=atmega2560 clean -j $(nproc)
   CPPFLAGS=-DAYAB_HW_TEST make BOARD_TAG=mega BOARD_SUB=atmega2560 MACHINETYPE=KH930 -j $(nproc)
 
   make BOARD_TAG=uno clean -j $(nproc)
@@ -52,7 +54,6 @@ function make_variant() {
   if [[ $1 == "mega" ]]; then
     subboard="BOARD_SUB=atmega2560"
   fi
-    make BOARD_TAG=$1 $subboard MACHINETYPE=$2 clean -j $(nproc)
     make BOARD_TAG=$1 $subboard MACHINETYPE=$2 -j $(nproc)
     mv $parent_path/build/raw/$1/$2/ayab.hex $parent_path/build/ayab_$2_$1.hex
 }

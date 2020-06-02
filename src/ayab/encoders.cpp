@@ -159,10 +159,18 @@ void Encoders::encA_falling() {
 
   // In front of Right Hall Sensor?
   uint16 hallValue = analogRead(EOL_PIN_R);
-  if (hallValue < FILTER_R_MIN || hallValue > FILTER_R_MAX) {
+
+  // Avoid 'comparison of unsigned expression < 0 is always false'
+  // by being explicit about that behaviour being expected.
+  bool hallValueSmall = false;
+#if FILTER_R_MIN != 0
+  hallValueSmall = (hallValue < FILTER_R_MIN);
+#endif
+
+  if (hallValueSmall || hallValue > FILTER_R_MAX) {
     m_hallActive = Right;
 
-    if (hallValue < FILTER_R_MIN) {
+    if (hallValueSmall) {
       m_carriage = K;
     }
 

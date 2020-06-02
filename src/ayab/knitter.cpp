@@ -116,8 +116,9 @@ void Knitter::fsm() {
 
 bool Knitter::startOperation(byte startNeedle, byte stopNeedle,
                              bool continuousReportingEnabled, byte(*line)) {
-  if (startNeedle >= 0 && stopNeedle < NUM_NEEDLES &&
-      startNeedle < stopNeedle) {
+  // TODO(sl): Check that functionality is correct after removing
+  // always true comparison.
+  if (stopNeedle < NUM_NEEDLES && startNeedle < stopNeedle) {
     if (s_ready == m_opState) {
       // Proceed to next state
       m_opState = s_operate;

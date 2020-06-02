@@ -52,7 +52,6 @@ void encoderAChange() {
  * \brief Set single solenoid command handler.
  */
 void setSingle() {
-  int aNumber;
   char *arg;
 
   byte solenoidNumber = 0;
@@ -77,7 +76,6 @@ void setSingle() {
  * \brief Set all solenoids command handler.
  */
 void setAll() {
-  int aNumber;
   char *arg;
 
   byte lowByte = 0;
@@ -166,10 +164,14 @@ void autoTest() {
 /*!
  * \brief Unrecognized command handler.
  *
+ * \param buffer Unused buffer parameter.
+ *
  * This gets set as the default handler, and gets called when no other command
  * matches.
  */
-void unrecognized() {
+void unrecognized(const char *buffer) {
+  (void)(buffer);
+
   Serial.println("setSingle [0..15] [1/0]");
   Serial.println("setAll [0..255] [0..255]");
   Serial.println("readEOLsensors");
