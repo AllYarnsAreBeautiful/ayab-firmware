@@ -40,6 +40,9 @@
  * encoders, and serial communication.
  */
 class Knitter {
+#if AYAB_TESTS
+  FRIEND_TEST(KnitterTest, test_constructor);
+#endif
 public:
   Knitter();
 

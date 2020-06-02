@@ -6,7 +6,9 @@
 #include "knitter/solenoids_mock.h"
 
 using ::testing::_;
+using ::testing::NiceMock;
 using ::testing::Return;
+// using ::testing::StrictMock;
 
 void onPacketReceived(const uint8_t *buffer, size_t size) {
   (void)buffer;
@@ -58,6 +60,8 @@ protected:
 };
 
 TEST_F(KnitterTest, test_constructor) {
+  // NOTE: Probing private data!
+  ASSERT_EQ(k->m_startNeedle, 0);
 }
 
 TEST_F(KnitterTest, test_isr) {
@@ -75,7 +79,7 @@ TEST_F(KnitterTest, test_startTest) {
 }
 
 TEST_F(KnitterTest, test_setNextLine) {
-  k->setNextLine(1);
+  ASSERT_EQ(k->setNextLine(1), false);
 }
 
 TEST_F(KnitterTest, test_setLastLine) {
@@ -86,6 +90,22 @@ TEST_F(KnitterTest, test_send) {
   uint8_t p[] = {1, 2, 3, 4, 5};
   EXPECT_CALL(*serialMock, write(_, _));
   k->send(p, 5);
+}
+
+TEST_F(KnitterTest, test_fsm_init) {
+  // Don't init
+  EXPECT_CALL(*encodersMock, encA_interrupt).Times(1);
+  EXPECT_CALL(*encodersMock, getPosition)
+      .Times(1)
+      .WillOnce(Return(40 + END_OF_LINE_OFFSET_L + 1));
+  EXPECT_CALL(*encodersMock, getDirection).Times(1).WillOnce(Return(Left));
+  EXPECT_CALL(*encodersMock, getHallActive).Times(1).WillOnce(Return(Right));
+  EXPECT_CALL(*encodersMock, getBeltshift).Times(1).WillOnce(Return(Regular));
+  EXPECT_CALL(*encodersMock, getCarriage).Times(1).WillOnce(Return(G));
+
+  k->isr();
+  k->fsm();
+  ASSERT_EQ(k->getState(), s_init);
 }
 
 TEST_F(KnitterTest, test_fsm) {
@@ -115,6 +135,9 @@ TEST_F(KnitterTest, test_fsm) {
   EXPECT_CALL(*solenoidsMock, setSolenoid);
   k->fsm();
   ASSERT_EQ(k->getState(), s_operate);
+  k->setNextLine(1);
+  EXPECT_CALL(*beeperMock, finishedLine).Times(1);
+  k->setNextLine(0);
 
   // Outside of the active needles
   expect_isr(40 + NUM_NEEDLES - 1 + END_OF_LINE_OFFSET_R + 1);
@@ -122,10 +145,17 @@ TEST_F(KnitterTest, test_fsm) {
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, 1)).Times(1);
   expect_indState();
   EXPECT_CALL(*solenoidsMock, setSolenoid).Times(1);
-  EXPECT_CALL(*solenoidsMock, setSolenoids(0xFFFF)).Times(1);
-  EXPECT_CALL(*beeperMock, finishedLine).Times(1);
-  k->setLastLine();
   k->fsm();
+  ASSERT_EQ(k->getState(), s_operate);
+
+  // Reset static position variable for next test
+  expect_isr(40 + NUM_NEEDLES - 1 + END_OF_LINE_OFFSET_R + 0);
+  k->isr();
+  EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, 1)).Times(1);
+  expect_indState();
+  EXPECT_CALL(*solenoidsMock, setSolenoid).Times(1);
+  k->fsm();
+  ASSERT_EQ(k->getState(), s_operate);
 }
 
 TEST_F(KnitterTest, test_fsm_test) {
