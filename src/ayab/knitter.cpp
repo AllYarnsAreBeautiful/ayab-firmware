@@ -169,13 +169,14 @@ void Knitter::setLastLine() {
   m_lastLineFlag = true;
 }
 
-/*
- * PRIVATE METHODS
- */
+/* Private Methods */
+
 void Knitter::state_init() {
+  // TODO(sl): Change into class members.
   static bool _ready = false;
 
 #ifdef DBG_NOMACHINE
+  // TODO(sl): Change into class members.
   static bool _prevState = false;
   bool state = digitalRead(DBG_BTN_PIN);
 
@@ -209,6 +210,7 @@ void Knitter::state_ready() {
 
 void Knitter::state_operate() {
   digitalWrite(LED_PIN_A, 1);
+  // TODO(sl): Change into class members.
   static bool _firstRun = true;
   static uint8_t _sOldPosition = 0;
   static bool _workedOnLine = false;
@@ -222,6 +224,7 @@ void Knitter::state_operate() {
   }
 
 #ifdef DBG_NOMACHINE
+  // TODO(sl): Change into class members.
   static bool _prevState = false;
   bool state = digitalRead(DBG_BTN_PIN);
 
@@ -289,6 +292,7 @@ void Knitter::state_operate() {
 }
 
 void Knitter::state_test() {
+  // TODO(sl): Change into class members.
   static uint8_t _sOldPosition = 0;
 
   if (_sOldPosition != m_position) {
