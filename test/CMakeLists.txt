@@ -10,7 +10,7 @@ add_subdirectory(arduino_mock)
 set(SOURCE_DIRECTORY
     ${PROJECT_SOURCE_DIR}/../src/ayab
     )
-  set(LIBRARY_DIRECTORY
+set(LIBRARY_DIRECTORY
     ${PROJECT_SOURCE_DIR}/../libraries
     )
 
@@ -66,106 +66,50 @@ set(HARD_I2C_LIB
 set(SOFT_I2C_LIB
     ${LIBRARY_DIRECTORY}/SoftI2CMaster/SoftI2CMaster.cpp
     )
+function(add_machine machine board)
+    if(${board}=="Uno")
+        set(processor
+            __AVR_ATmega168__
+            )
+        set(I2C_LIB
+            ${HARD_I2C_LIB}
+            )
+    else()
+        set(processor
+            __AVR_ATmega2560__
+            )
+        set(I2C_LIB
+            ${SOFT_I2C_LIB}
+            )
+    endif()
+    add_executable(${PROJECT_NAME}_${machine}_${board}
+        ${COMMON_SOURCES}
+        # External libraries
+        ${I2C_LIB}
+        )
+    target_include_directories(${PROJECT_NAME}_${machine}_${board}
+        PRIVATE
+        ${COMMON_INCLUDES}
+        ${EXTERNAL_LIB_INCLUDES}
+        )
+    target_compile_definitions(${PROJECT_NAME}_${machine}_${board}
+        PRIVATE
+        ${COMMON_DEFINES}
+        ${machine}
+        ${processor}
+        )
+    target_compile_options(${PROJECT_NAME}_${machine}_${board} PRIVATE
+        ${COMMON_FLAGS}
+        )
+    target_link_libraries(${PROJECT_NAME}_${machine}_${board}
+        ${COMMON_LINKER_FLAGS}
+        )
+endfunction()
 
-# KH930 Uno
-add_executable(${PROJECT_NAME}_KH930_Uno
-    ${COMMON_SOURCES}
-    # External libraries
-    ${HARD_I2C_LIB}
-    )
-target_include_directories(${PROJECT_NAME}_KH930_Uno
-    PRIVATE
-    ${COMMON_INCLUDES}
-    ${EXTERNAL_LIB_INCLUDES}
-    )
-target_compile_definitions(${PROJECT_NAME}_KH930_Uno
-    PRIVATE
-    ${COMMON_DEFINES}
-    KH930
-    __AVR_ATmega168__
-    )
-target_compile_options(${PROJECT_NAME}_KH930_Uno PRIVATE
-    ${COMMON_FLAGS}
-    )
-target_link_libraries(${PROJECT_NAME}_KH930_Uno
-    ${COMMON_LINKER_FLAGS}
-    )
-add_dependencies(${PROJECT_NAME}_KH930_Uno arduino_mock)
-
-# KH910 Uno
-add_executable(${PROJECT_NAME}_KH910_Uno
-    ${COMMON_SOURCES}
-    # External libraries
-    ${HARD_I2C_LIB}
-    )
-target_include_directories(${PROJECT_NAME}_KH910_Uno
-    PRIVATE
-    ${COMMON_INCLUDES}
-    ${EXTERNAL_LIB_INCLUDES}
-    )
-target_compile_definitions(${PROJECT_NAME}_KH910_Uno
-    PRIVATE
-    ${COMMON_DEFINES}
-    KH910
-    __AVR_ATmega168__
-    )
-target_compile_options(${PROJECT_NAME}_KH910_Uno PRIVATE
-    ${COMMON_FLAGS}
-    )
-target_link_libraries(${PROJECT_NAME}_KH910_Uno
-    ${COMMON_LINKER_FLAGS}
-    )
-add_dependencies(${PROJECT_NAME}_KH910_Uno arduino_mock)
-
-# KH930 Mega
-add_executable(${PROJECT_NAME}_KH930_Mega
-    ${COMMON_SOURCES}
-    # External libraries
-    ${SOFT_I2C_LIB}
-    )
-target_include_directories(${PROJECT_NAME}_KH930_Mega
-    PRIVATE
-    ${COMMON_INCLUDES}
-    ${EXTERNAL_LIB_INCLUDES}
-    )
-target_compile_definitions(${PROJECT_NAME}_KH930_Mega
-    PRIVATE
-    ${COMMON_DEFINES}
-    KH930
-    __AVR_ATmega1280__
-    )
-target_compile_options(${PROJECT_NAME}_KH930_Mega PRIVATE
-    ${COMMON_FLAGS}
-    )
-target_link_libraries(${PROJECT_NAME}_KH930_Mega
-    ${COMMON_LINKER_FLAGS}
-    )
-add_dependencies(${PROJECT_NAME}_KH930_Mega arduino_mock)
-
-# KH910 Mega
-add_executable(${PROJECT_NAME}_KH910_Mega
-    ${COMMON_SOURCES}
-    # External libraries
-    ${SOFT_I2C_LIB}
-    )
-target_include_directories(${PROJECT_NAME}_KH910_Mega
-    PRIVATE
-    ${COMMON_INCLUDES}
-    ${EXTERNAL_LIB_INCLUDES}
-    )
-target_compile_definitions(${PROJECT_NAME}_KH910_Mega
-    PRIVATE
-    ${COMMON_DEFINES}
-    KH910
-    __AVR_ATmega1280__
-    )
-target_compile_options(${PROJECT_NAME}_KH910_Mega PRIVATE
-    ${COMMON_FLAGS}
-    )
-target_link_libraries(${PROJECT_NAME}_KH910_Mega
-    ${COMMON_LINKER_FLAGS}
-    )
-add_dependencies(${PROJECT_NAME}_KH910_Mega arduino_mock)
+add_machine(KH930 Uno)
+add_machine(KH910 Uno)
+add_machine(KH930 Mega)
+add_machine(KH910 Mega)
 
 # Knitter (device independent)
 add_executable(${PROJECT_NAME}_knitter

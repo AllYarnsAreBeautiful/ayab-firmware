@@ -23,6 +23,6 @@ CXXFLAGS += -pedantic -Wall -Wextra
 LDFLAGS += -fdiagnostics-color
 
 CURRENT_DIR       = $(shell basename $(CURDIR))
-OBJDIR            = $(PROJECT_DIR)/build-raw/$(BOARD_TAG)/$(MACHINETYPE)
+OBJDIR            = $(PROJECT_DIR)/build/raw/$(BOARD_TAG)/$(MACHINETYPE)
 
 include $(ARDMK_DIR)/Arduino.mk

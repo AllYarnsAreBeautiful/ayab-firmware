@@ -24,22 +24,26 @@ SUFFIX=$1
 parent_path=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
 cd $parent_path
 
-rm -f build/*
+rm -rf build/*
 mkdir -p build
 
 # change to src directory
 cd "$parent_path"/src/ayab
 
+if [ -z ${ARDMK_DIR+x} ]; then
+  export ARDMK_DIR=$(dirname $(find /usr -name Arduino.mk))
+fi
+
 if [[ $hw_tests -eq 1 ]]; then
 
   # HW tests
-  CPPFLAGS=-DAYAB_HW_TEST make BOARD_TAG=uno MACHINETYPE=KH910
-  CPPFLAGS=-DAYAB_HW_TEST make BOARD_TAG=uno MACHINETYPE=KH930
-  CPPFLAGS=-DAYAB_HW_TEST make BOARD_TAG=mega BOARD_SUB=atmega2560 MACHINETYPE=KH910
-  CPPFLAGS=-DAYAB_HW_TEST make BOARD_TAG=mega BOARD_SUB=atmega2560 MACHINETYPE=KH930
+  CPPFLAGS=-DAYAB_HW_TEST make BOARD_TAG=uno MACHINETYPE=KH910 -j $(nproc)
+  CPPFLAGS=-DAYAB_HW_TEST make BOARD_TAG=uno MACHINETYPE=KH930 -j $(nproc)
+  CPPFLAGS=-DAYAB_HW_TEST make BOARD_TAG=mega BOARD_SUB=atmega2560 MACHINETYPE=KH910 -j $(nproc)
+  CPPFLAGS=-DAYAB_HW_TEST make BOARD_TAG=mega BOARD_SUB=atmega2560 MACHINETYPE=KH930 -j $(nproc)
 
-  make BOARD_TAG=uno clean
-  make BOARD_TAG=mega BOARD_SUB=atmega2560 clean
+  make BOARD_TAG=uno clean -j $(nproc)
+  make BOARD_TAG=mega BOARD_SUB=atmega2560 clean -j $(nproc)
 
 fi
 
@@ -48,9 +52,9 @@ function make_variant() {
   if [[ $1 == "mega" ]]; then
     subboard="BOARD_SUB=atmega2560"
   fi
-    make BOARD_TAG=$1 $subboard MACHINETYPE=$2 clean
-    make BOARD_TAG=$1 $subboard MACHINETYPE=$2
-    mv $parent_path/build-raw/$1/$2/ayab.hex $parent_path/build/ayab_$2_$1.hex
+    make BOARD_TAG=$1 $subboard MACHINETYPE=$2 clean -j $(nproc)
+    make BOARD_TAG=$1 $subboard MACHINETYPE=$2 -j $(nproc)
+    mv $parent_path/build/raw/$1/$2/ayab.hex $parent_path/build/ayab_$2_$1.hex
 }
 
 function make_machine() {
@@ -61,4 +65,5 @@ function make_machine() {
 make_machine KH910
 make_machine KH930
 
-rm -rf build-raw
+cd $parent_path
+rm -rf build/raw
