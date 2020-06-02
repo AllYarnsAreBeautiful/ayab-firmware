@@ -20,6 +20,7 @@
  *    Copyright 2013 Christian Obersteiner, Andreas Müller
  *    http://ayab-knitting.com
  */
+#include <Arduino.h>
 
 /* Includes */
 #ifdef AYAB_HW_TEST
