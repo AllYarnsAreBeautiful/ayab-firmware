@@ -66,7 +66,7 @@ TEST_F(KnitterTest, test_isr) {
 }
 
 TEST_F(KnitterTest, test_startOperation) {
-  byte line[] = {1};
+  uint8_t line[] = {1};
   k->startOperation(0, NUM_NEEDLES - 1, false, line);
 }
 
@@ -109,7 +109,7 @@ TEST_F(KnitterTest, test_fsm) {
   EXPECT_CALL(*beeperMock, ready).Times(1);
   EXPECT_CALL(*arduinoMock, delay).Times(1);
   EXPECT_CALL(*beeperMock, finishedLine).Times(1);
-  byte line[] = {1};
+  uint8_t line[] = {1};
   k->startOperation(0, NUM_NEEDLES - 1, true, line);
   expect_indState();
   EXPECT_CALL(*solenoidsMock, setSolenoid);

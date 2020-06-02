@@ -54,8 +54,8 @@ void encoderAChange() {
 void setSingle() {
   char *arg;
 
-  byte solenoidNumber = 0;
-  byte solenoidState = 0;
+  uint8_t solenoidNumber = 0;
+  uint8_t solenoidState = 0;
 
   arg = SCmd.next();
   if (arg != NULL) {
@@ -78,9 +78,9 @@ void setSingle() {
 void setAll() {
   char *arg;
 
-  byte lowByte = 0;
-  byte highByte = 0;
-  uint16 solenoidState = 0;
+  uint8_t lowByte = 0;
+  uint8_t highByte = 0;
+  uint16_t solenoidState = 0;
 
   arg = SCmd.next();
   if (arg != NULL) {

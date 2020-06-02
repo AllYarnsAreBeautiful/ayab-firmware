@@ -90,9 +90,6 @@
 #define END_OF_LINE_OFFSET_L 12
 #define END_OF_LINE_OFFSET_R 12
 
-// Typedefs
-#define uint16 unsigned int
-
 typedef enum AYAB_API {
   reqStart_msgid = 0x01,
   cnfStart_msgid = 0xC1,

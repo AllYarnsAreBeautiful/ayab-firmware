@@ -15,7 +15,7 @@ protected:
     releaseArduinoMock();
   }
 
-  void checkBeepTime(byte length) {
+  void checkBeepTime(uint8_t length) {
     EXPECT_CALL(*arduinoMock, analogWrite(PIEZO_PIN, 0)).Times(length);
     EXPECT_CALL(*arduinoMock, analogWrite(PIEZO_PIN, 20)).Times(length);
     EXPECT_CALL(*arduinoMock, delay(BEEPDELAY)).Times(length * 2);

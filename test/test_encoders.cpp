@@ -124,7 +124,7 @@ TEST_F(EncodersTest, test_encA_falling_in_front) {
 }
 
 TEST_F(EncodersTest, test_getPosition) {
-  byte p = e.getPosition();
+  uint8_t p = e.getPosition();
   ASSERT_EQ(p, 0x00);
 }
 
@@ -149,7 +149,7 @@ TEST_F(EncodersTest, test_getCarriage) {
 }
 
 TEST_F(EncodersTest, test_getHallValue) {
-  uint16 v = e.getHallValue(NoDirection);
+  uint16_t v = e.getHallValue(NoDirection);
   ASSERT_EQ(v, 0u);
   EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_L));
   v = e.getHallValue(Left);
@@ -157,8 +157,7 @@ TEST_F(EncodersTest, test_getHallValue) {
   EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_R));
   v = e.getHallValue(Right);
   ASSERT_EQ(v, 0u);
-  EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_R))
-      .WillOnce(Return(0xdeadbeefu));
+  EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_R)).WillOnce(Return(0xbeefu));
   v = e.getHallValue(Right);
-  ASSERT_EQ(v, 0xdeadbeefu);
+  ASSERT_EQ(v, 0xbeefu);
 }

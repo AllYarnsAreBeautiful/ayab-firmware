@@ -26,16 +26,8 @@
 
 /*!
  * \brief Construct encoder object.
- *
- * \todo sl: Initialize members in class definition.
  */
 Encoders::Encoders() {
-  m_direction = NoDirection;
-  m_hallActive = NoDirection;
-  m_beltShift = Unknown;
-  m_carriage = NoCarriage;
-  m_encoderPos = 0x00;
-  _oldState = false;
 }
 
 /*!
@@ -60,7 +52,7 @@ void Encoders::encA_interrupt() {
 /*!
  * \brief Getter for position member.
  */
-byte Encoders::getPosition() {
+uint8_t Encoders::getPosition() {
   return m_encoderPos;
 }
 
@@ -95,7 +87,7 @@ Carriage_t Encoders::getCarriage() {
 /*!
  * \brief Read hall sensor on left and right.
  */
-uint16 Encoders::getHallValue(Direction_t pSensor) {
+uint16_t Encoders::getHallValue(Direction_t pSensor) {
   switch (pSensor) {
   case Left:
     return analogRead(EOL_PIN_L);
@@ -123,7 +115,7 @@ void Encoders::encA_rising() {
   }
 
   // In front of Left Hall Sensor?
-  uint16 hallValue = analogRead(EOL_PIN_L);
+  uint16_t hallValue = analogRead(EOL_PIN_L);
   if (hallValue < FILTER_L_MIN || hallValue > FILTER_L_MAX) {
     m_hallActive = Left;
 
@@ -158,7 +150,7 @@ void Encoders::encA_falling() {
   }
 
   // In front of Right Hall Sensor?
-  uint16 hallValue = analogRead(EOL_PIN_R);
+  uint16_t hallValue = analogRead(EOL_PIN_R);
 
   // Avoid 'comparison of unsigned expression < 0 is always false'
   // by being explicit about that behaviour being expected.

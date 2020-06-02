@@ -61,13 +61,9 @@ Knitter::Knitter() {
   digitalWrite(LED_PIN_A, 1);
   digitalWrite(LED_PIN_B, 1);
 
+#if DBG_NOMACHINE
   pinMode(DBG_BTN_PIN, INPUT);
-
-  m_opState = s_init;
-  m_startNeedle = 0;
-  m_stopNeedle = 0;
-  m_currentLineNumber = 0;
-  m_lineRequested = false;
+#endif
 
   m_solenoids.init();
 }
@@ -114,8 +110,8 @@ void Knitter::fsm() {
   m_packetSerial.update();
 }
 
-bool Knitter::startOperation(byte startNeedle, byte stopNeedle,
-                             bool continuousReportingEnabled, byte(*line)) {
+bool Knitter::startOperation(uint8_t startNeedle, uint8_t stopNeedle,
+                             bool continuousReportingEnabled, uint8_t(*line)) {
   // TODO(sl): Check that functionality is correct after removing
   // always true comparison.
   if (stopNeedle < NUM_NEEDLES && startNeedle < stopNeedle) {
@@ -153,7 +149,7 @@ bool Knitter::startTest() {
   return false;
 }
 
-bool Knitter::setNextLine(byte lineNumber) {
+bool Knitter::setNextLine(uint8_t lineNumber) {
   if (m_lineRequested) {
     // Is there even a need for a new line?
     if (lineNumber == m_currentLineNumber) {
@@ -214,7 +210,7 @@ void Knitter::state_ready() {
 void Knitter::state_operate() {
   digitalWrite(LED_PIN_A, 1);
   static bool _firstRun = true;
-  static byte _sOldPosition = 0;
+  static uint8_t _sOldPosition = 0;
   static bool _workedOnLine = false;
 
   if (true == _firstRun) {
@@ -293,7 +289,7 @@ void Knitter::state_operate() {
 }
 
 void Knitter::state_test() {
-  static byte _sOldPosition = 0;
+  static uint8_t _sOldPosition = 0;
 
   if (_sOldPosition != m_position) {
     // Only act if there is an actual change of position
@@ -353,7 +349,7 @@ bool Knitter::calculatePixelAndSolenoid() {
   return true;
 }
 
-byte Knitter::getStartOffset(Direction_t direction) {
+uint8_t Knitter::getStartOffset(Direction_t direction) {
   switch (direction) {
   case Left:
     if (m_carriage == G) {
@@ -380,7 +376,7 @@ byte Knitter::getStartOffset(Direction_t direction) {
   }
 }
 
-void Knitter::reqLine(byte lineNumber) {
+void Knitter::reqLine(uint8_t lineNumber) {
   uint8_t payload[2];
   payload[0] = reqLine_msgid;
   payload[1] = lineNumber;
@@ -392,18 +388,18 @@ void Knitter::reqLine(byte lineNumber) {
 void Knitter::indState(bool initState) {
   uint8_t payload[9];
   payload[0] = indState_msgid;
-  payload[1] = (byte)initState;
+  payload[1] = (uint8_t)initState;
 
-  uint16 hallValue = m_encoders.getHallValue(Left);
-  payload[2] = (byte)(hallValue >> 8) & 0xFF;
-  payload[3] = (byte)hallValue & 0xFF;
+  uint16_t hallValue = m_encoders.getHallValue(Left);
+  payload[2] = (uint8_t)(hallValue >> 8) & 0xFF;
+  payload[3] = (uint8_t)hallValue & 0xFF;
 
   hallValue = m_encoders.getHallValue(Right);
-  payload[4] = (byte)(hallValue >> 8) & 0xFF;
-  payload[5] = (byte)hallValue & 0xFF;
+  payload[4] = (uint8_t)(hallValue >> 8) & 0xFF;
+  payload[5] = (uint8_t)hallValue & 0xFF;
 
-  payload[6] = (byte)m_carriage;
-  payload[7] = (byte)m_position;
-  payload[8] = (byte)m_encoders.getDirection();
+  payload[6] = (uint8_t)m_carriage;
+  payload[7] = (uint8_t)m_position;
+  payload[8] = (uint8_t)m_encoders.getDirection();
   send(payload, 9);
 }
