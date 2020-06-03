@@ -40,7 +40,6 @@ To set up a working development environment follow these steps:
     ```bash
     sudo apt install arduino-mk
     export ARDMK_DIR=/usr/share/arduino
-    export ARDUINO_DIR=$ARDMK_DIR
     ```
     Running ./build.sh should work now.
 
@@ -66,7 +65,6 @@ To set up a working development environment follow these steps:
     set -e
 
     ./build.sh
-    make clean
-    ./test/test.sh
+    ./test/test.sh -c
     ```
 
