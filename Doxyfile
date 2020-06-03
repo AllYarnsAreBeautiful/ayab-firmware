@@ -2361,3 +2361,5 @@ GENERATE_LEGEND        = YES
 # This tag requires that the tag HAVE_DOT is set to YES.
 
 DOT_CLEANUP            = YES
+
+PLANTUML_JAR_PATH      = $(HOME)/Downloads/plantuml.jar
