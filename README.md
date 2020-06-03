@@ -14,17 +14,7 @@ This is the firmware for the Arduino-based hardware that is part of the AYAB pro
 
 ## Updating your AYAB firmware
 
-Clone this repository to a directory called ayab.
-`git clone --recurse-submodules https://github.com/AllYarnsAreBeautiful/ayab-firmware.git ayab`
-
-Download the [Arduino IDE](https://www.arduino.cc/en/Main/Software) if you haven't before,
-in which case the [Arduino getting started guide](https://www.arduino.cc/en/Guide/ArduinoUno) is recommended.
-
-Open ayab.ino in Arduino IDE.
-
-Press 'verify' to check that your setup is in good shape.
-
-Press 'upload' to update your AYAB hardware with new firmware.
+In [ayab-desktop](https://github.com/AllYarnsAreBeautiful/ayab-desktop): go to Tools \> Load AYAB Firmware.
 
 ## Development Environment
 
