@@ -126,7 +126,7 @@ void Encoders::encA_rising() {
       } else {
         m_carriage = L;
       }
-    } else if (hallValue > FILTER_L_MAX) {
+    } else {
       m_carriage = K;
     }
 
