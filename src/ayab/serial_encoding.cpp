@@ -60,37 +60,68 @@ static void h_reqStart(const uint8_t *buffer, size_t size) {
   knitter->send(payload, 2);
 }
 
+#ifdef AYAB_ENABLE_CRC
+/*!
+ * \brief Calculate CRC8 of a buffer
+ *
+ * Based on
+ * https://www.leonardomiliani.com/en/2013/un-semplice-crc8-per-arduino/
+ *
+ * CRC-8 - based on the CRC8 formulas by Dallas/Maxim
+ * code released under the therms of the GNU GPL 3.0 license
+ */
+static uint8_t CRC8(const uint8_t *buffer, size_t len) {
+  uint8_t crc = 0x00;
+
+  while (len--) {
+    uint8_t extract = *buffer;
+    buffer++;
+
+    for (uint8_t tempI = 8; tempI; tempI--) {
+      uint8_t sum = (crc ^ extract) & 0x01;
+      crc >>= 1;
+
+      if (sum) {
+        crc ^= 0x8C;
+      }
+      extract >>= 1;
+    }
+  }
+  return crc;
+}
+#endif
+
 /*!
  * \brief Handle configure line command.
  *
- * \todo sl: CRC8
+ * \todo sl: Handle CRC-8 error?
  * \todo sl: Assert size? Handle error?
  */
 static void h_cnfLine(const uint8_t *buffer, size_t size) {
-  if (size < 28) {
-    // Need 28 bytes from buffer below.
+  if (size < 29) {
+    // Need 29 bytes from buffer below.
     return;
   }
 
-  uint8_t _lineNumber = 0;
-  uint8_t _flags = 0;
-  // uint8_t _crc8 = 0;
-  bool _flagLastLine = false;
-
-  _lineNumber = (uint8_t)buffer[1];
+  uint8_t _lineNumber = buffer[1];
 
   for (int i = 0; i < 25; i++) {
     // Values have to be inverted because of needle states
-    lineBuffer[i] = ~(uint8_t)buffer[i + 2];
+    lineBuffer[i] = ~buffer[i + 2];
   }
-  _flags = (uint8_t)buffer[27];
-  // _crc8 = (uint8_t)buffer[28];
+  uint8_t _flags = buffer[27];
 
-  // TODO insert CRC8 check
+#ifdef AYAB_ENABLE_CRC
+  uint8_t _crc8 = buffer[28];
+  // Check crc on bytes 0-28 of buffer.
+  if (_crc8 != CRC8(buffer, 28)) {
+    return;
+  }
+#endif
 
   if (knitter->setNextLine(_lineNumber)) {
     // Line was accepted
-    _flagLastLine = bitRead(_flags, 0);
+    bool _flagLastLine = bitRead(_flags, 0);
     if (_flagLastLine) {
       knitter->setLastLine();
     }

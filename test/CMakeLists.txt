@@ -46,6 +46,7 @@ set(COMMON_DEFINES
     ARDUINO=105
     AYAB_QUIET
     AYAB_TESTS
+    AYAB_ENABLE_CRC
     )
 set(COMMON_FLAGS
     -Wall -Wextra -Wpedantic
