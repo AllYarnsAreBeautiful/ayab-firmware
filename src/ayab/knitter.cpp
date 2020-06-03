@@ -110,10 +110,15 @@ void Knitter::fsm() {
   m_packetSerial.update();
 }
 
+/*!
+ * \brief Enter operate state.
+ *
+ * \todo sl: Check that functionality is correct after removing always true
+ * comparison.
+ */
 bool Knitter::startOperation(uint8_t startNeedle, uint8_t stopNeedle,
                              bool continuousReportingEnabled, uint8_t(*line)) {
-  // TODO(sl): Check that functionality is correct after removing
-  // always true comparison.
+  // TODO(sl): Check ok after removed always true comparison.
   if (stopNeedle < NUM_NEEDLES && startNeedle < stopNeedle) {
     if (s_ready == m_opState) {
       // Proceed to next state

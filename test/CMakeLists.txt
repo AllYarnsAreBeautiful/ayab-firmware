@@ -1,7 +1,16 @@
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.7.2)
 project(ayab_test)
 
 set(CMAKE_CXX_STANDARD 11 CACHE STRING "Set the C++ standard to be used for compiling")
+
+# TODO(sl): Create a clang-tidy option, this is really slow!
+if(false)
+set(CMAKE_CXX_CLANG_TIDY
+  clang-tidy
+  -header-filter=.
+  -checks=modernize-*,bugprone-*,cppcoreguidelines-*
+  )
+endif()
 
 find_package(Threads REQUIRED)
 

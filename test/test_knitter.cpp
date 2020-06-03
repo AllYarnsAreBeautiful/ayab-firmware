@@ -159,7 +159,12 @@ TEST_F(KnitterTest, test_fsm) {
 }
 
 TEST_F(KnitterTest, test_fsm_test) {
-  expect_isr(1);
+  EXPECT_CALL(*encodersMock, encA_interrupt).Times(1);
+  EXPECT_CALL(*encodersMock, getPosition).Times(1).WillOnce(Return(100));
+  EXPECT_CALL(*encodersMock, getDirection).Times(1).WillOnce(Return(Left));
+  EXPECT_CALL(*encodersMock, getHallActive).Times(1).WillOnce(Return(Right));
+  EXPECT_CALL(*encodersMock, getBeltshift).Times(1).WillOnce(Return(Shifted));
+  EXPECT_CALL(*encodersMock, getCarriage).Times(1).WillOnce(Return(L));
   k->isr();
   // test
   ASSERT_EQ(k->startTest(), true);
@@ -167,5 +172,50 @@ TEST_F(KnitterTest, test_fsm_test) {
   EXPECT_CALL(*encodersMock, getHallValue(Left)).Times(1);
   EXPECT_CALL(*encodersMock, getHallValue(Right)).Times(1);
   EXPECT_CALL(*encodersMock, getDirection).Times(1);
+  k->fsm();
+  // handle static variable
+  expect_isr(0);
+  k->isr();
+  expect_indState();
+  k->fsm();
+}
+
+TEST_F(KnitterTest, test_fsm_test2) {
+  EXPECT_CALL(*encodersMock, encA_interrupt).Times(1);
+  EXPECT_CALL(*encodersMock, getPosition).Times(1).WillOnce(Return(100));
+  EXPECT_CALL(*encodersMock, getDirection).Times(1).WillOnce(Return(Left));
+  EXPECT_CALL(*encodersMock, getHallActive).Times(1).WillOnce(Return(Right));
+  EXPECT_CALL(*encodersMock, getBeltshift).Times(1).WillOnce(Return(Regular));
+  EXPECT_CALL(*encodersMock, getCarriage).Times(1).WillOnce(Return(L));
+  k->isr();
+  // test
+  ASSERT_EQ(k->startTest(), true);
+  ASSERT_EQ(k->getState(), s_test);
+  expect_indState();
+  k->fsm();
+  // handle static variable
+  expect_isr(0);
+  k->isr();
+  expect_indState();
+  k->fsm();
+}
+
+TEST_F(KnitterTest, test_fsm_test3) {
+  EXPECT_CALL(*encodersMock, encA_interrupt).Times(1);
+  EXPECT_CALL(*encodersMock, getPosition).Times(1).WillOnce(Return(100));
+  EXPECT_CALL(*encodersMock, getDirection).Times(1).WillOnce(Return(Right));
+  EXPECT_CALL(*encodersMock, getHallActive).Times(1).WillOnce(Return(Right));
+  EXPECT_CALL(*encodersMock, getBeltshift).Times(1).WillOnce(Return(Shifted));
+  EXPECT_CALL(*encodersMock, getCarriage).Times(1).WillOnce(Return(L));
+  k->isr();
+  // test
+  ASSERT_EQ(k->startTest(), true);
+  ASSERT_EQ(k->getState(), s_test);
+  expect_indState();
+  k->fsm();
+  // handle static variable
+  expect_isr(0);
+  k->isr();
+  expect_indState();
   k->fsm();
 }
