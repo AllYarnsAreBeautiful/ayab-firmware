@@ -177,34 +177,23 @@ void Knitter::setLastLine() {
 /* Private Methods */
 
 void Knitter::state_init() {
-  // TODO(sl): Change into class members.
-  static bool _ready = false;
-
 #ifdef DBG_NOMACHINE
-  // TODO(sl): Change into class members.
-  static bool _prevState = false;
   bool state = digitalRead(DBG_BTN_PIN);
 
   // TODO Check if debounce is needed
-  if (_prevState && !state) {
-    _ready = true;
-  }
-  _prevState = state;
+  if (m_prevState && !state) {
 #else
   // Machine is initialized when left hall sensor is passed in Right direction
   if (Right == m_direction && Left == m_hallActive) {
-    _ready = true;
-  }
 #endif // DBG_NOMACHINE
-
-  if (_ready) {
     m_opState = s_ready;
     m_solenoids.setSolenoids(0xFFFF);
     indState(true);
-    return;
   }
 
-  m_opState = s_init;
+#ifdef DBG_NOMACHINE
+  m_prevState = state;
+#endif
 }
 
 void Knitter::state_ready() {
@@ -215,10 +204,7 @@ void Knitter::state_ready() {
 
 void Knitter::state_operate() {
   digitalWrite(LED_PIN_A, 1);
-  // TODO(sl): Change into class members.
   static bool _firstRun = true;
-  static uint8_t _sOldPosition = 0;
-  static bool _workedOnLine = false;
 
   if (true == _firstRun) {
     _firstRun = false;
@@ -229,23 +215,20 @@ void Knitter::state_operate() {
   }
 
 #ifdef DBG_NOMACHINE
-  // TODO(sl): Change into class members.
-  static bool _prevState = false;
   bool state = digitalRead(DBG_BTN_PIN);
 
   // TODO Check if debounce is needed
-  if (_prevState && !state) {
+  if (m_prevState && !state) {
     if (!m_lineRequested) {
       reqLine(++m_currentLineNumber);
     }
   }
-  _prevState = state;
-  return;
+  m_prevState = state;
 #else
-  if (_sOldPosition != m_position) {
+  if (m_sOldPosition != m_position) {
     // Only act if there is an actual change of position
     // Store current Encoder position for next call of this function
-    _sOldPosition = m_position;
+    m_sOldPosition = m_position;
 
     if (m_continuousReportingEnabled) {
       // Send current position to GUI
@@ -261,7 +244,7 @@ void Knitter::state_operate() {
         (m_pixelToSet <= m_stopNeedle + END_OF_LINE_OFFSET_R)) {
 
       if ((m_pixelToSet >= m_startNeedle) && (m_pixelToSet <= m_stopNeedle)) {
-        _workedOnLine = true;
+        m_workedOnLine = true;
       }
 
       // Find the right byte from the currentLine array,
@@ -277,9 +260,9 @@ void Knitter::state_operate() {
       // Reset Solenoids when out of range
       m_solenoids.setSolenoid(m_solenoidToSet, true);
 
-      if (_workedOnLine) {
+      if (m_workedOnLine) {
         // already worked on the current line -> finished the line
-        _workedOnLine = false;
+        m_workedOnLine = false;
 
         if (!m_lineRequested && !m_lastLineFlag) {
           // request new Line from Host
@@ -297,13 +280,10 @@ void Knitter::state_operate() {
 }
 
 void Knitter::state_test() {
-  // TODO(sl): Change into class members.
-  static uint8_t _sOldPosition = 0;
-
-  if (_sOldPosition != m_position) {
+  if (m_sOldPosition != m_position) {
     // Only act if there is an actual change of position
     // Store current Encoder position for next call of this function
-    _sOldPosition = m_position;
+    m_sOldPosition = m_position;
 
     calculatePixelAndSolenoid();
     indState();
