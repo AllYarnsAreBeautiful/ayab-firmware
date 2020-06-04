@@ -42,6 +42,8 @@
 class Knitter {
 #if AYAB_TESTS
   FRIEND_TEST(KnitterTest, test_constructor);
+  FRIEND_TEST(KnitterTest, test_fsm_default_case);
+  FRIEND_TEST(KnitterTest, test_getStartOffset);
 #endif
 public:
   Knitter();
@@ -78,7 +80,7 @@ private:
 
   // current machine state
   uint8_t m_position;
-  Direction_t m_direction;
+  Direction_t m_direction = NoDirection;
   Direction_t m_hallActive;
   Beltshift_t m_beltshift;
   Carriage_t m_carriage;
