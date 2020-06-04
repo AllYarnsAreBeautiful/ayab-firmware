@@ -85,6 +85,13 @@ private:
   Beltshift_t m_beltshift;
   Carriage_t m_carriage;
 
+  uint8_t m_sOldPosition = 0;
+  bool m_firstRun = true;
+  bool m_workedOnLine = false;
+#ifdef DBG_NOMACHINE
+  bool m_prevState = false;
+#endif
+
   // Resulting needle data
   uint8_t m_solenoidToSet;
   uint8_t m_pixelToSet;
