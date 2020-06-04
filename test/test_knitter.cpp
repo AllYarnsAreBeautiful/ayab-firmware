@@ -59,39 +59,63 @@ protected:
   Knitter *k;
 };
 
+/*!
+ * \test
+ */
 TEST_F(KnitterTest, test_constructor) {
   // NOTE: Probing private data!
   ASSERT_EQ(k->m_startNeedle, 0);
 }
 
+/*!
+ * \test
+ */
 TEST_F(KnitterTest, test_isr) {
   expect_isr(1);
   k->isr();
 }
 
+/*!
+ * \test
+ */
 TEST_F(KnitterTest, test_startOperation) {
   uint8_t line[] = {1};
   k->startOperation(0, NUM_NEEDLES - 1, false, line);
 }
 
+/*!
+ * \test
+ */
 TEST_F(KnitterTest, test_startTest) {
   k->startTest();
 }
 
+/*!
+ * \test
+ */
 TEST_F(KnitterTest, test_setNextLine) {
   ASSERT_EQ(k->setNextLine(1), false);
 }
 
+/*!
+ * \test
+ */
 TEST_F(KnitterTest, test_setLastLine) {
   k->setLastLine();
 }
 
+/*!
+ * \test
+ */
 TEST_F(KnitterTest, test_send) {
   uint8_t p[] = {1, 2, 3, 4, 5};
   EXPECT_CALL(*serialMock, write(_, _));
   k->send(p, 5);
 }
 
+/*!
+ * \test
+ */
 TEST_F(KnitterTest, test_fsm_init) {
   // Don't init
   EXPECT_CALL(*encodersMock, encA_interrupt).Times(1);
@@ -108,6 +132,9 @@ TEST_F(KnitterTest, test_fsm_init) {
   ASSERT_EQ(k->getState(), s_init);
 }
 
+/*!
+ * \test
+ */
 TEST_F(KnitterTest, test_fsm) {
   // Machine is initialized when left hall sensor is passed in Right direction
   // Inside active needles
@@ -158,6 +185,9 @@ TEST_F(KnitterTest, test_fsm) {
   ASSERT_EQ(k->getState(), s_operate);
 }
 
+/*!
+ * \test
+ */
 TEST_F(KnitterTest, test_fsm_test) {
   EXPECT_CALL(*encodersMock, encA_interrupt).Times(1);
   EXPECT_CALL(*encodersMock, getPosition).Times(1).WillOnce(Return(100));
@@ -180,6 +210,9 @@ TEST_F(KnitterTest, test_fsm_test) {
   k->fsm();
 }
 
+/*!
+ * \test
+ */
 TEST_F(KnitterTest, test_fsm_test2) {
   EXPECT_CALL(*encodersMock, encA_interrupt).Times(1);
   EXPECT_CALL(*encodersMock, getPosition).Times(1).WillOnce(Return(100));
@@ -200,6 +233,9 @@ TEST_F(KnitterTest, test_fsm_test2) {
   k->fsm();
 }
 
+/*!
+ * \test
+ */
 TEST_F(KnitterTest, test_fsm_test3) {
   EXPECT_CALL(*encodersMock, encA_interrupt).Times(1);
   EXPECT_CALL(*encodersMock, getPosition).Times(1).WillOnce(Return(100));
@@ -217,5 +253,42 @@ TEST_F(KnitterTest, test_fsm_test3) {
   expect_isr(0);
   k->isr();
   expect_indState();
+  k->fsm();
+}
+
+/*!
+ * \test
+ */
+TEST_F(KnitterTest, test_operate_lastline) {
+  // Machine is initialized when left hall sensor is passed in Right direction
+  // Inside active needles
+  expect_isr(40 + END_OF_LINE_OFFSET_L + 1);
+  k->isr();
+  EXPECT_CALL(*solenoidsMock, setSolenoids(0xFFFF)).Times(1);
+  expect_indState();
+
+  // init
+  k->fsm();
+  // state is ready
+
+  // m_pixelToSet is between start and stop needle
+  uint8_t line[] = {1};
+  k->startOperation(0, NUM_NEEDLES - 1, false, line);
+  k->fsm();
+
+  // _workedOnLine is set to true
+
+  // Position has changed since last call to operate function
+  // m_pixelToSet is above m_stopNeedle + END_OF_LINE_OFFSET_R
+  expect_isr(NUM_NEEDLES + 8 + END_OF_LINE_OFFSET_R + 1);
+  k->isr();
+
+  // m_lastLineFlag is true
+  k->setLastLine();
+
+  EXPECT_CALL(*solenoidsMock, setSolenoid);
+  EXPECT_CALL(*beeperMock, endWork);
+  EXPECT_CALL(*solenoidsMock, setSolenoids(0xFFFF));
+  EXPECT_CALL(*beeperMock, finishedLine);
   k->fsm();
 }
