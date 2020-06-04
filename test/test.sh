@@ -43,4 +43,4 @@ cd ../..
 
 gcovr -r . -e test_* -e arduino_mock* -e libraries* --html-details -o ./test/build/coverage.html
 gcovr -r . --branches -e test_* -e arduino_mock* -e libraries*
-gcovr -r . -e test_* -e arduino_mock* -e libraries* --fail-under-line 100 --fail-under-branch 86
+gcovr -r . -e test_* -e arduino_mock* -e libraries* --fail-under-line 100 --fail-under-branch 97
