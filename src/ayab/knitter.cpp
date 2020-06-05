@@ -117,7 +117,7 @@ void Knitter::fsm() {
  * comparison.
  */
 bool Knitter::startOperation(uint8_t startNeedle, uint8_t stopNeedle,
-                             bool continuousReportingEnabled, uint8_t(*line)) {
+                             bool continuousReportingEnabled, uint8_t *line) {
   // TODO(sl): Check ok after removed always true comparison.
   if (stopNeedle < NUM_NEEDLES && startNeedle < stopNeedle) {
     if (s_ready == m_opState) {
@@ -204,10 +204,9 @@ void Knitter::state_ready() {
 
 void Knitter::state_operate() {
   digitalWrite(LED_PIN_A, 1);
-  static bool _firstRun = true;
 
-  if (true == _firstRun) {
-    _firstRun = false;
+  if (true == m_firstRun) {
+    m_firstRun = false;
     // Optimize Delay for various Arduino Models
     delay(2000);
     m_beeper.finishedLine();

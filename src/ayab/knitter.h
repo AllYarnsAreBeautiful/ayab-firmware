@@ -44,6 +44,7 @@ class Knitter {
   FRIEND_TEST(KnitterTest, test_constructor);
   FRIEND_TEST(KnitterTest, test_fsm_default_case);
   FRIEND_TEST(KnitterTest, test_getStartOffset);
+  FRIEND_TEST(KnitterTest, test_operate_lastline_and_no_req);
 #endif
 public:
   Knitter();
@@ -51,7 +52,7 @@ public:
   void isr();
   void fsm();
   bool startOperation(uint8_t startNeedle, uint8_t stopNeedle,
-                      bool continuousReportingEnabled, uint8_t(*line));
+                      bool continuousReportingEnabled, uint8_t *line);
   bool startTest(void);
   bool setNextLine(uint8_t lineNumber);
   void setLastLine();
