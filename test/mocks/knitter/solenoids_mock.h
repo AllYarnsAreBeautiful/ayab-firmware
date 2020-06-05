@@ -1,6 +1,5 @@
 #pragma once
 
-#include "types.h"
 #include <gmock/gmock.h>
 
 class SolenoidsMock {

@@ -25,8 +25,9 @@
 #include <SerialCommand.h>
 
 #include "beeper.h"
+#include "board.h"
 #include "debug.h"
-#include "settings.h"
+#include "serial_encoding.h"
 #include "solenoids.h"
 
 /* Global Declarations */

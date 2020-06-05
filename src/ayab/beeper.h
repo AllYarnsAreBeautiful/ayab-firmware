@@ -25,7 +25,7 @@
 
 #include <Arduino.h>
 
-#include "settings.h"
+#define BEEPDELAY 50 // ms
 
 /*!
  *  Class to actuate a beeper connected to PIEZO_PIN

@@ -25,7 +25,36 @@
 
 #include <Arduino.h>
 
-#include "settings.h"
+// Should be calibrated to each device
+// These values are for the K carriage
+#if defined(KH910)
+#define FILTER_L_MIN 200 // below: L Carriage
+#define FILTER_L_MAX 600 // above: K Carriage
+#define FILTER_R_MIN 200
+#define FILTER_R_MAX 1023
+#elif defined(KH930)
+#define FILTER_L_MIN 200 // below: L Carriage
+#define FILTER_L_MAX 600 // above: K Carriage
+#define FILTER_R_MIN 0
+#define FILTER_R_MAX 600
+#else
+#error "KH910 or KH930 has to be defined as a preprocessor variable!"
+#endif
+
+#define END_LEFT 0
+#define END_RIGHT 255
+
+typedef enum Direction { NoDirection = 0, Left = 1, Right = 2 } Direction_t;
+
+typedef enum Carriage { NoCarriage = 0, K = 1, L = 2, G = 3 } Carriage_t;
+
+typedef enum Beltshift {
+  Unknown = 0,
+  Regular = 1,
+  Shifted = 2,
+  Lace_Regular = 3,
+  Lace_Shifted = 4
+} Beltshift_t;
 
 /*!
  * \brief Encoder interface.

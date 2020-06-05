@@ -1,14 +1,13 @@
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 
-#include "knitter.h"
-#include "knitter/beeper_mock.h"
-#include "knitter/encoders_mock.h"
-#include "knitter/solenoids_mock.h"
+#include <board.h>
+#include <knitter.h>
+#include <knitter/beeper_mock.h>
+#include <knitter/encoders_mock.h>
+#include <knitter/solenoids_mock.h>
 
 using ::testing::_;
-using ::testing::NiceMock;
 using ::testing::Return;
-// using ::testing::StrictMock;
 
 void onPacketReceived(const uint8_t *buffer, size_t size) {
   (void)buffer;

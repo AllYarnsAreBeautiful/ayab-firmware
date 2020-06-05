@@ -1,6 +1,7 @@
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 
-#include "encoders.h"
+#include <board.h>
+#include <encoders.h>
 
 using ::testing::Return;
 

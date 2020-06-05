@@ -20,10 +20,10 @@
   ((bitvalue) ? bitSet(value, bit) : bitClear(value, bit))
 
 #define A0 0
-#define A1 0
-#define A2 0
-#define A3 0
-#define A4 0
-#define A5 0
-#define A6 0
-#define A7 0
+#define A1 1
+#define A2 2
+#define A3 3
+#define A4 4
+#define A5 5
+#define A6 6
+#define A7 7

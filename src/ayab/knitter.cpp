@@ -22,6 +22,7 @@
 
 #include <Arduino.h>
 
+#include "board.h"
 #include "knitter.h"
 #include "serial_encoding.h"
 
