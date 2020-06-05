@@ -16,13 +16,11 @@ void releaseEncodersMock() {
   }
 }
 
-Encoders::Encoders() {
-}
 void Encoders::encA_interrupt() {
   assert(gEncodersMock != NULL);
   gEncodersMock->encA_interrupt();
 }
-uint8_t Encoders::getPosition() {
+uint8_t Encoders::getPosition() const {
   assert(gEncodersMock != NULL);
   return gEncodersMock->getPosition();
 }

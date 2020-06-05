@@ -26,12 +26,6 @@
 #include "encoders.h"
 
 /*!
- * \brief Construct encoder object.
- */
-Encoders::Encoders() {
-}
-
-/*!
  * \brief Encoder A interrupt service routine.
  *
  * Determines edge of signal and deferres to private rising/falling
@@ -40,55 +34,55 @@ Encoders::Encoders() {
 void Encoders::encA_interrupt() {
   m_hallActive = NoDirection;
 
-  bool _curState = digitalRead(ENC_PIN_A);
+  bool currentState = static_cast<bool>(digitalRead(ENC_PIN_A));
 
-  if (!_oldState && _curState) {
+  if (!m_oldState && currentState) {
     encA_rising();
-  } else if (_oldState && !_curState) {
+  } else if (m_oldState && !currentState) {
     encA_falling();
   }
-  _oldState = _curState;
+  m_oldState = currentState;
 }
 
 /*!
  * \brief Getter for position member.
  */
-uint8_t Encoders::getPosition() {
+auto Encoders::getPosition() const -> uint8_t {
   return m_encoderPos;
 }
 
 /*!
  * \brief Getter for beltshift member.
  */
-Beltshift_t Encoders::getBeltshift() {
+auto Encoders::getBeltshift() -> Beltshift_t {
   return m_beltShift;
 }
 
 /*!
  * \brief Getter for direction member.
  */
-Direction_t Encoders::getDirection() {
+auto Encoders::getDirection() -> Direction_t {
   return m_direction;
 }
 
 /*!
  * \brief Getter for hallActive member.
  */
-Direction_t Encoders::getHallActive() {
+auto Encoders::getHallActive() -> Direction_t {
   return m_hallActive;
 }
 
 /*!
  * \brief Getter for carriage member.
  */
-Carriage_t Encoders::getCarriage() {
+auto Encoders::getCarriage() -> Carriage_t {
   return m_carriage;
 }
 
 /*!
  * \brief Read hall sensor on left and right.
  */
-uint16_t Encoders::getHallValue(Direction_t pSensor) {
+auto Encoders::getHallValue(Direction_t pSensor) -> uint16_t {
   switch (pSensor) {
   case Left:
     return analogRead(EOL_PIN_L);
@@ -106,7 +100,7 @@ uint16_t Encoders::getHallValue(Direction_t pSensor) {
  */
 void Encoders::encA_rising() {
   // Direction only decided on rising edge of encoder A
-  m_direction = digitalRead(ENC_PIN_B) ? Right : Left;
+  m_direction = digitalRead(ENC_PIN_B) != 0 ? Right : Left;
 
   // Update carriage position
   if (Right == m_direction) {
@@ -132,10 +126,10 @@ void Encoders::encA_rising() {
     }
 
     // Belt shift signal only decided in front of hall sensor
-    m_beltShift = digitalRead(ENC_PIN_C) ? Regular : Shifted;
+    m_beltShift = digitalRead(ENC_PIN_C) != 0 ? Regular : Shifted;
 
     // Known position of the carriage -> overwrite position
-    m_encoderPos = END_LEFT + 28;
+    m_encoderPos = END_LEFT + END_OFFSET;
   }
 }
 
@@ -168,9 +162,9 @@ void Encoders::encA_falling() {
     }
 
     // Belt shift signal only decided in front of hall sensor
-    m_beltShift = digitalRead(ENC_PIN_C) ? Shifted : Regular;
+    m_beltShift = digitalRead(ENC_PIN_C) != 0 ? Shifted : Regular;
 
     // Known position of the carriage -> overwrite position
-    m_encoderPos = END_RIGHT - 28;
+    m_encoderPos = END_RIGHT - END_OFFSET;
   }
 }
