@@ -36,11 +36,14 @@ if [[ $clean -eq 1 ]]; then
   make $make_verbose clean
 fi
 
-make $make_verbose
+make -j 2 $make_verbose
 GTEST_COLOR=1 ctest $ctest_verbose --output-on-failure .
 
 cd ../..
 
-gcovr -r . -e test_* -e arduino_mock* -e libraries* --html-details -o ./test/build/coverage.html
-gcovr -r . --branches -e test_* -e arduino_mock* -e libraries*
-gcovr -r . -e test_* -e arduino_mock* -e libraries* --fail-under-line 100 --fail-under-branch 97
+GCOVR_ARGS="--exclude-unreachable-branches --exclude-throw-branches \
+            --exclude-directories 'test/build/arduino_mock$' -e test_* -e libraries*"
+
+gcovr -r . $GCOVR_ARGS  --html-details -o ./test/build/coverage.html
+gcovr -r . $GCOVR_ARGS --branches
+gcovr -d -j 2 -r . $GCOVR_ARGS --fail-under-line 100 --fail-under-branch 100
