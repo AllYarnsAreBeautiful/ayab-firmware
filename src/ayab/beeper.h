@@ -1,3 +1,4 @@
+#pragma once
 /*!
  * \file beeper.h
  *
@@ -19,27 +20,29 @@
  *    Copyright 2013 Christian Obersteiner, Andreas Müller
  *    http://ayab-knitting.com
  */
+#include <cstdint>
 
-#ifndef BEEPER_H_
-#define BEEPER_H_
+constexpr uint8_t BEEP_DELAY = 50U; // ms
 
-#include <Arduino.h>
+constexpr uint8_t BEEP_NUM_READY = 5U;
+constexpr uint8_t BEEP_NUM_FINISHEDLINE = 3U;
+constexpr uint8_t BEEP_NUM_ENDWORK = 10U;
 
-#define BEEPDELAY 50 // ms
+constexpr uint8_t BEEP_ON_DUTY = 0U;
+constexpr uint8_t BEEP_OFF_DUTY = 20U;
+constexpr uint8_t BEEP_NO_DUTY = 255U;
 
 /*!
  *  Class to actuate a beeper connected to PIEZO_PIN
  */
 class Beeper {
 public:
-  Beeper();
+  Beeper() = default;
 
-  void ready();
-  void finishedLine();
-  void endWork();
+  static void ready();
+  static void finishedLine();
+  static void endWork();
 
 private:
-  void beep(uint8_t length);
+  static void beep(uint8_t length);
 };
-
-#endif // BEEPER_H_

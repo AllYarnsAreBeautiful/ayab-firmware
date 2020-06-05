@@ -25,29 +25,25 @@
 #include "beeper.h"
 #include "board.h"
 
-Beeper::Beeper() {
-  // Intentionally left blank
-}
-
 /*!
  * Beep to indicate readiness
  */
 void Beeper::ready() {
-  beep(5);
+  beep(BEEP_NUM_READY);
 }
 
 /*!
  * Beep to indicate the end of a line
  */
 void Beeper::finishedLine() {
-  beep(3);
+  beep(BEEP_NUM_FINISHEDLINE);
 }
 
 /*!
  * Beep to indicate the end the knitting pattern
  */
 void Beeper::endWork() {
-  beep(10);
+  beep(BEEP_NUM_ENDWORK);
 }
 
 /* Private Methods */
@@ -56,11 +52,15 @@ void Beeper::endWork() {
  * Generic beep function.
  */
 void Beeper::beep(uint8_t length) {
-  for (int i = 0; i < length; i++) {
-    analogWrite(PIEZO_PIN, 0);
-    delay(BEEPDELAY);
-    analogWrite(PIEZO_PIN, 20);
-    delay(BEEPDELAY);
+
+  for (uint8_t i = 0U; i < length; ++i) {
+
+    analogWrite(PIEZO_PIN, BEEP_ON_DUTY);
+    delay(BEEP_DELAY);
+
+    analogWrite(PIEZO_PIN, BEEP_OFF_DUTY);
+    delay(BEEP_DELAY);
   }
-  analogWrite(PIEZO_PIN, 255);
+
+  analogWrite(PIEZO_PIN, BEEP_NO_DUTY);
 }
