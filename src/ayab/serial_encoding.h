@@ -22,3 +22,24 @@ This file is part of AYAB.
 #pragma once
 
 void onPacketReceived(const uint8_t *buffer, size_t size);
+
+#define FW_VERSION_MAJ 0
+#define FW_VERSION_MIN 95
+#define FW_VERSION_PATCH 0
+
+#define API_VERSION 5 // for message description, see below
+
+#define SERIAL_BAUDRATE 115200
+
+typedef enum AYAB_API {
+  reqStart_msgid = 0x01,
+  cnfStart_msgid = 0xC1,
+  reqLine_msgid = 0x82,
+  cnfLine_msgid = 0x42,
+  reqInfo_msgid = 0x03,
+  cnfInfo_msgid = 0xC3,
+  reqTest_msgid = 0x04,
+  cnfTest_msgid = 0xC4,
+  indState_msgid = 0x84,
+  debug_msgid = 0xFF
+} AYAB_API_t;

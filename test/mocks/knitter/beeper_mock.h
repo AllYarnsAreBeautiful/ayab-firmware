@@ -1,6 +1,6 @@
 #pragma once
 
-#include "types.h"
+#include <beeper.h>
 #include <gmock/gmock.h>
 
 class BeeperMock {

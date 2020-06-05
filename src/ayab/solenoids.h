@@ -25,8 +25,6 @@
 
 #include <Arduino.h>
 
-#include "settings.h"
-
 #define I2Caddr_sol1_8 0x0  ///< I2C Address of solenoids 1 - 8
 #define I2Caddr_sol9_16 0x1 ///< I2C Address of solenoids 9 - 16
 

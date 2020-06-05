@@ -1,5 +1,5 @@
 /*!
- * \file beeper.cpp
+ * \file board.h
  *
  * This file is part of AYAB.
  *
@@ -16,51 +16,25 @@
  *    You should have received a copy of the GNU General Public License
  *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
  *
- *    Copyright 2013 Christian Obersteiner, Andreas Müller
+ *    Copyright 2013-2015 Christian Obersteiner, Andreas Müller
  *    http://ayab-knitting.com
  */
+#pragma once
 
-#include <Arduino.h>
+// Pin Assignments
+#define EOL_PIN_R A0 // Analog
+#define EOL_PIN_L A1 // Analog
 
-#include "beeper.h"
-#include "board.h"
+#define ENC_PIN_A 2
+#define ENC_PIN_B 3
 
-Beeper::Beeper() {
-  // Intentionally left blank
-}
+#define ENC_PIN_C 4
 
-/*!
- * Beep to indicate readiness
- */
-void Beeper::ready() {
-  beep(5);
-}
+#define LED_PIN_A 5 // green LED
+#define LED_PIN_B 6 // yellow LED
 
-/*!
- * Beep to indicate the end of a line
- */
-void Beeper::finishedLine() {
-  beep(3);
-}
+#define PIEZO_PIN 9
 
-/*!
- * Beep to indicate the end the knitting pattern
- */
-void Beeper::endWork() {
-  beep(10);
-}
-
-/* Private Methods */
-
-/*!
- * Generic beep function.
- */
-void Beeper::beep(uint8_t length) {
-  for (int i = 0; i < length; i++) {
-    analogWrite(PIEZO_PIN, 0);
-    delay(BEEPDELAY);
-    analogWrite(PIEZO_PIN, 20);
-    delay(BEEPDELAY);
-  }
-  analogWrite(PIEZO_PIN, 255);
-}
+#ifdef DBG_NOMACHINE  // Turn on to use DBG_BTN as EOL Trigger
+#define DBG_BTN_PIN 7 // DEBUG BUTTON
+#endif

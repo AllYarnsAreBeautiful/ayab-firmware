@@ -22,6 +22,7 @@ This file is part of AYAB.
 #include <Arduino.h>
 
 #include "knitter.h"
+#include "serial_encoding.h"
 
 static uint8_t lineBuffer[25];
 

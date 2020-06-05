@@ -30,8 +30,19 @@
 
 #include "beeper.h"
 #include "encoders.h"
-#include "settings.h"
 #include "solenoids.h"
+
+// Machine constants
+#define NUM_NEEDLES 200
+#define END_OF_LINE_OFFSET_L 12
+#define END_OF_LINE_OFFSET_R 12
+
+typedef enum OpState {
+  s_init = 0,
+  s_ready = 1,
+  s_operate = 2,
+  s_test = 3
+} OpState_t;
 
 /*!
  * \brief The knitting finite state machine.

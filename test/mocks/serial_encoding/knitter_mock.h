@@ -1,6 +1,5 @@
 #pragma once
 
-#include "../knitter/types.h"
 #include <gmock/gmock.h>
 
 class KnitterMock {

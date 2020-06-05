@@ -1,6 +1,7 @@
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 
-#include "beeper.h"
+#include <beeper.h>
+#include <board.h>
 
 using ::testing::Return;
 

@@ -22,6 +22,7 @@
 
 #include <Arduino.h>
 
+#include "board.h"
 #include "encoders.h"
 
 /*!
