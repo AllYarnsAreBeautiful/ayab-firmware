@@ -131,10 +131,12 @@ add_executable(${PROJECT_NAME}_knitter
     ${PROJECT_SOURCE_DIR}/mocks/knitter/solenoids_mock.cpp
     ${PROJECT_SOURCE_DIR}/mocks/knitter/encoders_mock.cpp
     ${PROJECT_SOURCE_DIR}/mocks/knitter/beeper_mock.cpp
+    ${SOFT_I2C_LIB}
 )
 target_include_directories(${PROJECT_NAME}_knitter
     PRIVATE
     ${COMMON_INCLUDES}
+    ${EXTERNAL_LIB_INCLUDES}
 )
 target_compile_definitions(${PROJECT_NAME}_knitter
     PRIVATE

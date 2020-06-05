@@ -16,8 +16,6 @@ void releaseSolenoidsMock() {
   }
 }
 
-Solenoids::Solenoids() {
-}
 void Solenoids::init(void) {
   assert(gSolenoidsMock != NULL);
   gSolenoidsMock->init();

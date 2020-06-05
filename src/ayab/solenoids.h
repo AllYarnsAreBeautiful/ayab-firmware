@@ -1,3 +1,4 @@
+#pragma once
 /*!
  * \file solenoids.h
  *
@@ -20,49 +21,46 @@
  *    http://ayab-knitting.com
  */
 
-#ifndef SOLENOIDS_H_
-#define SOLENOIDS_H_
-
 #include <Arduino.h>
 
-#define I2Caddr_sol1_8 0x0  ///< I2C Address of solenoids 1 - 8
-#define I2Caddr_sol9_16 0x1 ///< I2C Address of solenoids 9 - 16
+#include "board.h"
 
-// Determine board type
-#if defined(__AVR_ATmega168__) || defined(__AVR_ATmega328P__)
-// Arduino Uno
-#if !defined(AYAB_QUIET)
-#warning Using Hardware I2C
-#endif
-#ifndef HARD_I2C
-#define HARD_I2C
+#if defined(HARD_I2C)
+#include <Adafruit_MCP23008.h>
+#include <Wire.h>
+#elif defined(SOFT_I2C)
+#include <SoftI2CMaster.h>
 #endif
 
-#elif defined(__AVR_ATmega2560__) || defined(__AVR_ATmega1280__)
-// Arduino Mega
-#if !defined(AYAB_QUIET)
-#warning Using Software I2C
-#endif
-#ifndef SOFT_I2C
-#define SOFT_I2C
-#endif
-#else
-#error "untested board - please check your I2C ports"
-#endif
+constexpr uint8_t SOLENOIDS_NUM = 16U;
+constexpr uint8_t SOLENOIDS_I2C_ADDRESS_MASK = 0x20U;
 
 /*!
  * \brief Control of the needles via solenoids connected to IO expanders.
  */
 class Solenoids {
 public:
-  Solenoids();
-  void init(void);
+  Solenoids()
+#if defined(HARD_I2C)
+      : mcp_0(), mcp_1()
+#elif defined(SOFT_I2C)
+      : SoftI2C(A4, A5)
+#endif
+  {
+  }
+
+  void init();
   void setSolenoid(uint8_t solenoid, bool state);
   void setSolenoids(uint16_t state);
 
 private:
-  uint16_t solenoidState = 0x00;
+  uint16_t solenoidState = 0x0000U;
   void write(uint16_t state);
-};
 
-#endif // SOLENOIDS_H_
+#if defined(HARD_I2C)
+  Adafruit_MCP23008 mcp_0;
+  Adafruit_MCP23008 mcp_1;
+#elif defined(SOFT_I2C)
+  SoftI2CMaster SoftI2C;
+#endif
+};

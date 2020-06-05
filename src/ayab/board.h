@@ -40,3 +40,19 @@ constexpr uint8_t PIEZO_PIN = 9;
 #ifdef DBG_NOMACHINE               // Turn on to use DBG_BTN as EOL Trigger
 constexpr uint8_t DBG_BTN_PIN = 7; // DEBUG BUTTON
 #endif
+
+constexpr uint8_t I2Caddr_sol1_8 = 0x0U;  ///< I2C Address of solenoids 1 - 8
+constexpr uint8_t I2Caddr_sol9_16 = 0x1U; ///< I2C Address of solenoids 9 - 16
+
+// Determine board type
+#if defined(__AVR_ATmega168__) || defined(__AVR_ATmega328P__)
+// Arduino Uno
+#define HARD_I2C
+
+#elif defined(__AVR_ATmega2560__) || defined(__AVR_ATmega1280__)
+// Arduino Mega
+#define SOFT_I2C
+
+#else
+#error "untested board - please check your I2C ports"
+#endif
