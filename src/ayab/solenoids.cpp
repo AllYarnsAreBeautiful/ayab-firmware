@@ -22,28 +22,15 @@
 
 #include "solenoids.h"
 
-#if defined(HARD_I2C)
-#include <Adafruit_MCP23008.h>
-#include <Wire.h>
-static Adafruit_MCP23008 mcp_0;
-static Adafruit_MCP23008 mcp_1;
-#elif defined(SOFT_I2C)
-#include <SoftI2CMaster.h>
-static SoftI2CMaster SoftI2C(A4, A5, 1);
-#endif
-
-Solenoids::Solenoids() {
-}
-
 /*!
  * Initialize I2C connection for solenoids.
  */
-void Solenoids::init(void) {
+void Solenoids::init() {
 #ifdef HARD_I2C
   mcp_0.begin(I2Caddr_sol1_8);
   mcp_1.begin(I2Caddr_sol9_16);
 
-  for (int i = 0; i < 8; i++) {
+  for (int i = 0; i < (SOLENOIDS_NUM / 2); i++) {
     mcp_0.pinMode(i, OUTPUT);
     mcp_1.pinMode(i, OUTPUT);
   }
@@ -58,7 +45,7 @@ void Solenoids::init(void) {
  * \param state The state to set the solenoid to.
  */
 void Solenoids::setSolenoid(uint8_t solenoid, bool state) {
-  if (solenoid > 15) {
+  if (solenoid > (SOLENOIDS_NUM - 1)) {
     // Only 16 solenoids (zero-indexed).
     return;
   }
@@ -69,7 +56,7 @@ void Solenoids::setSolenoid(uint8_t solenoid, bool state) {
     bitClear(solenoidState, solenoid);
   }
 
-  // TODO optimize to act only when there is an actual change of state
+  // TODO(Who?): Optimize to act only when there is an actual change of state
   write(solenoidState);
 }
 
@@ -102,10 +89,10 @@ void Solenoids::write(uint16_t newState) {
   mcp_0.writeGPIO(lowByte(newState));
   mcp_1.writeGPIO(highByte(newState));
 #elif defined SOFT_I2C
-  SoftI2C.beginTransmission(I2Caddr_sol1_8 | 0x20);
+  SoftI2C.beginTransmission(I2Caddr_sol1_8 | SOLENOIDS_I2C_ADDRESS_MASK);
   SoftI2C.send(lowByte(newState));
   SoftI2C.endTransmission();
-  SoftI2C.beginTransmission(I2Caddr_sol9_16 | 0x20);
+  SoftI2C.beginTransmission(I2Caddr_sol9_16 | SOLENOIDS_I2C_ADDRESS_MASK);
   SoftI2C.send(highByte(newState));
   SoftI2C.endTransmission();
 #endif

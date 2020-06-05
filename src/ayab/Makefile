@@ -6,6 +6,7 @@
 PROJECT_DIR = $(shell dirname $(shell pwd))/..
 $(info $(PROJECT_DIR))
 
+ARDUINO_LIBS = Wire Adafruit_MCP23008 SoftI2CMaster PacketSerial SerialCommand
 USER_LIB_PATH = $(realpath $(PROJECT_DIR)/libraries)
 
 TARGET = ayab

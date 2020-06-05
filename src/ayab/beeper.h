@@ -20,7 +20,7 @@
  *    Copyright 2013 Christian Obersteiner, Andreas Müller
  *    http://ayab-knitting.com
  */
-#include <cstdint>
+#include <Arduino.h>
 
 constexpr uint8_t BEEP_DELAY = 50U; // ms
 
