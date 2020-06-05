@@ -1,5 +1,5 @@
 #include "beeper_mock.h"
-#include "beeper.h"
+#include <beeper.h>
 
 static BeeperMock *gBeeperMock = NULL;
 BeeperMock *beeperMockInstance() {
@@ -16,8 +16,6 @@ void releaseBeeperMock() {
   }
 }
 
-Beeper::Beeper() {
-}
 void Beeper::ready() {
   assert(gBeeperMock != NULL);
   gBeeperMock->ready();

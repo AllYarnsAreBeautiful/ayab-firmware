@@ -1,3 +1,4 @@
+#pragma once
 /*!
  * \file board.h
  *
@@ -19,22 +20,23 @@
  *    Copyright 2013-2015 Christian Obersteiner, Andreas Müller
  *    http://ayab-knitting.com
  */
-#pragma once
+
+#include <Arduino.h>
 
 // Pin Assignments
-#define EOL_PIN_R A0 // Analog
-#define EOL_PIN_L A1 // Analog
+constexpr uint8_t EOL_PIN_R = A0; // Analog
+constexpr uint8_t EOL_PIN_L = A1; // Analog
 
-#define ENC_PIN_A 2
-#define ENC_PIN_B 3
+constexpr uint8_t ENC_PIN_A = 2;
+constexpr uint8_t ENC_PIN_B = 3;
 
-#define ENC_PIN_C 4
+constexpr uint8_t ENC_PIN_C = 4;
 
-#define LED_PIN_A 5 // green LED
-#define LED_PIN_B 6 // yellow LED
+constexpr uint8_t LED_PIN_A = 5; // green LED
+constexpr uint8_t LED_PIN_B = 6; // yellow LED
 
-#define PIEZO_PIN 9
+constexpr uint8_t PIEZO_PIN = 9;
 
-#ifdef DBG_NOMACHINE  // Turn on to use DBG_BTN as EOL Trigger
-#define DBG_BTN_PIN 7 // DEBUG BUTTON
+#ifdef DBG_NOMACHINE               // Turn on to use DBG_BTN as EOL Trigger
+constexpr uint8_t DBG_BTN_PIN = 7; // DEBUG BUTTON
 #endif
