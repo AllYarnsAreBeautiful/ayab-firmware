@@ -28,33 +28,40 @@
 // Should be calibrated to each device
 // These values are for the K carriage
 #if defined(KH910)
-#define FILTER_L_MIN 200 // below: L Carriage
-#define FILTER_L_MAX 600 // above: K Carriage
-#define FILTER_R_MIN 200
-#define FILTER_R_MAX 1023
+constexpr uint16_t FILTER_L_MIN = 200U; // below: L Carriage
+constexpr uint16_t FILTER_L_MAX = 600U; // above: K Carriage
+constexpr uint16_t FILTER_R_MIN = 200U;
+constexpr uint16_t FILTER_R_MAX = 1023U;
 #elif defined(KH930)
-#define FILTER_L_MIN 200 // below: L Carriage
-#define FILTER_L_MAX 600 // above: K Carriage
-#define FILTER_R_MIN 0
-#define FILTER_R_MAX 600
+constexpr uint16_t FILTER_L_MIN = 200U; // below: L Carriage
+constexpr uint16_t FILTER_L_MAX = 600U; // above: K Carriage
+constexpr uint16_t FILTER_R_MIN = 0U;
+constexpr uint16_t FILTER_R_MAX = 600U;
 #else
 #error "KH910 or KH930 has to be defined as a preprocessor variable!"
 #endif
 
-#define END_LEFT 0
-#define END_RIGHT 255
+constexpr uint8_t END_LEFT = 0U;
+constexpr uint8_t END_RIGHT = 255U;
+constexpr uint8_t END_OFFSET = 28;
 
-typedef enum Direction { NoDirection = 0, Left = 1, Right = 2 } Direction_t;
+enum Direction { NoDirection = 0, Left = 1, Right = 2 };
 
-typedef enum Carriage { NoCarriage = 0, K = 1, L = 2, G = 3 } Carriage_t;
+enum Carriage { NoCarriage = 0, K = 1, L = 2, G = 3 };
 
-typedef enum Beltshift {
+enum Beltshift {
   Unknown = 0,
   Regular = 1,
   Shifted = 2,
   Lace_Regular = 3,
   Lace_Shifted = 4
-} Beltshift_t;
+};
+
+using Direction_t = enum Direction;
+
+using Carriage_t = enum Carriage;
+
+using Beltshift_t = enum Beltshift;
 
 /*!
  * \brief Encoder interface.
@@ -63,17 +70,17 @@ typedef enum Beltshift {
  */
 class Encoders {
 public:
-  Encoders();
+  Encoders() = default;
 
   void encA_interrupt();
 
-  uint8_t getPosition();
-  Beltshift_t getBeltshift();
-  Direction_t getDirection();
-  Direction_t getHallActive();
-  Carriage_t getCarriage();
+  auto getPosition() const -> uint8_t;
+  auto getBeltshift() -> Beltshift_t;
+  auto getDirection() -> Direction_t;
+  auto getHallActive() -> Direction_t;
+  auto getCarriage() -> Carriage_t;
 
-  uint16_t getHallValue(Direction_t);
+  static auto getHallValue(Direction_t pSensor) -> uint16_t;
 
 private:
   Direction_t m_direction = NoDirection;
@@ -81,7 +88,7 @@ private:
   Beltshift_t m_beltShift = Unknown;
   Carriage_t m_carriage = NoCarriage;
   uint8_t m_encoderPos = 0x00;
-  bool _oldState = false;
+  bool m_oldState = false;
 
   void encA_rising();
   void encA_falling();
