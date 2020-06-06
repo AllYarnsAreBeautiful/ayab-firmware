@@ -263,6 +263,9 @@ TEST_F(KnitterTest, test_startOperation) {
 
   // stopNeedle equal to NUM_NEEDLES
   ASSERT_EQ(k->startOperation(0, NUM_NEEDLES, false, line), false);
+
+  // null pointer passed as line
+  ASSERT_EQ(k->startOperation(0, NUM_NEEDLES - 1, false, nullptr), false);
 }
 
 /*!
@@ -420,6 +423,10 @@ TEST_F(KnitterTest, test_operate_lastline_and_no_req) {
 
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, 1));
   k->state_operate();
+
+  ASSERT_EQ(k->getStartOffset(NUM_DIRECTIONS), 0);
+  k->m_carriage = NUM_CARRIAGES;
+  ASSERT_EQ(k->getStartOffset(Right), 0);
 }
 
 /*!

@@ -1,5 +1,5 @@
 ---
-Checks:          'clang-diagnostic-*,clang-analyzer-*,*,-llvm-header-guard,-fuchsia-trailing-return'
+Checks:          'clang-diagnostic-*,clang-analyzer-*,*,-llvm-header-guard,-fuchsia-trailing-return,-cppcoreguidelines-avoid-c-arrays,-modernize-avoid-c-arrays,-hicpp-avoid-c-arrays,-fuchsia-default-arguments-declarations,-hicpp-deprecated-headers,-modernize-deprecated-headers,-fuchsia-default-arguments-calls,-cppcoreguidelines-avoid-magic-numbers,-cppcoreguidelines-pro-bounds-pointer-arithmetic,-cppcoreguidelines-pro-bounds-constant-array-index'
 WarningsAsErrors: ''
 HeaderFilterRegex: '.*'
 AnalyzeTemporaryDtors: false

@@ -44,6 +44,9 @@ constexpr uint8_t DBG_BTN_PIN = 7; // DEBUG BUTTON
 constexpr uint8_t I2Caddr_sol1_8 = 0x0U;  ///< I2C Address of solenoids 1 - 8
 constexpr uint8_t I2Caddr_sol9_16 = 0x1U; ///< I2C Address of solenoids 9 - 16
 
+// TODO(Who?): Optimize Delay for various Arduino Models
+constexpr uint16_t START_OPERATION_DELAY = 2000U;
+
 // Determine board type
 #if defined(__AVR_ATmega168__) || defined(__AVR_ATmega328P__)
 // Arduino Uno

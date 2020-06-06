@@ -26,6 +26,13 @@
 #include "knitter.h"
 #include "serial_encoding.h"
 
+#ifdef CLANG_TIDY
+// clang-tidy doesn't find these macros for some reason,
+// no problem when building or testing though.
+constexpr uint8_t UINT8_MAX = 0xFFU;
+constexpr uint16_t UINT16_MAX = 0xFFFFU;
+#endif
+
 #ifndef AYAB_TESTS
 /*!
  * \brief Wrapper for knitter's isr.
@@ -44,7 +51,7 @@ void isr_wrapper() {
  *
  * Initializes the solenoids as well as pins and interrupts.
  */
-Knitter::Knitter() {
+Knitter::Knitter() : m_beeper() {
   m_packetSerial.begin(SERIAL_BAUDRATE);
   m_packetSerial.setPacketHandler(&onPacketReceived);
 
@@ -69,11 +76,11 @@ Knitter::Knitter() {
   m_solenoids.init();
 }
 
-OpState_t Knitter::getState() {
+auto Knitter::getState() -> OpState_t {
   return m_opState;
 }
 
-void Knitter::send(uint8_t payload[], size_t length) {
+void Knitter::send(uint8_t *payload, size_t length) {
   m_packetSerial.send(payload, length);
 }
 
@@ -117,8 +124,14 @@ void Knitter::fsm() {
  * \todo sl: Check that functionality is correct after removing always true
  * comparison.
  */
-bool Knitter::startOperation(uint8_t startNeedle, uint8_t stopNeedle,
-                             bool continuousReportingEnabled, uint8_t *line) {
+auto Knitter::startOperation(uint8_t startNeedle, uint8_t stopNeedle,
+                             bool continuousReportingEnabled, uint8_t *line)
+    -> bool {
+  bool success = false;
+  if (line == nullptr) {
+    return success;
+  }
+
   // TODO(sl): Check ok after removed always true comparison.
   if (stopNeedle < NUM_NEEDLES && startNeedle < stopNeedle) {
     if (s_ready == m_opState) {
@@ -133,41 +146,44 @@ bool Knitter::startOperation(uint8_t startNeedle, uint8_t stopNeedle,
       m_lineBuffer = line;
 
       // Reset variables to start conditions
-      m_currentLineNumber = 255; // because counter will
-                                 // be increased before request
+      m_currentLineNumber = UINT8_MAX; // because counter will
+                                       // be increased before request
       m_lineRequested = false;
       m_lastLineFlag = false;
+      // TODO(sl): Not used? Can be removed?
       m_lastLinesCountdown = 2;
 
-      m_beeper.ready();
+      Beeper::ready();
 
-      return true;
+      success = true;
     }
   }
-  return false;
+  return success;
 }
 
-bool Knitter::startTest() {
+auto Knitter::startTest() -> bool {
+  bool success = false;
   if (s_init == m_opState || s_ready == m_opState) {
     m_opState = s_test;
-    return true;
+    success = true;
   }
-  return false;
+  return success;
 }
 
-bool Knitter::setNextLine(uint8_t lineNumber) {
+auto Knitter::setNextLine(uint8_t lineNumber) -> bool {
+  bool success = false;
   if (m_lineRequested) {
     // Is there even a need for a new line?
     if (lineNumber == m_currentLineNumber) {
       m_lineRequested = false;
-      m_beeper.finishedLine();
-      return true;
+      Beeper::finishedLine();
+      success = true;
     } else {
       //  line numbers didnt match -> request again
       reqLine(m_currentLineNumber);
     }
   }
-  return false;
+  return success;
 }
 
 void Knitter::setLastLine() {
@@ -181,14 +197,14 @@ void Knitter::state_init() {
 #ifdef DBG_NOMACHINE
   bool state = digitalRead(DBG_BTN_PIN);
 
-  // TODO Check if debounce is needed
+  // TODO(Who?): Check if debounce is needed
   if (m_prevState && !state) {
 #else
   // Machine is initialized when left hall sensor is passed in Right direction
   if (Right == m_direction && Left == m_hallActive) {
 #endif // DBG_NOMACHINE
     m_opState = s_ready;
-    m_solenoids.setSolenoids(0xFFFF);
+    m_solenoids.setSolenoids(UINT16_MAX);
     indState(true);
   }
 
@@ -206,18 +222,18 @@ void Knitter::state_ready() {
 void Knitter::state_operate() {
   digitalWrite(LED_PIN_A, 1);
 
-  if (true == m_firstRun) {
+  if (m_firstRun) {
     m_firstRun = false;
-    // Optimize Delay for various Arduino Models
-    delay(2000);
-    m_beeper.finishedLine();
+    // TODO(Who?): Optimize Delay for various Arduino Models
+    delay(START_OPERATION_DELAY);
+    Beeper::finishedLine();
     reqLine(++m_currentLineNumber);
   }
 
 #ifdef DBG_NOMACHINE
   bool state = digitalRead(DBG_BTN_PIN);
 
-  // TODO Check if debounce is needed
+  // TODO(Who?): Check if debounce is needed
   if (m_prevState && !state) {
     if (!m_lineRequested) {
       reqLine(++m_currentLineNumber);
@@ -249,11 +265,11 @@ void Knitter::state_operate() {
 
       // Find the right byte from the currentLine array,
       // then read the appropriate Pixel(/Bit) for the current needle to set
-      int _currentByte = (int)(m_pixelToSet / 8);
-      bool _pixelValue = bitRead(m_lineBuffer[_currentByte],
-                                 m_pixelToSet - (8 * _currentByte));
+      uint8_t currentByte = m_pixelToSet / 8U;
+      bool pixelValue =
+          bitRead(m_lineBuffer[currentByte], m_pixelToSet - (8U * currentByte));
       // Write Pixel state to the appropriate needle
-      m_solenoids.setSolenoid(m_solenoidToSet, _pixelValue);
+      m_solenoids.setSolenoid(m_solenoidToSet, pixelValue);
     } else { // Outside of the active needles
       //  digitalWrite(LED_PIN_B, 0);
 
@@ -268,10 +284,10 @@ void Knitter::state_operate() {
           // request new Line from Host
           reqLine(++m_currentLineNumber);
         } else if (m_lastLineFlag) {
-          m_beeper.endWork();
+          Beeper::endWork();
           m_opState = s_ready;
-          m_solenoids.setSolenoids(0xFFFF);
-          m_beeper.finishedLine();
+          m_solenoids.setSolenoids(UINT16_MAX);
+          Beeper::finishedLine();
         }
       }
     }
@@ -290,14 +306,20 @@ void Knitter::state_test() {
   }
 }
 
-bool Knitter::calculatePixelAndSolenoid() {
+auto Knitter::calculatePixelAndSolenoid() -> bool {
+  uint8_t startOffset = 0;
+  bool success = true;
+
   switch (m_direction) {
   // Calculate the solenoid and pixel to be set
   // Implemented according to machine manual
   // Magic numbers result from machine manual
+  // TODO(sl): 16 is number of solenoids? 8 is half? Replace with named
+  // constant.
   case Right:
-    if (m_position >= getStartOffset(Left)) {
-      m_pixelToSet = m_position - getStartOffset(Left);
+    startOffset = getStartOffset(Left);
+    if (m_position >= startOffset) {
+      m_pixelToSet = m_position - startOffset;
 
       if (Regular == m_beltshift) {
         m_solenoidToSet = m_position % 16;
@@ -309,13 +331,14 @@ bool Knitter::calculatePixelAndSolenoid() {
         m_pixelToSet = m_pixelToSet + 8;
       }
     } else {
-      return false;
+      success = false;
     }
     break;
 
   case Left:
-    if (m_position <= (END_RIGHT - getStartOffset(Right))) {
-      m_pixelToSet = m_position - getStartOffset(Right);
+    startOffset = getStartOffset(Right);
+    if (m_position <= (END_RIGHT - startOffset)) {
+      m_pixelToSet = m_position - startOffset;
 
       if (Regular == m_beltshift) {
         m_solenoidToSet = (m_position + 8) % 16;
@@ -327,68 +350,50 @@ bool Knitter::calculatePixelAndSolenoid() {
         m_pixelToSet = m_pixelToSet - 16;
       }
     } else {
-      return false;
+      success = false;
     }
     break;
 
   default:
-    return false;
+    success = false;
     break;
   }
-  return true;
+  return success;
 }
 
-uint8_t Knitter::getStartOffset(Direction_t direction) {
-  switch (direction) {
-  case Left:
-    if (m_carriage == G) {
-      // G carriage
-      return 8;
-    } else {
-      // K and L carriage
-      return 40;
-    }
-    break;
-
-  case Right:
-    if (m_carriage == G) {
-      // G carriage
-      return 32;
-    } else {
-      // K and L carriage
-      return 16;
-    }
-    break;
-
-  default:
-    return 0;
+auto Knitter::getStartOffset(const Direction_t direction) -> uint8_t {
+  if (direction >= NUM_DIRECTIONS || m_carriage >= NUM_CARRIAGES) {
+    return 0U;
   }
+
+  return startOffsetLUT[direction][m_carriage];
 }
 
-void Knitter::reqLine(uint8_t lineNumber) {
-  uint8_t payload[2];
-  payload[0] = reqLine_msgid;
-  payload[1] = lineNumber;
-  send(payload, 2);
+void Knitter::reqLine(const uint8_t lineNumber) {
+  constexpr uint8_t REQLINE_LEN = 2U;
+  uint8_t payload[REQLINE_LEN] = {
+      reqLine_msgid,
+      lineNumber,
+  };
+  send(static_cast<uint8_t *>(payload), REQLINE_LEN);
 
   m_lineRequested = true;
 }
 
-void Knitter::indState(bool initState) {
-  uint8_t payload[9];
-  payload[0] = indState_msgid;
-  payload[1] = (uint8_t)initState;
-
-  uint16_t hallValue = m_encoders.getHallValue(Left);
-  payload[2] = (uint8_t)(hallValue >> 8) & 0xFF;
-  payload[3] = (uint8_t)hallValue & 0xFF;
-
-  hallValue = m_encoders.getHallValue(Right);
-  payload[4] = (uint8_t)(hallValue >> 8) & 0xFF;
-  payload[5] = (uint8_t)hallValue & 0xFF;
-
-  payload[6] = (uint8_t)m_carriage;
-  payload[7] = (uint8_t)m_position;
-  payload[8] = (uint8_t)m_encoders.getDirection();
-  send(payload, 9);
+void Knitter::indState(const bool initState) {
+  constexpr uint8_t INDSTATE_LEN = 9U;
+  uint16_t leftHallValue = Encoders::getHallValue(Left);
+  uint16_t rightHallValue = Encoders::getHallValue(Right);
+  uint8_t payload[INDSTATE_LEN] = {
+      indState_msgid,
+      static_cast<uint8_t>(initState),
+      highByte(leftHallValue),
+      lowByte(leftHallValue),
+      highByte(rightHallValue),
+      lowByte(rightHallValue),
+      static_cast<uint8_t>(m_carriage),
+      static_cast<uint8_t>(m_position),
+      static_cast<uint8_t>(m_encoders.getDirection()),
+  };
+  send(static_cast<uint8_t *>(payload), INDSTATE_LEN);
 }
