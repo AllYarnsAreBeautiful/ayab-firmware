@@ -1,23 +1,24 @@
-// serial_encoding.cpp
-/*
-This file is part of AYAB.
-
-    AYAB is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    AYAB is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
-
-    Copyright 2013 Christian Obersteiner, Andreas Müller
-    http://ayab-knitting.com
-*/
+/*!
+ * \file serial_encoding.cpp
+ *
+ * This file is part of AYAB.
+ *
+ *    AYAB is free software: you can redistribute it and/or modify
+ *    it under the terms of the GNU General Public License as published by
+ *    the Free Software Foundation, either version 3 of the License, or
+ *    (at your option) any later version.
+ *
+ *    AYAB is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU General Public License for more details.
+ *
+ *    You should have received a copy of the GNU General Public License
+ *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *    Copyright 2013 Christian Obersteiner, Andreas Müller
+ *    http://ayab-knitting.com
+ */
 
 #include <Arduino.h>
 
@@ -41,9 +42,9 @@ static void h_reqStart(const uint8_t *buffer, size_t size) {
     return;
   }
 
-  uint8_t _startNeedle = buffer[1];
-  uint8_t _stopNeedle = buffer[2];
-  bool _continuousReportingEnabled = static_cast<bool>(buffer[3]);
+  uint8_t startNeedle = buffer[1];
+  uint8_t stopNeedle = buffer[2];
+  bool continuousReportingEnabled = static_cast<bool>(buffer[3]);
 
   // TODO(who?): verify operation
   // memset(lineBuffer,0,sizeof(lineBuffer));
@@ -52,12 +53,12 @@ static void h_reqStart(const uint8_t *buffer, size_t size) {
     lineBuffer[i] = 0xFFU;
   }
 
-  bool _success = knitter->startOperation(
-      _startNeedle, _stopNeedle, _continuousReportingEnabled, &(lineBuffer[0]));
+  bool success = knitter->startOperation(
+      startNeedle, stopNeedle, continuousReportingEnabled, &(lineBuffer[0]));
 
   uint8_t payload[2];
   payload[0] = cnfStart_msgid;
-  payload[1] = static_cast<uint8_t>(_success);
+  payload[1] = static_cast<uint8_t>(success);
   knitter->send(payload, 2);
 }
 
@@ -104,26 +105,26 @@ static void h_cnfLine(const uint8_t *buffer, size_t size) {
     return;
   }
 
-  uint8_t _lineNumber = buffer[1];
+  uint8_t lineNumber = buffer[1];
 
   for (uint8_t i = 0U; i < LINEBUFFER_LEN; i++) {
     // Values have to be inverted because of needle states
     lineBuffer[i] = ~buffer[i + 2];
   }
-  uint8_t _flags = buffer[27];
+  uint8_t flags = buffer[27];
 
 #ifdef AYAB_ENABLE_CRC
-  uint8_t _crc8 = buffer[28];
+  uint8_t crc8 = buffer[28];
   // Check crc on bytes 0-28 of buffer.
-  if (_crc8 != CRC8(buffer, 28)) {
+  if (crc8 != CRC8(buffer, 28)) {
     return;
   }
 #endif
 
-  if (knitter->setNextLine(_lineNumber)) {
+  if (knitter->setNextLine(lineNumber)) {
     // Line was accepted
-    bool _flagLastLine = bitRead(_flags, 0U);
-    if (_flagLastLine) {
+    bool flagLastLine = bitRead(flags, 0U);
+    if (flagLastLine) {
       knitter->setLastLine();
     }
   }
@@ -139,11 +140,11 @@ static void h_reqInfo() {
 }
 
 static void h_reqTest() {
-  bool _success = knitter->startTest();
+  bool success = knitter->startTest();
 
   uint8_t payload[2];
   payload[0] = cnfTest_msgid;
-  payload[1] = static_cast<uint8_t>(_success);
+  payload[1] = static_cast<uint8_t>(success);
   knitter->send(payload, 2);
 }
 
