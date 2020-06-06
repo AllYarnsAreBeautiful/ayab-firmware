@@ -25,8 +25,7 @@
 
 #include <Arduino.h>
 
-// TODO(sl): Figure out how to make this include non-relative.
-#include "../../libraries/PacketSerial/src/PacketSerial.h"
+#include <PacketSerial.h>
 
 #include "beeper.h"
 #include "encoders.h"

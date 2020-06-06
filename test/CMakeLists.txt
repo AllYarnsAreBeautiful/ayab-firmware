@@ -30,6 +30,7 @@ set(COMMON_INCLUDES
     ${ARDUINO_MOCK_LIBS_DIR}/lib/gtest/gtest/src/gtest/googlemock/include
     ${PROJECT_SOURCE_DIR}/mocks
     ${SOURCE_DIRECTORY}
+    ${LIBRARY_DIRECTORY}/PacketSerial/src
     )
 set(EXTERNAL_LIB_INCLUDES
     ${LIBRARY_DIRECTORY}/Adafruit_MCP23008
