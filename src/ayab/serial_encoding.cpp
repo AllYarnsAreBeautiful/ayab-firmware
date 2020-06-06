@@ -24,7 +24,7 @@ This file is part of AYAB.
 #include "knitter.h"
 #include "serial_encoding.h"
 
-static uint8_t lineBuffer[25];
+static uint8_t lineBuffer[LINEBUFFER_LEN];
 
 extern Knitter *knitter;
 
@@ -36,20 +36,20 @@ extern Knitter *knitter;
  * \todo sl: Assert size? Handle error?
  */
 static void h_reqStart(const uint8_t *buffer, size_t size) {
-  if (size < 4) {
+  if (size < 4U) {
     // Need 4 bytes from buffer below.
     return;
   }
 
-  uint8_t _startNeedle = (uint8_t)buffer[1];
-  uint8_t _stopNeedle = (uint8_t)buffer[2];
-  bool _continuousReportingEnabled = (bool)buffer[3];
+  uint8_t _startNeedle = buffer[1];
+  uint8_t _stopNeedle = buffer[2];
+  bool _continuousReportingEnabled = static_cast<bool>(buffer[3]);
 
-  // TODO verify operation
+  // TODO(who?): verify operation
   // memset(lineBuffer,0,sizeof(lineBuffer));
   // temporary solution:
-  for (int i = 0; i < 25; i++) {
-    lineBuffer[i] = 0xFF;
+  for (uint8_t i = 0U; i < LINEBUFFER_LEN; i++) {
+    lineBuffer[i] = 0xFFU;
   }
 
   bool _success = knitter->startOperation(
@@ -57,7 +57,7 @@ static void h_reqStart(const uint8_t *buffer, size_t size) {
 
   uint8_t payload[2];
   payload[0] = cnfStart_msgid;
-  payload[1] = _success;
+  payload[1] = static_cast<uint8_t>(_success);
   knitter->send(payload, 2);
 }
 
@@ -72,20 +72,20 @@ static void h_reqStart(const uint8_t *buffer, size_t size) {
  * code released under the therms of the GNU GPL 3.0 license
  */
 static uint8_t CRC8(const uint8_t *buffer, size_t len) {
-  uint8_t crc = 0x00;
+  uint8_t crc = 0x00U;
 
   while (len--) {
     uint8_t extract = *buffer;
     buffer++;
 
-    for (uint8_t tempI = 8; tempI; tempI--) {
-      uint8_t sum = (crc ^ extract) & 0x01;
-      crc >>= 1;
+    for (uint8_t tempI = 8U; tempI; tempI--) {
+      uint8_t sum = (crc ^ extract) & 0x01U;
+      crc >>= 1U;
 
       if (sum) {
-        crc ^= 0x8C;
+        crc ^= 0x8CU;
       }
-      extract >>= 1;
+      extract >>= 1U;
     }
   }
   return crc;
@@ -99,14 +99,14 @@ static uint8_t CRC8(const uint8_t *buffer, size_t len) {
  * \todo sl: Assert size? Handle error?
  */
 static void h_cnfLine(const uint8_t *buffer, size_t size) {
-  if (size < 29) {
+  if (size < 29U) {
     // Need 29 bytes from buffer below.
     return;
   }
 
   uint8_t _lineNumber = buffer[1];
 
-  for (int i = 0; i < 25; i++) {
+  for (uint8_t i = 0U; i < LINEBUFFER_LEN; i++) {
     // Values have to be inverted because of needle states
     lineBuffer[i] = ~buffer[i + 2];
   }
@@ -122,7 +122,7 @@ static void h_cnfLine(const uint8_t *buffer, size_t size) {
 
   if (knitter->setNextLine(_lineNumber)) {
     // Line was accepted
-    bool _flagLastLine = bitRead(_flags, 0);
+    bool _flagLastLine = bitRead(_flags, 0U);
     if (_flagLastLine) {
       knitter->setLastLine();
     }
@@ -143,12 +143,11 @@ static void h_reqTest() {
 
   uint8_t payload[2];
   payload[0] = cnfTest_msgid;
-  payload[1] = _success;
+  payload[1] = static_cast<uint8_t>(_success);
   knitter->send(payload, 2);
 }
 
 static void h_unrecognized() {
-  return;
 }
 
 /*! Callback for PacketSerial
