@@ -32,16 +32,13 @@
 #include "solenoids.h"
 
 // Machine constants
-#define NUM_NEEDLES 200
-#define END_OF_LINE_OFFSET_L 12
-#define END_OF_LINE_OFFSET_R 12
+constexpr uint8_t NUM_NEEDLES = 200;
+constexpr uint8_t END_OF_LINE_OFFSET_L = 12;
+constexpr uint8_t END_OF_LINE_OFFSET_R = 12;
 
-typedef enum OpState {
-  s_init = 0,
-  s_ready = 1,
-  s_operate = 2,
-  s_test = 3
-} OpState_t;
+enum OpState { s_init = 0, s_ready = 1, s_operate = 2, s_test = 3 };
+
+using OpState_t = enum OpState;
 
 /*!
  * \brief The knitting finite state machine.
@@ -63,7 +60,7 @@ public:
   void fsm();
   bool startOperation(uint8_t startNeedle, uint8_t stopNeedle,
                       bool continuousReportingEnabled, uint8_t *line);
-  bool startTest(void);
+  bool startTest();
   bool setNextLine(uint8_t lineNumber);
   void setLastLine();
 

@@ -23,15 +23,17 @@ This file is part of AYAB.
 
 void onPacketReceived(const uint8_t *buffer, size_t size);
 
-#define FW_VERSION_MAJ 0
-#define FW_VERSION_MIN 95
-#define FW_VERSION_PATCH 0
+constexpr uint8_t FW_VERSION_MAJ = 0U;
+constexpr uint8_t FW_VERSION_MIN = 95U;
+constexpr uint8_t FW_VERSION_PATCH = 0U;
 
-#define API_VERSION 5 // for message description, see below
+constexpr uint8_t API_VERSION = 5U; // for message description, see below
 
-#define SERIAL_BAUDRATE 115200
+constexpr uint32_t SERIAL_BAUDRATE = 115200U;
 
-typedef enum AYAB_API {
+constexpr uint8_t LINEBUFFER_LEN = 25U;
+
+enum AYAB_API {
   reqStart_msgid = 0x01,
   cnfStart_msgid = 0xC1,
   reqLine_msgid = 0x82,
@@ -42,4 +44,6 @@ typedef enum AYAB_API {
   cnfTest_msgid = 0xC4,
   indState_msgid = 0x84,
   debug_msgid = 0xFF
-} AYAB_API_t;
+};
+
+using AYAB_API_t = enum AYAB_API;
