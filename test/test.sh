@@ -36,7 +36,7 @@ if [[ $clean -eq 1 ]]; then
   make $make_verbose clean
 fi
 
-make -j 2 $make_verbose
+make -j $(nproc) $make_verbose
 GTEST_COLOR=1 ctest $ctest_verbose --output-on-failure .
 
 cd ../..
@@ -46,4 +46,4 @@ GCOVR_ARGS="--exclude-unreachable-branches --exclude-throw-branches \
 
 gcovr -r . $GCOVR_ARGS  --html-details -o ./test/build/coverage.html
 gcovr -r . $GCOVR_ARGS --branches
-gcovr -d -j 2 -r . $GCOVR_ARGS --fail-under-line 100 --fail-under-branch 100
+gcovr -d -j $(nproc) -r . $GCOVR_ARGS --fail-under-line 100 --fail-under-branch 100
