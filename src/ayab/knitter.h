@@ -32,11 +32,18 @@
 #include "solenoids.h"
 
 // Machine constants
-constexpr uint8_t NUM_NEEDLES = 200;
-constexpr uint8_t END_OF_LINE_OFFSET_L = 12;
-constexpr uint8_t END_OF_LINE_OFFSET_R = 12;
+constexpr uint8_t NUM_NEEDLES = 200U;
+constexpr uint8_t END_OF_LINE_OFFSET_L = 12U;
+constexpr uint8_t END_OF_LINE_OFFSET_R = 12U;
 
-enum OpState { s_init = 0, s_ready = 1, s_operate = 2, s_test = 3 };
+constexpr uint8_t startOffsetLUT[NUM_DIRECTIONS][NUM_CARRIAGES] = {
+    // NC,  K,  L,  G
+    {0, 0, 0, 0},    // NoDirection
+    {0, 40, 40, 8},  // Left
+    {0, 16, 16, 32}, // Right
+};
+
+enum OpState { s_init, s_ready, s_operate, s_test };
 
 using OpState_t = enum OpState;
 
@@ -65,7 +72,7 @@ public:
   void setLastLine();
 
   auto getState() -> OpState_t;
-  void send(uint8_t payload[], size_t length);
+  void send(uint8_t *payload, size_t length);
 
 private:
   Solenoids m_solenoids;
@@ -75,25 +82,26 @@ private:
   OpState_t m_opState = s_init;
   SLIPPacketSerial m_packetSerial;
 
-  bool m_lastLineFlag;
-  uint8_t m_lastLinesCountdown;
+  bool m_lastLineFlag = false;
+  // TODO(sl): Not used? Can be removed?
+  uint8_t m_lastLinesCountdown = 0U;
 
   // Job Parameters
-  uint8_t m_startNeedle = 0;
-  uint8_t m_stopNeedle = 0;
-  bool m_continuousReportingEnabled;
+  uint8_t m_startNeedle = 0U;
+  uint8_t m_stopNeedle = 0U;
+  bool m_continuousReportingEnabled = false;
   bool m_lineRequested = false;
-  uint8_t m_currentLineNumber = 0;
-  uint8_t *m_lineBuffer;
+  uint8_t m_currentLineNumber = 0U;
+  uint8_t *m_lineBuffer = nullptr;
 
   // current machine state
-  uint8_t m_position;
+  uint8_t m_position = 0U;
   Direction_t m_direction = NoDirection;
-  Direction_t m_hallActive;
-  Beltshift_t m_beltshift;
-  Carriage_t m_carriage;
+  Direction_t m_hallActive = NoDirection;
+  Beltshift_t m_beltshift = Unknown;
+  Carriage_t m_carriage = NoCarriage;
 
-  uint8_t m_sOldPosition = 0;
+  uint8_t m_sOldPosition = 0U;
   bool m_firstRun = true;
   bool m_workedOnLine = false;
 #ifdef DBG_NOMACHINE
@@ -101,16 +109,16 @@ private:
 #endif
 
   // Resulting needle data
-  uint8_t m_solenoidToSet;
-  uint8_t m_pixelToSet;
+  uint8_t m_solenoidToSet = 0U;
+  uint8_t m_pixelToSet = 0U;
 
   void state_init();
-  void state_ready();
+  static void state_ready();
   void state_operate();
   void state_test();
 
   auto calculatePixelAndSolenoid() -> bool;
-  auto getStartOffset(Direction_t) -> uint8_t;
+  auto getStartOffset(Direction_t direction) -> uint8_t;
 
   void reqLine(uint8_t lineNumber);
   void indState(bool initState = false);

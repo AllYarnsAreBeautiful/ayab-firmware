@@ -45,16 +45,16 @@ constexpr uint8_t END_LEFT = 0U;
 constexpr uint8_t END_RIGHT = 255U;
 constexpr uint8_t END_OFFSET = 28;
 
-enum Direction { NoDirection = 0, Left = 1, Right = 2 };
+enum Direction { NoDirection, Left, Right, NUM_DIRECTIONS };
 
-enum Carriage { NoCarriage = 0, K = 1, L = 2, G = 3 };
-
+enum Carriage { NoCarriage, K, L, G, NUM_CARRIAGES };
 enum Beltshift {
-  Unknown = 0,
-  Regular = 1,
-  Shifted = 2,
-  Lace_Regular = 3,
-  Lace_Shifted = 4
+  Unknown,
+  Regular,
+  Shifted,
+  Lace_Regular,
+  Lace_Shifted,
+  NUM_BELTSHIFTS
 };
 
 using Direction_t = enum Direction;
