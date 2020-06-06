@@ -58,13 +58,13 @@ public:
 
   void isr();
   void fsm();
-  bool startOperation(uint8_t startNeedle, uint8_t stopNeedle,
-                      bool continuousReportingEnabled, uint8_t *line);
-  bool startTest();
-  bool setNextLine(uint8_t lineNumber);
+  auto startOperation(uint8_t startNeedle, uint8_t stopNeedle,
+                      bool continuousReportingEnabled, uint8_t *line) -> bool;
+  auto startTest() -> bool;
+  auto setNextLine(uint8_t lineNumber) -> bool;
   void setLastLine();
 
-  OpState_t getState();
+  auto getState() -> OpState_t;
   void send(uint8_t payload[], size_t length);
 
 private:
@@ -109,8 +109,8 @@ private:
   void state_operate();
   void state_test();
 
-  bool calculatePixelAndSolenoid();
-  uint8_t getStartOffset(Direction_t);
+  auto calculatePixelAndSolenoid() -> bool;
+  auto getStartOffset(Direction_t) -> uint8_t;
 
   void reqLine(uint8_t lineNumber);
   void indState(bool initState = false);
