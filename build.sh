@@ -32,19 +32,14 @@ if [ -z ${ARDMK_DIR+x} ]; then
   export ARDMK_DIR=$(dirname $(find /usr -name Arduino.mk))
 fi
 
-if [[ $hw_tests -eq 1 ]]; then
-
-  # HW tests
-  CPPFLAGS=-DAYAB_HW_TEST make BOARD_TAG=uno MACHINETYPE=KH910 -j $(nproc)
-  make BOARD_TAG=uno clean -j $(nproc)
-  CPPFLAGS=-DAYAB_HW_TEST make BOARD_TAG=uno MACHINETYPE=KH930 -j $(nproc)
-  CPPFLAGS=-DAYAB_HW_TEST make BOARD_TAG=mega BOARD_SUB=atmega2560 MACHINETYPE=KH910 -j $(nproc)
-  make BOARD_TAG=mega BOARD_SUB=atmega2560 clean -j $(nproc)
-  CPPFLAGS=-DAYAB_HW_TEST make BOARD_TAG=mega BOARD_SUB=atmega2560 MACHINETYPE=KH930 -j $(nproc)
-
-  make BOARD_TAG=uno clean -j $(nproc)
-  make BOARD_TAG=mega BOARD_SUB=atmega2560 clean -j $(nproc)
-fi
+function make_hw_test() {
+  subboard=""
+  if [[ $1 == "mega" ]]; then
+    subboard="BOARD_SUB=atmega2560"
+  fi
+  make BOARD_TAG=$1 $subboard MACHINETYPE=HW_TEST -j $(nproc)
+  mv $parent_path/build/raw/$1/HW_TEST/ayab.hex $parent_path/build/ayab_HW_TEST_$1.hex
+}
 
 function make_variant() {
   subboard=""
@@ -55,13 +50,17 @@ function make_variant() {
     mv $parent_path/build/raw/$1/$2/ayab.hex $parent_path/build/ayab_$2_$1.hex
 }
 
-function make_machine() {
-  make_variant uno $1
-  make_variant mega $1
+function make_board() {
+  make_variant $1 KH910
+  make_variant $1 KH930
+if [[ $hw_tests -eq 1 ]]; then
+  echo "Making HW Test $1"
+  make_hw_test $1
+fi
 }
 
-make_machine KH910
-make_machine KH930
+make_board uno
+make_board mega
 
 cd $parent_path
 rm -rf build/raw

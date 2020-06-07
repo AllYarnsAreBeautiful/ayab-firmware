@@ -65,7 +65,7 @@ void SerialEncoding::h_reqStart(const uint8_t *buffer, size_t size) {
 
   extern Knitter *knitter;
   bool success = knitter->startOperation(
-      startNeedle, stopNeedle, continuousReportingEnabled, &(lineBuffer[0]));
+      startNeedle, stopNeedle, continuousReportingEnabled, lineBuffer);
 
   uint8_t payload[2];
   payload[0] = cnfStart_msgid;
@@ -203,5 +203,12 @@ void SerialEncoding::update() {
 }
 
 void SerialEncoding::send(uint8_t *payload, size_t length) {
+#ifdef AYAB_HW_TEST
+  Serial.print("Sent: ");
+  for (uint8_t i = 0; i < length; ++i) {
+    Serial.print(payload[i]);
+  }
+  Serial.print(", Encoded as: ");
+#endif
   m_packetSerial.send(payload, length);
 }

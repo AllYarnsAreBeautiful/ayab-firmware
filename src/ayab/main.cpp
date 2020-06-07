@@ -22,26 +22,22 @@
  */
 #include <Arduino.h>
 
-/* Includes */
 #ifdef AYAB_HW_TEST
 #include "hw_test.h"
-#else
-#include "knitter.h"
 #endif
 
+#include "knitter.h"
+
 /* Global Declarations */
-#if !defined(AYAB_HW_TEST)
 Knitter *knitter; ///< A pointer to the global instance of the knitter object.
-#endif
 
 /*!
  * Setup - steps to take before going to the main loop.
  */
 void setup() {
+  knitter = new Knitter();
 #ifdef AYAB_HW_TEST
   hw_test_setup();
-#else
-  knitter = new Knitter();
 #endif
 }
 

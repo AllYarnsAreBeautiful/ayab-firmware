@@ -18,7 +18,11 @@ else
 ifeq "$(MACHINETYPE)" "KH930"
 CPPFLAGS += -DKH930
 else
+ifeq "$(MACHINETYPE)" "HW_TEST"
+CPPFLAGS += -DAYAB_HW_TEST
+else
 $(info "Available values for MACHINETYPE: KH910 KH930")
+endif
 endif
 endif
 
