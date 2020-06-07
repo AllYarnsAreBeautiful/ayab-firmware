@@ -27,7 +27,7 @@
 
 // Should be calibrated to each device
 // These values are for the K carriage
-#if defined(KH910)
+#if defined(KH910) || defined(AYAB_HW_TEST)
 constexpr uint16_t FILTER_L_MIN = 200U; // below: L Carriage
 constexpr uint16_t FILTER_L_MAX = 600U; // above: K Carriage
 constexpr uint16_t FILTER_R_MIN = 200U;
