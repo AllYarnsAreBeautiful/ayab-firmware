@@ -177,3 +177,16 @@ void onPacketReceived(const uint8_t *buffer, size_t size) {
     break;
   }
 }
+
+SerialEncoding::SerialEncoding() {
+  m_packetSerial.begin(SERIAL_BAUDRATE);
+  m_packetSerial.setPacketHandler(&onPacketReceived);
+}
+
+void SerialEncoding::update() {
+  m_packetSerial.update();
+}
+
+void SerialEncoding::send(uint8_t *payload, size_t length) {
+  m_packetSerial.send(payload, length);
+}

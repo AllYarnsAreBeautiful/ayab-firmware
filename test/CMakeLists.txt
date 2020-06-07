@@ -132,6 +132,7 @@ add_executable(${PROJECT_NAME}_knitter
     ${PROJECT_SOURCE_DIR}/mocks/knitter/solenoids_mock.cpp
     ${PROJECT_SOURCE_DIR}/mocks/knitter/encoders_mock.cpp
     ${PROJECT_SOURCE_DIR}/mocks/knitter/beeper_mock.cpp
+    ${PROJECT_SOURCE_DIR}/mocks/knitter/serial_encoding_mock.cpp
     ${SOFT_I2C_LIB}
 )
 target_include_directories(${PROJECT_NAME}_knitter
@@ -153,6 +154,8 @@ target_link_libraries(${PROJECT_NAME}_knitter
 )
 add_dependencies(${PROJECT_NAME}_knitter arduino_mock)
 
+# TODO(sl): Use gtest_discover_tests() ?
+# https://cmake.org/cmake/help/git-master/module/GoogleTest.html
 enable_testing()
 add_test(test_KH930_Uno ${PROJECT_NAME}_KH930_Uno)
 add_test(test_KH910_Uno ${PROJECT_NAME}_KH910_Uno)

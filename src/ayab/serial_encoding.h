@@ -51,3 +51,13 @@ enum AYAB_API {
 };
 
 using AYAB_API_t = enum AYAB_API;
+
+class SerialEncoding {
+public:
+  SerialEncoding();
+  void update();
+  void send(uint8_t *payload, size_t length);
+
+private:
+  SLIPPacketSerial m_packetSerial;
+};
