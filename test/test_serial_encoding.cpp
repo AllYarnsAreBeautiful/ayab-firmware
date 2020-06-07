@@ -3,7 +3,9 @@
 #include "serial_encoding.h"
 #include "serial_encoding/knitter_mock.h"
 
+using ::testing::_;
 using ::testing::Return;
+
 class SerialEncodingTest : public ::testing::Test {
 protected:
   void SetUp() override {
@@ -72,4 +74,35 @@ TEST_F(SerialEncodingTest, test_cnfmsg) {
 TEST_F(SerialEncodingTest, test_debug) {
   uint8_t buffer[] = {debug_msgid};
   onPacketReceived(buffer, sizeof(buffer));
+}
+
+class SerialEncodingObjTest : public ::testing::Test {
+protected:
+  void SetUp() override {
+    serialMock = serialMockInstance();
+    s = new SerialEncoding();
+  }
+
+  void TearDown() override {
+    releaseSerialMock();
+  }
+
+  SerialMock *serialMock;
+  SerialEncoding *s;
+};
+
+TEST_F(SerialEncodingObjTest, test_constructor) {
+}
+
+TEST_F(SerialEncodingObjTest, test_update) {
+  EXPECT_CALL(*serialMock, available);
+  s->update();
+}
+
+TEST_F(SerialEncodingObjTest, test_send) {
+  EXPECT_CALL(*serialMock, write(_, _));
+  EXPECT_CALL(*serialMock, write(SLIP::END));
+
+  uint8_t p[] = {1, 2, 3};
+  s->send(p, 3);
 }

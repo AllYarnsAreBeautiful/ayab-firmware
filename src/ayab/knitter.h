@@ -29,6 +29,7 @@
 
 #include "beeper.h"
 #include "encoders.h"
+#include "serial_encoding.h"
 #include "solenoids.h"
 
 // Machine constants
@@ -78,9 +79,9 @@ private:
   Solenoids m_solenoids;
   Encoders m_encoders;
   Beeper m_beeper;
+  SerialEncoding m_serial_encoding;
 
   OpState_t m_opState = s_init;
-  SLIPPacketSerial m_packetSerial;
 
   bool m_lastLineFlag = false;
   // TODO(sl): Not used? Can be removed?

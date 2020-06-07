@@ -24,7 +24,6 @@
 
 #include "board.h"
 #include "knitter.h"
-#include "serial_encoding.h"
 
 #ifdef CLANG_TIDY
 // clang-tidy doesn't find these macros for some reason,
@@ -51,9 +50,7 @@ void isr_wrapper() {
  *
  * Initializes the solenoids as well as pins and interrupts.
  */
-Knitter::Knitter() : m_beeper() {
-  m_packetSerial.begin(SERIAL_BAUDRATE);
-  m_packetSerial.setPacketHandler(&onPacketReceived);
+Knitter::Knitter() : m_beeper(), m_serial_encoding() {
 
   pinMode(ENC_PIN_A, INPUT);
 #ifndef AYAB_TESTS
@@ -81,7 +78,7 @@ auto Knitter::getState() -> OpState_t {
 }
 
 void Knitter::send(uint8_t *payload, size_t length) {
-  m_packetSerial.send(payload, length);
+  m_serial_encoding.send(payload, length);
 }
 
 void Knitter::isr() {
@@ -115,7 +112,7 @@ void Knitter::fsm() {
   default:
     break;
   }
-  m_packetSerial.update();
+  m_serial_encoding.update();
 }
 
 /*!

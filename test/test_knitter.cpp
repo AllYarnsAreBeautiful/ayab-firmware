@@ -4,6 +4,7 @@
 #include <knitter.h>
 #include <knitter/beeper_mock.h>
 #include <knitter/encoders_mock.h>
+#include <knitter/serial_encoding_mock.h>
 #include <knitter/solenoids_mock.h>
 
 using ::testing::_;
@@ -21,13 +22,27 @@ protected:
     beeperMock = beeperMockInstance();
     solenoidsMock = solenoidsMockInstance();
     encodersMock = encodersMockInstance();
-    serialMock = serialMockInstance();
+    serialEncodingMock = serialEncodingMockInstance();
     expect_constructor();
     k = new Knitter();
   }
 
+  void TearDown() override {
+    releaseArduinoMock();
+    releaseBeeperMock();
+    releaseSolenoidsMock();
+    releaseEncodersMock();
+    releaseSerialEncodingMock();
+  }
+
+  ArduinoMock *arduinoMock;
+  BeeperMock *beeperMock;
+  SolenoidsMock *solenoidsMock;
+  EncodersMock *encodersMock;
+  SerialEncodingMock *serialEncodingMock;
+  Knitter *k;
+
   void expect_constructor() {
-    EXPECT_CALL(*serialMock, begin);
     EXPECT_CALL(*arduinoMock, pinMode(ENC_PIN_A, INPUT));
     EXPECT_CALL(*arduinoMock, pinMode(ENC_PIN_B, INPUT));
     EXPECT_CALL(*arduinoMock, pinMode(ENC_PIN_C, INPUT));
@@ -79,8 +94,6 @@ protected:
   }
 
   template <int times = 1> void expect_send() {
-    EXPECT_CALL(*serialMock, write(_, _)).Times(times);
-    EXPECT_CALL(*serialMock, write(SLIP::END)).Times(times);
   }
 
   template <int times = 1> void expect_indState() {
@@ -91,7 +104,6 @@ protected:
   }
 
   void expect_fsm() {
-    EXPECT_CALL(*serialMock, available);
   }
 
   void expected_fsm() {
@@ -137,21 +149,6 @@ protected:
     expect_indState();
     expected_fsm();
   }
-
-  void TearDown() override {
-    releaseArduinoMock();
-    releaseBeeperMock();
-    releaseSolenoidsMock();
-    releaseEncodersMock();
-    releaseSerialMock();
-  }
-
-  ArduinoMock *arduinoMock;
-  BeeperMock *beeperMock;
-  SolenoidsMock *solenoidsMock;
-  EncodersMock *encodersMock;
-  SerialMock *serialMock;
-  Knitter *k;
 };
 
 /*!
