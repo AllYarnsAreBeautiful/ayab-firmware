@@ -74,6 +74,7 @@ public:
 
   auto getState() -> OpState_t;
   void send(uint8_t *payload, size_t length);
+  void onPacketReceived(const uint8_t *buffer, size_t size);
 
 private:
   Solenoids m_solenoids;

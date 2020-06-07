@@ -25,8 +25,6 @@
 
 #include <PacketSerial.h>
 
-void onPacketReceived(const uint8_t *buffer, size_t size);
-
 constexpr uint8_t FW_VERSION_MAJ = 0U;
 constexpr uint8_t FW_VERSION_MIN = 95U;
 constexpr uint8_t FW_VERSION_PATCH = 0U;
@@ -57,7 +55,14 @@ public:
   SerialEncoding();
   void update();
   void send(uint8_t *payload, size_t length);
+  void onPacketReceived(const uint8_t *buffer, size_t size);
 
 private:
   SLIPPacketSerial m_packetSerial;
+  uint8_t lineBuffer[LINEBUFFER_LEN] = {0};
+
+  void h_reqStart(const uint8_t *buffer, size_t size);
+  void h_cnfLine(const uint8_t *buffer, size_t size);
+  void h_reqInfo();
+  void h_reqTest();
 };

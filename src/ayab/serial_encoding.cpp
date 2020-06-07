@@ -25,9 +25,19 @@
 #include "knitter.h"
 #include "serial_encoding.h"
 
-static uint8_t lineBuffer[LINEBUFFER_LEN];
-
-extern Knitter *knitter;
+#ifndef AYAB_TESTS
+/*!
+ * \brief Wrapper for knitter's onPacketReceived.
+ *
+ * This is needed since a non-static method cannot be
+ * passed to _setPacketHandler_, and the only global variable
+ * is knitter.
+ */
+void gOnPacketReceived(const uint8_t *buffer, size_t size) {
+  extern Knitter *knitter;
+  knitter->onPacketReceived(buffer, size);
+}
+#endif
 
 /* Serial Command handling */
 
@@ -36,7 +46,7 @@ extern Knitter *knitter;
  *
  * \todo sl: Assert size? Handle error?
  */
-static void h_reqStart(const uint8_t *buffer, size_t size) {
+void SerialEncoding::h_reqStart(const uint8_t *buffer, size_t size) {
   if (size < 4U) {
     // Need 4 bytes from buffer below.
     return;
@@ -53,13 +63,14 @@ static void h_reqStart(const uint8_t *buffer, size_t size) {
     lineBuffer[i] = 0xFFU;
   }
 
+  extern Knitter *knitter;
   bool success = knitter->startOperation(
       startNeedle, stopNeedle, continuousReportingEnabled, &(lineBuffer[0]));
 
   uint8_t payload[2];
   payload[0] = cnfStart_msgid;
   payload[1] = static_cast<uint8_t>(success);
-  knitter->send(payload, 2);
+  send(payload, 2);
 }
 
 #ifdef AYAB_ENABLE_CRC
@@ -99,7 +110,7 @@ static uint8_t CRC8(const uint8_t *buffer, size_t len) {
  * \todo sl: Handle CRC-8 error?
  * \todo sl: Assert size? Handle error?
  */
-static void h_cnfLine(const uint8_t *buffer, size_t size) {
+void SerialEncoding::h_cnfLine(const uint8_t *buffer, size_t size) {
   if (size < 29U) {
     // Need 29 bytes from buffer below.
     return;
@@ -121,6 +132,7 @@ static void h_cnfLine(const uint8_t *buffer, size_t size) {
   }
 #endif
 
+  extern Knitter *knitter;
   if (knitter->setNextLine(lineNumber)) {
     // Line was accepted
     bool flagLastLine = bitRead(flags, 0U);
@@ -130,22 +142,23 @@ static void h_cnfLine(const uint8_t *buffer, size_t size) {
   }
 }
 
-static void h_reqInfo() {
+void SerialEncoding::h_reqInfo() {
   uint8_t payload[4];
   payload[0] = cnfInfo_msgid;
   payload[1] = API_VERSION;
   payload[2] = FW_VERSION_MAJ;
   payload[3] = FW_VERSION_MIN;
-  knitter->send(payload, 4);
+  send(payload, 4);
 }
 
-static void h_reqTest() {
+void SerialEncoding::h_reqTest() {
+  extern Knitter *knitter;
   bool success = knitter->startTest();
 
   uint8_t payload[2];
   payload[0] = cnfTest_msgid;
   payload[1] = static_cast<uint8_t>(success);
-  knitter->send(payload, 2);
+  send(payload, 2);
 }
 
 static void h_unrecognized() {
@@ -154,7 +167,7 @@ static void h_unrecognized() {
 /*! Callback for PacketSerial
  *
  */
-void onPacketReceived(const uint8_t *buffer, size_t size) {
+void SerialEncoding::onPacketReceived(const uint8_t *buffer, size_t size) {
   switch (buffer[0]) {
   case reqStart_msgid:
     h_reqStart(buffer, size);
@@ -180,7 +193,9 @@ void onPacketReceived(const uint8_t *buffer, size_t size) {
 
 SerialEncoding::SerialEncoding() {
   m_packetSerial.begin(SERIAL_BAUDRATE);
-  m_packetSerial.setPacketHandler(&onPacketReceived);
+#ifndef AYAB_TESTS
+  m_packetSerial.setPacketHandler(gOnPacketReceived);
+#endif
 }
 
 void SerialEncoding::update() {

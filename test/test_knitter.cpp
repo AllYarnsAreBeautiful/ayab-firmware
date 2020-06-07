@@ -94,6 +94,7 @@ protected:
   }
 
   template <int times = 1> void expect_send() {
+    EXPECT_CALL(*serialEncodingMock, send).Times(times);
   }
 
   template <int times = 1> void expect_indState() {
@@ -104,6 +105,7 @@ protected:
   }
 
   void expect_fsm() {
+    EXPECT_CALL(*serialEncodingMock, update);
   }
 
   void expected_fsm() {
@@ -419,6 +421,10 @@ TEST_F(KnitterTest, test_operate_lastline_and_no_req) {
   k->m_lastLineFlag = true;
 
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, 1));
+  EXPECT_CALL(*solenoidsMock, setSolenoid);
+  EXPECT_CALL(*beeperMock, endWork);
+  EXPECT_CALL(*solenoidsMock, setSolenoids(0xFFFF));
+  EXPECT_CALL(*beeperMock, finishedLine);
   k->state_operate();
 
   ASSERT_EQ(k->getStartOffset(NUM_DIRECTIONS), 0);
@@ -504,4 +510,12 @@ TEST_F(KnitterTest, test_calculatePixelAndSolenoid) {
 TEST_F(KnitterTest, test_getStartOffset) {
   // NOTE: Probing private method to be able to cover all branches.
   ASSERT_EQ(k->getStartOffset(NoDirection), 0);
+}
+
+/*!
+ * \test
+ */
+TEST_F(KnitterTest, test_onPacketReceived) {
+  EXPECT_CALL(*serialEncodingMock, onPacketReceived);
+  k->onPacketReceived(nullptr, 0);
 }

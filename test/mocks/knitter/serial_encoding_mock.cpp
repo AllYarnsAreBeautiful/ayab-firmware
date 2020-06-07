@@ -28,3 +28,8 @@ void SerialEncoding::send(uint8_t *payload, size_t length) {
   assert(gSerialEncodingMock != nullptr);
   gSerialEncodingMock->send(payload, length);
 }
+
+void SerialEncoding::onPacketReceived(const uint8_t *buffer, size_t size) {
+  assert(gSerialEncodingMock != nullptr);
+  gSerialEncodingMock->onPacketReceived(buffer, size);
+}
