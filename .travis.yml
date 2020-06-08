@@ -8,11 +8,12 @@ matrix:
         - ubuntu-toolchain-r-test
         packages:
         - g++
-        - gcovr
     env:
     - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
     before_install:
     - eval "${MATRIX_EVAL}"
+    - pip install gcovr
+    - gcovr --version
     script:
     - "./test/test.sh"
   - language: c
