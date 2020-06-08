@@ -117,6 +117,7 @@ function(add_machine machine board)
     target_link_libraries(${PROJECT_NAME}_${machine}_${board}
         ${COMMON_LINKER_FLAGS}
         )
+    add_dependencies(${PROJECT_NAME}_${machine}_${board} arduino_mock)
 endfunction()
 
 add_machine(KH930 Uno)
