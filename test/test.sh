@@ -9,6 +9,7 @@ while getopts "vc" opt; do
         v)   verbose=1
              ;;
         c)   clean=1
+             ;;
     esac
 done
 shift $((OPTIND-1))
