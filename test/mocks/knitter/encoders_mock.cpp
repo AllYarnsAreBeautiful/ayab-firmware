@@ -1,5 +1,5 @@
 #include "encoders_mock.h"
-#include "../../../encoders.h"
+#include "encoders.h"
 
 static EncodersMock *gEncodersMock = NULL;
 EncodersMock *encodersMockInstance() {

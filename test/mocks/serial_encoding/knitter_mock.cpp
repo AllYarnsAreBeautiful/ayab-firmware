@@ -1,5 +1,5 @@
 #include "knitter_mock.h"
-#include "../../../knitter.h"
+#include "knitter.h"
 
 static KnitterMock *gKnitterMock = NULL;
 KnitterMock *knitterMockInstance() {

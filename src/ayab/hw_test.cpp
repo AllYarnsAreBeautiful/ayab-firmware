@@ -24,7 +24,7 @@ This file is part of AYAB.
  */
 #include <Arduino.h>
 
-#include "SerialCommand.h"
+#include <SerialCommand.h>
 
 #include "beeper.h"
 #include "debug.h"

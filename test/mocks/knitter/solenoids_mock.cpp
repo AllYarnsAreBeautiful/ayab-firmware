@@ -1,5 +1,5 @@
 #include "solenoids_mock.h"
-#include "../../../solenoids.h"
+#include "solenoids.h"
 
 static SolenoidsMock *gSolenoidsMock = NULL;
 SolenoidsMock *solenoidsMockInstance() {
