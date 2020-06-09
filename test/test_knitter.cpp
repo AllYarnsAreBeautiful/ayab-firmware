@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 
-#include "../knitter.h"
+#include "knitter.h"
 #include "knitter/beeper_mock.h"
 #include "knitter/encoders_mock.h"
 #include "knitter/solenoids_mock.h"

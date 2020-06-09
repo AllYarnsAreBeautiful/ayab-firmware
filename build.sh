@@ -1,37 +1,64 @@
 #!/bin/bash
+
 set -e
+
+OPTIND=1
+
+verbose=0
+hw_tests=0
+
+# parse arguments
+while getopts "v" opt; do
+    case $opt in
+        v)   verbose=1
+             ;;
+        hw)   hw_tests=1
+             ;;
+    esac
+done
+shift $((OPTIND-1))
+[ "${1:-}" = "--" ] && shift
 
 SUFFIX=$1
 
-rm -rf build
+parent_path=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
+cd $parent_path
 
-mkdir -p build/uno
-mkdir -p build/mega2560
+rm -f build/*
+mkdir -p build
 
-# Uno
-make BOARD_TAG=uno MACHINETYPE=KH910 clean
-make BOARD_TAG=uno MACHINETYPE=KH910
-mv build-uno/ayab.hex build/uno/kh910_uno${SUFFIX}.hex
+# change to src directory
+cd "$parent_path"/src/ayab
 
-make BOARD_TAG=uno MACHINETYPE=KH930 clean
-make BOARD_TAG=uno MACHINETYPE=KH930
-mv build-uno/ayab.hex build/uno/kh930_uno${SUFFIX}.hex
+if [[ $hw_tests -eq 1 ]]; then
 
-make BOARD_TAG=uno clean
+  # HW tests
+  CPPFLAGS=-DAYAB_HW_TEST make BOARD_TAG=uno MACHINETYPE=KH910
+  CPPFLAGS=-DAYAB_HW_TEST make BOARD_TAG=uno MACHINETYPE=KH930
+  CPPFLAGS=-DAYAB_HW_TEST make BOARD_TAG=mega BOARD_SUB=atmega2560 MACHINETYPE=KH910
+  CPPFLAGS=-DAYAB_HW_TEST make BOARD_TAG=mega BOARD_SUB=atmega2560 MACHINETYPE=KH930
 
-# Mega
-make BOARD_TAG=mega BOARD_SUB=atmega2560 MACHINETYPE=KH910 clean
-make BOARD_TAG=mega BOARD_SUB=atmega2560 MACHINETYPE=KH910
-mv build-mega-atmega2560/ayab.hex build/mega2560/kh910_mega${SUFFIX}.hex
+  make BOARD_TAG=uno clean
+  make BOARD_TAG=mega BOARD_SUB=atmega2560 clean
 
-make BOARD_TAG=mega BOARD_SUB=atmega2560 MACHINETYPE=KH930 clean
-make BOARD_TAG=mega BOARD_SUB=atmega2560 MACHINETYPE=KH930
-mv build-mega-atmega2560/ayab.hex build/mega2560/kh930_mega${SUFFIX}.hex
+fi
 
-make BOARD_TAG=mega BOARD_SUB=atmega2560 clean
+function make_variant() {
+  subboard=""
+  if [[ $1 == "mega" ]]; then
+    subboard="BOARD_SUB=atmega2560"
+  fi
+    make BOARD_TAG=$1 $subboard MACHINETYPE=$2 clean
+    make BOARD_TAG=$1 $subboard MACHINETYPE=$2
+    mv $parent_path/build-raw/$1/$2/ayab.hex $parent_path/build/ayab_$2_$1.hex
+}
 
-# HW tests
-CPPFLAGS=-DAYAB_HW_TEST make BOARD_TAG=uno MACHINETYPE=KH910
-CPPFLAGS=-DAYAB_HW_TEST make BOARD_TAG=uno MACHINETYPE=KH930
-CPPFLAGS=-DAYAB_HW_TEST make BOARD_TAG=mega BOARD_SUB=atmega2560 MACHINETYPE=KH910
-CPPFLAGS=-DAYAB_HW_TEST make BOARD_TAG=mega BOARD_SUB=atmega2560 MACHINETYPE=KH930
+function make_machine() {
+  make_variant uno $1
+  make_variant mega $1
+}
+
+make_machine KH910
+make_machine KH930
+
+rm -rf build-raw

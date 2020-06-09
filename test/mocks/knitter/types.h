@@ -1,4 +1,4 @@
 #include <cstdint>
 
-#include "../../../settings.h"
+#include "settings.h"
 typedef uint8_t byte;

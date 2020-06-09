@@ -7,32 +7,40 @@ find_package(Threads REQUIRED)
 
 add_subdirectory(arduino_mock)
 
+set(SOURCE_DIRECTORY
+    ${PROJECT_SOURCE_DIR}/../src/ayab
+    )
+  set(LIBRARY_DIRECTORY
+    ${PROJECT_SOURCE_DIR}/../libraries
+    )
+
 # Includes arduino-mock files directly inplace of original Arduino headers.
 set(COMMON_INCLUDES
     ${ARDUINO_MOCK_INCLUDE_DIRS}
     ${ARDUINO_MOCK_LIBS_DIR}/lib/gtest/gtest/src/gtest/googletest/include
     ${ARDUINO_MOCK_LIBS_DIR}/lib/gtest/gtest/src/gtest/googlemock/include
     ${PROJECT_SOURCE_DIR}/mocks
+    ${SOURCE_DIRECTORY}
     )
 set(EXTERNAL_LIB_INCLUDES
-    ${PROJECT_SOURCE_DIR}/../libraries/Adafruit_MCP23008
-    ${PROJECT_SOURCE_DIR}/../libraries/SoftI2CMaster
+    ${LIBRARY_DIRECTORY}/Adafruit_MCP23008
+    ${LIBRARY_DIRECTORY}/SoftI2CMaster
     )
 set(COMMON_SOURCES
-    ${PROJECT_SOURCE_DIR}/./test_all.cpp
+    ${PROJECT_SOURCE_DIR}/test_all.cpp
 
-    ${PROJECT_SOURCE_DIR}/../encoders.cpp
-    ${PROJECT_SOURCE_DIR}/./test_encoders.cpp
+    ${SOURCE_DIRECTORY}/encoders.cpp
+    ${PROJECT_SOURCE_DIR}/test_encoders.cpp
 
-    ${PROJECT_SOURCE_DIR}/../beeper.cpp
-    ${PROJECT_SOURCE_DIR}/./test_beeper.cpp
+    ${SOURCE_DIRECTORY}/beeper.cpp
+    ${PROJECT_SOURCE_DIR}/test_beeper.cpp
 
-    ${PROJECT_SOURCE_DIR}/../solenoids.cpp
-    ${PROJECT_SOURCE_DIR}/./test_solenoids.cpp
+    ${SOURCE_DIRECTORY}/solenoids.cpp
+    ${PROJECT_SOURCE_DIR}/test_solenoids.cpp
 
-    ${PROJECT_SOURCE_DIR}/../serial_encoding.cpp
-    ${PROJECT_SOURCE_DIR}/./test_serial_encoding.cpp
-    ${PROJECT_SOURCE_DIR}/./mocks/serial_encoding/knitter_mock.cpp
+    ${SOURCE_DIRECTORY}/serial_encoding.cpp
+    ${PROJECT_SOURCE_DIR}/test_serial_encoding.cpp
+    ${PROJECT_SOURCE_DIR}/mocks/serial_encoding/knitter_mock.cpp
     )
 set(COMMON_DEFINES
     ARDUINO=105
@@ -53,10 +61,10 @@ set(COMMON_LINKER_FLAGS
     -lgcov
     )
 set(HARD_I2C_LIB
-    ${PROJECT_SOURCE_DIR}/../libraries/Adafruit_MCP23008/Adafruit_MCP23008.cpp
+    ${LIBRARY_DIRECTORY}/Adafruit_MCP23008/Adafruit_MCP23008.cpp
     )
 set(SOFT_I2C_LIB
-    ${PROJECT_SOURCE_DIR}/../libraries/SoftI2CMaster/SoftI2CMaster.cpp
+    ${LIBRARY_DIRECTORY}/SoftI2CMaster/SoftI2CMaster.cpp
     )
 
 # KH930 Uno
@@ -161,9 +169,9 @@ add_dependencies(${PROJECT_NAME}_KH910_Mega arduino_mock)
 
 # Knitter (device independent)
 add_executable(${PROJECT_NAME}_knitter
-    ${PROJECT_SOURCE_DIR}/./test_all.cpp
-    ${PROJECT_SOURCE_DIR}/../knitter.cpp
-    ${PROJECT_SOURCE_DIR}/./test_knitter.cpp
+    ${PROJECT_SOURCE_DIR}/test_all.cpp
+    ${SOURCE_DIRECTORY}/knitter.cpp
+    ${PROJECT_SOURCE_DIR}/test_knitter.cpp
     ${PROJECT_SOURCE_DIR}/mocks/knitter/solenoids_mock.cpp
     ${PROJECT_SOURCE_DIR}/mocks/knitter/encoders_mock.cpp
     ${PROJECT_SOURCE_DIR}/mocks/knitter/beeper_mock.cpp

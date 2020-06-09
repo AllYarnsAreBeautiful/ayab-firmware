@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 
-#include "../solenoids.h"
+#include "solenoids.h"
 #ifdef HARD_I2C
 #include <Wire.h>
 #endif
