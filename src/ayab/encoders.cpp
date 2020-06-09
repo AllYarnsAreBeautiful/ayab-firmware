@@ -16,7 +16,8 @@
  *    You should have received a copy of the GNU General Public License
  *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
  *
- *    Copyright 2013-2015 Christian Obersteiner, Andreas Müller
+ *    Original Work Copyright 2013-2015 Christian Obersteiner, Andreas Müller
+ *    Modified Work Copyright 2020 Sturla Lange
  *    http://ayab-knitting.com
  */
 
