@@ -1,5 +1,5 @@
 /*!`
- * \file test_all.cpp
+ * \file machine_mock.h
  *
  * This file is part of AYAB.
  *
@@ -21,9 +21,21 @@
  *    http://ayab-knitting.com
  */
 
-#include "gtest/gtest.h"
+#ifndef MACHINE_MOCK_H_
+#define MACHINE_MOCK_H_
 
-int main(int argc, char *argv[]) {
-  ::testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
-}
+#include <machine.h>
+#include <gmock/gmock.h>
+
+class MachineMock : public Machine {
+public:
+  MOCK_METHOD0(getMachineType, Machine_t());
+  MOCK_METHOD1(setMachineType, void(Machine_t machineType));
+  MOCK_METHOD0(numNeedles, uint8_t());
+  MOCK_METHOD0(lenLineBuffer, uint8_t());
+  MOCK_METHOD0(endOfLineOffsetL, uint8_t());
+  MOCK_METHOD0(endOfLineOffsetR, uint8_t());
+  MOCK_METHOD2(startOffsetLUT, uint8_t(Direction_t direction, Carriage_t carriage));
+};
+
+#endif  // MACHINE_MOCK_H_

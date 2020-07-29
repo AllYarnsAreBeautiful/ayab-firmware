@@ -1,11 +1,35 @@
+/*!`
+ * \file test_knitter.cpp
+ *
+ * This file is part of AYAB.
+ *
+ *    AYAB is free software: you can redistribute it and/or modify
+ *    it under the terms of the GNU General Public License as published by
+ *    the Free Software Foundation, either version 3 of the License, or
+ *    (at your option) any later version.
+ *
+ *    AYAB is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU General Public License for more details.
+ *
+ *    You should have received a copy of the GNU General Public License
+ *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *    Original Work Copyright 2013 Christian Obersteiner, Andreas Müller
+ *    Modified Work Copyright 2020 Sturla Lange, Tom Price
+ *    http://ayab-knitting.com
+ */
+
 #include <gtest/gtest.h>
 
 #include <board.h>
 #include <knitter.h>
-#include <knitter/beeper_mock.h>
-#include <knitter/encoders_mock.h>
-#include <knitter/serial_encoding_mock.h>
-#include <knitter/solenoids_mock.h>
+#include <beeper_mock.h>
+#include <encoders_mock.h>
+#include <serial_encoding_mock.h>
+#include <solenoids_mock.h>
+#include <machine_mock.h>
 
 using ::testing::_;
 using ::testing::Return;
@@ -23,8 +47,13 @@ protected:
     solenoidsMock = solenoidsMockInstance();
     encodersMock = encodersMockInstance();
     serialEncodingMock = serialEncodingMockInstance();
+    machineMock = new MachineMock;
     expect_constructor();
     k = new Knitter();
+    /*
+    // initialize knitter
+    k->setMachineType(Kh910);
+    */
   }
 
   void TearDown() override {
@@ -33,6 +62,7 @@ protected:
     releaseSolenoidsMock();
     releaseEncodersMock();
     releaseSerialEncodingMock();
+    delete machineMock;
   }
 
   ArduinoMock *arduinoMock;
@@ -40,6 +70,7 @@ protected:
   SolenoidsMock *solenoidsMock;
   EncodersMock *encodersMock;
   SerialEncodingMock *serialEncodingMock;
+  MachineMock *machineMock;
   Knitter *k;
 
   void expect_constructor() {
@@ -56,7 +87,6 @@ protected:
     EXPECT_CALL(*solenoidsMock, init);
   }
 
-  // TODO(sl): m_position is only uint8_t, should it be bigger?
   void expect_isr(uint16_t pos, Direction_t dir, Direction_t hall,
                   Beltshift_t belt, Carriage_t carriage) {
     EXPECT_CALL(*encodersMock, encA_interrupt);
@@ -66,6 +96,7 @@ protected:
     EXPECT_CALL(*encodersMock, getBeltshift).WillRepeatedly(Return(belt));
     EXPECT_CALL(*encodersMock, getCarriage).WillRepeatedly(Return(carriage));
   }
+
   void expected_isr(uint16_t pos, Direction_t dir, Direction_t hall,
                     Beltshift_t belt, Carriage_t carriage) {
     expect_isr(pos, dir, hall, belt, carriage);
@@ -75,6 +106,7 @@ protected:
   void expect_isr(Direction_t dir, Direction_t hall) {
     expect_isr(1, dir, hall, Regular, G);
   }
+
   void expected_isr(Direction_t dir, Direction_t hall) {
     expect_isr(dir, hall);
     k->isr();
@@ -116,7 +148,7 @@ protected:
   void get_to_ready() {
     // Machine is initialized when left hall sensor is passed in Right direction
     // Inside active needles
-    expected_isr(40 + END_OF_LINE_OFFSET_L + 1);
+    expected_isr(40 + k->getMachine().endOfLineOffsetL() + 1);
 
     // init
     EXPECT_CALL(*solenoidsMock, setSolenoids(0xFFFF));
@@ -129,8 +161,9 @@ protected:
 
     EXPECT_CALL(*beeperMock, ready);
     // operate
-    uint8_t line[] = {1};
-    k->startOperation(0, 0, NUM_NEEDLES - 1, false, line);
+    Machine m = k->getMachine();
+    uint8_t pattern[] = {1};
+    k->startOperation(m.getMachineType(), 0, m.numNeedles() - 1, pattern, false);
   }
 
   void expected_operate(bool first) {
@@ -185,7 +218,7 @@ TEST_F(KnitterTest, test_isr) {
  */
 TEST_F(KnitterTest, test_fsm_default_case) {
   // NOTE: Probing private data to be able to cover all branches.
-  k->m_opState = (OpState_t)4;
+  k->m_opState = static_cast<OpState_t>(4);
   expected_fsm();
 }
 
@@ -248,23 +281,46 @@ TEST_F(KnitterTest, test_fsm_test) {
 /*!
  * \test
  */
-TEST_F(KnitterTest, test_startOperation) {
-  uint8_t line[] = {1};
+TEST_F(KnitterTest, test_startOperation_1) {
+  uint8_t pattern[] = {1};
+
   // Not in ready state
-  ASSERT_EQ(k->startOperation(0, 0, NUM_NEEDLES - 1, false, line), false);
+  ASSERT_EQ(k->startOperation(Kh910, 0, 200 - 1, pattern, false), false);
 
   get_to_ready();
   EXPECT_CALL(*beeperMock, ready);
-  ASSERT_EQ(k->startOperation(0, 0, NUM_NEEDLES - 1, false, line), true);
+  ASSERT_EQ(k->startOperation(Kh910, 0, 200 - 1, pattern, false), true);
+}
+
+/*!
+ * \test
+ */
+TEST_F(KnitterTest, test_startOperation_2) {
+  uint8_t pattern[] = {1};
 
   // stopNeedle lower than start
-  ASSERT_EQ(k->startOperation(0, 1, 0, false, line), false);
+  get_to_ready();
+  ASSERT_EQ(k->startOperation(Kh910, 1, 0, pattern, false), false);
+}
 
-  // stopNeedle equal to NUM_NEEDLES
-  ASSERT_EQ(k->startOperation(0, 0, NUM_NEEDLES, false, line), false);
+/*!
+ * \test
+ */
+TEST_F(KnitterTest, test_startOperation_3) {
+  uint8_t pattern[] = {1};
 
+  // stopNeedle equal to k->getMachine().numNeedles()
+  get_to_ready();
+  ASSERT_EQ(k->startOperation(Kh910, 0, 200, pattern, false), false);
+}
+
+/*!
+ * \test
+ */
+TEST_F(KnitterTest, test_startOperation_4) {
   // null pointer passed as line
-  ASSERT_EQ(k->startOperation(0, 0, NUM_NEEDLES - 1, false, nullptr), false);
+  get_to_ready();
+  ASSERT_EQ(k->startOperation(Kh910, 0, 200 - 1, nullptr, false), false);
 }
 
 /*!
@@ -296,7 +352,10 @@ TEST_F(KnitterTest, test_setNextLine) {
   expected_operate(true);
 
   // Outside of the active needles
-  expected_isr(40 + NUM_NEEDLES - 1 + END_OF_LINE_OFFSET_R + 1);
+  Machine m = k->getMachine();
+  uint8_t needles = m.numNeedles();
+  uint8_t offset = m.endOfLineOffsetR();
+  expected_isr(40 + needles - 1 + offset + 1);
   EXPECT_CALL(*solenoidsMock, setSolenoid).Times(1);
   expected_operate(false);
   ASSERT_EQ(k->getState(), s_operate);
@@ -327,14 +386,18 @@ TEST_F(KnitterTest, test_operate) {
   expected_fsm();
 
   // operate
-  uint8_t line[] = {1};
+  uint8_t pattern[] = {1};
+  Machine kh270 = Machine();
+  kh270.setMachineType(Kh270);
+
   // startNeedle is greater than pixelToSet
   EXPECT_CALL(*beeperMock, ready);
-  constexpr uint8_t START_NEEDLE = NUM_NEEDLES - 2;
-  constexpr uint8_t STOP_NEEDLE = NUM_NEEDLES - 1;
-  k->startOperation(0, START_NEEDLE, STOP_NEEDLE, true, line);
+  const uint8_t START_NEEDLE = kh270.numNeedles() - 2;
+  const uint8_t STOP_NEEDLE = kh270.numNeedles() - 1;
+  const uint8_t OFFSET = kh270.endOfLineOffsetR();
+  k->startOperation(Kh270, START_NEEDLE, STOP_NEEDLE, pattern, true);
 
-  // First operate
+  // first operate
   EXPECT_CALL(*arduinoMock, delay(2000));
   EXPECT_CALL(*beeperMock, finishedLine);
 
@@ -343,7 +406,6 @@ TEST_F(KnitterTest, test_operate) {
   EXPECT_CALL(*encodersMock, getHallValue(Left));
   EXPECT_CALL(*encodersMock, getHallValue(Right));
   EXPECT_CALL(*encodersMock, getDirection);
-
   EXPECT_CALL(*solenoidsMock, setSolenoid);
   expected_operate(false);
 
@@ -353,7 +415,7 @@ TEST_F(KnitterTest, test_operate) {
   expected_operate(false);
 
   // Don't set workedonline to true
-  expected_isr(8 + STOP_NEEDLE + END_OF_LINE_OFFSET_R);
+  expected_isr(8 + STOP_NEEDLE + OFFSET);
   EXPECT_CALL(*solenoidsMock, setSolenoid);
   expect_indState();
   expected_operate(false);
@@ -374,7 +436,7 @@ TEST_F(KnitterTest, test_operate_line_request) {
 
   // Position has changed since last call to operate function
   // m_pixelToSet is set above m_stopNeedle + END_OF_LINE_OFFSET_R
-  expected_isr(NUM_NEEDLES + 8 + END_OF_LINE_OFFSET_R + 1);
+  expected_isr(/* NUM_NEEDLES */ 200 + 8 + /* END_OF_LINE_OFFSET_R */ 12 + 1);
 
   EXPECT_CALL(*solenoidsMock, setSolenoid);
   expected_operate(false);
@@ -394,7 +456,7 @@ TEST_F(KnitterTest, test_operate_lastline) {
 
   // Position has changed since last call to operate function
   // m_pixelToSet is above m_stopNeedle + END_OF_LINE_OFFSET_R
-  expected_isr(NUM_NEEDLES + 8 + END_OF_LINE_OFFSET_R + 1);
+  expected_isr(/* NUM_NEEDLES */ 200 + 8 + /* END_OF_LINE_OFFSET_R */ 12 + 1);
 
   // m_lastLineFlag is true
   k->setLastLine();
@@ -412,7 +474,7 @@ TEST_F(KnitterTest, test_operate_lastline) {
 TEST_F(KnitterTest, test_operate_lastline_and_no_req) {
   // Note probing lots of private data and methods to get full branch coverage.
   k->m_stopNeedle = 100;
-  uint8_t wanted_pixel = k->m_stopNeedle + END_OF_LINE_OFFSET_R + 1;
+  uint8_t wanted_pixel = k->m_stopNeedle + /* END_OF_LINE_OFFSET_R */ 12 + 1;
   k->m_firstRun = false;
   k->m_direction = Left;
   k->m_position = wanted_pixel + k->getStartOffset(Right);
@@ -454,7 +516,7 @@ TEST_F(KnitterTest, test_operate_new_line) {
 
   // Position has changed since last call to operate function
   // m_pixelToSet is above m_stopNeedle + END_OF_LINE_OFFSET_R
-  expected_isr(NUM_NEEDLES + 8 + END_OF_LINE_OFFSET_R + 1);
+  expected_isr(/* NUM_NEEDLES */ 200 + 8 + /* END_OF_LINE_OFFSET_R */ 12 + 1);
 
   // Set m_lineRequested to false
   EXPECT_CALL(*beeperMock, finishedLine);

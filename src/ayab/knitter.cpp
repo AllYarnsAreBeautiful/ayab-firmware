@@ -17,10 +17,9 @@
  *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
  *
  *    Original Work Copyright 2013-2015 Christian Obersteiner, Andreas Müller
- *    Modified Work Copyright 2020 Sturla Lange
+ *    Modified Work Copyright 2020 Sturla Lange, Tom Price
  *    http://ayab-knitting.com
  */
-
 #include <Arduino.h>
 
 #include "board.h"
@@ -51,7 +50,9 @@ void isr_wrapper() {
  *
  * Initializes the solenoids as well as pins and interrupts.
  */
-Knitter::Knitter() : m_beeper(), m_serial_encoding() {
+Knitter::Knitter() :
+  // incorporated  by composition
+  m_beeper(), m_serial_encoding(), m_machine() {
 
   pinMode(ENC_PIN_A, INPUT);
 #ifndef AYAB_TESTS
@@ -70,14 +71,22 @@ Knitter::Knitter() : m_beeper(), m_serial_encoding() {
 #if DBG_NOMACHINE
   pinMode(DBG_BTN_PIN, INPUT);
 #endif
-
+  
   m_solenoids.init();
 }
 
-auto Knitter::getState() -> OpState_t {
+OpState_t Knitter::getState() {
   return m_opState;
 }
 
+Machine Knitter::getMachine() {
+  return m_machine;
+}
+/*
+void Knitter::setMachineType(Machine_t machineType) {
+   m_machine.setMachineType(machineType);
+}
+*/
 void Knitter::send(uint8_t *payload, size_t length) {
   m_serial_encoding.send(payload, length);
 }
@@ -127,46 +136,43 @@ void Knitter::fsm() {
  * \todo sl: Check that functionality is correct after removing always true
  * comparison.
  */
-auto Knitter::startOperation(uint8_t machineType, uint8_t startNeedle, uint8_t stopNeedle,
-                             bool continuousReportingEnabled, uint8_t *line)
-    -> bool {
-  bool success = false;
-  if (line == nullptr) {
-    return success;
+bool Knitter::startOperation(Machine_t machineType, uint8_t startNeedle, uint8_t stopNeedle,
+                             uint8_t *pattern_start, bool continuousReportingEnabled) {
+  if ((pattern_start == nullptr) || (m_opState != s_ready) || (startNeedle >= stopNeedle)) {
+    return false;
   }
 
-  // FIXME(TP): NUM_NEEDLES depends on machineType
-
-  // TODO(sl): Check OK after removed always true comparison.
-  if (stopNeedle < NUM_NEEDLES && startNeedle < stopNeedle) {
-    if (s_ready == m_opState) {
-      // Proceed to next state
-      m_opState = s_operate;
-      // Record argument values
-      m_machineType = machineType;
-      m_startNeedle = startNeedle;
-      m_stopNeedle = stopNeedle;
-      m_continuousReportingEnabled = continuousReportingEnabled;
-      // Set pixel data source
-      m_lineBuffer = line;
-
-      // Reset variables to start conditions
-      m_currentLineNumber = UINT8_MAX; // because counter will
-                                       // be increased before request
-      m_lineRequested = false;
-      m_lastLineFlag = false;
-      // TODO(sl): Not used? Can be removed?
-      m_lastLinesCountdown = 2;
-
-      Beeper::ready();
-
-      success = true;
-    }
+  Machine temp = Machine();
+  temp.setMachineType(machineType);
+  if (stopNeedle >= temp.numNeedles()) {
+    return false;
   }
-  return success;
+
+  // Record argument values
+  m_machine.setMachineType(machineType);
+  m_startNeedle = startNeedle;
+  m_stopNeedle = stopNeedle;
+  m_lineBuffer = pattern_start;
+  m_continuousReportingEnabled = continuousReportingEnabled;
+
+  // Reset variables to start conditions
+  m_currentLineNumber = UINT8_MAX; // because counter will
+                                   // be increased before request
+  m_lineRequested = false;
+  m_lastLineFlag = false;
+
+  // Proceed to next state
+  m_opState = s_operate;
+  Beeper::ready();
+
+  // TODO(sl): Not used? Can be removed?
+  m_lastLinesCountdown = 2;
+
+  // success
+  return true;
 }
 
-auto Knitter::startTest() -> bool {
+bool Knitter::startTest() {
   bool success = false;
   if (s_init == m_opState || s_ready == m_opState) {
     m_opState = s_test;
@@ -175,7 +181,7 @@ auto Knitter::startTest() -> bool {
   return success;
 }
 
-auto Knitter::setNextLine(uint8_t lineNumber) -> bool {
+bool Knitter::setNextLine(uint8_t lineNumber) {
   bool success = false;
   if (m_lineRequested) {
     // Is there even a need for a new line?
@@ -184,7 +190,7 @@ auto Knitter::setNextLine(uint8_t lineNumber) -> bool {
       Beeper::finishedLine();
       success = true;
     } else {
-      //  line numbers didnt match -> request again
+      // line numbers didnt match -> request again
       reqLine(m_currentLineNumber);
     }
   }
@@ -261,8 +267,8 @@ void Knitter::state_operate() {
       return;
     }
 
-    if ((m_pixelToSet >= m_startNeedle - END_OF_LINE_OFFSET_L) &&
-        (m_pixelToSet <= m_stopNeedle + END_OF_LINE_OFFSET_R)) {
+    if ((m_pixelToSet >= m_startNeedle - m_machine.endOfLineOffsetL()) &&
+        (m_pixelToSet <= m_stopNeedle + m_machine.endOfLineOffsetR())) {
 
       if ((m_pixelToSet >= m_startNeedle) && (m_pixelToSet <= m_stopNeedle)) {
         m_workedOnLine = true;
@@ -311,7 +317,7 @@ void Knitter::state_test() {
   }
 }
 
-auto Knitter::calculatePixelAndSolenoid() -> bool {
+bool Knitter::calculatePixelAndSolenoid() {
   uint8_t startOffset = 0;
   bool success = true;
 
@@ -366,12 +372,11 @@ auto Knitter::calculatePixelAndSolenoid() -> bool {
   return success;
 }
 
-auto Knitter::getStartOffset(const Direction_t direction) -> uint8_t {
+uint8_t Knitter::getStartOffset(const Direction_t direction) {
   if (direction >= NUM_DIRECTIONS || m_carriage >= NUM_CARRIAGES) {
     return 0U;
   }
-
-  return startOffsetLUT[direction][m_carriage];
+  return m_machine.startOffsetLUT(direction, m_carriage);
 }
 
 void Knitter::reqLine(const uint8_t lineNumber) {

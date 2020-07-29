@@ -51,8 +51,7 @@ function make_variant() {
 }
 
 function make_board() {
-  make_variant $1 KH910
-  make_variant $1 KH930
+  make_variant $1 monolithic
 if [[ $hw_tests -eq 1 ]]; then
   echo "Making HW Test $1"
   make_hw_test $1

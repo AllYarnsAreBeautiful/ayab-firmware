@@ -1,5 +1,5 @@
 /*!`
- * \file test_all.cpp
+ * \file solenoids_mock.h
  *
  * This file is part of AYAB.
  *
@@ -21,9 +21,20 @@
  *    http://ayab-knitting.com
  */
 
-#include "gtest/gtest.h"
+#ifndef SOLENOIDS_MOCK_H_
+#define SOLENOIDS_MOCK_H_
 
-int main(int argc, char *argv[]) {
-  ::testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
-}
+#include <solenoids.h>
+#include <gmock/gmock.h>
+
+class SolenoidsMock : public Solenoids {
+public:
+  MOCK_METHOD0(init, void());
+  MOCK_METHOD2(setSolenoid, void(uint8_t, bool));
+  MOCK_METHOD1(setSolenoids, void(uint16_t state));
+};
+
+SolenoidsMock *solenoidsMockInstance();
+void releaseSolenoidsMock();
+
+#endif  // SOLENOIDS_MOCK_H_

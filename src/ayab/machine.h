@@ -1,5 +1,5 @@
 /*!`
- * \file test_all.cpp
+ * \file machine.h
  *
  * This file is part of AYAB.
  *
@@ -21,9 +21,38 @@
  *    http://ayab-knitting.com
  */
 
-#include "gtest/gtest.h"
+#ifndef MACHINE_H_
+#define MACHINE_H_
 
-int main(int argc, char *argv[]) {
-  ::testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
-}
+#include "encoders.h"
+
+// Machine constants
+
+constexpr uint8_t m_startOffsetLUT[NUM_DIRECTIONS][NUM_CARRIAGES] = {
+    // NC,  K,  L,  G
+    {0, 0, 0, 0},    // NoDirection
+    {0, 40, 40, 8},  // Left
+    {0, 16, 16, 32}, // Right
+};
+
+enum MachineType { Kh910, Kh930, Kh270, NO_MACHINE };
+using Machine_t = enum MachineType;
+
+class Machine {
+public:
+  virtual ~Machine() {};
+
+  virtual Machine_t getMachineType() const;
+  virtual void setMachineType(Machine_t machineType);
+
+  virtual uint8_t numNeedles() const;
+  virtual uint8_t lenLineBuffer() const;
+  virtual uint8_t endOfLineOffsetL() const;
+  virtual uint8_t endOfLineOffsetR() const;
+  virtual uint8_t startOffsetLUT(Direction_t direction, Carriage_t carriage) const;
+
+private:
+  Machine_t m_machineType = NO_MACHINE;
+};
+
+#endif // MACHINE_H_

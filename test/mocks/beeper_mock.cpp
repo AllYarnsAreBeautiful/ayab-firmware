@@ -1,5 +1,5 @@
 /*!`
- * \file test_all.cpp
+ * \file beeper_mock.cpp
  *
  * This file is part of AYAB.
  *
@@ -21,9 +21,32 @@
  *    http://ayab-knitting.com
  */
 
-#include "gtest/gtest.h"
+#include <beeper_mock.h>
 
-int main(int argc, char *argv[]) {
-  ::testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
+static BeeperMock *gBeeperMock = NULL;
+BeeperMock *beeperMockInstance() {
+  if (!gBeeperMock) {
+    gBeeperMock = new BeeperMock();
+  }
+  return gBeeperMock;
+}
+
+void releaseBeeperMock() {
+  if (gBeeperMock) {
+    delete gBeeperMock;
+    gBeeperMock = NULL;
+  }
+}
+
+void Beeper::ready() {
+  assert(gBeeperMock != NULL);
+  gBeeperMock->ready();
+}
+void Beeper::finishedLine() {
+  assert(gBeeperMock != NULL);
+  gBeeperMock->finishedLine();
+}
+void Beeper::endWork() {
+  assert(gBeeperMock != NULL);
+  gBeeperMock->endWork();
 }

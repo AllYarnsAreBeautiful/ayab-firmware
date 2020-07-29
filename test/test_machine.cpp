@@ -1,5 +1,5 @@
 /*!`
- * \file test_beeper.cpp
+ * \file test_machine.cpp
  *
  * This file is part of AYAB.
  *
@@ -23,44 +23,69 @@
 
 #include <gtest/gtest.h>
 
-#include <beeper.h>
-#include <board.h>
+#include <machine.h>
 
+using ::testing::_;
 using ::testing::Return;
 
-class BeeperTest : public ::testing::Test {
+class MachineTest : public ::testing::Test {
 protected:
   void SetUp() override {
-    arduinoMock = arduinoMockInstance();
-    b = Beeper();
+    m = new Machine();
   }
 
   void TearDown() override {
-    releaseArduinoMock();
+    delete m;
   }
 
-  void checkBeepTime(uint8_t length) {
-    EXPECT_CALL(*arduinoMock, analogWrite(PIEZO_PIN, 0)).Times(length);
-    EXPECT_CALL(*arduinoMock, analogWrite(PIEZO_PIN, 20)).Times(length);
-    EXPECT_CALL(*arduinoMock, delay(BEEP_DELAY)).Times(length * 2);
-    EXPECT_CALL(*arduinoMock, analogWrite(PIEZO_PIN, 255)).Times(1);
-  }
-
-  ArduinoMock *arduinoMock;
-  Beeper b;
+  Machine *m;
 };
 
-TEST_F(BeeperTest, test_ready) {
-  checkBeepTime(5);
-  b.ready();
+/*!
+ * \test
+ */
+TEST_F(MachineTest, test_constructor) {
+  ASSERT_EQ(m->getMachineType(), NO_MACHINE);
 }
 
-TEST_F(BeeperTest, test_finishedLine) {
-  checkBeepTime(3);
-  b.finishedLine();
+/*!
+ * \test
+ */
+TEST_F(MachineTest, test_setMachineType) {
+  m->setMachineType(Kh930);
+  ASSERT_EQ(m->getMachineType(), Kh930);
 }
 
-TEST_F(BeeperTest, test_endWork) {
-  checkBeepTime(10);
-  b.endWork();
+/*!
+ * \test
+ */
+TEST_F(MachineTest, test_numNeedles) {
+  m->setMachineType(Kh270);
+  ASSERT_EQ(m->numNeedles(), 114);
+  m->setMachineType(Kh930);
+  ASSERT_EQ(m->numNeedles(), 200);
+}
+
+/*!
+ * \test
+ */
+TEST_F(MachineTest, test_lenLineBuffer) {
+  m->setMachineType(Kh270);
+  ASSERT_EQ(m->lenLineBuffer(), 15);
+  m->setMachineType(Kh910);
+  ASSERT_EQ(m->lenLineBuffer(), 25);
+}
+
+/*!
+ * \test
+ */
+TEST_F(MachineTest, test_offsetL) {
+  ASSERT_EQ(m->endOfLineOffsetL(), 12);
+}
+
+/*!
+ * \test
+ */
+TEST_F(MachineTest, test_offsetR) {
+  ASSERT_EQ(m->endOfLineOffsetR(), 12);
 }

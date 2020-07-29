@@ -17,7 +17,7 @@
  *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
  *
  *    Original Work Copyright 2013-2015 Christian Obersteiner, Andreas Müller
- *    Modified Work Copyright 2020 Sturla Lange
+ *    Modified Work Copyright 2020 Sturla Lange, Tom Price
  *    http://ayab-knitting.com
  */
 
@@ -48,42 +48,42 @@ void Encoders::encA_interrupt() {
 /*!
  * \brief Getter for position member.
  */
-auto Encoders::getPosition() const -> uint8_t {
+uint8_t Encoders::getPosition() const {
   return m_encoderPos;
 }
 
 /*!
  * \brief Getter for beltshift member.
  */
-auto Encoders::getBeltshift() -> Beltshift_t {
+Beltshift_t Encoders::getBeltshift() {
   return m_beltShift;
 }
 
 /*!
  * \brief Getter for direction member.
  */
-auto Encoders::getDirection() -> Direction_t {
+Direction_t Encoders::getDirection() {
   return m_direction;
 }
 
 /*!
  * \brief Getter for hallActive member.
  */
-auto Encoders::getHallActive() -> Direction_t {
+Direction_t Encoders::getHallActive() {
   return m_hallActive;
 }
 
 /*!
  * \brief Getter for carriage member.
  */
-auto Encoders::getCarriage() -> Carriage_t {
+Carriage_t Encoders::getCarriage() {
   return m_carriage;
 }
 
 /*!
  * \brief Read hall sensor on left and right.
  */
-auto Encoders::getHallValue(Direction_t pSensor) -> uint16_t {
+uint16_t Encoders::getHallValue(Direction_t pSensor) {
   switch (pSensor) {
   case Left:
     return analogRead(EOL_PIN_L);

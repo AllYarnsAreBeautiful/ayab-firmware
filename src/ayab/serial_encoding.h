@@ -17,13 +17,14 @@
  *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
  *
  *    Original Work Copyright 2013 Christian Obersteiner, Andreas Müller
- *    Modified Work Copyright 2020 Sturla Lange
+ *    Modified Work Copyright 2020 Sturla Lange, Tom Price
  *    http://ayab-knitting.com
  */
-#pragma once
+
+#ifndef SERIAL_ENCODING_H_
+#define SERIAL_ENCODING_H_
 
 #include <Arduino.h>
-
 #include <PacketSerial.h>
 
 constexpr uint8_t FW_VERSION_MAJ = 1U;
@@ -43,12 +44,11 @@ enum AYAB_API {
   cnfLine_msgid = 0x42,
   reqInfo_msgid = 0x03,
   cnfInfo_msgid = 0xC3,
-  reqTest_msgid = 0x04, // deprecated
-  cnfTest_msgid = 0xC4, // deprecated
+  reqTest_msgid = 0x04,
+  cnfTest_msgid = 0xC4,
   indState_msgid = 0x84,
   debug_msgid = 0xFF
 };
-
 using AYAB_API_t = enum AYAB_API;
 
 class SerialEncoding {
@@ -67,3 +67,5 @@ private:
   void h_reqInfo();
   void h_reqTest();
 };
+
+#endif  // SERIAL_ENCODING_H_

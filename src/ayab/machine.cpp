@@ -1,5 +1,5 @@
 /*!`
- * \file test_all.cpp
+ * \file machine.cpp
  *
  * This file is part of AYAB.
  *
@@ -21,9 +21,40 @@
  *    http://ayab-knitting.com
  */
 
-#include "gtest/gtest.h"
+#include "machine.h"
 
-int main(int argc, char *argv[]) {
-  ::testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
+Machine_t Machine::getMachineType() const {
+  return m_machineType;
+}
+
+void Machine::setMachineType(Machine_t machineType) {
+  m_machineType = machineType;
+}
+
+uint8_t Machine::numNeedles() const {
+  if (m_machineType == Kh270) {
+    return 114U;
+  }
+  return 200U;
+}
+
+uint8_t Machine::lenLineBuffer() const {
+  if (m_machineType == Kh270) {
+    // KH270 has 114 needles = 15 bytes
+    return 15U;
+  }
+  // Other machines have 200 needles = 25 bytes
+  return 25U;
+}
+
+uint8_t Machine::endOfLineOffsetL() const {
+  return 12U;
+}
+
+uint8_t Machine::endOfLineOffsetR() const {
+  return 12U;
+}
+
+uint8_t Machine::startOffsetLUT(Direction_t direction, Carriage_t carriage) const {
+  return m_startOffsetLUT[direction][carriage];
 }

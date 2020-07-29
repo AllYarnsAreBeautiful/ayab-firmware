@@ -1,5 +1,5 @@
 /*!`
- * \file test_all.cpp
+ * \file serial_encoding_mock.h
  *
  * This file is part of AYAB.
  *
@@ -21,9 +21,19 @@
  *    http://ayab-knitting.com
  */
 
-#include "gtest/gtest.h"
+#ifndef SERIAL_ENCODING_MOCK_H_
+#define SERIAL_ENCODING_MOCK_H_
 
-int main(int argc, char *argv[]) {
-  ::testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
-}
+#include <gmock/gmock.h>
+
+class SerialEncodingMock {
+public:
+  MOCK_METHOD0(update, void());
+  MOCK_METHOD2(send, void(uint8_t *payload, size_t length));
+  MOCK_METHOD2(onPacketReceived, void(const uint8_t *buffer, size_t size));
+};
+
+SerialEncodingMock *serialEncodingMockInstance();
+void releaseSerialEncodingMock();
+
+#endif  // SERIAL_ENCODING_MOCK_H_

@@ -17,9 +17,11 @@
  *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
  *
  *    Original Work Copyright 2013 Christian Obersteiner, Andreas Müller
- *    Modified Work Copyright 2020 Sturla Lange
+ *    Modified Work Copyright 2020 Sturla Lange, Tom Price
  *    http://ayab-knitting.com
  */
+
+// TODO(TP): incorporate into machine instead of knitter
 
 #ifndef ENCODERS_H_
 #define ENCODERS_H_
@@ -28,11 +30,15 @@
 
 // Should be calibrated to each device
 // These values are for the K carriage
+
+/*
 #if defined(KH910) || defined(AYAB_HW_TEST)
+*/
 constexpr uint16_t FILTER_L_MIN = 200U; // below: L Carriage
 constexpr uint16_t FILTER_L_MAX = 600U; // above: K Carriage
 constexpr uint16_t FILTER_R_MIN = 200U;
 constexpr uint16_t FILTER_R_MAX = 1023U;
+/*
 #elif defined(KH930)
 constexpr uint16_t FILTER_L_MIN = 200U; // below: L Carriage
 constexpr uint16_t FILTER_L_MAX = 600U; // above: K Carriage
@@ -41,6 +47,7 @@ constexpr uint16_t FILTER_R_MAX = 600U;
 #else
 #error "KH910 or KH930 has to be defined as a preprocessor variable!"
 #endif
+*/
 
 constexpr uint8_t END_LEFT = 0U;
 constexpr uint8_t END_RIGHT = 255U;
@@ -75,13 +82,13 @@ public:
 
   void encA_interrupt();
 
-  auto getPosition() const -> uint8_t;
-  auto getBeltshift() -> Beltshift_t;
-  auto getDirection() -> Direction_t;
-  auto getHallActive() -> Direction_t;
-  auto getCarriage() -> Carriage_t;
+  uint8_t getPosition() const;
+  Beltshift_t getBeltshift();
+  Direction_t getDirection();
+  Direction_t getHallActive();
+  Carriage_t getCarriage();
 
-  static auto getHallValue(Direction_t pSensor) -> uint16_t;
+  static uint16_t getHallValue(Direction_t pSensor);
 
 private:
   Direction_t m_direction = NoDirection;
