@@ -34,7 +34,7 @@
 #include "solenoids.h"
 
 // Machine constants
-constexpr uint8_t NUM_NEEDLES = 200U;
+constexpr uint8_t NUM_NEEDLES = 200U; // FIXME 114 for KH-270
 constexpr uint8_t END_OF_LINE_OFFSET_L = 12U;
 constexpr uint8_t END_OF_LINE_OFFSET_R = 12U;
 
@@ -67,7 +67,7 @@ public:
 
   void isr();
   void fsm();
-  auto startOperation(uint8_t startNeedle, uint8_t stopNeedle,
+  auto startOperation(uint8_t MachineVal, uint8_t startNeedle, uint8_t stopNeedle,
                       bool continuousReportingEnabled, uint8_t *line) -> bool;
   auto startTest() -> bool;
   auto setNextLine(uint8_t lineNumber) -> bool;
@@ -90,6 +90,7 @@ private:
   uint8_t m_lastLinesCountdown = 0U;
 
   // Job Parameters
+  uint8_t m_machineType = 0U;
   uint8_t m_startNeedle = 0U;
   uint8_t m_stopNeedle = 0U;
   bool m_continuousReportingEnabled = false;

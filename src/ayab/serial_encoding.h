@@ -26,11 +26,11 @@
 
 #include <PacketSerial.h>
 
-constexpr uint8_t FW_VERSION_MAJ = 0U;
-constexpr uint8_t FW_VERSION_MIN = 95U;
+constexpr uint8_t FW_VERSION_MAJ = 1U;
+constexpr uint8_t FW_VERSION_MIN = 0U;
 constexpr uint8_t FW_VERSION_PATCH = 0U;
 
-constexpr uint8_t API_VERSION = 5U; // for message description, see below
+constexpr uint8_t API_VERSION = 6U;
 
 constexpr uint32_t SERIAL_BAUDRATE = 115200U;
 
@@ -43,8 +43,8 @@ enum AYAB_API {
   cnfLine_msgid = 0x42,
   reqInfo_msgid = 0x03,
   cnfInfo_msgid = 0xC3,
-  reqTest_msgid = 0x04,
-  cnfTest_msgid = 0xC4,
+  reqTest_msgid = 0x04, // deprecated
+  cnfTest_msgid = 0xC4, // deprecated
   indState_msgid = 0x84,
   debug_msgid = 0xFF
 };

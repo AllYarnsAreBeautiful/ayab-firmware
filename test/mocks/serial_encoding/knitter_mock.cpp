@@ -24,10 +24,10 @@ bool Knitter::startTest(void) {
   return gKnitterMock->startTest();
 }
 
-bool Knitter::startOperation(uint8_t startNeedle, uint8_t stopNeedle,
+bool Knitter::startOperation(uint8_t machineType, uint8_t startNeedle, uint8_t stopNeedle,
                              bool continuousReportingEnabled, uint8_t *line) {
   assert(gKnitterMock != NULL);
-  return gKnitterMock->startOperation(startNeedle, stopNeedle,
+  return gKnitterMock->startOperation(machineType, startNeedle, stopNeedle,
                                       continuousReportingEnabled, line);
 }
 

@@ -92,6 +92,11 @@ void Knitter::isr() {
   m_carriage = m_encoders.getCarriage();
 }
 
+/*!
+ * \brief Dispatch on machine state
+ *
+ * \todo TP: Add error state(s)
+ */
 void Knitter::fsm() {
   switch (m_opState) {
   case s_init:
@@ -122,7 +127,7 @@ void Knitter::fsm() {
  * \todo sl: Check that functionality is correct after removing always true
  * comparison.
  */
-auto Knitter::startOperation(uint8_t startNeedle, uint8_t stopNeedle,
+auto Knitter::startOperation(uint8_t machineType, uint8_t startNeedle, uint8_t stopNeedle,
                              bool continuousReportingEnabled, uint8_t *line)
     -> bool {
   bool success = false;
@@ -130,15 +135,17 @@ auto Knitter::startOperation(uint8_t startNeedle, uint8_t stopNeedle,
     return success;
   }
 
-  // TODO(sl): Check ok after removed always true comparison.
+  // FIXME(TP): NUM_NEEDLES depends on machineType
+
+  // TODO(sl): Check OK after removed always true comparison.
   if (stopNeedle < NUM_NEEDLES && startNeedle < stopNeedle) {
     if (s_ready == m_opState) {
       // Proceed to next state
       m_opState = s_operate;
-      // Assign image width
+      // Record argument values
+      m_machineType = machineType;
       m_startNeedle = startNeedle;
       m_stopNeedle = stopNeedle;
-      // Continuous Reporting enabled?
       m_continuousReportingEnabled = continuousReportingEnabled;
       // Set pixel data source
       m_lineBuffer = line;

@@ -31,9 +31,11 @@ TEST_F(SerialEncodingTest, test_testmsg) {
 }
 
 TEST_F(SerialEncodingTest, test_startmsg) {
-  uint8_t buffer[] = {reqStart_msgid, 0, 0, 0};
+  uint8_t buffer[] = {reqStart_msgid, 0, 0, 10, 1, 0x74};
   s->onPacketReceived(buffer, sizeof(buffer));
-
+  // checksum wrong
+  buffer[5] = 0;
+  s->onPacketReceived(buffer, sizeof(buffer));
   // Not enough bytes
   s->onPacketReceived(buffer, sizeof(buffer) - 1);
 }

@@ -4,8 +4,8 @@
 
 class KnitterMock {
 public:
-  MOCK_METHOD4(startOperation,
-               bool(uint8_t startNeedle, uint8_t stopNeedle,
+  MOCK_METHOD5(startOperation,
+               bool(uint8_t machineType, uint8_t startNeedle, uint8_t stopNeedle,
                     bool continuousReportingEnabled, uint8_t *line));
   MOCK_METHOD0(startTest, bool(void));
   MOCK_METHOD1(setNextLine, bool(uint8_t lineNumber));

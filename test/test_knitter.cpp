@@ -130,7 +130,7 @@ protected:
     EXPECT_CALL(*beeperMock, ready);
     // operate
     uint8_t line[] = {1};
-    k->startOperation(0, NUM_NEEDLES - 1, false, line);
+    k->startOperation(0, 0, NUM_NEEDLES - 1, false, line);
   }
 
   void expected_operate(bool first) {
@@ -251,20 +251,20 @@ TEST_F(KnitterTest, test_fsm_test) {
 TEST_F(KnitterTest, test_startOperation) {
   uint8_t line[] = {1};
   // Not in ready state
-  ASSERT_EQ(k->startOperation(0, NUM_NEEDLES - 1, false, line), false);
+  ASSERT_EQ(k->startOperation(0, 0, NUM_NEEDLES - 1, false, line), false);
 
   get_to_ready();
   EXPECT_CALL(*beeperMock, ready);
-  ASSERT_EQ(k->startOperation(0, NUM_NEEDLES - 1, false, line), true);
+  ASSERT_EQ(k->startOperation(0, 0, NUM_NEEDLES - 1, false, line), true);
 
   // stopNeedle lower than start
-  ASSERT_EQ(k->startOperation(1, 0, false, line), false);
+  ASSERT_EQ(k->startOperation(0, 1, 0, false, line), false);
 
   // stopNeedle equal to NUM_NEEDLES
-  ASSERT_EQ(k->startOperation(0, NUM_NEEDLES, false, line), false);
+  ASSERT_EQ(k->startOperation(0, 0, NUM_NEEDLES, false, line), false);
 
   // null pointer passed as line
-  ASSERT_EQ(k->startOperation(0, NUM_NEEDLES - 1, false, nullptr), false);
+  ASSERT_EQ(k->startOperation(0, 0, NUM_NEEDLES - 1, false, nullptr), false);
 }
 
 /*!
@@ -332,7 +332,7 @@ TEST_F(KnitterTest, test_operate) {
   EXPECT_CALL(*beeperMock, ready);
   constexpr uint8_t START_NEEDLE = NUM_NEEDLES - 2;
   constexpr uint8_t STOP_NEEDLE = NUM_NEEDLES - 1;
-  k->startOperation(START_NEEDLE, STOP_NEEDLE, true, line);
+  k->startOperation(0, START_NEEDLE, STOP_NEEDLE, true, line);
 
   // First operate
   EXPECT_CALL(*arduinoMock, delay(2000));
