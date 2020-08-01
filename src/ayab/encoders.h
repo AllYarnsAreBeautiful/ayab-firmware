@@ -28,34 +28,14 @@
 
 #include <Arduino.h>
 
-// Should be calibrated to each device
-// These values are for the K carriage
-
-/*
-#if defined(KH910) || defined(AYAB_HW_TEST)
-*/
-constexpr uint16_t FILTER_L_MIN = 200U; // below: L Carriage
-constexpr uint16_t FILTER_L_MAX = 600U; // above: K Carriage
-constexpr uint16_t FILTER_R_MIN = 200U;
-constexpr uint16_t FILTER_R_MAX = 1023U;
-/*
-#elif defined(KH930)
-constexpr uint16_t FILTER_L_MIN = 200U; // below: L Carriage
-constexpr uint16_t FILTER_L_MAX = 600U; // above: K Carriage
-constexpr uint16_t FILTER_R_MIN = 0U;
-constexpr uint16_t FILTER_R_MAX = 600U;
-#else
-#error "KH910 or KH930 has to be defined as a preprocessor variable!"
-#endif
-*/
-
-constexpr uint8_t END_LEFT = 0U;
-constexpr uint8_t END_RIGHT = 255U;
-constexpr uint8_t END_OFFSET = 28;
+// Enumerated constants
 
 enum Direction { NoDirection, Left, Right, NUM_DIRECTIONS };
+using Direction_t = enum Direction;
 
 enum Carriage { NoCarriage, K, L, G, NUM_CARRIAGES };
+using Carriage_t = enum Carriage;
+
 enum Beltshift {
   Unknown,
   Regular,
@@ -64,12 +44,51 @@ enum Beltshift {
   Lace_Shifted,
   NUM_BELTSHIFTS
 };
-
-using Direction_t = enum Direction;
-
-using Carriage_t = enum Carriage;
-
 using Beltshift_t = enum Beltshift;
+
+enum MachineType { Kh910, Kh930, Kh270, NUM_MACHINES };
+using Machine_t = enum MachineType;
+
+// Machine constants
+
+constexpr uint8_t NUM_NEEDLES[NUM_MACHINES] = {200, 200, 114};
+constexpr uint8_t LINE_BUFFER_LEN[NUM_MACHINES] = {25, 25, 15};
+constexpr uint8_t END_OF_LINE_OFFSET_L[NUM_MACHINES] = {12, 12, 6};
+constexpr uint8_t END_OF_LINE_OFFSET_R[NUM_MACHINES] = {12, 12, 6};
+
+constexpr uint8_t END_LEFT[NUM_MACHINES]      = {   0U,   0U,   0U};
+constexpr uint8_t END_RIGHT[NUM_MACHINES]     = { 255U, 255U, 140U};
+constexpr uint8_t END_OFFSET[NUM_MACHINES]    = {  28U,  28U,  14U};
+
+constexpr uint8_t START_OFFSET[NUM_MACHINES][NUM_DIRECTIONS][NUM_CARRIAGES] = {
+// KH910
+    {// NC,  K,  L,  G
+        {0,  0,  0,  0}, // NoDirection
+        {0, 40, 40,  8}, // Left
+        {0, 16, 16, 32}  // Right
+                          },
+// KH930
+    {// NC,  K,  L,  G
+        {0,  0,  0,  0}, // NoDirection
+        {0, 40, 40,  8}, // Left
+        {0, 16, 16, 32}  // Right
+                          },
+// KH270
+    {// NC,  K,  L,  G
+        {0,  0,  0,  0}, // NoDirection
+        {0, 14, 14,  0}, // Left
+        {0,  2,  2,  0}  // Right
+                          }
+};
+
+// Should be calibrated to each device
+// These values are for the K carriage
+//                                               KH910 KH930 KH270
+constexpr uint16_t FILTER_L_MIN[NUM_MACHINES] = { 200U, 200U, 200U}; // below: L Carriage
+constexpr uint16_t FILTER_L_MAX[NUM_MACHINES] = { 600U, 600U, 600U}; // above: K Carriage
+constexpr uint16_t FILTER_R_MIN[NUM_MACHINES] = { 200U,   0U,   0U};
+constexpr uint16_t FILTER_R_MAX[NUM_MACHINES] = {1023U, 600U, 600U};
+constexpr uint16_t SOLENOIDS_BITMASK[NUM_MACHINES] = {0xFFFFU, 0xFFFFU, 0x7FF8};
 
 /*!
  * \brief Encoder interface.
@@ -79,6 +98,7 @@ using Beltshift_t = enum Beltshift;
 class Encoders {
 public:
   Encoders() = default;
+  void init(Machine_t machineType);
 
   void encA_interrupt();
 
@@ -87,6 +107,7 @@ public:
   Direction_t getDirection();
   Direction_t getHallActive();
   Carriage_t getCarriage();
+  Machine_t getMachineType();
 
   static uint16_t getHallValue(Direction_t pSensor);
 
@@ -95,6 +116,8 @@ private:
   Direction_t m_hallActive = NoDirection;
   Beltshift_t m_beltShift = Unknown;
   Carriage_t m_carriage = NoCarriage;
+  Machine_t m_machineType = Kh910;
+
   uint8_t m_encoderPos = 0x00;
   bool m_oldState = false;
 

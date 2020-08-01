@@ -107,7 +107,7 @@ void SerialEncoding::h_reqStart(const uint8_t *buffer, size_t size) {
   // TODO(who?): verify operation
   // memset(lineBuffer,0,sizeof(lineBuffer));
   // temporary solution:
-  for (uint8_t i = 0U; i < LINEBUFFER_LEN; i++) {
+  for (uint8_t i = 0U; i < MAX_LINE_BUFFER_LEN; i++) {
     lineBuffer[i] = 0xFFU;
   }
 
@@ -129,7 +129,7 @@ void SerialEncoding::h_reqStart(const uint8_t *buffer, size_t size) {
  */
 void SerialEncoding::h_cnfLine(const uint8_t *buffer, size_t size) {
   extern Knitter *knitter;
-  uint8_t lenLineBuffer = knitter->getMachine().lenLineBuffer();
+  uint8_t lenLineBuffer = LINE_BUFFER_LEN[knitter->getMachineType()];
   if (size < lenLineBuffer + 5U) {
     return;
   }

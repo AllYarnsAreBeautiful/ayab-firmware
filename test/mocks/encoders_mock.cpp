@@ -39,6 +39,10 @@ void releaseEncodersMock() {
   }
 }
 
+void Encoders::init(Machine_t machineType) {
+  assert(gEncodersMock != NULL);
+  return gEncodersMock->init(machineType);
+}
 void Encoders::encA_interrupt() {
   assert(gEncodersMock != NULL);
   gEncodersMock->encA_interrupt();
@@ -62,6 +66,10 @@ Direction_t Encoders::getHallActive() {
 Carriage_t Encoders::getCarriage() {
   assert(gEncodersMock != NULL);
   return gEncodersMock->getCarriage();
+}
+Machine_t Encoders::getMachineType() {
+  assert(gEncodersMock != NULL);
+  return gEncodersMock->getMachineType();
 }
 uint16_t Encoders::getHallValue(Direction_t dir) {
   assert(gEncodersMock != NULL);

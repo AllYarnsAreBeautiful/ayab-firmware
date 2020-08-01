@@ -39,16 +39,16 @@ void releaseKnitterMock() {
   }
 }
 
-Machine Knitter::getMachine() {
+Machine_t Knitter::getMachineType() {
   assert(gKnitterMock != NULL);
-  return gKnitterMock->getMachine();
+  return gKnitterMock->getMachineType();
 }
-/*
+
 void Knitter::setMachineType(Machine_t machineType) {
   assert(gKnitterMock != NULL);
   return gKnitterMock->setMachineType(machineType);
 }
-*/
+
 bool Knitter::startTest() {
   assert(gKnitterMock != NULL);
   return gKnitterMock->startTest();

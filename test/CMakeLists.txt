@@ -42,9 +42,6 @@ set(COMMON_SOURCES
     ${SOURCE_DIRECTORY}/encoders.cpp
     ${PROJECT_SOURCE_DIR}/test_encoders.cpp
 
-    ${SOURCE_DIRECTORY}/machine.cpp
-    ${PROJECT_SOURCE_DIR}/test_machine.cpp
-
     ${SOURCE_DIRECTORY}/beeper.cpp
     ${PROJECT_SOURCE_DIR}/test_beeper.cpp
 
@@ -130,14 +127,12 @@ add_board(Mega)
 # Knitter (device independent)
 add_executable(${PROJECT_NAME}_knitter
     ${PROJECT_SOURCE_DIR}/test_all.cpp
-    ${PROJECT_SOURCE_DIR}/test_knitter.cpp
     ${SOURCE_DIRECTORY}/knitter.cpp
-    ${SOURCE_DIRECTORY}/machine.cpp
     ${PROJECT_SOURCE_DIR}/mocks/solenoids_mock.cpp
     ${PROJECT_SOURCE_DIR}/mocks/encoders_mock.cpp
     ${PROJECT_SOURCE_DIR}/mocks/beeper_mock.cpp
     ${PROJECT_SOURCE_DIR}/mocks/serial_encoding_mock.cpp
-    ${PROJECT_SOURCE_DIR}/mocks/machine_mock.h
+    ${PROJECT_SOURCE_DIR}/test_knitter.cpp
     ${SOFT_I2C_LIB}
 )
 target_include_directories(${PROJECT_NAME}_knitter

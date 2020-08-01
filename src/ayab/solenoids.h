@@ -36,6 +36,7 @@
 #endif
 
 constexpr uint8_t SOLENOIDS_NUM = 16U;
+constexpr uint8_t HALF_SOLENOIDS_NUM = 8U;
 constexpr uint8_t SOLENOIDS_I2C_ADDRESS_MASK = 0x20U;
 
 /*!

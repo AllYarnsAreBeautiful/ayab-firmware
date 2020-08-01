@@ -27,7 +27,6 @@
 #include "encoders.h"
 #include "serial_encoding.h"
 #include "solenoids.h"
-#include "machine.h"
 
 enum OpState { s_init, s_ready, s_operate, s_test };
 using OpState_t = enum OpState;
@@ -58,17 +57,17 @@ public:
   OpState_t getState();
   void send(uint8_t *payload, size_t length);
   void onPacketReceived(const uint8_t *buffer, size_t size);
-  Machine getMachine();
-  /* void setMachineType(Machine_t machineType); */
+  Machine_t getMachineType();
+  void setMachineType(Machine_t);
 
 private:
+  Machine_t m_machineType = Kh910;
   Solenoids m_solenoids;
   Encoders m_encoders;
 
   // these are incorporated by composition
   Beeper m_beeper;
   SerialEncoding m_serial_encoding;
-  Machine m_machine;
 
   // machine state
   OpState_t m_opState = s_init;
