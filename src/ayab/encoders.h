@@ -74,10 +74,10 @@ constexpr uint8_t START_OFFSET[NUM_MACHINES][NUM_DIRECTIONS][NUM_CARRIAGES] = {
         {0, 16, 16, 32}  // Right
                           },
 // KH270
-    {// NC,  K,  L,  G
+    {// NC,  K
         {0,  0,  0,  0}, // NoDirection
-        {0, 14, 14,  0}, // Left
-        {0,  2,  2,  0}  // Right
+        {0, 14,  0,  0}, // Left
+        {0,  2,  0,  0}  // Right
                           }
 };
 

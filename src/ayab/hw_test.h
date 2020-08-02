@@ -20,10 +20,10 @@
  *    http://ayab-knitting.com
  */
 
-#ifndef HW_TEST_H
-#define HW_TEST_H
+#ifndef HW_TEST_H_
+#define HW_TEST_H_
 
 void hw_test_setup();
 void hw_test_loop();
 
-#endif  // HW_TEST_H
+#endif  // HW_TEST_H_

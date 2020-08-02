@@ -65,7 +65,9 @@ TEST_F(EncodersTest, test_encA_rising_not_in_front) {
   ASSERT_EQ(e.getCarriage(), NoCarriage);
 }
 
-TEST_F(EncodersTest, test_encA_rising_in_front) {
+TEST_F(EncodersTest, test_encA_rising_in_front_notKH270) {
+  ASSERT_FALSE(e.getMachineType() == Kh270);
+  ASSERT_EQ(e.getCarriage(), NoCarriage);
   // We should not enter the falling function
   EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_R)).Times(0);
   // Create a rising edge
@@ -89,8 +91,39 @@ TEST_F(EncodersTest, test_encA_rising_in_front) {
 
   ASSERT_EQ(e.getDirection(), Right);
   ASSERT_EQ(e.getHallActive(), Left);
-  ASSERT_EQ(e.getPosition(), 28);
+  ASSERT_EQ(e.getPosition(), END_OFFSET[e.getMachineType()]);
   ASSERT_EQ(e.getCarriage(), L);
+  ASSERT_EQ(e.getBeltshift(), Regular);
+}
+
+TEST_F(EncodersTest, test_encA_rising_in_front_KH270) {
+  e.init(Kh270);
+  ASSERT_TRUE(e.getMachineType() == Kh270);
+  // We should not enter the falling function
+  EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_R)).Times(0);
+  // Create a rising edge
+  EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_A)).WillOnce(Return(false));
+  // We have not entered the rising function yet
+  EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_L)).Times(0);
+
+  e.encA_interrupt();
+
+  // Create a rising edge
+  EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_A)).WillOnce(Return(true));
+  // Enter rising function, direction is right
+  EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_B)).WillOnce(Return(true));
+  // In front of Left Hall Sensor
+  EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_L))
+      .WillOnce(Return(FILTER_L_MIN[e.getMachineType()] - 1));
+  // Beltshift is regular
+  EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_C)).WillOnce(Return(true));
+
+  e.encA_interrupt();
+
+  ASSERT_EQ(e.getDirection(), Right);
+  ASSERT_EQ(e.getHallActive(), Left);
+  ASSERT_EQ(e.getPosition(), END_OFFSET[e.getMachineType()]);
+  ASSERT_EQ(e.getCarriage(), K);
   ASSERT_EQ(e.getBeltshift(), Regular);
 }
 
@@ -232,8 +265,10 @@ TEST_F(EncodersTest, test_encA_falling_at_end) {
   ASSERT_EQ(e.getPosition(), pos);
 }
 
-#if FILTER_R_MIN != 0
-TEST_F(EncodersTest, test_encA_falling_set_K_carriage) {
+// requires FILTER_R_MIN != 0
+TEST_F(EncodersTest, test_encA_falling_set_K_carriage_KH910) {
+  ASSERT_TRUE(e.getMachineType() == Kh910);
+
   // Create a rising edge
   EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_A)).WillOnce(Return(true));
   EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_B));
@@ -250,7 +285,7 @@ TEST_F(EncodersTest, test_encA_falling_set_K_carriage) {
   e.encA_interrupt();
   ASSERT_EQ(e.getCarriage(), K);
 }
-#endif
+
 
 TEST_F(EncodersTest, test_encA_falling_not_at_end) {
   // rising, direction is left

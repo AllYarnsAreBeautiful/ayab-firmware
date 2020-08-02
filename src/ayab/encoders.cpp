@@ -131,14 +131,12 @@ void Encoders::encA_rising() {
     m_hallActive = Left;
 
     // TODO(chris): Verify these decisions!
-    if (hallValue < FILTER_L_MIN[m_machineType]) {
-      if (m_carriage == K /*&& m_encoderPos == ?? */) {
-        m_carriage = G;
-      } else {
-        m_carriage = L;
-      }
+    if ((m_machineType == Kh270) || (hallValue >= FILTER_L_MIN[m_machineType])) {
+        m_carriage = K;
+    } else if (m_carriage == K /*&& m_encoderPos == ?? */) {
+      m_carriage = G;
     } else {
-      m_carriage = K;
+      m_carriage = L;
     }
 
     // Belt shift signal only decided in front of hall sensor
@@ -166,9 +164,8 @@ void Encoders::encA_falling() {
   // Avoid 'comparison of unsigned expression < 0 is always false'
   // by being explicit about that behaviour being expected.
   bool hallValueSmall = false;
-#if FILTER_R_MIN != 0
+
   hallValueSmall = (hallValue < FILTER_R_MIN[m_machineType]);
-#endif
 
   if (hallValueSmall || hallValue > FILTER_R_MAX[m_machineType]) {
     m_hallActive = Right;

@@ -21,8 +21,8 @@
  *    http://ayab-knitting.com
  */
 
-#ifndef BOARD_H
-#define BOARD_H
+#ifndef BOARD_H_
+#define BOARD_H_
 
 #include <Arduino.h>
 
@@ -63,4 +63,4 @@ constexpr uint16_t START_OPERATION_DELAY = 2000U;
 #error "untested board - please check your I2C ports"
 #endif
 
-#endif  // BOARD_H
+#endif  // BOARD_H_

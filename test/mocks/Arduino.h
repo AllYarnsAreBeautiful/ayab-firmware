@@ -21,8 +21,8 @@
  *    http://ayab-knitting.com
  */
 
-#ifndef ARDUINO_MOCK_H
-#define ARDUINO_MOCK_H
+#ifndef ARDUINO_MOCK_H_
+#define ARDUINO_MOCK_H_
 
 #include <arduino-mock/Arduino.h>
 #include <arduino-mock/Serial.h>
@@ -52,4 +52,4 @@
 #define A6 6
 #define A7 7
 
-#endif  // ARDUINO_MOCK_H
+#endif  // ARDUINO_MOCK_H_
