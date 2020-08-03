@@ -16,11 +16,14 @@
  *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
  *
  *    Original Work Copyright 2013 Christian Obersteiner, Andreas MÃ¼ller
- *    Modified Work Copyright 2020 Sturla Lange
+ *    Modified Work Copyright 2020 Sturla Lange, Tom Price
  *    http://ayab-knitting.com
  */
 
-#pragma once
+#ifndef HW_TEST_H_
+#define HW_TEST_H_
 
 void hw_test_setup();
 void hw_test_loop();
+
+#endif  // HW_TEST_H_

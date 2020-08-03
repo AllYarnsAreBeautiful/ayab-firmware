@@ -17,24 +17,25 @@
  *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
  *
  *    Original Work Copyright 2013 Christian Obersteiner, Andreas Müller
- *    Modified Work Copyright 2020 Sturla Lange
+ *    Modified Work Copyright 2020 Sturla Lange, Tom Price
  *    http://ayab-knitting.com
  */
-#pragma once
+
+#ifndef SERIAL_ENCODING_H_
+#define SERIAL_ENCODING_H_
 
 #include <Arduino.h>
-
 #include <PacketSerial.h>
 
-constexpr uint8_t FW_VERSION_MAJ = 0U;
-constexpr uint8_t FW_VERSION_MIN = 95U;
+constexpr uint8_t FW_VERSION_MAJ = 1U;
+constexpr uint8_t FW_VERSION_MIN = 0U;
 constexpr uint8_t FW_VERSION_PATCH = 0U;
 
-constexpr uint8_t API_VERSION = 5U; // for message description, see below
+constexpr uint8_t API_VERSION = 6U;
 
 constexpr uint32_t SERIAL_BAUDRATE = 115200U;
 
-constexpr uint8_t LINEBUFFER_LEN = 25U;
+constexpr uint8_t MAX_LINE_BUFFER_LEN = 25U;
 
 enum AYAB_API {
   reqStart_msgid = 0x01,
@@ -46,9 +47,8 @@ enum AYAB_API {
   reqTest_msgid = 0x04,
   cnfTest_msgid = 0xC4,
   indState_msgid = 0x84,
-  debug_msgid = 0xFF
+  debug_msgid = 0xFF,
 };
-
 using AYAB_API_t = enum AYAB_API;
 
 class SerialEncoding {
@@ -60,10 +60,12 @@ public:
 
 private:
   SLIPPacketSerial m_packetSerial;
-  uint8_t lineBuffer[LINEBUFFER_LEN] = {0};
+  uint8_t lineBuffer[MAX_LINE_BUFFER_LEN] = {0};
 
   void h_reqStart(const uint8_t *buffer, size_t size);
   void h_cnfLine(const uint8_t *buffer, size_t size);
   void h_reqInfo();
   void h_reqTest();
 };
+
+#endif  // SERIAL_ENCODING_H_

@@ -1,5 +1,5 @@
 /*!`
- * \file test_all.cpp
+ * \file knitter_mock.h
  *
  * This file is part of AYAB.
  *
@@ -21,9 +21,26 @@
  *    http://ayab-knitting.com
  */
 
-#include "gtest/gtest.h"
+#ifndef KNITTER_MOCK_H_
+#define KNITTER_MOCK_H_
 
-int main(int argc, char *argv[]) {
-  ::testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
-}
+#include <encoders.h>
+#include <gmock/gmock.h>
+
+class KnitterMock {
+public:
+  MOCK_METHOD5(startOperation, bool(Machine_t machineType, uint8_t startNeedle,
+               uint8_t stopNeedle, uint8_t *pattern_start, bool continuousReportingEnabled));
+  MOCK_METHOD0(startTest, bool());
+  MOCK_METHOD1(setNextLine, bool(uint8_t lineNumber));
+  MOCK_METHOD0(setLastLine, void());
+  MOCK_METHOD2(send, void(uint8_t *payload, size_t length));
+  MOCK_METHOD2(onPacketReceived, void(const uint8_t *buffer, size_t size));
+  MOCK_METHOD0(getMachineType, Machine_t());
+  MOCK_METHOD1(setMachineType, void(Machine_t));
+};
+
+KnitterMock *knitterMockInstance();
+void releaseKnitterMock();
+
+#endif  // KNITTER_MOCK_H_

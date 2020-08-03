@@ -1,4 +1,3 @@
-#pragma once
 /*!
  * \file beeper.h
  *
@@ -18,9 +17,13 @@
  *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
  *
  *    Original Work Copyright 2013 Christian Obersteiner, Andreas Müller
- *    Modified Work Copyright 2020 Sturla Lange
+ *    Modified Work Copyright 2020 Sturla Lange, Tom Price
  *    http://ayab-knitting.com
  */
+
+#ifndef BEEPER_H_
+#define BEEPER_H_
+
 #include <Arduino.h>
 
 constexpr uint8_t BEEP_DELAY = 50U; // ms
@@ -47,3 +50,5 @@ public:
 private:
   static void beep(uint8_t length);
 };
+
+#endif  // BEEPER_H_

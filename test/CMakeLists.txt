@@ -50,7 +50,8 @@ set(COMMON_SOURCES
 
     ${SOURCE_DIRECTORY}/serial_encoding.cpp
     ${PROJECT_SOURCE_DIR}/test_serial_encoding.cpp
-    ${PROJECT_SOURCE_DIR}/mocks/serial_encoding/knitter_mock.cpp
+
+    ${PROJECT_SOURCE_DIR}/mocks/knitter_mock.cpp
     )
 set(COMMON_DEFINES
     ARDUINO=105
@@ -79,9 +80,10 @@ set(HARD_I2C_LIB
 set(SOFT_I2C_LIB
     ${LIBRARY_DIRECTORY}/SoftI2CMaster/SoftI2CMaster.cpp
     )
-function(add_machine machine board)
+function(add_board board)
     if(${board}=="Uno")
         set(processor
+            # FIXME(TP): should this be ATmega328?
             __AVR_ATmega168__
             )
         set(I2C_LIB
@@ -95,45 +97,42 @@ function(add_machine machine board)
             ${SOFT_I2C_LIB}
             )
     endif()
-    add_executable(${PROJECT_NAME}_${machine}_${board}
+    add_executable(${PROJECT_NAME}_${board}
         ${COMMON_SOURCES}
         # External libraries
         ${I2C_LIB}
         )
-    target_include_directories(${PROJECT_NAME}_${machine}_${board}
+    target_include_directories(${PROJECT_NAME}_${board}
         PRIVATE
         ${COMMON_INCLUDES}
         ${EXTERNAL_LIB_INCLUDES}
         )
-    target_compile_definitions(${PROJECT_NAME}_${machine}_${board}
+    target_compile_definitions(${PROJECT_NAME}_${board}
         PRIVATE
         ${COMMON_DEFINES}
-        ${machine}
         ${processor}
         )
-    target_compile_options(${PROJECT_NAME}_${machine}_${board} PRIVATE
+    target_compile_options(${PROJECT_NAME}_${board} PRIVATE
         ${COMMON_FLAGS}
         )
-    target_link_libraries(${PROJECT_NAME}_${machine}_${board}
+    target_link_libraries(${PROJECT_NAME}_${board}
         ${COMMON_LINKER_FLAGS}
         )
-    add_dependencies(${PROJECT_NAME}_${machine}_${board} arduino_mock)
+    add_dependencies(${PROJECT_NAME}_${board} arduino_mock)
 endfunction()
 
-add_machine(KH930 Uno)
-add_machine(KH910 Uno)
-add_machine(KH930 Mega)
-add_machine(KH910 Mega)
+add_board(Uno)
+add_board(Mega)
 
 # Knitter (device independent)
 add_executable(${PROJECT_NAME}_knitter
     ${PROJECT_SOURCE_DIR}/test_all.cpp
     ${SOURCE_DIRECTORY}/knitter.cpp
+    ${PROJECT_SOURCE_DIR}/mocks/solenoids_mock.cpp
+    ${PROJECT_SOURCE_DIR}/mocks/encoders_mock.cpp
+    ${PROJECT_SOURCE_DIR}/mocks/beeper_mock.cpp
+    ${PROJECT_SOURCE_DIR}/mocks/serial_encoding_mock.cpp
     ${PROJECT_SOURCE_DIR}/test_knitter.cpp
-    ${PROJECT_SOURCE_DIR}/mocks/knitter/solenoids_mock.cpp
-    ${PROJECT_SOURCE_DIR}/mocks/knitter/encoders_mock.cpp
-    ${PROJECT_SOURCE_DIR}/mocks/knitter/beeper_mock.cpp
-    ${PROJECT_SOURCE_DIR}/mocks/knitter/serial_encoding_mock.cpp
     ${SOFT_I2C_LIB}
 )
 target_include_directories(${PROJECT_NAME}_knitter
@@ -144,7 +143,6 @@ target_include_directories(${PROJECT_NAME}_knitter
 target_compile_definitions(${PROJECT_NAME}_knitter
     PRIVATE
     ${COMMON_DEFINES}
-    KH910 # should not matter which one is chosen for knitter
     __AVR_ATmega1280__ # should not matter which one is chosen for knitter
 )
 target_compile_options(${PROJECT_NAME}_knitter PRIVATE
@@ -158,8 +156,6 @@ add_dependencies(${PROJECT_NAME}_knitter arduino_mock)
 # TODO(sl): Use gtest_discover_tests() ?
 # https://cmake.org/cmake/help/git-master/module/GoogleTest.html
 enable_testing()
-add_test(test_KH930_Uno ${PROJECT_NAME}_KH930_Uno)
-add_test(test_KH910_Uno ${PROJECT_NAME}_KH910_Uno)
-add_test(test_KH930_Mega ${PROJECT_NAME}_KH930_Mega)
-add_test(test_KH910_Mega ${PROJECT_NAME}_KH910_Mega)
+add_test(test_Uno ${PROJECT_NAME}_Uno)
+add_test(test_Mega ${PROJECT_NAME}_Mega)
 add_test(test_knitter ${PROJECT_NAME}_knitter)

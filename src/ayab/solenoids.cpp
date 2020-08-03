@@ -17,7 +17,7 @@
  *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
  *
  *    Original Work Copyright 2013 Christian Obersteiner, Andreas Müller
- *    Modified Work Copyright 2020 Sturla Lange
+ *    Modified Work Copyright 2020 Sturla Lange, Tom Price
  *    http://ayab-knitting.com
  */
 
@@ -31,7 +31,7 @@ void Solenoids::init() {
   mcp_0.begin(I2Caddr_sol1_8);
   mcp_1.begin(I2Caddr_sol9_16);
 
-  for (int i = 0; i < (SOLENOIDS_NUM / 2); i++) {
+  for (int i = 0; i < HALF_SOLENOIDS_NUM; i++) {
     mcp_0.pinMode(i, OUTPUT);
     mcp_1.pinMode(i, OUTPUT);
   }

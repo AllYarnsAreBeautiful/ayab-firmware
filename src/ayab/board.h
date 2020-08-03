@@ -1,4 +1,3 @@
-#pragma once
 /*!
  * \file board.h
  *
@@ -18,9 +17,12 @@
  *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
  *
  *    Original Work Copyright 2013-2015 Christian Obersteiner, Andreas Müller
- *    Modified Work Copyright 2020 Sturla Lange
+ *    Modified Work Copyright 2020 Sturla Lange, Tom Price
  *    http://ayab-knitting.com
  */
+
+#ifndef BOARD_H_
+#define BOARD_H_
 
 #include <Arduino.h>
 
@@ -60,3 +62,5 @@ constexpr uint16_t START_OPERATION_DELAY = 2000U;
 #else
 #error "untested board - please check your I2C ports"
 #endif
+
+#endif  // BOARD_H_

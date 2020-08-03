@@ -1,4 +1,3 @@
-#pragma once
 /*!
  * \file solenoids.h
  *
@@ -18,9 +17,12 @@
  *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
  *
  *    Original Work Copyright 2013 Christian Obersteiner, Andreas Müller
- *    Modified Work Copyright 2020 Sturla Lange
+ *    Modified Work Copyright 2020 Sturla Lange, Tom Price
  *    http://ayab-knitting.com
  */
+
+#ifndef SOLENOIDS_H_
+#define SOLENOIDS_H_
 
 #include <Arduino.h>
 
@@ -34,6 +36,7 @@
 #endif
 
 constexpr uint8_t SOLENOIDS_NUM = 16U;
+constexpr uint8_t HALF_SOLENOIDS_NUM = 8U;
 constexpr uint8_t SOLENOIDS_I2C_ADDRESS_MASK = 0x20U;
 
 /*!
@@ -65,3 +68,5 @@ private:
   SoftI2CMaster SoftI2C;
 #endif
 };
+
+#endif  // SOLENOIDS_H_

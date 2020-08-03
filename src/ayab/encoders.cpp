@@ -17,7 +17,7 @@
  *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
  *
  *    Original Work Copyright 2013-2015 Christian Obersteiner, Andreas Müller
- *    Modified Work Copyright 2020 Sturla Lange
+ *    Modified Work Copyright 2020 Sturla Lange, Tom Price
  *    http://ayab-knitting.com
  */
 
@@ -27,7 +27,14 @@
 #include "encoders.h"
 
 /*!
- * \brief Encoder A interrupt service routine.
+ * \brief Set machine type.
+ */
+void Encoders::init(Machine_t machineType) {
+  m_machineType = machineType;
+}
+
+/*!
+ * \brief Service encoder A interrupt routine.
  *
  * Determines edge of signal and deferres to private rising/falling
  * functions.
@@ -46,44 +53,51 @@ void Encoders::encA_interrupt() {
 }
 
 /*!
- * \brief Getter for position member.
+ * \brief Get position member.
  */
-auto Encoders::getPosition() const -> uint8_t {
+uint8_t Encoders::getPosition() const {
   return m_encoderPos;
 }
 
 /*!
- * \brief Getter for beltshift member.
+ * \brief Get beltshift member.
  */
-auto Encoders::getBeltshift() -> Beltshift_t {
+Beltshift_t Encoders::getBeltshift() {
   return m_beltShift;
 }
 
 /*!
- * \brief Getter for direction member.
+ * \brief Get direction member.
  */
-auto Encoders::getDirection() -> Direction_t {
+Direction_t Encoders::getDirection() {
   return m_direction;
 }
 
 /*!
- * \brief Getter for hallActive member.
+ * \brief Get hallActive member.
  */
-auto Encoders::getHallActive() -> Direction_t {
+Direction_t Encoders::getHallActive() {
   return m_hallActive;
 }
 
 /*!
- * \brief Getter for carriage member.
+ * \brief Get carriage member.
  */
-auto Encoders::getCarriage() -> Carriage_t {
+Carriage_t Encoders::getCarriage() {
   return m_carriage;
+}
+
+/*!
+ * \brief Get machine type.
+ */
+Machine_t Encoders::getMachineType() {
+  return m_machineType;
 }
 
 /*!
  * \brief Read hall sensor on left and right.
  */
-auto Encoders::getHallValue(Direction_t pSensor) -> uint16_t {
+uint16_t Encoders::getHallValue(Direction_t pSensor) {
   switch (pSensor) {
   case Left:
     return analogRead(EOL_PIN_L);
@@ -105,32 +119,31 @@ void Encoders::encA_rising() {
 
   // Update carriage position
   if (Right == m_direction) {
-    if (m_encoderPos < END_RIGHT) {
+    if (m_encoderPos < END_RIGHT[m_machineType]) {
       m_encoderPos++;
     }
   }
 
   // In front of Left Hall Sensor?
   uint16_t hallValue = analogRead(EOL_PIN_L);
-  if (hallValue < FILTER_L_MIN || hallValue > FILTER_L_MAX) {
+  if ((hallValue < FILTER_L_MIN[m_machineType]) || 
+      (hallValue > FILTER_L_MAX[m_machineType])) {
     m_hallActive = Left;
 
     // TODO(chris): Verify these decisions!
-    if (hallValue < FILTER_L_MIN) {
-      if (m_carriage == K /*&& m_encoderPos == ?? */) {
-        m_carriage = G;
-      } else {
-        m_carriage = L;
-      }
+    if ((m_machineType == Kh270) || (hallValue >= FILTER_L_MIN[m_machineType])) {
+        m_carriage = K;
+    } else if (m_carriage == K /*&& m_encoderPos == ?? */) {
+      m_carriage = G;
     } else {
-      m_carriage = K;
+      m_carriage = L;
     }
 
     // Belt shift signal only decided in front of hall sensor
     m_beltShift = digitalRead(ENC_PIN_C) != 0 ? Regular : Shifted;
 
     // Known position of the carriage -> overwrite position
-    m_encoderPos = END_LEFT + END_OFFSET;
+    m_encoderPos = END_LEFT[m_machineType] + END_OFFSET[m_machineType];
   }
 }
 
@@ -140,7 +153,7 @@ void Encoders::encA_rising() {
 void Encoders::encA_falling() {
   // Update carriage position
   if (Left == m_direction) {
-    if (m_encoderPos > END_LEFT) {
+    if (m_encoderPos > END_LEFT[m_machineType]) {
       m_encoderPos--;
     }
   }
@@ -151,11 +164,10 @@ void Encoders::encA_falling() {
   // Avoid 'comparison of unsigned expression < 0 is always false'
   // by being explicit about that behaviour being expected.
   bool hallValueSmall = false;
-#if FILTER_R_MIN != 0
-  hallValueSmall = (hallValue < FILTER_R_MIN);
-#endif
 
-  if (hallValueSmall || hallValue > FILTER_R_MAX) {
+  hallValueSmall = (hallValue < FILTER_R_MIN[m_machineType]);
+
+  if (hallValueSmall || hallValue > FILTER_R_MAX[m_machineType]) {
     m_hallActive = Right;
 
     if (hallValueSmall) {
@@ -166,6 +178,6 @@ void Encoders::encA_falling() {
     m_beltShift = digitalRead(ENC_PIN_C) != 0 ? Shifted : Regular;
 
     // Known position of the carriage -> overwrite position
-    m_encoderPos = END_RIGHT - END_OFFSET;
+    m_encoderPos = END_RIGHT[m_machineType] - END_OFFSET[m_machineType];
   }
 }

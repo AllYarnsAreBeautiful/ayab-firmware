@@ -6,3 +6,4 @@ build*
 .*/*
 *.pu
 html
+*.swp

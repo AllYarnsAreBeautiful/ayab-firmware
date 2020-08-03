@@ -17,11 +17,9 @@
  *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
  *
  *    Original Work Copyright 2013 Christian Obersteiner, Andreas Müller
- *    Modified Work Copyright 2020 Sturla Lange
+ *    Modified Work Copyright 2020 Sturla Lange, Tom Price
  *    http://ayab-knitting.com
  */
-
-#include <Arduino.h>
 
 #include "knitter.h"
 #include "serial_encoding.h"
@@ -39,40 +37,6 @@ void gOnPacketReceived(const uint8_t *buffer, size_t size) {
   knitter->onPacketReceived(buffer, size);
 }
 #endif
-
-/* Serial Command handling */
-
-/*!
- * \brief Handle start request command.
- *
- * \todo sl: Assert size? Handle error?
- */
-void SerialEncoding::h_reqStart(const uint8_t *buffer, size_t size) {
-  if (size < 4U) {
-    // Need 4 bytes from buffer below.
-    return;
-  }
-
-  uint8_t startNeedle = buffer[1];
-  uint8_t stopNeedle = buffer[2];
-  bool continuousReportingEnabled = static_cast<bool>(buffer[3]);
-
-  // TODO(who?): verify operation
-  // memset(lineBuffer,0,sizeof(lineBuffer));
-  // temporary solution:
-  for (uint8_t i = 0U; i < LINEBUFFER_LEN; i++) {
-    lineBuffer[i] = 0xFFU;
-  }
-
-  extern Knitter *knitter;
-  bool success = knitter->startOperation(
-      startNeedle, stopNeedle, continuousReportingEnabled, lineBuffer);
-
-  uint8_t payload[2];
-  payload[0] = cnfStart_msgid;
-  payload[1] = static_cast<uint8_t>(success);
-  send(payload, 2);
-}
 
 #ifdef AYAB_ENABLE_CRC
 /*!
@@ -105,6 +69,58 @@ static uint8_t CRC8(const uint8_t *buffer, size_t len) {
 }
 #endif
 
+/* Serial Command handling */
+
+/*!
+ * \brief Handle start request command.
+ *
+ * \todo sl: Assert size? Handle error?
+ * \todo TP: Handle CRC-8 error?
+ */
+void SerialEncoding::h_reqStart(const uint8_t *buffer, size_t size) {
+
+#ifdef AYAB_ENABLE_CRC
+  if (size < 6U) {
+    // Need 6 bytes from buffer below.
+    return;
+  }
+#else
+  if (size < 5U) {
+    // Need 5 bytes from buffer below.
+    return;
+  }
+#endif
+
+  Machine_t machineType = static_cast<Machine_t>(buffer[1]);
+  uint8_t startNeedle = buffer[2];
+  uint8_t stopNeedle = buffer[3];
+  bool continuousReportingEnabled = static_cast<bool>(buffer[4]);
+
+#ifdef AYAB_ENABLE_CRC
+  uint8_t crc8 = buffer[5];
+  // Check crc on bytes 0-4 of buffer.
+  if (crc8 != CRC8(buffer, 5)) {
+    return;
+  }
+#endif
+
+  // TODO(who?): verify operation
+  // memset(lineBuffer,0,sizeof(lineBuffer));
+  // temporary solution:
+  for (uint8_t i = 0U; i < MAX_LINE_BUFFER_LEN; i++) {
+    lineBuffer[i] = 0xFFU;
+  }
+
+  extern Knitter *knitter;
+  bool success = knitter->startOperation(machineType, startNeedle, stopNeedle,
+                                         lineBuffer, continuousReportingEnabled);
+
+  uint8_t payload[2];
+  payload[0] = cnfStart_msgid;
+  payload[1] = static_cast<uint8_t>(success);
+  send(payload, 2);
+}
+
 /*!
  * \brief Handle configure line command.
  *
@@ -112,28 +128,29 @@ static uint8_t CRC8(const uint8_t *buffer, size_t len) {
  * \todo sl: Assert size? Handle error?
  */
 void SerialEncoding::h_cnfLine(const uint8_t *buffer, size_t size) {
-  if (size < 29U) {
-    // Need 29 bytes from buffer below.
+  extern Knitter *knitter;
+  uint8_t lenLineBuffer = LINE_BUFFER_LEN[knitter->getMachineType()];
+  if (size < lenLineBuffer + 5U) {
     return;
   }
 
   uint8_t lineNumber = buffer[1];
+  /* uint8_t color = buffer[2];  // unused */
+  uint8_t flags = buffer[3];
 
-  for (uint8_t i = 0U; i < LINEBUFFER_LEN; i++) {
+  for (uint8_t i = 0U; i < lenLineBuffer; i++) {
     // Values have to be inverted because of needle states
-    lineBuffer[i] = ~buffer[i + 2];
+    lineBuffer[i] = ~buffer[i + 4];
   }
-  uint8_t flags = buffer[27];
 
 #ifdef AYAB_ENABLE_CRC
-  uint8_t crc8 = buffer[28];
-  // Check crc on bytes 0-28 of buffer.
-  if (crc8 != CRC8(buffer, 28)) {
+  uint8_t crc8 = buffer[lenLineBuffer + 4];
+  // Calculate checksum of buffer contents
+  if (crc8 != CRC8(buffer, lenLineBuffer + 4)) {
     return;
   }
 #endif
 
-  extern Knitter *knitter;
   if (knitter->setNextLine(lineNumber)) {
     // Line was accepted
     bool flagLastLine = bitRead(flags, 0U);
@@ -204,6 +221,7 @@ void SerialEncoding::update() {
 }
 
 void SerialEncoding::send(uint8_t *payload, size_t length) {
+/*
 #ifdef AYAB_HW_TEST
   Serial.print("Sent: ");
   for (uint8_t i = 0; i < length; ++i) {
@@ -211,5 +229,6 @@ void SerialEncoding::send(uint8_t *payload, size_t length) {
   }
   Serial.print(", Encoded as: ");
 #endif
+*/
   m_packetSerial.send(payload, length);
 }

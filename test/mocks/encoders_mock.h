@@ -1,5 +1,5 @@
 /*!`
- * \file test_all.cpp
+ * \file encoders_mock.h
  *
  * This file is part of AYAB.
  *
@@ -21,9 +21,26 @@
  *    http://ayab-knitting.com
  */
 
-#include "gtest/gtest.h"
+#ifndef ENCODERS_MOCK_H_
+#define ENCODERS_MOCK_H_
 
-int main(int argc, char *argv[]) {
-  ::testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
-}
+#include <encoders.h>
+#include <gmock/gmock.h>
+
+class EncodersMock {
+public:
+  MOCK_METHOD1(init, void(Machine_t));
+  MOCK_METHOD0(getBeltshift, Beltshift_t());
+  MOCK_METHOD0(getDirection, Direction_t());
+  MOCK_METHOD0(getCarriage, Carriage_t());
+  MOCK_METHOD0(getMachineType, Machine_t());
+  MOCK_METHOD0(encA_interrupt, void());
+  MOCK_METHOD0(getPosition, uint8_t());
+  MOCK_METHOD0(getHallActive, Direction_t());
+  MOCK_METHOD1(getHallValue, uint16_t(Direction_t));
+};
+
+EncodersMock *encodersMockInstance();
+void releaseEncodersMock();
+
+#endif  // ENCODERS_MOCK_H_
