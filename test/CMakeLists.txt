@@ -60,6 +60,7 @@ set(COMMON_DEFINES
     AYAB_ENABLE_CRC
     )
 set(COMMON_FLAGS
+    -std=c++11
     -Wall -Wextra -Wpedantic
     -Wno-vla
     -Werror

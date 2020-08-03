@@ -27,9 +27,8 @@
 #include <encoders.h>
 #include <gmock/gmock.h>
 
-class EncodersMock {
+class EncodersMockBase {
 public:
-  MOCK_METHOD1(init, void(Machine_t));
   MOCK_METHOD0(getBeltshift, Beltshift_t());
   MOCK_METHOD0(getDirection, Direction_t());
   MOCK_METHOD0(getCarriage, Carriage_t());
@@ -40,7 +39,16 @@ public:
   MOCK_METHOD1(getHallValue, uint16_t(Direction_t));
 };
 
-EncodersMock *encodersMockInstance();
+EncodersMockBase *encodersMockInstance();
 void releaseEncodersMock();
+
+template <Machine_t M> class EncodersMock : EncodersMockBase{
+public:
+  MOCK_METHOD0(encA_interrupt, void());
+};
+
+template class EncodersMock<Kh910>;
+template class EncodersMock<Kh930>;
+template class EncodersMock<Kh270>;
 
 #endif  // ENCODERS_MOCK_H_

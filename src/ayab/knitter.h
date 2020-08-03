@@ -61,9 +61,9 @@ public:
   void setMachineType(Machine_t);
 
 private:
-  Machine_t m_machineType = Kh910;
+  Machine_t m_machineType;
   Solenoids m_solenoids;
-  Encoders m_encoders;
+  EncodersBase *m_encoders;
 
   // these are incorporated by composition
   Beeper m_beeper;

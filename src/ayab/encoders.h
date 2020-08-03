@@ -91,38 +91,54 @@ constexpr uint16_t FILTER_R_MAX[NUM_MACHINES] = {1023U, 600U, 600U};
 constexpr uint16_t SOLENOIDS_BITMASK[NUM_MACHINES] = {0xFFFFU, 0xFFFFU, 0x7FF8};
 
 /*!
- * \brief Encoder interface.
+ * \brief Untemplated interface for Encoders.
  *
  * Encoders for Beltshift, Direction, Active Hall sensor and Carriage Type.
+ * Most methods are untemplated and can be inherited unchanged by the
+ * templated derived classes.
  */
-class Encoders {
+class EncodersBase {
 public:
-  Encoders() = default;
-  void init(Machine_t machineType);
+  //EncodersBase();
+  virtual ~EncodersBase() {}
 
-  void encA_interrupt();
-
-  uint8_t getPosition() const;
-  Beltshift_t getBeltshift();
-  Direction_t getDirection();
-  Direction_t getHallActive();
-  Carriage_t getCarriage();
-  Machine_t getMachineType();
-
+  virtual void encA_interrupt() {}
   static uint16_t getHallValue(Direction_t pSensor);
 
-private:
-  Direction_t m_direction = NoDirection;
-  Direction_t m_hallActive = NoDirection;
-  Beltshift_t m_beltShift = Unknown;
-  Carriage_t m_carriage = NoCarriage;
-  Machine_t m_machineType = Kh910;
+  uint8_t getPosition() const {return m_encoderPos;}
+  Beltshift_t getBeltshift() const {return m_beltShift;}
+  Direction_t getDirection() const {return m_direction;}
+  Direction_t getHallActive() const {return m_hallActive;}
+  Carriage_t getCarriage() const {return m_carriage;}
+  Machine_t getMachineType() const {return m_machineType;}
+
+protected:
+  Direction_t m_direction;
+  Direction_t m_hallActive;
+  Beltshift_t m_beltShift;
+  Carriage_t m_carriage;
+  Machine_t m_machineType;
 
   uint8_t m_encoderPos = 0x00;
   bool m_oldState = false;
 
-  void encA_rising();
+  virtual void encA_rising() {}
   void encA_falling();
+};
+
+/*!
+ * \brief Template for derived classes for Encoders.
+ */
+template <Machine_t M> class Encoders : public EncodersBase {
+public:
+  Encoders<M>() : m_machineType(M) {}
+
+  void encA_interrupt() override;
+
+private:
+  Machine_t m_machineType;
+
+  void encA_rising() override;
 };
 
 #endif // ENCODERS_H_

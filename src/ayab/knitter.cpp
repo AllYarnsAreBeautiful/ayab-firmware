@@ -73,6 +73,11 @@ Knitter::Knitter() :
 #endif
   
   m_solenoids.init();
+
+  // Kh910 is the default machine type.
+  // NB it is not necessary to instantiate the default encoder here,
+  // but it makes mock testing more convenient
+  m_encoders = dynamic_cast<EncodersBase*>(new Encoders<Kh910>);
 }
 
 OpState_t Knitter::getState() {
@@ -93,12 +98,12 @@ void Knitter::send(uint8_t *payload, size_t length) {
 
 void Knitter::isr() {
   // Update machine state data
-  m_encoders.encA_interrupt();
-  m_position = m_encoders.getPosition();
-  m_direction = m_encoders.getDirection();
-  m_hallActive = m_encoders.getHallActive();
-  m_beltshift = m_encoders.getBeltshift();
-  m_carriage = m_encoders.getCarriage();
+  m_encoders->encA_interrupt();
+  m_position = m_encoders->getPosition();
+  m_direction = m_encoders->getDirection();
+  m_hallActive = m_encoders->getHallActive();
+  m_beltshift = m_encoders->getBeltshift();
+  m_carriage = m_encoders->getCarriage();
 }
 
 /*!
@@ -145,27 +150,32 @@ bool Knitter::startOperation(Machine_t machineType, uint8_t startNeedle, uint8_t
         return false;
   }
 
-  // Record argument values
+  if (machineType != m_machineType) {
+    // substitute `m_encoders` with object of new class
+    delete m_encoders;
+    /* m_encoders = dynamic_cast<EncodersBase*>(new Encoders<machineType>); */
+    Encoders<machineType> *newEncoders = new Encoders<machineType>;
+    m_encoders = dynamic_cast<EncodersBase*>(newEncoders);
+  }
+
+  // replace argument values
   m_machineType = machineType;
   m_startNeedle = startNeedle;
   m_stopNeedle = stopNeedle;
   m_lineBuffer = pattern_start;
   m_continuousReportingEnabled = continuousReportingEnabled;
 
-  // Reset variables to start conditions
+  // reset variables to start conditions
   m_currentLineNumber = UINT8_MAX; // because counter will
                                    // be increased before request
   m_lineRequested = false;
   m_lastLineFlag = false;
 
-  // Initialize encoders
-  m_encoders.init(machineType);
-
-  // Proceed to next state
+  // proceed to next state
   m_opState = s_operate;
   Beeper::ready();
 
-  // TODO(sl): Not used? Can be removed?
+  // TODO(sl): not used? Can be removed?
   m_lastLinesCountdown = 2;
 
   // success
@@ -408,8 +418,8 @@ void Knitter::reqLine(const uint8_t lineNumber) {
 
 void Knitter::indState(const bool initState) {
   constexpr uint8_t INDSTATE_LEN = 9U;
-  uint16_t leftHallValue = Encoders::getHallValue(Left);
-  uint16_t rightHallValue = Encoders::getHallValue(Right);
+  uint16_t leftHallValue = EncodersBase::getHallValue(Left);
+  uint16_t rightHallValue = EncodersBase::getHallValue(Right);
   uint8_t payload[INDSTATE_LEN] = {
       indState_msgid,
       static_cast<uint8_t>(initState),
@@ -419,7 +429,7 @@ void Knitter::indState(const bool initState) {
       lowByte(rightHallValue),
       static_cast<uint8_t>(m_carriage),
       static_cast<uint8_t>(m_position),
-      static_cast<uint8_t>(m_encoders.getDirection()),
+      static_cast<uint8_t>(m_encoders->getDirection()),
   };
   send(static_cast<uint8_t *>(payload), INDSTATE_LEN);
 }

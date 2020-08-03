@@ -21,17 +21,23 @@
  *    http://ayab-knitting.com
  */
 
+#include <type_traits>
 #include <Arduino.h>
 
 #include "board.h"
 #include "encoders.h"
 
 /*!
- * \brief Set machine type.
+ * \brief Default constructor.
  */
-void Encoders::init(Machine_t machineType) {
-  m_machineType = machineType;
+/*
+EncodersBase::EncodersBase() {
+  // Kh910 is the default machine type.
+  Encoders<Kh910> *defaultEncoders = new Encoders<Kh910>;
+  EncodersBase *encoders = dynamic_cast<EncodersBase*>(defaultEncoders);
+  return *encoders;
 }
+*/
 
 /*!
  * \brief Service encoder A interrupt routine.
@@ -39,13 +45,13 @@ void Encoders::init(Machine_t machineType) {
  * Determines edge of signal and deferres to private rising/falling
  * functions.
  */
-void Encoders::encA_interrupt() {
+template <Machine_t M> void Encoders<M>::encA_interrupt() {
   m_hallActive = NoDirection;
 
   bool currentState = static_cast<bool>(digitalRead(ENC_PIN_A));
 
   if (!m_oldState && currentState) {
-    encA_rising();
+    Encoders<M>::encA_rising();
   } else if (m_oldState && !currentState) {
     encA_falling();
   }
@@ -53,51 +59,9 @@ void Encoders::encA_interrupt() {
 }
 
 /*!
- * \brief Get position member.
- */
-uint8_t Encoders::getPosition() const {
-  return m_encoderPos;
-}
-
-/*!
- * \brief Get beltshift member.
- */
-Beltshift_t Encoders::getBeltshift() {
-  return m_beltShift;
-}
-
-/*!
- * \brief Get direction member.
- */
-Direction_t Encoders::getDirection() {
-  return m_direction;
-}
-
-/*!
- * \brief Get hallActive member.
- */
-Direction_t Encoders::getHallActive() {
-  return m_hallActive;
-}
-
-/*!
- * \brief Get carriage member.
- */
-Carriage_t Encoders::getCarriage() {
-  return m_carriage;
-}
-
-/*!
- * \brief Get machine type.
- */
-Machine_t Encoders::getMachineType() {
-  return m_machineType;
-}
-
-/*!
  * \brief Read hall sensor on left and right.
  */
-uint16_t Encoders::getHallValue(Direction_t pSensor) {
+uint16_t EncodersBase::getHallValue(Direction_t pSensor) {
   switch (pSensor) {
   case Left:
     return analogRead(EOL_PIN_L);
@@ -108,12 +72,10 @@ uint16_t Encoders::getHallValue(Direction_t pSensor) {
   }
 }
 
-/* Private Methods */
+// Protected methods
 
-/*!
- *
- */
-void Encoders::encA_rising() {
+// default (i.e. not KH270)
+template <Machine_t M> void Encoders<M>::encA_rising() {
   // Direction only decided on rising edge of encoder A
   m_direction = digitalRead(ENC_PIN_B) != 0 ? Right : Left;
 
@@ -131,7 +93,7 @@ void Encoders::encA_rising() {
     m_hallActive = Left;
 
     // TODO(chris): Verify these decisions!
-    if ((m_machineType == Kh270) || (hallValue >= FILTER_L_MIN[m_machineType])) {
+    if (hallValue >= FILTER_L_MIN[m_machineType]) {
         m_carriage = K;
     } else if (m_carriage == K /*&& m_encoderPos == ?? */) {
       m_carriage = G;
@@ -147,10 +109,34 @@ void Encoders::encA_rising() {
   }
 }
 
-/*!
- *
- */
-void Encoders::encA_falling() {
+// type specialization for KH270
+template <> void Encoders<Kh270>::encA_rising() {
+  // Direction only decided on rising edge of encoder A
+  m_direction = digitalRead(ENC_PIN_B) != 0 ? Right : Left;
+
+  // Update carriage position
+  if (Right == m_direction) {
+    if (m_encoderPos < END_RIGHT[Kh270]) {
+      m_encoderPos++;
+    }
+  }
+
+  // In front of Left Hall Sensor?
+  uint16_t hallValue = analogRead(EOL_PIN_L);
+  if ((hallValue < FILTER_L_MIN[Kh270]) || 
+      (hallValue > FILTER_L_MAX[Kh270])) {
+    m_hallActive = Left;
+    m_carriage = K;
+
+    // Belt shift signal only decided in front of hall sensor
+    m_beltShift = digitalRead(ENC_PIN_C) != 0 ? Regular : Shifted;
+
+    // Known position of the carriage -> overwrite position
+    m_encoderPos = END_LEFT[Kh270] + END_OFFSET[Kh270];
+  }
+}
+
+void EncodersBase::encA_falling() {
   // Update carriage position
   if (Left == m_direction) {
     if (m_encoderPos > END_LEFT[m_machineType]) {
@@ -181,3 +167,8 @@ void Encoders::encA_falling() {
     m_encoderPos = END_RIGHT[m_machineType] - END_OFFSET[m_machineType];
   }
 }
+
+// instantiate templated derived classes
+template class Encoders<Kh910>;
+template class Encoders<Kh930>;
+template class Encoders<Kh270>;

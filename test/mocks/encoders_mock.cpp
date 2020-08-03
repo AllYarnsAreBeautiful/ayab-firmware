@@ -24,8 +24,9 @@
 #include <encoders_mock.h>
 #include <encoders.h>
 
-static EncodersMock *gEncodersMock = NULL;
-EncodersMock *encodersMockInstance() {
+static EncodersMockBase *gEncodersMock = NULL;
+
+EncodersMockBase *encodersMockInstance() {
   if (!gEncodersMock) {
     gEncodersMock = new EncodersMock();
   }
@@ -39,10 +40,6 @@ void releaseEncodersMock() {
   }
 }
 
-void Encoders::init(Machine_t machineType) {
-  assert(gEncodersMock != NULL);
-  return gEncodersMock->init(machineType);
-}
 void Encoders::encA_interrupt() {
   assert(gEncodersMock != NULL);
   gEncodersMock->encA_interrupt();
@@ -51,27 +48,43 @@ uint8_t Encoders::getPosition() const {
   assert(gEncodersMock != NULL);
   return gEncodersMock->getPosition();
 }
-Beltshift_t Encoders::getBeltshift() {
+Beltshift_t Encoders::getBeltshift() const {
   assert(gEncodersMock != NULL);
   return gEncodersMock->getBeltshift();
 }
-Direction_t Encoders::getDirection() {
+Direction_t Encoders::getDirection() const {
   assert(gEncodersMock != NULL);
   return gEncodersMock->getDirection();
 }
-Direction_t Encoders::getHallActive() {
+Direction_t Encoders::getHallActive() const {
   assert(gEncodersMock != NULL);
   return gEncodersMock->getHallActive();
 }
-Carriage_t Encoders::getCarriage() {
+Carriage_t Encoders::getCarriage() const {
   assert(gEncodersMock != NULL);
   return gEncodersMock->getCarriage();
 }
-Machine_t Encoders::getMachineType() {
+Machine_t Encoders::getMachineType() const {
   assert(gEncodersMock != NULL);
   return gEncodersMock->getMachineType();
 }
-uint16_t Encoders::getHallValue(Direction_t dir) {
+uint16_t Encoders::getHallValue(Direction_t dir) const {
   assert(gEncodersMock != NULL);
   return gEncodersMock->getHallValue(dir);
+}
+
+void Encoders<Kh910>::encA_interrupt() {
+  assert(gEncodersMock != NULL);
+  assert(gEncodersMock->getMachineType == Kh910);
+  gEncodersMock->encA_interrupt();
+}
+void Encoders<Kh930>::encA_interrupt() {
+  assert(gEncodersMock != NULL);
+  assert(gEncodersMock->getMachineType == Kh930);
+  gEncodersMock->encA_interrupt();
+}
+void Encoders<Kh270>::encA_interrupt() {
+  assert(gEncodersMock != NULL);
+  assert(gEncodersMock->getMachineType == Kh270);
+  gEncodersMock->encA_interrupt();
 }

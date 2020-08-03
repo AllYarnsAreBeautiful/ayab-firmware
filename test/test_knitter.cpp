@@ -62,7 +62,7 @@ protected:
   ArduinoMock *arduinoMock;
   BeeperMock *beeperMock;
   SolenoidsMock *solenoidsMock;
-  EncodersMock *encodersMock;
+  EncodersMockBase *encodersMock;
   SerialEncodingMock *serialEncodingMock;
   Knitter *k;
 
@@ -444,8 +444,10 @@ TEST_F(KnitterTest, test_operate_Kh910) {
  * \test
  */
 TEST_F(KnitterTest, test_operate_Kh270) {
+  delete encodersMock;
+  EncodersMock<Kh270>* newEncodersMock = new EncodersMock<Kh270>;
+  e = dynamic_cast<EncodersMockBase*>(newEncodersMock);
   k->setMachineType(Kh270);
-  encodersMock->init(Kh270);
   Machine_t m = k->getMachineType();
   ASSERT_EQ(m, Kh270);
 
