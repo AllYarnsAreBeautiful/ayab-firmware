@@ -21,8 +21,8 @@
  *    http://ayab-knitting.com
  */
 
-#include <encoders_mock.h>
 #include <encoders.h>
+#include <encoders_mock.h>
 
 static EncodersMock *gEncodersMock = NULL;
 EncodersMock *encodersMockInstance() {
@@ -43,34 +43,42 @@ void Encoders::init(Machine_t machineType) {
   assert(gEncodersMock != NULL);
   return gEncodersMock->init(machineType);
 }
+
 void Encoders::encA_interrupt() {
   assert(gEncodersMock != NULL);
   gEncodersMock->encA_interrupt();
 }
+
 uint8_t Encoders::getPosition() const {
   assert(gEncodersMock != NULL);
   return gEncodersMock->getPosition();
 }
-Beltshift_t Encoders::getBeltshift() {
+
+Beltshift_t Encoders::getBeltshift() const {
   assert(gEncodersMock != NULL);
   return gEncodersMock->getBeltshift();
 }
-Direction_t Encoders::getDirection() {
+
+Direction_t Encoders::getDirection() const {
   assert(gEncodersMock != NULL);
   return gEncodersMock->getDirection();
 }
-Direction_t Encoders::getHallActive() {
+
+Direction_t Encoders::getHallActive() const {
   assert(gEncodersMock != NULL);
   return gEncodersMock->getHallActive();
 }
-Carriage_t Encoders::getCarriage() {
+
+Carriage_t Encoders::getCarriage() const {
   assert(gEncodersMock != NULL);
   return gEncodersMock->getCarriage();
 }
-Machine_t Encoders::getMachineType() {
+
+Machine_t Encoders::getMachineType() const {
   assert(gEncodersMock != NULL);
   return gEncodersMock->getMachineType();
 }
+
 uint16_t Encoders::getHallValue(Direction_t dir) {
   assert(gEncodersMock != NULL);
   return gEncodersMock->getHallValue(dir);

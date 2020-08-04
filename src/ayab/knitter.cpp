@@ -32,33 +32,13 @@ constexpr uint8_t UINT8_MAX = 0xFFU;
 constexpr uint16_t UINT16_MAX = 0xFFFFU;
 #endif
 
-#ifndef AYAB_TESTS
-/*!
- * \brief Wrapper for knitter's isr.
- *
- * This is needed since a non-static method cannot be
- * passed to _attachInterrupt_.
- */
-void isr_wrapper() {
-  extern Knitter *knitter;
-  knitter->isr();
-}
-#endif
-
 /*!
  * \brief Knitter constructor.
  *
  * Initializes the solenoids as well as pins and interrupts.
  */
-Knitter::Knitter() :
-  // incorporated  by composition
-  m_beeper(), m_serial_encoding() {
-
+Knitter::Knitter() {
   pinMode(ENC_PIN_A, INPUT);
-#ifndef AYAB_TESTS
-  // Attaching ENC_PIN_A(=2), Interrupt No. 0
-  attachInterrupt(0, isr_wrapper, CHANGE);
-#endif
 
   pinMode(ENC_PIN_B, INPUT);
   pinMode(ENC_PIN_C, INPUT);
@@ -71,7 +51,7 @@ Knitter::Knitter() :
 #if DBG_NOMACHINE
   pinMode(DBG_BTN_PIN, INPUT);
 #endif
-  
+
   m_solenoids.init();
 }
 
@@ -91,8 +71,14 @@ void Knitter::send(uint8_t *payload, size_t length) {
   m_serial_encoding.send(payload, length);
 }
 
+/*!
+ * \brief Interrupt service routine.
+ *
+ * Update machine state data.
+ * Must execute as fast as possible.
+ * Machine type assumed valid.
+ */
 void Knitter::isr() {
-  // Update machine state data
   m_encoders.encA_interrupt();
   m_position = m_encoders.getPosition();
   m_direction = m_encoders.getDirection();
@@ -100,6 +86,19 @@ void Knitter::isr() {
   m_beltshift = m_encoders.getBeltshift();
   m_carriage = m_encoders.getCarriage();
 }
+
+#ifndef AYAB_TESTS
+/*!
+ * \brief Wrapper for knitter's isr.
+ *
+ * This is needed since a non-static method cannot be
+ * passed to _attachInterrupt_.
+ */
+void isr_wrapper() {
+  extern Knitter *knitter;
+  knitter->isr();
+}
+#endif
 
 /*!
  * \brief Dispatch on machine state
@@ -132,17 +131,15 @@ void Knitter::fsm() {
 
 /*!
  * \brief Enter operate state.
- *
- * \todo sl: Check that functionality is correct after removing always true
- * comparison.
  */
-bool Knitter::startOperation(Machine_t machineType, uint8_t startNeedle, uint8_t stopNeedle,
-                             uint8_t *pattern_start, bool continuousReportingEnabled) {
-  if ((pattern_start == nullptr) ||
-      (m_opState != s_ready) ||
-      (startNeedle >= stopNeedle) ||
-      (stopNeedle >= NUM_NEEDLES[machineType])) {
-        return false;
+bool Knitter::startOperation(Machine_t machineType, uint8_t startNeedle,
+                             uint8_t stopNeedle, uint8_t *pattern_start,
+                             bool continuousReportingEnabled) {
+  if ((m_opState != s_ready) || (machineType == NoMachine) ||
+      (machineType >= NUM_MACHINES) || (pattern_start == nullptr) ||
+      (startNeedle >= stopNeedle) || (stopNeedle >= NUM_NEEDLES[machineType])) {
+    // TODO(TP): error code
+    return false;
   }
 
   // Record argument values
@@ -154,7 +151,7 @@ bool Knitter::startOperation(Machine_t machineType, uint8_t startNeedle, uint8_t
 
   // Reset variables to start conditions
   m_currentLineNumber = UINT8_MAX; // because counter will
-                                   // be increased before request
+                                   // be incremented before request
   m_lineRequested = false;
   m_lastLineFlag = false;
 
@@ -165,8 +162,18 @@ bool Knitter::startOperation(Machine_t machineType, uint8_t startNeedle, uint8_t
   m_opState = s_operate;
   Beeper::ready();
 
-  // TODO(sl): Not used? Can be removed?
-  m_lastLinesCountdown = 2;
+  /* m_lastLinesCountdown = 2; */
+
+#ifndef AYAB_TESTS
+  // Attaching ENC_PIN_A, Interrupt No. 0
+  // This interrupt cannot be enabled until
+  // the machine type has been validated.
+  /*
+  // `digitalPinToInterrupt` macro not backported until Arduino !DE v.1.0.6
+  attachInterrupt(digitalPinToInterrupt(ENC_PIN_A), isr_wrapper, CHANGE);
+  */
+  attachInterrupt(0, isr_wrapper, CHANGE);
+#endif
 
   // success
   return true;
@@ -184,13 +191,13 @@ bool Knitter::startTest() {
 bool Knitter::setNextLine(uint8_t lineNumber) {
   bool success = false;
   if (m_lineRequested) {
-    // Is there even a need for a new line?
+    // FIXME: Is there even a need for a new line?
     if (lineNumber == m_currentLineNumber) {
       m_lineRequested = false;
       Beeper::finishedLine();
       success = true;
     } else {
-      // line numbers didnt match -> request again
+      // line numbers didn't match -> request again
       reqLine(m_currentLineNumber);
     }
   }
@@ -202,7 +209,7 @@ void Knitter::setLastLine() {
   m_lastLineFlag = true;
 }
 
-/* Private Methods */
+// Private Methods
 
 void Knitter::state_init() {
 #ifdef DBG_NOMACHINE
@@ -215,7 +222,7 @@ void Knitter::state_init() {
   if (Right == m_direction && Left == m_hallActive) {
 #endif // DBG_NOMACHINE
     m_opState = s_ready;
-    m_solenoids.setSolenoids(SOLENOIDS_BITMASK[m_machineType]);
+    m_solenoids.setSolenoids(SOLENOIDS_BITMASK);
     indState(true);
   }
 
@@ -225,13 +232,13 @@ void Knitter::state_init() {
 }
 
 void Knitter::state_ready() {
-  digitalWrite(LED_PIN_A, 0);
+  digitalWrite(LED_PIN_A, 0); // green LED off
   // This state is left when the startOperation() method
-  // is called successfully by main()
+  // is called successfully by fsm()
 }
 
 void Knitter::state_operate() {
-  digitalWrite(LED_PIN_A, 1);
+  digitalWrite(LED_PIN_A, 1); // green LED on
 
   if (m_firstRun) {
     m_firstRun = false;
@@ -267,13 +274,14 @@ void Knitter::state_operate() {
       return;
     }
 
+    // m_machineType has been validated
     if ((m_pixelToSet >= m_startNeedle - END_OF_LINE_OFFSET_L[m_machineType]) &&
-        (m_pixelToSet <= m_stopNeedle  + END_OF_LINE_OFFSET_R[m_machineType])) {
+        (m_pixelToSet <= m_stopNeedle + END_OF_LINE_OFFSET_R[m_machineType])) {
 
       if ((m_pixelToSet >= m_startNeedle) && (m_pixelToSet <= m_stopNeedle)) {
         // When inside the active needles
         if (m_machineType == Kh270) {
-          digitalWrite(LED_PIN_B, 1);  // yellow LED on
+          digitalWrite(LED_PIN_B, 1); // yellow LED on
         }
         m_workedOnLine = true;
       }
@@ -288,7 +296,7 @@ void Knitter::state_operate() {
     } else {
       // Outside of the active needles
       if (m_machineType == Kh270) {
-        digitalWrite(LED_PIN_B, 0);  // yellow LED off
+        digitalWrite(LED_PIN_B, 0); // yellow LED off
       }
 
       // Reset Solenoids when out of range
@@ -302,16 +310,31 @@ void Knitter::state_operate() {
           // request new Line from Host
           reqLine(++m_currentLineNumber);
         } else if (m_lastLineFlag) {
-          Beeper::endWork();
-          m_opState = s_ready;
-          
-          m_solenoids.setSolenoids(SOLENOIDS_BITMASK[m_machineType]);
-          Beeper::finishedLine();
+          stopOperation();
         }
       }
     }
   }
 #endif // DBG_NOMACHINE
+}
+
+void Knitter::stopOperation() {
+  Beeper::endWork();
+  m_opState = s_ready;
+
+  m_solenoids.setSolenoids(SOLENOIDS_BITMASK);
+  Beeper::finishedLine();
+
+#ifndef AYAB_TESTS
+  // Attaching ENC_PIN_A, Interrupt No. 0
+  // This interrupt cannot be enabled until
+  // the machine type has been validated.
+  /*
+  // `digitalPinToInterrupt` macro not backported until Arduino !DE v.1.0.6
+  detachInterrupt(digitalPinToInterrupt(ENC_PIN_A));
+  */
+  detachInterrupt(0);
+#endif
 }
 
 void Knitter::state_test() {
@@ -347,7 +370,7 @@ bool Knitter::calculatePixelAndSolenoid() {
         } else if (Shifted == m_beltshift) {
           m_solenoidToSet = (m_position - HALF_SOLENOIDS_NUM) % SOLENOIDS_NUM;
         }
-        if (L == m_carriage) {
+        if (Lace == m_carriage) {
           m_pixelToSet = m_pixelToSet + HALF_SOLENOIDS_NUM;
         }
       }
@@ -370,7 +393,7 @@ bool Knitter::calculatePixelAndSolenoid() {
         } else if (Shifted == m_beltshift) {
           m_solenoidToSet = m_position % SOLENOIDS_NUM;
         }
-        if (L == m_carriage) {
+        if (Lace == m_carriage) {
           m_pixelToSet = m_pixelToSet - SOLENOIDS_NUM;
         }
       }
@@ -387,16 +410,16 @@ bool Knitter::calculatePixelAndSolenoid() {
 }
 
 uint8_t Knitter::getStartOffset(const Direction_t direction) {
-  if ((direction >= NUM_DIRECTIONS) ||
-      (m_carriage >= NUM_CARRIAGES) ||
-      (m_machineType >= NUM_MACHINES)) {
+  if ((direction == NoDirection) || (direction >= NUM_DIRECTIONS) ||
+      (m_carriage == NoCarriage) || (m_carriage >= NUM_CARRIAGES) ||
+      (m_machineType == NoMachine) || (m_machineType >= NUM_MACHINES)) {
+    // TODO(TP): return error state
     return 0U;
   }
   return START_OFFSET[m_machineType][direction][m_carriage];
 }
 
 void Knitter::reqLine(const uint8_t lineNumber) {
-  constexpr uint8_t REQLINE_LEN = 2U;
   uint8_t payload[REQLINE_LEN] = {
       reqLine_msgid,
       lineNumber,
@@ -407,7 +430,6 @@ void Knitter::reqLine(const uint8_t lineNumber) {
 }
 
 void Knitter::indState(const bool initState) {
-  constexpr uint8_t INDSTATE_LEN = 9U;
   uint16_t leftHallValue = Encoders::getHallValue(Left);
   uint16_t rightHallValue = Encoders::getHallValue(Right);
   uint8_t payload[INDSTATE_LEN] = {
