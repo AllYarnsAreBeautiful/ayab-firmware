@@ -27,17 +27,10 @@
 #include "encoders.h"
 
 /*!
- * \brief Set machine type.
- */
-void Encoders::init(Machine_t machineType) {
-  m_machineType = machineType;
-}
-
-/*!
  * \brief Service encoder A interrupt routine.
  *
- * Determines edge of signal and deferres to private rising/falling
- * functions.
+ * Determines edge of signal and dispatches to private rising/falling functions.
+ * m_machineType assumed valid.
  */
 void Encoders::encA_interrupt() {
   m_hallActive = NoDirection;
@@ -62,36 +55,43 @@ uint8_t Encoders::getPosition() const {
 /*!
  * \brief Get beltshift member.
  */
-Beltshift_t Encoders::getBeltshift() {
+Beltshift_t Encoders::getBeltshift() const {
   return m_beltShift;
 }
 
 /*!
  * \brief Get direction member.
  */
-Direction_t Encoders::getDirection() {
+Direction_t Encoders::getDirection() const {
   return m_direction;
 }
 
 /*!
  * \brief Get hallActive member.
  */
-Direction_t Encoders::getHallActive() {
+Direction_t Encoders::getHallActive() const {
   return m_hallActive;
 }
 
 /*!
  * \brief Get carriage member.
  */
-Carriage_t Encoders::getCarriage() {
+Carriage_t Encoders::getCarriage() const {
   return m_carriage;
 }
 
 /*!
  * \brief Get machine type.
  */
-Machine_t Encoders::getMachineType() {
+Machine_t Encoders::getMachineType() const {
   return m_machineType;
+}
+
+/*!
+ * \brief Set machine type.
+ */
+void Encoders::init(Machine_t machineType) {
+  m_machineType = machineType;
 }
 
 /*!
@@ -108,10 +108,14 @@ uint16_t Encoders::getHallValue(Direction_t pSensor) {
   }
 }
 
-/* Private Methods */
+// Private Methods
 
 /*!
+ * \brief Interrupt service subroutine.
  *
+ * Called when encoder pin A is rising.
+ * Must execute as fast as possible.
+ * Bounds on m_machineType not checked.
  */
 void Encoders::encA_rising() {
   // Direction only decided on rising edge of encoder A
@@ -126,17 +130,18 @@ void Encoders::encA_rising() {
 
   // In front of Left Hall Sensor?
   uint16_t hallValue = analogRead(EOL_PIN_L);
-  if ((hallValue < FILTER_L_MIN[m_machineType]) || 
+  if ((hallValue < FILTER_L_MIN[m_machineType]) ||
       (hallValue > FILTER_L_MAX[m_machineType])) {
     m_hallActive = Left;
 
     // TODO(chris): Verify these decisions!
-    if ((m_machineType == Kh270) || (hallValue >= FILTER_L_MIN[m_machineType])) {
-        m_carriage = K;
-    } else if (m_carriage == K /*&& m_encoderPos == ?? */) {
-      m_carriage = G;
+    if ((m_machineType == Kh270) ||
+        (hallValue >= FILTER_L_MIN[m_machineType])) {
+      m_carriage = Knit;
+    } else if (m_carriage == Knit /*&& m_encoderPos == ?? */) {
+      m_carriage = Garter;
     } else {
-      m_carriage = L;
+      m_carriage = Lace;
     }
 
     // Belt shift signal only decided in front of hall sensor
@@ -148,7 +153,11 @@ void Encoders::encA_rising() {
 }
 
 /*!
+ * \brief Interrupt service subroutine.
  *
+ * Called when encoder pin A is falling.
+ * Must execute as fast as possible.
+ * Bounds on m_machineType not checked.
  */
 void Encoders::encA_falling() {
   // Update carriage position
@@ -171,7 +180,7 @@ void Encoders::encA_falling() {
     m_hallActive = Right;
 
     if (hallValueSmall) {
-      m_carriage = K;
+      m_carriage = Knit;
     }
 
     // Belt shift signal only decided in front of hall sensor

@@ -92,7 +92,7 @@ TEST_F(EncodersTest, test_encA_rising_in_front_notKH270) {
   ASSERT_EQ(e.getDirection(), Right);
   ASSERT_EQ(e.getHallActive(), Left);
   ASSERT_EQ(e.getPosition(), END_OFFSET[e.getMachineType()]);
-  ASSERT_EQ(e.getCarriage(), L);
+  ASSERT_EQ(e.getCarriage(), Lace);
   ASSERT_EQ(e.getBeltshift(), Regular);
 }
 
@@ -123,7 +123,7 @@ TEST_F(EncodersTest, test_encA_rising_in_front_KH270) {
   ASSERT_EQ(e.getDirection(), Right);
   ASSERT_EQ(e.getHallActive(), Left);
   ASSERT_EQ(e.getPosition(), END_OFFSET[e.getMachineType()]);
-  ASSERT_EQ(e.getCarriage(), K);
+  ASSERT_EQ(e.getCarriage(), Knit);
   ASSERT_EQ(e.getBeltshift(), Regular);
 }
 
@@ -140,7 +140,7 @@ TEST_F(EncodersTest, test_encA_rising_in_front_G_carriage) {
 
   e.encA_interrupt();
 
-  ASSERT_EQ(e.getCarriage(), K);
+  ASSERT_EQ(e.getCarriage(), Knit);
 
   // Create a falling edge
   EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_A)).WillOnce(Return(false));
@@ -160,7 +160,7 @@ TEST_F(EncodersTest, test_encA_rising_in_front_G_carriage) {
 
   e.encA_interrupt();
 
-  ASSERT_EQ(e.getCarriage(), G);
+  ASSERT_EQ(e.getCarriage(), Garter);
 }
 
 TEST_F(EncodersTest, test_encA_falling_not_in_front) {
@@ -283,9 +283,8 @@ TEST_F(EncodersTest, test_encA_falling_set_K_carriage_KH910) {
   EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_C));
 
   e.encA_interrupt();
-  ASSERT_EQ(e.getCarriage(), K);
+  ASSERT_EQ(e.getCarriage(), Knit);
 }
-
 
 TEST_F(EncodersTest, test_encA_falling_not_at_end) {
   // rising, direction is left

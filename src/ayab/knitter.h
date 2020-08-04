@@ -28,6 +28,10 @@
 #include "serial_encoding.h"
 #include "solenoids.h"
 
+// API constants
+constexpr uint8_t INDSTATE_LEN = 9U;
+constexpr uint8_t REQLINE_LEN = 2U;
+
 enum OpState { s_init, s_ready, s_operate, s_test };
 using OpState_t = enum OpState;
 
@@ -49,8 +53,9 @@ public:
 
   void isr();
   void fsm();
-  bool startOperation(Machine_t machineType, uint8_t startNeedle, uint8_t stopNeedle,
-                      uint8_t *pattern_start, bool continuousReportingEnabled);
+  bool startOperation(Machine_t machineType, uint8_t startNeedle,
+                      uint8_t stopNeedle, uint8_t *pattern_start,
+                      bool continuousReportingEnabled);
   bool startTest();
   bool setNextLine(uint8_t lineNumber);
   void setLastLine();
@@ -61,11 +66,8 @@ public:
   void setMachineType(Machine_t);
 
 private:
-  Machine_t m_machineType = Kh910;
   Solenoids m_solenoids;
   Encoders m_encoders;
-
-  // these are incorporated by composition
   Beeper m_beeper;
   SerialEncoding m_serial_encoding;
 
@@ -75,12 +77,11 @@ private:
   bool m_lastLineFlag = false;
 
   // job parameters
+  Machine_t m_machineType = NoMachine;
   uint8_t m_startNeedle = 0U;
   uint8_t m_stopNeedle = 0U;
-  bool m_continuousReportingEnabled = false;
-  bool m_lineRequested = false;
-  uint8_t m_currentLineNumber = 0U;
   uint8_t *m_lineBuffer = nullptr;
+  bool m_continuousReportingEnabled = false;
 
   // current machine state
   uint8_t m_position = 0U;
@@ -88,6 +89,9 @@ private:
   Direction_t m_hallActive = NoDirection;
   Beltshift_t m_beltshift = Unknown;
   Carriage_t m_carriage = NoCarriage;
+
+  bool m_lineRequested = false;
+  uint8_t m_currentLineNumber = 0U;
 
   uint8_t m_sOldPosition = 0U;
   bool m_firstRun = true;
@@ -111,8 +115,8 @@ private:
   void reqLine(uint8_t lineNumber);
   void indState(bool initState = false);
 
-  // TODO(sl): Not used? Can be removed?
-  uint8_t m_lastLinesCountdown = 0U;
+  void stopOperation();
+  /* uint8_t m_lastLinesCountdown = 0U; */
 };
 
 #endif // KNITTER_H_
