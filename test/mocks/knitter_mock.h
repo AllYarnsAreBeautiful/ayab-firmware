@@ -24,23 +24,36 @@
 #ifndef KNITTER_MOCK_H_
 #define KNITTER_MOCK_H_
 
-#include <encoders.h>
 #include <gmock/gmock.h>
+#include <knitter.h>
 
 class KnitterMock {
 public:
   MOCK_METHOD5(startOperation, bool(Machine_t machineType, uint8_t startNeedle,
-               uint8_t stopNeedle, uint8_t *pattern_start, bool continuousReportingEnabled));
+                                    uint8_t stopNeedle, uint8_t *pattern_start,
+                                    bool continuousReportingEnabled));
   MOCK_METHOD0(startTest, bool());
   MOCK_METHOD1(setNextLine, bool(uint8_t lineNumber));
   MOCK_METHOD0(setLastLine, void());
   MOCK_METHOD2(send, void(uint8_t *payload, size_t length));
   MOCK_METHOD2(onPacketReceived, void(const uint8_t *buffer, size_t size));
-  MOCK_METHOD0(getMachineType, Machine_t());
+  MOCK_CONST_METHOD0(getMachineType, Machine_t());
   MOCK_METHOD1(setMachineType, void(Machine_t));
+  MOCK_CONST_METHOD1(getStartOffset, uint8_t(const Direction_t direction));
+  MOCK_METHOD1(setState, void(OpState_t));
+  MOCK_CONST_METHOD0(getStartNeedle, uint8_t());
+  MOCK_CONST_METHOD0(getStopNeedle, uint8_t());
+  MOCK_METHOD1(setStopNeedle, void(uint8_t));
+  MOCK_METHOD1(setPosition, void(uint8_t));
+  MOCK_METHOD1(setDirection, void(Direction_t));
+  MOCK_METHOD1(setCarriage, void(Carriage_t));
+  MOCK_METHOD1(setFirstRun, void(bool));
+  MOCK_METHOD1(setWorkedOnLine, void(bool));
+  MOCK_METHOD1(setLineRequested, void(bool));
+  MOCK_METHOD1(setLastLineFlag, void(bool));
 };
 
 KnitterMock *knitterMockInstance();
 void releaseKnitterMock();
 
-#endif  // KNITTER_MOCK_H_
+#endif // KNITTER_MOCK_H_

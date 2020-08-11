@@ -68,4 +68,4 @@ private:
   void h_reqTest();
 };
 
-#endif  // SERIAL_ENCODING_H_
+#endif // SERIAL_ENCODING_H_

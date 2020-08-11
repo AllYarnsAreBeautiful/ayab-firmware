@@ -1,5 +1,5 @@
 /*!`
- * \file beeper_mock.cpp
+ * \file hw_test_mock.cpp
  *
  * This file is part of AYAB.
  *
@@ -21,34 +21,29 @@
  *    http://ayab-knitting.com
  */
 
-#include <beeper_mock.h>
+#include <hw_test_mock.h>
 
-static BeeperMock *gBeeperMock = NULL;
-BeeperMock *beeperMockInstance() {
-  if (!gBeeperMock) {
-    gBeeperMock = new BeeperMock();
+static HardwareTestMock *gHardwareTestMock = NULL;
+HardwareTestMock *hardwareTestMockInstance() {
+  if (!gHardwareTestMock) {
+    gHardwareTestMock = new HardwareTestMock();
   }
-  return gBeeperMock;
+  return gHardwareTestMock;
 }
 
-void releaseBeeperMock() {
-  if (gBeeperMock) {
-    delete gBeeperMock;
-    gBeeperMock = NULL;
+void releaseHardwareTestMock() {
+  if (gHardwareTestMock) {
+    delete gHardwareTestMock;
+    gHardwareTestMock = NULL;
   }
 }
 
-void Beeper::ready() {
-  assert(gBeeperMock != NULL);
-  gBeeperMock->ready();
+void HardwareTest::setUp() {
+  assert(gHardwareTestMock != NULL);
+  gHardwareTestMock->setUp();
 }
 
-void Beeper::finishedLine() {
-  assert(gBeeperMock != NULL);
-  gBeeperMock->finishedLine();
-}
-
-void Beeper::endWork() {
-  assert(gBeeperMock != NULL);
-  gBeeperMock->endWork();
+void HardwareTest::loop() {
+  assert(gHardwareTestMock != NULL);
+  gHardwareTestMock->loop();
 }

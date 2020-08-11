@@ -1,5 +1,5 @@
 /*!`
- * \file beeper_mock.cpp
+ * \file hw_test_mock.h
  *
  * This file is part of AYAB.
  *
@@ -21,34 +21,19 @@
  *    http://ayab-knitting.com
  */
 
-#include <beeper_mock.h>
+#ifndef HW_TEST_MOCK_H_
+#define HW_TEST_MOCK_H_
 
-static BeeperMock *gBeeperMock = NULL;
-BeeperMock *beeperMockInstance() {
-  if (!gBeeperMock) {
-    gBeeperMock = new BeeperMock();
-  }
-  return gBeeperMock;
-}
+#include <gmock/gmock.h>
+#include <hw_test.h>
 
-void releaseBeeperMock() {
-  if (gBeeperMock) {
-    delete gBeeperMock;
-    gBeeperMock = NULL;
-  }
-}
+class HardwareTestMock {
+public:
+  MOCK_METHOD0(setUp, void());
+  MOCK_METHOD0(loop, void());
+};
 
-void Beeper::ready() {
-  assert(gBeeperMock != NULL);
-  gBeeperMock->ready();
-}
+HardwareTestMock *hardwareTestMockInstance();
+void releaseHardwareTestMock();
 
-void Beeper::finishedLine() {
-  assert(gBeeperMock != NULL);
-  gBeeperMock->finishedLine();
-}
-
-void Beeper::endWork() {
-  assert(gBeeperMock != NULL);
-  gBeeperMock->endWork();
-}
+#endif // HW_TEST_MOCK_H_
