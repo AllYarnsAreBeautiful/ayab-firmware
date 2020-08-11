@@ -26,6 +26,7 @@
 #include <beeper_mock.h>
 #include <board.h>
 #include <encoders_mock.h>
+#include <hw_test_mock.h>
 #include <knitter.h>
 #include <serial_encoding_mock.h>
 #include <solenoids_mock.h>
@@ -33,6 +34,11 @@
 using ::testing::_;
 using ::testing::AtLeast;
 using ::testing::Return;
+
+// global definitions
+// references everywhere else must use `extern`
+Knitter *knitter;
+HardwareTest *hwTest;
 
 void onPacketReceived(const uint8_t *buffer, size_t size) {
   (void)buffer;
@@ -47,6 +53,7 @@ protected:
     solenoidsMock = solenoidsMockInstance();
     encodersMock = encodersMockInstance();
     serialEncodingMock = serialEncodingMockInstance();
+    hwTestMock = hardwareTestMockInstance();
     expect_constructor();
     k = new Knitter();
   }
@@ -57,6 +64,7 @@ protected:
     releaseSolenoidsMock();
     releaseEncodersMock();
     releaseSerialEncodingMock();
+    releaseHardwareTestMock();
   }
 
   ArduinoMock *arduinoMock;
@@ -64,6 +72,7 @@ protected:
   SolenoidsMock *solenoidsMock;
   EncodersMock *encodersMock;
   SerialEncodingMock *serialEncodingMock;
+  HardwareTestMock *hwTestMock;
   Knitter *k;
 
   void expect_constructor() {
@@ -207,7 +216,7 @@ protected:
 TEST_F(KnitterTest, test_constructor) {
   ASSERT_EQ(k->getState(), s_init);
   // NOTE: Probing private data!
-  ASSERT_EQ(k->m_startNeedle, 0);
+  ASSERT_EQ(k->getStartNeedle(), 0);
 }
 
 /*!
@@ -233,7 +242,7 @@ TEST_F(KnitterTest, test_isr) {
  */
 TEST_F(KnitterTest, test_fsm_default_case) {
   // NOTE: Probing private data to be able to cover all branches.
-  k->m_opState = static_cast<OpState_t>(4);
+  k->setState(static_cast<OpState_t>(4));
   expected_fsm();
 }
 
@@ -562,14 +571,14 @@ TEST_F(KnitterTest, test_operate_lastline_and_no_req) {
   get_to_operate(Kh910);
 
   // Note probing lots of private data and methods to get full branch coverage.
-  k->m_stopNeedle = 100;
-  uint8_t wanted_pixel = k->m_stopNeedle + END_OF_LINE_OFFSET_R[Kh910] + 1;
-  k->m_firstRun = false;
-  k->m_direction = Left;
-  k->m_position = wanted_pixel + k->getStartOffset(Right);
-  k->m_workedOnLine = true;
-  k->m_lineRequested = false;
-  k->m_lastLineFlag = true;
+  k->setStopNeedle(100);
+  uint8_t wanted_pixel = k->getStopNeedle() + END_OF_LINE_OFFSET_R[Kh910] + 1;
+  k->setFirstRun(false);
+  k->setDirection(Left);
+  k->setPosition(wanted_pixel + k->getStartOffset(Right));
+  k->setWorkedOnLine(true);
+  k->setLineRequested(false);
+  k->setLastLineFlag(true);
 
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, 1));
   EXPECT_CALL(*solenoidsMock, setSolenoid);
@@ -579,7 +588,7 @@ TEST_F(KnitterTest, test_operate_lastline_and_no_req) {
   k->state_operate();
 
   ASSERT_EQ(k->getStartOffset(NUM_DIRECTIONS), 0);
-  k->m_carriage = NUM_CARRIAGES;
+  k->setCarriage(NUM_CARRIAGES);
   ASSERT_EQ(k->getStartOffset(Right), 0);
 }
 
@@ -677,14 +686,14 @@ TEST_F(KnitterTest, test_calculatePixelAndSolenoid) {
  */
 TEST_F(KnitterTest, test_getStartOffset) {
   // out of range values
-  k->m_carriage = Knit;
+  k->setCarriage(Knit);
   ASSERT_EQ(k->getStartOffset(NoDirection), 0);
   ASSERT_EQ(k->getStartOffset(NUM_DIRECTIONS), 0);
-  k->m_carriage = NoCarriage;
+  k->setCarriage(NoCarriage);
   ASSERT_EQ(k->getStartOffset(Left), 0);
-  k->m_carriage = NUM_CARRIAGES;
+  k->setCarriage(NUM_CARRIAGES);
   ASSERT_EQ(k->getStartOffset(Right), 0);
-  k->m_carriage = Lace;
+  k->setCarriage(Lace);
   k->setMachineType(NoMachine);
   ASSERT_EQ(k->getStartOffset(Left), 0);
   k->setMachineType(NUM_MACHINES);

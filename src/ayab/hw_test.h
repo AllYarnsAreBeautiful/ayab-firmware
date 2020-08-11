@@ -23,7 +23,28 @@
 #ifndef HW_TEST_H_
 #define HW_TEST_H_
 
-void hw_test_setup();
-void hw_test_loop();
+#include <Arduino.h>
+#include <SerialCommand.h>
 
-#endif  // HW_TEST_H_
+#include "beeper.h"
+#include "solenoids.h"
+
+class HardwareTest {
+public:
+  void setUp();
+  void loop();
+
+  SerialCommand m_SCmd;
+  Beeper m_beeper;
+  Solenoids m_solenoids;
+
+  volatile bool m_timerEvent = false;
+  bool m_timerEventOdd = false;
+  bool m_autoReadOn = false;
+  bool m_autoTestOn = false;
+  bool m_quit = false;
+};
+
+extern HardwareTest *hwTest;
+
+#endif // HW_TEST_H_

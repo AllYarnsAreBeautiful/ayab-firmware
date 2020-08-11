@@ -20,11 +20,13 @@
  *    Modified Work Copyright 2020 Sturla Lange, Tom Price
  *    http://ayab-knitting.com
  */
+
 #ifndef KNITTER_H_
 #define KNITTER_H_
 
 #include "beeper.h"
 #include "encoders.h"
+#include "hw_test.h"
 #include "serial_encoding.h"
 #include "solenoids.h"
 
@@ -42,28 +44,54 @@ using OpState_t = enum OpState;
  * encoders, and serial communication.
  */
 class Knitter {
-#if AYAB_TESTS
-  FRIEND_TEST(KnitterTest, test_constructor);
-  FRIEND_TEST(KnitterTest, test_fsm_default_case);
-  FRIEND_TEST(KnitterTest, test_getStartOffset);
-  FRIEND_TEST(KnitterTest, test_operate_lastline_and_no_req);
-#endif
+  /*
+  #if AYAB_TESTS
+    FRIEND_TEST(KnitterTest, test_constructor);
+    FRIEND_TEST(KnitterTest, test_fsm_default_case);
+    FRIEND_TEST(KnitterTest, test_getStartOffset);
+    FRIEND_TEST(KnitterTest, test_operate_lastline_and_no_req);
+  #endif
+  */
 public:
   Knitter();
 
   void isr();
   void fsm();
+  void setUpInterrupt();
   bool startOperation(Machine_t machineType, uint8_t startNeedle,
                       uint8_t stopNeedle, uint8_t *pattern_start,
                       bool continuousReportingEnabled);
-  bool startTest();
-  bool setNextLine(uint8_t lineNumber);
-  void setLastLine();
-  OpState_t getState();
+
   void send(uint8_t *payload, size_t length);
   void onPacketReceived(const uint8_t *buffer, size_t size);
-  Machine_t getMachineType();
+
+  OpState_t getState() const;
+  void state_init();
+  static void state_ready();
+  void state_operate();
+  void state_test();
+
+  bool startTest();
+
+  Machine_t getMachineType() const;
   void setMachineType(Machine_t);
+  uint8_t getStartOffset(const Direction_t direction) const;
+
+  bool setNextLine(uint8_t lineNumber);
+  void setLastLine();
+
+  // for testing purposes only
+  void setState(OpState_t state);
+  uint8_t getStartNeedle() const;
+  uint8_t getStopNeedle() const;
+  void setStopNeedle(uint8_t stopNeedle);
+  void setPosition(uint8_t position);
+  void setDirection(Direction_t direction);
+  void setCarriage(Carriage_t carriage);
+  void setFirstRun(bool firstRun);
+  void setWorkedOnLine(bool workedOnLine);
+  void setLineRequested(bool lineRequested);
+  void setLastLineFlag(bool lastLineFlag);
 
 private:
   Solenoids m_solenoids;
@@ -104,13 +132,7 @@ private:
   uint8_t m_solenoidToSet = 0U;
   uint8_t m_pixelToSet = 0U;
 
-  void state_init();
-  static void state_ready();
-  void state_operate();
-  void state_test();
-
   bool calculatePixelAndSolenoid();
-  uint8_t getStartOffset(Direction_t direction);
 
   void reqLine(uint8_t lineNumber);
   void indState(bool initState = false);
@@ -118,5 +140,7 @@ private:
   void stopOperation();
   /* uint8_t m_lastLinesCountdown = 0U; */
 };
+
+extern Knitter *knitter;
 
 #endif // KNITTER_H_

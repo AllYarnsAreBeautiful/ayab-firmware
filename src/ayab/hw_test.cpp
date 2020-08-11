@@ -21,24 +21,14 @@
  */
 
 #include <Arduino.h>
-#include <SerialCommand.h>
 
+#include "hw_test.h"
 #include "knitter.h"
 
-extern Knitter *knitter;
-
-static SerialCommand SCmd; ///< The SerialCommand object
-static Beeper beeper;
-static Solenoids solenoids;
-
-static bool autoReadOn = false;
-static bool autoTestOn = false;
-
 static void prompt() {
-  Serial.print("$ ");
 }
 
-static void help() {
+static void helpCmd() {
   Serial.println("The following commands are available:");
   Serial.println("setSingle [0..15] [1/0]");
   Serial.println("setAll [0..255] [0..255]");
@@ -48,23 +38,25 @@ static void help() {
   Serial.println("autoRead");
   Serial.println("autoTest");
   Serial.println("send");
+  Serial.println("stop");
+  Serial.println("quit");
   Serial.println("help");
 
   prompt();
 }
 
-static void send() {
+static void sendCmd() {
+  extern Knitter *knitter;
   Serial.println("Called send");
 
   uint8_t p[] = {1, 2, 3};
   knitter->send(p, 3);
   Serial.print("\n");
-
   prompt();
 }
 
 static void beep() {
-  beeper.ready();
+  hwTest->m_beeper.ready();
 }
 
 /*!
@@ -74,7 +66,6 @@ static void beepCmd() {
   Serial.println("Called beep");
 
   beep();
-
   prompt();
 }
 
@@ -88,10 +79,10 @@ static void encoderAChange() {
 /*!
  * \brief Set single solenoid command handler.
  */
-static void setSingle() {
+static void setSingleCmd() {
   Serial.println("Called setSingle");
 
-  char *arg = SCmd.next();
+  char *arg = hwTest->m_SCmd.next();
   if (arg == nullptr) {
     return;
   }
@@ -101,51 +92,44 @@ static void setSingle() {
     Serial.println(solenoidNumber);
     return;
   }
-
   if (arg == nullptr) {
     return;
   }
-  arg = SCmd.next();
+  arg = hwTest->m_SCmd.next();
   uint8_t solenoidState = atoi(arg);
   if (solenoidState > 1) {
     Serial.print("Invalid argument: ");
     Serial.println(solenoidState);
     return;
   }
-
-  solenoids.setSolenoid(solenoidNumber, solenoidState);
-
+  hwTest->m_solenoids.setSolenoid(solenoidNumber, solenoidState);
   prompt();
 }
 
 /*!
  * \brief Set all solenoids command handler.
  */
-static void setAll() {
+static void setAllCmd() {
   Serial.println("Called setAll");
 
-  char *arg = SCmd.next();
+  char *arg = hwTest->m_SCmd.next();
   if (arg == nullptr) {
     return;
   }
   uint8_t highByte = atoi(arg);
-
-  arg = SCmd.next();
+  arg = hwTest->m_SCmd.next();
   if (arg == nullptr) {
     return;
   }
   uint8_t lowByte = atoi(arg);
-
   uint16_t solenoidState = (highByte << 8) + lowByte;
-  solenoids.setSolenoids(solenoidState);
-
+  hwTest->m_solenoids.setSolenoids(solenoidState);
   prompt();
 }
 
 static void readEOLsensors() {
   Serial.print("  EOL_L: ");
   Serial.print(analogRead(EOL_PIN_L));
-
   Serial.print("  EOL_R: ");
   Serial.print(analogRead(EOL_PIN_R));
 }
@@ -158,7 +142,6 @@ static void readEOLsensorsCmd() {
 
   readEOLsensors();
   Serial.print("\n");
-
   prompt();
 }
 
@@ -166,11 +149,9 @@ static void readEncoders() {
   Serial.print("  ENC_A: ");
   bool state = digitalRead(ENC_PIN_A);
   Serial.print(state ? "HIGH" : "LOW");
-
   Serial.print("  ENC_B: ");
   state = digitalRead(ENC_PIN_B);
   Serial.print(state ? "HIGH" : "LOW");
-
   Serial.print("  ENC_C: ");
   state = digitalRead(ENC_PIN_C);
   Serial.print(state ? "HIGH" : "LOW");
@@ -184,7 +165,6 @@ static void readEncodersCmd() {
 
   readEncoders();
   Serial.print("\n");
-
   prompt();
 }
 
@@ -193,9 +173,8 @@ static void autoRead() {
   readEOLsensors();
   readEncoders();
   Serial.print("\n");
-
   prompt();
-  delay(1000);
+  // delay(1000);
 }
 
 /*!
@@ -203,26 +182,25 @@ static void autoRead() {
  */
 static void autoReadCmd() {
   Serial.println("Called autoRead, send stop to quit");
-  autoReadOn = true;
+  hwTest->m_autoReadOn = true;
 }
 
-static void autoTest() {
+static void autoTestEven() {
   Serial.print("\n");
-
   Serial.println("Set even solenoids");
   digitalWrite(LED_PIN_A, 1);
   digitalWrite(LED_PIN_B, 1);
-  solenoids.setSolenoids(0xAAAA);
+  hwTest->m_solenoids.setSolenoids(0xAAAA);
+  // delay(500);
+}
 
-  delay(500);
-
+static void autoTestOdd() {
   Serial.println("Set odd solenoids");
   digitalWrite(LED_PIN_A, 0);
   digitalWrite(LED_PIN_B, 0);
-  solenoids.setSolenoids(0x5555);
-
+  hwTest->m_solenoids.setSolenoids(0x5555);
   prompt();
-  delay(500);
+  // delay(500);
 }
 
 /*!
@@ -230,14 +208,19 @@ static void autoTest() {
  */
 static void autoTestCmd() {
   Serial.println("Called autoTest, send stop to quit");
-  autoTestOn = true;
+  hwTest->m_autoTestOn = true;
 }
 
-static void stop() {
-  autoReadOn = false;
-  autoTestOn = false;
-
+static void stopCmd() {
+  hwTest->m_autoReadOn = false;
+  hwTest->m_autoTestOn = false;
   prompt();
+}
+
+static void quitCmd() {
+  extern Knitter *knitter;
+  hwTest->m_quit = true;
+  knitter->setUpInterrupt();
 }
 
 /*!
@@ -248,57 +231,62 @@ static void stop() {
  * This gets set as the default handler, and gets called when no other command
  * matches.
  */
-static void unrecognized(const char *buffer) {
+static void unrecognizedCmd(const char *buffer) {
   Serial.println("Unrecognized Command");
-
   (void)(buffer);
-
-  help();
+  helpCmd();
 }
+
+// Member functions
 
 /*!
  * \brief Setup for hw tests.
  */
-void hw_test_setup() {
-  pinMode(LED_PIN_A, OUTPUT);
-  pinMode(LED_PIN_B, OUTPUT);
+void HardwareTest::setUp() {
+  // attach interrupt for ENC_PIN_A(=2), interrupt #0
+  detachInterrupt(0);
+  attachInterrupt(0, encoderAChange, RISING);
 
-  // Setup callbacks for SerialCommand commands
-  SCmd.addCommand("setSingle", setSingle);
-  SCmd.addCommand("setAll", setAll);
-  SCmd.addCommand("readEOLsensors", readEOLsensorsCmd);
-  SCmd.addCommand("readEncoders", readEncodersCmd);
-  SCmd.addCommand("beep", beepCmd);
-  SCmd.addCommand("autoRead", autoReadCmd);
-  SCmd.addCommand("autoTest", autoTestCmd);
-  SCmd.addCommand("send", send);
-  SCmd.addCommand("stop", stop);
-  SCmd.addCommand("help", help);
-  SCmd.setDefaultHandler(
-      unrecognized); // Handler for command that isn't matched
+  // set up callbacks for SerialCommand commands
+  m_SCmd.addCommand("setSingle", setSingleCmd);
+  m_SCmd.addCommand("setAll", setAllCmd);
+  m_SCmd.addCommand("readEOLsensors", readEOLsensorsCmd);
+  m_SCmd.addCommand("readEncoders", readEncodersCmd);
+  m_SCmd.addCommand("beep", beepCmd);
+  m_SCmd.addCommand("autoRead", autoReadCmd);
+  m_SCmd.addCommand("autoTest", autoTestCmd);
+  m_SCmd.addCommand("send", sendCmd);
+  m_SCmd.addCommand("stop", stopCmd);
+  m_SCmd.addCommand("quit", quitCmd);
+  m_SCmd.addCommand("help", helpCmd);
+  m_SCmd.setDefaultHandler(unrecognizedCmd);
 
-  attachInterrupt(0, encoderAChange, RISING); // Attaching ENC_PIN_A(=2)
-
-  Serial.print("AYAB HW Test Firmware v");
+  // Print welcome message
+  Serial.print("AYAB Hardware Test, Firmware v");
   Serial.print(FW_VERSION_MAJ);
   Serial.print(".");
   Serial.print(FW_VERSION_MIN);
   Serial.print(" API v");
   Serial.print(API_VERSION);
   Serial.print("\n\n");
-
-  help();
+  helpCmd();
 }
 
 /*!
- * \brief Main loop for hw tests.
+ * \brief Main loop for hardware tests.
  */
-void hw_test_loop() {
-  if (autoReadOn) {
+void HardwareTest::loop() {
+  if (m_autoReadOn and m_timerEvent and m_timerEventOdd) {
     autoRead();
   }
-  if (autoTestOn) {
-    autoTest();
+  if (m_autoTestOn) {
+    if (m_timerEventOdd) {
+      autoTestOdd();
+    } else {
+      autoTestEven();
+    }
   }
-  SCmd.readSerial();
+  m_timerEvent = false;
+  m_timerEventOdd = not m_timerEventOdd;
+  m_SCmd.readSerial();
 }

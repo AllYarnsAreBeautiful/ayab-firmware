@@ -21,8 +21,8 @@
  *    http://ayab-knitting.com
  */
 
-#include "knitter.h"
 #include "serial_encoding.h"
+#include "knitter.h"
 
 #ifndef AYAB_TESTS
 /*!
@@ -32,11 +32,11 @@
  * passed to _setPacketHandler_, and the only global variable
  * is knitter.
  */
-void gOnPacketReceived(const uint8_t *buffer, size_t size) {
+static void gOnPacketReceived(const uint8_t *buffer, size_t size) {
   extern Knitter *knitter;
   knitter->onPacketReceived(buffer, size);
 }
-#endif
+#endif // AYAB_TESTS
 
 #ifdef AYAB_ENABLE_CRC
 /*!
@@ -112,8 +112,9 @@ void SerialEncoding::h_reqStart(const uint8_t *buffer, size_t size) {
   }
 
   extern Knitter *knitter;
-  bool success = knitter->startOperation(machineType, startNeedle, stopNeedle,
-                                         lineBuffer, continuousReportingEnabled);
+  bool success =
+      knitter->startOperation(machineType, startNeedle, stopNeedle, lineBuffer,
+                              continuousReportingEnabled);
 
   uint8_t payload[2];
   payload[0] = cnfStart_msgid;
@@ -131,11 +132,13 @@ void SerialEncoding::h_cnfLine(const uint8_t *buffer, size_t size) {
   extern Knitter *knitter;
   uint8_t lenLineBuffer = LINE_BUFFER_LEN[knitter->getMachineType()];
   if (size < lenLineBuffer + 5U) {
+    // message is too short
+    // TODO(sl): handle error?
     return;
   }
 
   uint8_t lineNumber = buffer[1];
-  /* uint8_t color = buffer[2];  // unused */
+  /* uint8_t color = buffer[2];  // currently unused */
   uint8_t flags = buffer[3];
 
   for (uint8_t i = 0U; i < lenLineBuffer; i++) {
@@ -147,6 +150,7 @@ void SerialEncoding::h_cnfLine(const uint8_t *buffer, size_t size) {
   uint8_t crc8 = buffer[lenLineBuffer + 4];
   // Calculate checksum of buffer contents
   if (crc8 != CRC8(buffer, lenLineBuffer + 4)) {
+    // TODO(sl): handle checksum error?
     return;
   }
 #endif
@@ -213,7 +217,7 @@ SerialEncoding::SerialEncoding() {
   m_packetSerial.begin(SERIAL_BAUDRATE);
 #ifndef AYAB_TESTS
   m_packetSerial.setPacketHandler(gOnPacketReceived);
-#endif
+#endif // AYAB_TESTS
 }
 
 void SerialEncoding::update() {
@@ -221,14 +225,14 @@ void SerialEncoding::update() {
 }
 
 void SerialEncoding::send(uint8_t *payload, size_t length) {
-/*
-#ifdef AYAB_HW_TEST
-  Serial.print("Sent: ");
-  for (uint8_t i = 0; i < length; ++i) {
-    Serial.print(payload[i]);
-  }
-  Serial.print(", Encoded as: ");
-#endif
-*/
+  /*
+  #ifdef AYAB_HW_TEST
+    Serial.print("Sent: ");
+    for (uint8_t i = 0; i < length; ++i) {
+      Serial.print(payload[i]);
+    }
+    Serial.print(", Encoded as: ");
+  #endif
+  */
   m_packetSerial.send(payload, length);
 }

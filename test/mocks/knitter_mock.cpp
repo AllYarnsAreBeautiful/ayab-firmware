@@ -21,8 +21,8 @@
  *    http://ayab-knitting.com
  */
 
-#include <knitter_mock.h>
 #include <knitter.h>
+#include <knitter_mock.h>
 
 static KnitterMock *gKnitterMock = NULL;
 KnitterMock *knitterMockInstance() {
@@ -39,7 +39,7 @@ void releaseKnitterMock() {
   }
 }
 
-Machine_t Knitter::getMachineType() {
+Machine_t Knitter::getMachineType() const {
   assert(gKnitterMock != NULL);
   return gKnitterMock->getMachineType();
 }
@@ -49,16 +49,23 @@ void Knitter::setMachineType(Machine_t machineType) {
   return gKnitterMock->setMachineType(machineType);
 }
 
+uint8_t Knitter::getStartOffset(const Direction_t direction) const {
+  assert(gKnitterMock != NULL);
+  return gKnitterMock->getStartOffset(direction);
+}
+
 bool Knitter::startTest() {
   assert(gKnitterMock != NULL);
   return gKnitterMock->startTest();
 }
 
-bool Knitter::startOperation(Machine_t machineType, uint8_t startNeedle, uint8_t stopNeedle,
-                             uint8_t *pattern_start, bool continuousReportingEnabled) {
+bool Knitter::startOperation(Machine_t machineType, uint8_t startNeedle,
+                             uint8_t stopNeedle, uint8_t *pattern_start,
+                             bool continuousReportingEnabled) {
   assert(gKnitterMock != NULL);
   return gKnitterMock->startOperation(machineType, startNeedle, stopNeedle,
-                                      pattern_start, continuousReportingEnabled);
+                                      pattern_start,
+                                      continuousReportingEnabled);
 }
 
 bool Knitter::setNextLine(uint8_t lineNumber) {
@@ -79,6 +86,61 @@ void Knitter::send(uint8_t payload[], size_t length) {
 void Knitter::onPacketReceived(const uint8_t *buffer, size_t size) {
   assert(gKnitterMock != NULL);
   gKnitterMock->onPacketReceived(buffer, size);
+}
+
+void Knitter::setState(OpState_t state) {
+  assert(gKnitterMock != NULL);
+  gKnitterMock->setState(state);
+}
+
+uint8_t Knitter::getStartNeedle() const {
+  assert(gKnitterMock != NULL);
+  return gKnitterMock->getStartNeedle();
+}
+
+uint8_t Knitter::getStopNeedle() const {
+  assert(gKnitterMock != NULL);
+  return gKnitterMock->getStopNeedle();
+}
+
+void Knitter::setStopNeedle(uint8_t stopNeedle) {
+  assert(gKnitterMock != NULL);
+  gKnitterMock->setStopNeedle(stopNeedle);
+}
+
+void Knitter::setPosition(uint8_t position) {
+  assert(gKnitterMock != NULL);
+  gKnitterMock->setPosition(position);
+}
+
+void Knitter::setDirection(Direction_t direction) {
+  assert(gKnitterMock != NULL);
+  gKnitterMock->setDirection(direction);
+}
+
+void Knitter::setCarriage(Carriage_t carriage) {
+  assert(gKnitterMock != NULL);
+  gKnitterMock->setCarriage(carriage);
+}
+
+void Knitter::setFirstRun(bool firstRun) {
+  assert(gKnitterMock != NULL);
+  gKnitterMock->setFirstRun(firstRun);
+}
+
+void Knitter::setWorkedOnLine(bool workedOnLine) {
+  assert(gKnitterMock != NULL);
+  gKnitterMock->setWorkedOnLine(workedOnLine);
+}
+
+void Knitter::setLineRequested(bool lineRequested) {
+  assert(gKnitterMock != NULL);
+  gKnitterMock->setLineRequested(lineRequested);
+}
+
+void Knitter::setLastLineFlag(bool lastLineFlag) {
+  assert(gKnitterMock != NULL);
+  gKnitterMock->setLastLineFlag(lastLineFlag);
 }
 
 Knitter *knitter;

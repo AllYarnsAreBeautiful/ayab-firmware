@@ -24,23 +24,20 @@
 
 #include <Arduino.h>
 
-#ifdef AYAB_HW_TEST
-#include <hw_test.h>
-#endif
-
+#include "hw_test.h"
 #include "knitter.h"
 
-/* Global Declarations */
-Knitter *knitter; ///< A pointer to the global instance of the knitter object.
+// global definitions
+// references everywhere else must use `extern`
+Knitter *knitter;
+HardwareTest *hwTest;
 
 /*!
  * Setup - steps to take before going to the main loop.
  */
 void setup() {
   knitter = new Knitter();
-#ifdef AYAB_HW_TEST
-  hw_test_setup();
-#endif
+  hwTest = new HardwareTest();
 }
 
 /*!
@@ -48,9 +45,5 @@ void setup() {
  * or someone cuts power to us.
  */
 void loop() {
-#ifdef AYAB_HW_TEST
-  hw_test_loop();
-#else
   knitter->fsm();
-#endif
 }
