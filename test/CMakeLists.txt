@@ -52,6 +52,10 @@ set(COMMON_SOURCES
     ${SOURCE_DIRECTORY}/serial_encoding.cpp
     ${PROJECT_SOURCE_DIR}/test_serial_encoding.cpp
 
+    ${SOURCE_DIRECTORY}/hw_test.cpp
+    ${PROJECT_SOURCE_DIR}/test_hw_test.cpp
+    ${PROJECT_SOURCE_DIR}/mocks/SerialCommand_mock.cpp
+
     ${PROJECT_SOURCE_DIR}/mocks/knitter_mock.cpp
     )
 set(COMMON_DEFINES
@@ -134,8 +138,8 @@ add_executable(${PROJECT_NAME}_knitter
     ${PROJECT_SOURCE_DIR}/mocks/beeper_mock.cpp
     ${PROJECT_SOURCE_DIR}/mocks/serial_encoding_mock.cpp
     ${PROJECT_SOURCE_DIR}/mocks/hw_test_mock.cpp
-    ${LIBRARY_DIRECTORY}/SerialCommand/SerialCommand.cpp
     ${PROJECT_SOURCE_DIR}/test_knitter.cpp
+    ${LIBRARY_DIRECTORY}/SerialCommand/SerialCommand.cpp
     ${SOFT_I2C_LIB}
 )
 target_include_directories(${PROJECT_NAME}_knitter

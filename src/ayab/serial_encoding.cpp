@@ -24,6 +24,8 @@
 #include "serial_encoding.h"
 #include "knitter.h"
 
+extern Knitter *knitter;
+
 #ifndef AYAB_TESTS
 /*!
  * \brief Wrapper for knitter's onPacketReceived.
@@ -33,7 +35,6 @@
  * is knitter.
  */
 static void gOnPacketReceived(const uint8_t *buffer, size_t size) {
-  extern Knitter *knitter;
   knitter->onPacketReceived(buffer, size);
 }
 #endif // AYAB_TESTS
@@ -111,7 +112,6 @@ void SerialEncoding::h_reqStart(const uint8_t *buffer, size_t size) {
     lineBuffer[i] = 0xFFU;
   }
 
-  extern Knitter *knitter;
   bool success =
       knitter->startOperation(machineType, startNeedle, stopNeedle, lineBuffer,
                               continuousReportingEnabled);
@@ -129,7 +129,6 @@ void SerialEncoding::h_reqStart(const uint8_t *buffer, size_t size) {
  * \todo sl: Assert size? Handle error?
  */
 void SerialEncoding::h_cnfLine(const uint8_t *buffer, size_t size) {
-  extern Knitter *knitter;
   uint8_t lenLineBuffer = LINE_BUFFER_LEN[knitter->getMachineType()];
   if (size < lenLineBuffer + 5U) {
     // message is too short
@@ -173,9 +172,20 @@ void SerialEncoding::h_reqInfo() {
   send(payload, 4);
 }
 
-void SerialEncoding::h_reqTest() {
-  extern Knitter *knitter;
-  bool success = knitter->startTest();
+/*!
+ * \brief Handle request hardware test command.
+ *
+ * \todo TP: Assert size? Handle error?
+ */
+void SerialEncoding::h_reqTest(const uint8_t *buffer, size_t size) {
+  if (size < 1U) {
+    // message is too short
+    // TODO(TP): handle error?
+    return;
+  }
+
+  Machine_t machineType = static_cast<Machine_t>(buffer[0]);
+  bool success = knitter->startTest(machineType);
 
   uint8_t payload[2];
   payload[0] = cnfTest_msgid;
@@ -184,10 +194,11 @@ void SerialEncoding::h_reqTest() {
 }
 
 static void h_unrecognized() {
+  // do nothing
 }
 
-/*! Callback for PacketSerial
- *
+/*!
+ * \brief Callback for PacketSerial.
  */
 void SerialEncoding::onPacketReceived(const uint8_t *buffer, size_t size) {
   switch (buffer[0]) {
@@ -204,7 +215,7 @@ void SerialEncoding::onPacketReceived(const uint8_t *buffer, size_t size) {
     break;
 
   case reqTest_msgid:
-    h_reqTest();
+    h_reqTest(buffer, size);
     break;
 
   default:
@@ -225,6 +236,7 @@ void SerialEncoding::update() {
 }
 
 void SerialEncoding::send(uint8_t *payload, size_t length) {
+  // TODO(TP): insert a workaround for hardware test code
   /*
   #ifdef AYAB_HW_TEST
     Serial.print("Sent: ");

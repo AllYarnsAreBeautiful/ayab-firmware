@@ -32,7 +32,7 @@ public:
   MOCK_METHOD5(startOperation, bool(Machine_t machineType, uint8_t startNeedle,
                                     uint8_t stopNeedle, uint8_t *pattern_start,
                                     bool continuousReportingEnabled));
-  MOCK_METHOD0(startTest, bool());
+  MOCK_METHOD1(startTest, bool(Machine_t));
   MOCK_METHOD1(setNextLine, bool(uint8_t lineNumber));
   MOCK_METHOD0(setLastLine, void());
   MOCK_METHOD2(send, void(uint8_t *payload, size_t length));
@@ -41,16 +41,10 @@ public:
   MOCK_METHOD1(setMachineType, void(Machine_t));
   MOCK_CONST_METHOD1(getStartOffset, uint8_t(const Direction_t direction));
   MOCK_METHOD1(setState, void(OpState_t));
-  MOCK_CONST_METHOD0(getStartNeedle, uint8_t());
-  MOCK_CONST_METHOD0(getStopNeedle, uint8_t());
-  MOCK_METHOD1(setStopNeedle, void(uint8_t));
-  MOCK_METHOD1(setPosition, void(uint8_t));
-  MOCK_METHOD1(setDirection, void(Direction_t));
-  MOCK_METHOD1(setCarriage, void(Carriage_t));
-  MOCK_METHOD1(setFirstRun, void(bool));
-  MOCK_METHOD1(setWorkedOnLine, void(bool));
-  MOCK_METHOD1(setLineRequested, void(bool));
-  MOCK_METHOD1(setLastLineFlag, void(bool));
+  MOCK_METHOD1(setSolenoids, void(uint16_t state));
+  MOCK_METHOD2(setSolenoid, void(uint8_t solenoid, uint8_t state));
+  MOCK_METHOD1(setQuitFlag, void(bool flag));
+  MOCK_METHOD0(setUpInterrupt, void());
 };
 
 KnitterMock *knitterMockInstance();

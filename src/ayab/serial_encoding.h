@@ -65,7 +65,7 @@ private:
   void h_reqStart(const uint8_t *buffer, size_t size);
   void h_cnfLine(const uint8_t *buffer, size_t size);
   void h_reqInfo();
-  void h_reqTest();
+  void h_reqTest(const uint8_t *buffer, size_t size);
 };
 
 #endif // SERIAL_ENCODING_H_

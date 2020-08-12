@@ -38,6 +38,66 @@ void releaseHardwareTestMock() {
   }
 }
 
+void HardwareTest::helpCmd() {
+  assert(gHardwareTestMock != NULL);
+  gHardwareTestMock->helpCmd();
+}
+
+void HardwareTest::sendCmd() {
+  assert(gHardwareTestMock != NULL);
+  gHardwareTestMock->sendCmd();
+}
+
+void HardwareTest::beepCmd() {
+  assert(gHardwareTestMock != NULL);
+  gHardwareTestMock->beepCmd();
+}
+
+void HardwareTest::setSingleCmd() {
+  assert(gHardwareTestMock != NULL);
+  gHardwareTestMock->setSingleCmd();
+}
+
+void HardwareTest::setAllCmd() {
+  assert(gHardwareTestMock != NULL);
+  gHardwareTestMock->setAllCmd();
+}
+
+void HardwareTest::readEOLsensorsCmd() {
+  assert(gHardwareTestMock != NULL);
+  gHardwareTestMock->readEOLsensorsCmd();
+}
+
+void HardwareTest::readEncodersCmd() {
+  assert(gHardwareTestMock != NULL);
+  gHardwareTestMock->readEncodersCmd();
+}
+
+void HardwareTest::autoReadCmd() {
+  assert(gHardwareTestMock != NULL);
+  gHardwareTestMock->autoReadCmd();
+}
+
+void HardwareTest::autoTestCmd() {
+  assert(gHardwareTestMock != NULL);
+  gHardwareTestMock->autoTestCmd();
+}
+
+void HardwareTest::stopCmd() {
+  assert(gHardwareTestMock != NULL);
+  gHardwareTestMock->stopCmd();
+}
+
+void HardwareTest::quitCmd() {
+  assert(gHardwareTestMock != NULL);
+  gHardwareTestMock->quitCmd();
+}
+
+void HardwareTest::unrecognizedCmd(const char *buffer) {
+  assert(gHardwareTestMock != NULL);
+  gHardwareTestMock->unrecognizedCmd(buffer);
+}
+
 void HardwareTest::setUp() {
   assert(gHardwareTestMock != NULL);
   gHardwareTestMock->setUp();
