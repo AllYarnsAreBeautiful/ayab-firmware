@@ -119,14 +119,14 @@ public:
   void init(Machine_t machineType);
 
 private:
-  Direction_t m_direction = NoDirection;
-  Direction_t m_hallActive = NoDirection;
-  Beltshift_t m_beltShift = Unknown;
-  Carriage_t m_carriage = NoCarriage;
   Machine_t m_machineType = NoMachine;
 
-  uint8_t m_encoderPos = 0x00;
-  bool m_oldState = false;
+  volatile Direction_t m_direction = NoDirection;
+  volatile Direction_t m_hallActive = NoDirection;
+  volatile Beltshift_t m_beltShift = Unknown;
+  volatile Carriage_t m_carriage = NoCarriage;
+  volatile uint8_t m_encoderPos = 0x00;
+  volatile bool m_oldState = false;
 
   void encA_rising();
   void encA_falling();

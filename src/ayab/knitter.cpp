@@ -54,10 +54,7 @@ static void isr_wrapper() {
  *
  * Initializes the solenoids as well as pins and interrupts.
  */
-Knitter::Knitter()
-    : // incorporated  by composition
-      m_beeper(), m_serial_encoding() {
-
+Knitter::Knitter() : m_beeper(), m_serial_encoding() {
   pinMode(ENC_PIN_A, INPUT);
   pinMode(ENC_PIN_B, INPUT);
   pinMode(ENC_PIN_C, INPUT);
@@ -75,7 +72,7 @@ Knitter::Knitter()
 }
 
 void Knitter::setUpInterrupt() {
-  // attach ENC_PIN_A(=2), interrupt #0
+  // (re-)attach ENC_PIN_A(=2), interrupt #0
   detachInterrupt(0);
 #ifndef AYAB_TESTS
   attachInterrupt(0, isr_wrapper, CHANGE);
@@ -183,10 +180,12 @@ bool Knitter::startOperation(Machine_t machineType, uint8_t startNeedle,
   return true;
 }
 
-bool Knitter::startTest() {
+bool Knitter::startTest(Machine_t machineType) {
   bool success = false;
   if (s_init == m_opState || s_ready == m_opState) {
     m_opState = s_test;
+    m_machineType = machineType;
+    HardwareTest::setUp();
     success = true;
   }
   return success;
@@ -213,7 +212,7 @@ void Knitter::setLastLine() {
   m_lastLineFlag = true;
 }
 
-// Private Methods
+// private methods
 
 void Knitter::state_init() {
 #ifdef DBG_NOMACHINE
@@ -345,7 +344,14 @@ void Knitter::state_test() {
     calculatePixelAndSolenoid();
     indState();
   }
-  hwTest->loop();
+  HardwareTest::loop();
+  if (m_quitFlag) {
+    m_opState = s_ready;
+  }
+}
+
+void Knitter::setQuitFlag(bool flag) {
+  m_quitFlag = flag;
 }
 
 bool Knitter::calculatePixelAndSolenoid() {
@@ -409,6 +415,14 @@ bool Knitter::calculatePixelAndSolenoid() {
   return success;
 }
 
+void Knitter::setSolenoids(uint16_t state) {
+  m_solenoids.setSolenoids(state);
+}
+
+void Knitter::setSolenoid(uint8_t solenoid, uint8_t state) {
+  m_solenoids.setSolenoid(solenoid, state);
+}
+
 uint8_t Knitter::getStartOffset(const Direction_t direction) const {
   if ((direction == NoDirection) || (direction >= NUM_DIRECTIONS) ||
       (m_carriage == NoCarriage) || (m_carriage >= NUM_CARRIAGES) ||
@@ -466,44 +480,4 @@ void Knitter::setMachineType(Machine_t machineType) {
 
 void Knitter::setState(OpState_t state) {
   m_opState = state;
-}
-
-uint8_t Knitter::getStartNeedle() const {
-  return m_startNeedle;
-}
-
-uint8_t Knitter::getStopNeedle() const {
-  return m_stopNeedle;
-}
-
-void Knitter::setStopNeedle(uint8_t stopNeedle) {
-  m_stopNeedle = stopNeedle;
-}
-
-void Knitter::setPosition(uint8_t position) {
-  m_position = position;
-}
-
-void Knitter::setDirection(Direction_t direction) {
-  m_direction = direction;
-}
-
-void Knitter::setCarriage(Carriage_t carriage) {
-  m_carriage = carriage;
-}
-
-void Knitter::setFirstRun(bool firstRun) {
-  m_firstRun = firstRun;
-}
-
-void Knitter::setWorkedOnLine(bool workedOnLine) {
-  m_workedOnLine = workedOnLine;
-}
-
-void Knitter::setLineRequested(bool lineRequested) {
-  m_lineRequested = lineRequested;
-}
-
-void Knitter::setLastLineFlag(bool lastLineFlag) {
-  m_lastLineFlag = lastLineFlag;
 }

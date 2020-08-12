@@ -73,7 +73,7 @@ protected:
   EncodersMock *encodersMock;
   SerialEncodingMock *serialEncodingMock;
   HardwareTestMock *hwTestMock;
-  Knitter *k;
+  Knitter *&k = knitter; // `k` is alias of global `knitter`
 
   void expect_constructor() {
     EXPECT_CALL(*arduinoMock, pinMode(ENC_PIN_A, INPUT));
@@ -178,17 +178,17 @@ protected:
     expected_fsm();
   }
 
-  void expected_test(bool first) {
-    if (first) {
-      // FIXME(TP): this is a kludge -
-      // currently there is no way to set the machineType in test mode
-      k->setMachineType(Kh910);
-      EXPECT_CALL(*encodersMock, init);
-      encodersMock->init(Kh910);
-      ASSERT_EQ(k->startTest(), true);
-    }
+  void expected_test() {
     expect_indState();
+    EXPECT_CALL(*hwTestMock, loop);
     expected_fsm();
+  }
+
+  void expected_set_machine(Machine_t machineType) {
+    k->setMachineType(machineType);
+    EXPECT_CALL(*encodersMock, init);
+    encodersMock->init(machineType);
+    ASSERT_EQ(k->startTest(machineType), true);
   }
 
   void test_operate_line_request() {
@@ -216,7 +216,7 @@ protected:
 TEST_F(KnitterTest, test_constructor) {
   ASSERT_EQ(k->getState(), s_init);
   // NOTE: Probing private data!
-  ASSERT_EQ(k->getStartNeedle(), 0);
+  ASSERT_EQ(k->m_startNeedle, 0);
 }
 
 /*!
@@ -290,15 +290,18 @@ TEST_F(KnitterTest, test_fsm_ready) {
  */
 TEST_F(KnitterTest, test_fsm_test) {
   // Enter test state
-  ASSERT_EQ(k->startTest(), true);
+  EXPECT_CALL(*hwTestMock, setUp);
+  ASSERT_EQ(k->startTest(Kh910), true);
 
   expected_isr();
   expect_indState();
+  EXPECT_CALL(*hwTestMock, loop);
   expected_fsm();
 
   // Again with same position, no indState this time.
   expected_isr();
   expect_indState<0>();
+  EXPECT_CALL(*hwTestMock, loop);
   expected_fsm();
 }
 
@@ -367,7 +370,8 @@ TEST_F(KnitterTest, test_startOperation_failures) {
  * \test
  */
 TEST_F(KnitterTest, test_startTest) {
-  ASSERT_EQ(k->startTest(), true);
+  EXPECT_CALL(*hwTestMock, setUp);
+  ASSERT_EQ(k->startTest(Kh910), true);
   ASSERT_EQ(k->getState(), s_test);
 }
 
@@ -377,7 +381,7 @@ TEST_F(KnitterTest, test_startTest) {
 TEST_F(KnitterTest, test_startTest_in_operation) {
   get_to_operate(Kh910);
   // Can't start test
-  ASSERT_EQ(k->startTest(), false);
+  ASSERT_EQ(k->startTest(Kh910), false);
   ASSERT_EQ(k->getState(), s_operate);
 }
 
@@ -571,14 +575,14 @@ TEST_F(KnitterTest, test_operate_lastline_and_no_req) {
   get_to_operate(Kh910);
 
   // Note probing lots of private data and methods to get full branch coverage.
-  k->setStopNeedle(100);
-  uint8_t wanted_pixel = k->getStopNeedle() + END_OF_LINE_OFFSET_R[Kh910] + 1;
-  k->setFirstRun(false);
-  k->setDirection(Left);
-  k->setPosition(wanted_pixel + k->getStartOffset(Right));
-  k->setWorkedOnLine(true);
-  k->setLineRequested(false);
-  k->setLastLineFlag(true);
+  k->m_stopNeedle = 100;
+  uint8_t wanted_pixel = k->m_stopNeedle + END_OF_LINE_OFFSET_R[Kh910] + 1;
+  k->m_firstRun = false;
+  k->m_direction = Left;
+  k->m_position = wanted_pixel + k->getStartOffset(Right);
+  k->m_workedOnLine = true;
+  k->m_lineRequested = false;
+  k->m_lastLineFlag = true;
 
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, 1));
   EXPECT_CALL(*solenoidsMock, setSolenoid);
@@ -588,7 +592,7 @@ TEST_F(KnitterTest, test_operate_lastline_and_no_req) {
   k->state_operate();
 
   ASSERT_EQ(k->getStartOffset(NUM_DIRECTIONS), 0);
-  k->setCarriage(NUM_CARRIAGES);
+  k->m_carriage = NUM_CARRIAGES;
   ASSERT_EQ(k->getStartOffset(Right), 0);
 }
 
@@ -631,54 +635,55 @@ TEST_F(KnitterTest, test_operate_new_line) {
  * \test
  */
 TEST_F(KnitterTest, test_calculatePixelAndSolenoid) {
+  EXPECT_CALL(*hwTestMock, setUp);
+  expected_set_machine(Kh910);
+
   // New Position, different beltshift and active hall
   expected_isr(100, Right, Right, Shifted, Lace);
-  expected_test(true);
+  expected_test();
 
   // No direction, need to change position to enter test
   expected_isr(101, NoDirection, Right, Shifted, Lace);
-  expected_test(false);
+  expected_test();
 
   // No belt, need to change position to enter test
   expected_isr(100, Right, Right, Unknown, Lace);
-  expected_test(false);
+  expected_test();
 
   // No belt on left side, need to change position to enter test
   expected_isr(101, Left, Right, Unknown, Garter);
-  expected_test(false);
+  expected_test();
 
   // Left Lace carriage
   expected_isr(100, Left, Right, Unknown, Lace);
-  expected_test(false);
+  expected_test();
 
   // Regular belt on left, need to change position to enter test
   expected_isr(101, Left, Right, Regular, Garter);
-  expected_test(false);
+  expected_test();
 
   // Shifted belt on left, need to change position to enter test
   expected_isr(100, Left, Right, Shifted, Garter);
-  expected_test(false);
+  expected_test();
 
   // Off of right end, position is changed
   expected_isr(END_RIGHT[Kh910], Left, Right, Unknown, Lace);
-  expected_test(false);
+  expected_test();
 
   // Direction right, have not reached offset
   expected_isr(39, Right, Left, Unknown, Lace);
-  expected_test(false);
+  expected_test();
 
   // Kh270
   k->setMachineType(Kh270);
-  EXPECT_CALL(*encodersMock, init);
-  encodersMock->init(Kh270);
 
   // K carriage direction left
   expected_isr(0, Left, Right, Regular, Knit);
-  expected_test(false);
+  expected_test();
 
   // K carriage direction right
   expected_isr(END_RIGHT[Kh270], Right, Left, Regular, Knit);
-  expected_test(false);
+  expected_test();
 }
 
 /*!
@@ -686,17 +691,17 @@ TEST_F(KnitterTest, test_calculatePixelAndSolenoid) {
  */
 TEST_F(KnitterTest, test_getStartOffset) {
   // out of range values
-  k->setCarriage(Knit);
+  k->m_carriage = Knit;
   ASSERT_EQ(k->getStartOffset(NoDirection), 0);
   ASSERT_EQ(k->getStartOffset(NUM_DIRECTIONS), 0);
-  k->setCarriage(NoCarriage);
+  k->m_carriage = NoCarriage;
   ASSERT_EQ(k->getStartOffset(Left), 0);
-  k->setCarriage(NUM_CARRIAGES);
+  k->m_carriage = NUM_CARRIAGES;
   ASSERT_EQ(k->getStartOffset(Right), 0);
-  k->setCarriage(Lace);
-  k->setMachineType(NoMachine);
+  k->m_carriage = Lace;
+  k->m_machineType = NoMachine;
   ASSERT_EQ(k->getStartOffset(Left), 0);
-  k->setMachineType(NUM_MACHINES);
+  k->m_machineType = NUM_MACHINES;
   ASSERT_EQ(k->getStartOffset(Right), 0);
 }
 
@@ -706,4 +711,33 @@ TEST_F(KnitterTest, test_getStartOffset) {
 TEST_F(KnitterTest, test_onPacketReceived) {
   EXPECT_CALL(*serialEncodingMock, onPacketReceived);
   k->onPacketReceived(nullptr, 0);
+}
+
+/*!
+ * \test
+ */
+TEST_F(KnitterTest, test_quit_hw_test) {
+  EXPECT_CALL(*hwTestMock, setUp);
+  ASSERT_EQ(k->startTest(Kh910), true);
+  ASSERT_EQ(k->getState(), s_test);
+  k->setQuitFlag(true);
+  EXPECT_CALL(*hwTestMock, loop);
+  k->state_test();
+  ASSERT_EQ(k->getState(), s_ready);
+}
+
+/*!
+ * \test
+ */
+TEST_F(KnitterTest, test_setSolenoids) {
+  EXPECT_CALL(*solenoidsMock, setSolenoids);
+  k->setSolenoids(0x1234);
+}
+
+/*!
+ * \test
+ */
+TEST_F(KnitterTest, test_setSolenoid) {
+  EXPECT_CALL(*solenoidsMock, setSolenoid);
+  k->setSolenoid(0x12, 0x34);
 }

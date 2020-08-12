@@ -1,5 +1,5 @@
 /*!`
- * \file hw_test_mock.h
+ * \file SerialCommand_mock.h
  *
  * This file is part of AYAB.
  *
@@ -21,31 +21,20 @@
  *    http://ayab-knitting.com
  */
 
-#ifndef HW_TEST_MOCK_H_
-#define HW_TEST_MOCK_H_
+#ifndef SERIAL_COMMAND_MOCK_H_
+#define SERIAL_COMMAND_MOCK_H_
 
 #include <gmock/gmock.h>
-#include <hw_test.h>
 
-class HardwareTestMock {
+class SerialCommandMock {
 public:
-  MOCK_METHOD0(helpCmd, void());
-  MOCK_METHOD0(sendCmd, void());
-  MOCK_METHOD0(beepCmd, void());
-  MOCK_METHOD0(setSingleCmd, void());
-  MOCK_METHOD0(setAllCmd, void());
-  MOCK_METHOD0(readEOLsensorsCmd, void());
-  MOCK_METHOD0(readEncodersCmd, void());
-  MOCK_METHOD0(autoReadCmd, void());
-  MOCK_METHOD0(autoTestCmd, void());
-  MOCK_METHOD0(stopCmd, void());
-  MOCK_METHOD0(quitCmd, void());
-  MOCK_METHOD1(unrecognizedCmd, void(const char *));
-  MOCK_METHOD0(setUp, void());
-  MOCK_METHOD0(loop, void());
+  MOCK_METHOD0(next, char *());
+  MOCK_METHOD2(addCommand, void(const char *command, void (*function)()));
+  MOCK_METHOD1(setDefaultHandler, void(void (*function)(const char *command)));
+  MOCK_METHOD0(readSerial, void());
 };
 
-HardwareTestMock *hardwareTestMockInstance();
-void releaseHardwareTestMock();
+SerialCommandMock *serialCommandMockInstance();
+void releaseSerialCommandMock();
 
-#endif // HW_TEST_MOCK_H_
+#endif // SERIAL_COMMAND_MOCK_H_

@@ -44,14 +44,16 @@ using OpState_t = enum OpState;
  * encoders, and serial communication.
  */
 class Knitter {
-  /*
-  #if AYAB_TESTS
-    FRIEND_TEST(KnitterTest, test_constructor);
-    FRIEND_TEST(KnitterTest, test_fsm_default_case);
-    FRIEND_TEST(KnitterTest, test_getStartOffset);
-    FRIEND_TEST(KnitterTest, test_operate_lastline_and_no_req);
-  #endif
-  */
+#if AYAB_TESTS
+  FRIEND_TEST(KnitterTest, test_constructor);
+  FRIEND_TEST(KnitterTest, test_fsm_default_case);
+  FRIEND_TEST(KnitterTest, test_getStartOffset);
+  FRIEND_TEST(KnitterTest, test_operate_lastline);
+  FRIEND_TEST(KnitterTest, test_operate_lastline_and_no_req);
+  FRIEND_TEST(KnitterTest, test_quit_hw_test);
+#endif
+  friend class HardwareTest;
+
 public:
   Knitter();
 
@@ -70,28 +72,21 @@ public:
   static void state_ready();
   void state_operate();
   void state_test();
+  void setQuitFlag(bool flag);
 
-  bool startTest();
+  bool startTest(Machine_t machineType);
 
-  Machine_t getMachineType() const;
-  void setMachineType(Machine_t);
   uint8_t getStartOffset(const Direction_t direction) const;
+  Machine_t getMachineType() const;
 
   bool setNextLine(uint8_t lineNumber);
   void setLastLine();
 
   // for testing purposes only
+  void setMachineType(Machine_t);
   void setState(OpState_t state);
-  uint8_t getStartNeedle() const;
-  uint8_t getStopNeedle() const;
-  void setStopNeedle(uint8_t stopNeedle);
-  void setPosition(uint8_t position);
-  void setDirection(Direction_t direction);
-  void setCarriage(Carriage_t carriage);
-  void setFirstRun(bool firstRun);
-  void setWorkedOnLine(bool workedOnLine);
-  void setLineRequested(bool lineRequested);
-  void setLastLineFlag(bool lastLineFlag);
+  void setSolenoids(uint16_t state);
+  void setSolenoid(uint8_t solenoid, uint8_t state);
 
 private:
   Solenoids m_solenoids;
@@ -101,8 +96,7 @@ private:
 
   // machine state
   OpState_t m_opState = s_init;
-
-  bool m_lastLineFlag = false;
+  bool m_quitFlag = false;
 
   // job parameters
   Machine_t m_machineType = NoMachine;
@@ -120,6 +114,7 @@ private:
 
   bool m_lineRequested = false;
   uint8_t m_currentLineNumber = 0U;
+  bool m_lastLineFlag = false;
 
   uint8_t m_sOldPosition = 0U;
   bool m_firstRun = true;

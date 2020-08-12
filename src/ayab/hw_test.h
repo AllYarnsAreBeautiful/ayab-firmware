@@ -15,7 +15,7 @@
  *    You should have received a copy of the GNU General Public License
  *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
  *
- *    Original Work Copyright 2013 Christian Obersteiner, Andreas MÃ¼ller
+ *    Original Work Copyright 2013 Christian Obersteiner, Andreas Müller
  *    Modified Work Copyright 2020 Sturla Lange, Tom Price
  *    http://ayab-knitting.com
  */
@@ -27,22 +27,54 @@
 #include <SerialCommand.h>
 
 #include "beeper.h"
-#include "solenoids.h"
 
 class HardwareTest {
+#if AYAB_TESTS
+  FRIEND_TEST(HardwareTestTest, test_setUp);
+  FRIEND_TEST(HardwareTestTest, test_loop_default);
+  FRIEND_TEST(HardwareTestTest, test_loop_autoRead);
+  FRIEND_TEST(HardwareTestTest, test_loop_autoTestEven);
+  FRIEND_TEST(HardwareTestTest, test_loop_autoTestOdd);
+  friend class HardwareTestTest;
+#endif
 public:
-  void setUp();
-  void loop();
+  static void helpCmd();
+  static void sendCmd();
+  static void beepCmd();
+  static void setSingleCmd();
+  static void setAllCmd();
+  static void readEOLsensorsCmd();
+  static void readEncodersCmd();
+  static void autoReadCmd();
+  static void autoTestCmd();
+  static void stopCmd();
+  static void quitCmd();
+  static void unrecognizedCmd(const char *buffer);
 
-  SerialCommand m_SCmd;
-  Beeper m_beeper;
-  Solenoids m_solenoids;
+  static void setUp();
+  static void loop();
 
-  volatile bool m_timerEvent = false;
-  bool m_timerEventOdd = false;
-  bool m_autoReadOn = false;
-  bool m_autoTestOn = false;
-  bool m_quit = false;
+  static SerialCommand m_sCmd;
+  /* static bool m_quitFlag; */
+
+private:
+  static void beep();
+  static void readEOLsensors();
+  static void readEncoders();
+  static void autoRead();
+  static void autoTestEven();
+  static void autoTestOdd();
+  static void handleTimerEvent();
+
+#ifndef AYAB_TESTS
+  static void encoderAChange();
+#endif
+
+  static bool m_autoReadOn;
+  static bool m_autoTestOn;
+
+  static unsigned long m_lastTime;
+  static bool m_timerEventOdd;
 };
 
 extern HardwareTest *hwTest;

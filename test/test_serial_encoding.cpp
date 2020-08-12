@@ -23,8 +23,8 @@
 
 #include <gtest/gtest.h>
 
-#include <serial_encoding.h>
 #include <knitter_mock.h>
+#include <serial_encoding.h>
 
 using ::testing::_;
 using ::testing::Return;
@@ -54,19 +54,28 @@ TEST_F(SerialEncodingTest, test_API) {
 */
 TEST_F(SerialEncodingTest, test_testmsg) {
   uint8_t buffer[] = {reqTest_msgid};
+  EXPECT_CALL(*knitterMock, startTest).WillOnce(Return(false));
   s->onPacketReceived(buffer, sizeof(buffer));
+
+  // no machineType
+  EXPECT_CALL(*knitterMock, startTest).Times(0);
+  s->onPacketReceived(buffer, sizeof(buffer) - 1);
 }
 
 TEST_F(SerialEncodingTest, test_startmsg) {
   uint8_t buffer[] = {reqStart_msgid, 0, 0, 10, 1, 0x74};
+  EXPECT_CALL(*knitterMock, startOperation);
   s->onPacketReceived(buffer, sizeof(buffer));
   // checksum wrong
   buffer[5] = 0x73;
+  EXPECT_CALL(*knitterMock, startOperation).Times(0);
   s->onPacketReceived(buffer, sizeof(buffer));
   // kh270
   buffer[1] = 2;
+  EXPECT_CALL(*knitterMock, startOperation);
   s->onPacketReceived(buffer, sizeof(buffer));
   // Not enough bytes
+  EXPECT_CALL(*knitterMock, startOperation).Times(0);
   s->onPacketReceived(buffer, sizeof(buffer) - 1);
 }
 
@@ -80,13 +89,36 @@ TEST_F(SerialEncodingTest, test_cnfmsg_kh910) {
   uint8_t pattern[] = {1};
 
   // message for machine with 200 needles
-  uint8_t buffer[30] = {cnfLine_msgid /* 0x42 */, 0, 0, 1,
-                        0xde, 0xad, 0xbe, 0xef, 0x00,
-                        0x00, 0x00, 0x00, 0x00, 0x00,
-                        0x00, 0x00, 0x00, 0x00, 0x00,
-                        0x00, 0x00, 0x00, 0x00, 0x00,
-                        0x00, 0x00, 0x00, 0x00, 0x00,
-                        0xa7};  // CRC8
+  uint8_t buffer[30] = {cnfLine_msgid /* 0x42 */,
+                        0,
+                        0,
+                        1,
+                        0xde,
+                        0xad,
+                        0xbe,
+                        0xef,
+                        0x00,
+                        0x00,
+                        0x00,
+                        0x00,
+                        0x00,
+                        0x00,
+                        0x00,
+                        0x00,
+                        0x00,
+                        0x00,
+                        0x00,
+                        0x00,
+                        0x00,
+                        0x00,
+                        0x00,
+                        0x00,
+                        0x00,
+                        0x00,
+                        0x00,
+                        0x00,
+                        0x00,
+                        0xa7}; // CRC8
 
   // start KH910 job
   knitterMock->startOperation(Kh910, 0, 199, pattern, false);

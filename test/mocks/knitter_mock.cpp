@@ -39,6 +39,11 @@ void releaseKnitterMock() {
   }
 }
 
+bool Knitter::startTest(Machine_t machineType) {
+  assert(gKnitterMock != NULL);
+  return gKnitterMock->startTest(machineType);
+}
+
 Machine_t Knitter::getMachineType() const {
   assert(gKnitterMock != NULL);
   return gKnitterMock->getMachineType();
@@ -52,11 +57,6 @@ void Knitter::setMachineType(Machine_t machineType) {
 uint8_t Knitter::getStartOffset(const Direction_t direction) const {
   assert(gKnitterMock != NULL);
   return gKnitterMock->getStartOffset(direction);
-}
-
-bool Knitter::startTest() {
-  assert(gKnitterMock != NULL);
-  return gKnitterMock->startTest();
 }
 
 bool Knitter::startOperation(Machine_t machineType, uint8_t startNeedle,
@@ -93,54 +93,24 @@ void Knitter::setState(OpState_t state) {
   gKnitterMock->setState(state);
 }
 
-uint8_t Knitter::getStartNeedle() const {
+void Knitter::setSolenoids(uint16_t state) {
   assert(gKnitterMock != NULL);
-  return gKnitterMock->getStartNeedle();
+  gKnitterMock->setSolenoids(state);
 }
 
-uint8_t Knitter::getStopNeedle() const {
+void Knitter::setSolenoid(uint8_t solenoid, uint8_t state) {
   assert(gKnitterMock != NULL);
-  return gKnitterMock->getStopNeedle();
+  gKnitterMock->setSolenoid(solenoid, state);
 }
 
-void Knitter::setStopNeedle(uint8_t stopNeedle) {
+void Knitter::setQuitFlag(bool flag) {
   assert(gKnitterMock != NULL);
-  gKnitterMock->setStopNeedle(stopNeedle);
+  gKnitterMock->setQuitFlag(flag);
 }
 
-void Knitter::setPosition(uint8_t position) {
+void Knitter::setUpInterrupt() {
   assert(gKnitterMock != NULL);
-  gKnitterMock->setPosition(position);
-}
-
-void Knitter::setDirection(Direction_t direction) {
-  assert(gKnitterMock != NULL);
-  gKnitterMock->setDirection(direction);
-}
-
-void Knitter::setCarriage(Carriage_t carriage) {
-  assert(gKnitterMock != NULL);
-  gKnitterMock->setCarriage(carriage);
-}
-
-void Knitter::setFirstRun(bool firstRun) {
-  assert(gKnitterMock != NULL);
-  gKnitterMock->setFirstRun(firstRun);
-}
-
-void Knitter::setWorkedOnLine(bool workedOnLine) {
-  assert(gKnitterMock != NULL);
-  gKnitterMock->setWorkedOnLine(workedOnLine);
-}
-
-void Knitter::setLineRequested(bool lineRequested) {
-  assert(gKnitterMock != NULL);
-  gKnitterMock->setLineRequested(lineRequested);
-}
-
-void Knitter::setLastLineFlag(bool lastLineFlag) {
-  assert(gKnitterMock != NULL);
-  gKnitterMock->setLastLineFlag(lastLineFlag);
+  gKnitterMock->setUpInterrupt();
 }
 
 Knitter *knitter;
