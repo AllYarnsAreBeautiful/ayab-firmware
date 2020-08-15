@@ -25,16 +25,11 @@
 #include "hw_test.h"
 #include "knitter.h"
 
-extern Knitter *knitter;
+// public interface
 
-// initialise static members
-SerialCommand HardwareTest::m_sCmd = SerialCommand();
-bool HardwareTest::m_autoReadOn = false;
-bool HardwareTest::m_autoTestOn = false;
-bool HardwareTest::m_timerEvent = false;
-bool HardwareTest::m_timerEventOdd = false;
-unsigned long HardwareTest::m_lastTime = 0U;
-
+/*!
+ * \brief Help command handler.
+ */
 void HardwareTest::helpCmd() {
   Serial.println("The following commands are available:");
   Serial.println("setSingle [0..15] [1/0]");
@@ -50,15 +45,14 @@ void HardwareTest::helpCmd() {
   Serial.println("help");
 }
 
+/*!
+ * \brief Send command handler.
+ */
 void HardwareTest::sendCmd() {
   Serial.println("Called send");
   uint8_t p[] = {1, 2, 3};
   knitter->send(p, 3);
   Serial.print("\n");
-}
-
-void HardwareTest::beep() {
-  knitter->m_beeper.ready();
 }
 
 /*!
@@ -117,13 +111,6 @@ void HardwareTest::setAllCmd() {
   knitter->setSolenoids(solenoidState);
 }
 
-void HardwareTest::readEOLsensors() {
-  Serial.print("  EOL_L: ");
-  Serial.print(analogRead(EOL_PIN_L));
-  Serial.print("  EOL_R: ");
-  Serial.print(analogRead(EOL_PIN_R));
-}
-
 /*!
  * \brief Read EOL sensors command handler.
  */
@@ -133,30 +120,11 @@ void HardwareTest::readEOLsensorsCmd() {
   Serial.print("\n");
 }
 
-void HardwareTest::readEncoders() {
-  Serial.print("  ENC_A: ");
-  bool state = digitalRead(ENC_PIN_A);
-  Serial.print(state ? "HIGH" : "LOW");
-  Serial.print("  ENC_B: ");
-  state = digitalRead(ENC_PIN_B);
-  Serial.print(state ? "HIGH" : "LOW");
-  Serial.print("  ENC_C: ");
-  state = digitalRead(ENC_PIN_C);
-  Serial.print(state ? "HIGH" : "LOW");
-}
-
 /*!
  * \brief Read encoders command handler.
  */
 void HardwareTest::readEncodersCmd() {
   Serial.println("Called readEncoders");
-  readEncoders();
-  Serial.print("\n");
-}
-
-void HardwareTest::autoRead() {
-  Serial.print("\n");
-  readEOLsensors();
   readEncoders();
   Serial.print("\n");
 }
@@ -169,20 +137,6 @@ void HardwareTest::autoReadCmd() {
   m_autoReadOn = true;
 }
 
-void HardwareTest::autoTestEven() {
-  Serial.println("Set even solenoids");
-  digitalWrite(LED_PIN_A, 1);
-  digitalWrite(LED_PIN_B, 1);
-  knitter->setSolenoids(0xAAAA);
-}
-
-void HardwareTest::autoTestOdd() {
-  Serial.println("Set odd solenoids");
-  digitalWrite(LED_PIN_A, 0);
-  digitalWrite(LED_PIN_B, 0);
-  knitter->setSolenoids(0x5555);
-}
-
 /*!
  * \brief Auto test command handler.
  */
@@ -191,11 +145,17 @@ void HardwareTest::autoTestCmd() {
   m_autoTestOn = true;
 }
 
+/*!
+ * \brief Stop command handler.
+ */
 void HardwareTest::stopCmd() {
   m_autoReadOn = false;
   m_autoTestOn = false;
 }
 
+/*!
+ * \brief Quit command handler.
+ */
 void HardwareTest::quitCmd() {
   knitter->setQuitFlag(true);
   knitter->setUpInterrupt();
@@ -215,25 +175,23 @@ void HardwareTest::unrecognizedCmd(const char *buffer) {
   helpCmd();
 }
 
-// Member functions
-
 /*!
- * \brief Setup for hw tests.
+ * \brief Setup for hardware tests.
  */
 void HardwareTest::setUp() {
   // set up callbacks for SerialCommand commands
-  m_sCmd.addCommand("setSingle", HardwareTest::setSingleCmd);
-  m_sCmd.addCommand("setAll", HardwareTest::setAllCmd);
-  m_sCmd.addCommand("readEOLsensors", HardwareTest::readEOLsensorsCmd);
-  m_sCmd.addCommand("readEncoders", HardwareTest::readEncodersCmd);
-  m_sCmd.addCommand("beep", HardwareTest::beepCmd);
-  m_sCmd.addCommand("autoRead", HardwareTest::autoReadCmd);
-  m_sCmd.addCommand("autoTest", HardwareTest::autoTestCmd);
-  m_sCmd.addCommand("send", HardwareTest::sendCmd);
-  m_sCmd.addCommand("stop", HardwareTest::stopCmd);
-  m_sCmd.addCommand("quit", HardwareTest::quitCmd);
-  m_sCmd.addCommand("help", HardwareTest::helpCmd);
-  m_sCmd.setDefaultHandler(HardwareTest::unrecognizedCmd);
+  m_sCmd.addCommand("setSingle", GlobalHardwareTest::setSingleCmd);
+  m_sCmd.addCommand("setAll", GlobalHardwareTest::setAllCmd);
+  m_sCmd.addCommand("readEOLsensors", GlobalHardwareTest::readEOLsensorsCmd);
+  m_sCmd.addCommand("readEncoders", GlobalHardwareTest::readEncodersCmd);
+  m_sCmd.addCommand("beep", GlobalHardwareTest::beepCmd);
+  m_sCmd.addCommand("autoRead", GlobalHardwareTest::autoReadCmd);
+  m_sCmd.addCommand("autoTest", GlobalHardwareTest::autoTestCmd);
+  m_sCmd.addCommand("send", GlobalHardwareTest::sendCmd);
+  m_sCmd.addCommand("stop", GlobalHardwareTest::stopCmd);
+  m_sCmd.addCommand("quit", GlobalHardwareTest::quitCmd);
+  m_sCmd.addCommand("help", GlobalHardwareTest::helpCmd);
+  m_sCmd.setDefaultHandler(GlobalHardwareTest::unrecognizedCmd);
 
   // Print welcome message
   Serial.print("AYAB Hardware Test, Firmware v");
@@ -248,24 +206,15 @@ void HardwareTest::setUp() {
   // attach interrupt for ENC_PIN_A(=2), interrupt #0
   detachInterrupt(0);
 #ifndef AYAB_TESTS
-  attachInterrupt(0, encoderAChange, RISING);
+  attachInterrupt(0, GlobalHardwareTest::encoderAChange, RISING);
+#endif // AYAB_TESTS
 
   m_lastTime = millis();
-#endif // AYAB_TESTS
   m_autoReadOn = false;
   m_autoTestOn = false;
   m_timerEventOdd = false;
   knitter->setQuitFlag(false);
 }
-
-#ifndef AYAB_TESTS
-/*!
- * \brief Interrupt service routine for encoder A.
- */
-void HardwareTest::encoderAChange() {
-  beep();
-}
-#endif // AYAB_TESTS
 
 /*!
  * \brief Main loop for hardware tests.
@@ -277,6 +226,61 @@ void HardwareTest::loop() {
     handleTimerEvent();
   }
 }
+
+// Private member functions
+
+void HardwareTest::beep() {
+  knitter->m_beeper.ready();
+}
+
+void HardwareTest::readEncoders() {
+  Serial.print("  ENC_A: ");
+  bool state = digitalRead(ENC_PIN_A);
+  Serial.print(state ? "HIGH" : "LOW");
+  Serial.print("  ENC_B: ");
+  state = digitalRead(ENC_PIN_B);
+  Serial.print(state ? "HIGH" : "LOW");
+  Serial.print("  ENC_C: ");
+  state = digitalRead(ENC_PIN_C);
+  Serial.print(state ? "HIGH" : "LOW");
+}
+
+void HardwareTest::readEOLsensors() {
+  Serial.print("  EOL_L: ");
+  Serial.print(analogRead(EOL_PIN_L));
+  Serial.print("  EOL_R: ");
+  Serial.print(analogRead(EOL_PIN_R));
+}
+
+void HardwareTest::autoRead() {
+  Serial.print("\n");
+  readEOLsensors();
+  readEncoders();
+  Serial.print("\n");
+}
+
+void HardwareTest::autoTestEven() {
+  Serial.println("Set even solenoids");
+  digitalWrite(LED_PIN_A, 1);
+  digitalWrite(LED_PIN_B, 1);
+  knitter->setSolenoids(0xAAAA);
+}
+
+void HardwareTest::autoTestOdd() {
+  Serial.println("Set odd solenoids");
+  digitalWrite(LED_PIN_A, 0);
+  digitalWrite(LED_PIN_B, 0);
+  knitter->setSolenoids(0x5555);
+}
+
+/*!
+ * \brief Interrupt service routine for encoder A.
+ */
+#ifndef AYAB_TESTS
+void HardwareTest::encoderAChange() {
+  beep();
+}
+#endif // AYAB_TESTS
 
 /*!
  * \brief Timer event every 500ms to handle auto functions.

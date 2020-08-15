@@ -27,7 +27,7 @@
 #include <gmock/gmock.h>
 #include <hw_test.h>
 
-class HardwareTestMock {
+class HardwareTestMock : public HardwareTestInterface {
 public:
   MOCK_METHOD0(helpCmd, void());
   MOCK_METHOD0(sendCmd, void());
@@ -45,7 +45,7 @@ public:
   MOCK_METHOD0(loop, void());
 };
 
-HardwareTestMock *hardwareTestMockInstance();
+HardwareTestMock *hwTestMockInstance();
 void releaseHardwareTestMock();
 
 #endif // HW_TEST_MOCK_H_

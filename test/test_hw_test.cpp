@@ -34,6 +34,9 @@ static char zero[2] = {48, 0};       // "0"
 static char two[2] = {50, 0};        // "2"
 static char twenty[3] = {50, 48, 0}; // "20"
 
+// initialize static member
+HardwareTestInterface *GlobalHardwareTest::m_instance = new HardwareTest();
+
 class HardwareTestTest : public ::testing::Test {
 protected:
   void SetUp() override {
@@ -41,6 +44,7 @@ protected:
     serialMock = serialMockInstance();
     serialCommandMock = serialCommandMockInstance();
     knitterMock = knitterMockInstance();
+    h = new HardwareTest();
   }
 
   void TearDown() override {
@@ -54,151 +58,149 @@ protected:
   SerialMock *serialMock;
   SerialCommandMock *serialCommandMock;
   KnitterMock *knitterMock;
-
-  void expect_test() {
-  }
+  HardwareTest *h;
 };
 
 TEST_F(HardwareTestTest, test_setUp) {
   EXPECT_CALL(*knitterMock, setQuitFlag);
-  ASSERT_FALSE(HardwareTest::m_autoReadOn);
-  ASSERT_FALSE(HardwareTest::m_autoTestOn);
-  ASSERT_FALSE(HardwareTest::m_timerEvent);
-  ASSERT_FALSE(HardwareTest::m_timerEventOdd);
-  HardwareTest::setUp();
+  EXPECT_CALL(*arduinoMock, millis);
+  h->setUp();
+  ASSERT_FALSE(h->m_autoReadOn);
+  ASSERT_FALSE(h->m_autoTestOn);
+  ASSERT_FALSE(h->m_timerEventOdd);
 }
 
 TEST_F(HardwareTestTest, test_helpCmd) {
-  HardwareTest::helpCmd();
+  h->helpCmd();
 }
 
 TEST_F(HardwareTestTest, test_sendCmd) {
   EXPECT_CALL(*knitterMock, send);
-  HardwareTest::sendCmd();
+  h->sendCmd();
 }
 
 TEST_F(HardwareTestTest, test_beepCmd) {
   EXPECT_CALL(*arduinoMock, analogWrite).Times(AtLeast(1));
   EXPECT_CALL(*arduinoMock, delay).Times(AtLeast(1));
-  HardwareTest::beepCmd();
+  h->beepCmd();
 }
 
 TEST_F(HardwareTestTest, test_setSingleCmd_fail1) {
   EXPECT_CALL(*serialCommandMock, next).WillOnce(Return(nullptr));
-  HardwareTest::setSingleCmd();
+  h->setSingleCmd();
 }
 
 TEST_F(HardwareTestTest, test_setSingleCmd_fail2) {
   EXPECT_CALL(*serialCommandMock, next).WillOnce(Return(twenty));
-  HardwareTest::setSingleCmd();
+  h->setSingleCmd();
 }
 
 TEST_F(HardwareTestTest, test_setSingleCmd_fail3) {
   EXPECT_CALL(*serialCommandMock, next)
       .WillOnce(Return(zero))
       .WillOnce(Return(nullptr));
-  HardwareTest::setSingleCmd();
+  h->setSingleCmd();
 }
 
 TEST_F(HardwareTestTest, test_setSingleCmd_fail4) {
   EXPECT_CALL(*serialCommandMock, next)
       .WillOnce(Return(zero))
       .WillOnce(Return(two));
-  HardwareTest::setSingleCmd();
+  h->setSingleCmd();
 }
 
 TEST_F(HardwareTestTest, test_setSingleCmd_success) {
   EXPECT_CALL(*serialCommandMock, next).WillRepeatedly(Return(zero));
   EXPECT_CALL(*knitterMock, setSolenoid);
-  HardwareTest::setSingleCmd();
+  h->setSingleCmd();
 }
 
 TEST_F(HardwareTestTest, test_setAllCmd_fail1) {
   EXPECT_CALL(*serialCommandMock, next).WillOnce(Return(nullptr));
-  HardwareTest::setAllCmd();
+  h->setAllCmd();
 }
 
 TEST_F(HardwareTestTest, test_setAllCmd_fail2) {
   EXPECT_CALL(*serialCommandMock, next)
       .WillOnce(Return(zero))
       .WillOnce(Return(nullptr));
-  HardwareTest::setAllCmd();
+  h->setAllCmd();
 }
 
 TEST_F(HardwareTestTest, test_setAllCmd_success) {
   EXPECT_CALL(*serialCommandMock, next).WillRepeatedly(Return(zero));
   EXPECT_CALL(*knitterMock, setSolenoids);
-  HardwareTest::setAllCmd();
+  h->setAllCmd();
 }
 
 TEST_F(HardwareTestTest, test_readEOLsensorsCmd) {
-  HardwareTest::readEOLsensorsCmd();
+  h->readEOLsensorsCmd();
 }
 
 TEST_F(HardwareTestTest, test_readEncodersCmd) {
   // low
   EXPECT_CALL(*arduinoMock, digitalRead).WillRepeatedly(Return(0));
-  HardwareTest::readEncodersCmd();
+  h->readEncodersCmd();
 
   // high
   EXPECT_CALL(*arduinoMock, digitalRead).WillRepeatedly(Return(1));
-  HardwareTest::readEncodersCmd();
+  h->readEncodersCmd();
 }
 
 TEST_F(HardwareTestTest, test_autoReadCmd) {
-  HardwareTest::autoReadCmd();
+  h->autoReadCmd();
 }
 
 TEST_F(HardwareTestTest, test_autoTestCmd) {
-  HardwareTest::autoTestCmd();
+  h->autoTestCmd();
 }
 
 TEST_F(HardwareTestTest, test_stopCmd) {
-  HardwareTest::stopCmd();
+  h->stopCmd();
 }
 
 TEST_F(HardwareTestTest, test_quitCmd) {
   EXPECT_CALL(*knitterMock, setQuitFlag);
-  HardwareTest::quitCmd();
+  h->quitCmd();
 }
 
 TEST_F(HardwareTestTest, test_unrecognizedCmd) {
   const char buffer[1] = {1};
-  HardwareTest::unrecognizedCmd(buffer);
+  h->unrecognizedCmd(buffer);
 }
 
 TEST_F(HardwareTestTest, test_loop_default) {
-  HardwareTest::m_lastTime = 0;
+  h->m_lastTime = 0;
   EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(499));
-  HardwareTest::loop();
+  h->loop();
 }
 
-TEST_F(HardwareTestTest, test_loop_autoRead) {
-  HardwareTest::m_lastTime = 0;
+TEST_F(HardwareTestTest, test_loop_null) {
+  h->m_lastTime = 0;
   EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(500));
-  HardwareTest::m_timerEventOdd = true;
-  HardwareTest::m_autoReadOn = true;
-  EXPECT_CALL(*arduinoMock, analogRead).Times(2);
-  EXPECT_CALL(*arduinoMock, digitalRead).Times(3);
-  HardwareTest::loop();
+  h->m_autoReadOn = false;
+  h->m_autoTestOn = false;
+  h->loop();
 }
 
 TEST_F(HardwareTestTest, test_loop_autoTestEven) {
-  HardwareTest::m_lastTime = 0;
+  h->m_lastTime = 0;
   EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(500));
-  HardwareTest::m_timerEventOdd = false;
-  HardwareTest::m_autoTestOn = true;
+  h->m_timerEventOdd = false;
+  h->m_autoReadOn = true;
+  h->m_autoTestOn = true;
   EXPECT_CALL(*arduinoMock, digitalWrite).Times(2);
   EXPECT_CALL(*knitterMock, setSolenoids);
-  HardwareTest::loop();
+  h->loop();
 }
 
 TEST_F(HardwareTestTest, test_loop_autoTestOdd) {
-  HardwareTest::m_lastTime = 0;
+  h->m_lastTime = 0;
   EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(500));
-  HardwareTest::m_timerEventOdd = true;
-  HardwareTest::m_autoTestOn = true;
+  h->m_timerEventOdd = true;
+  h->m_autoReadOn = true;
+  h->m_autoTestOn = true;
   EXPECT_CALL(*arduinoMock, digitalWrite).Times(2);
   EXPECT_CALL(*knitterMock, setSolenoids);
-  HardwareTest::loop();
+  h->loop();
 }

@@ -28,15 +28,79 @@
 
 #include "beeper.h"
 
-class HardwareTest {
+class HardwareTestInterface {
+public:
+  virtual ~HardwareTestInterface(){};
+
+  virtual void helpCmd() = 0;
+  virtual void sendCmd() = 0;
+  virtual void beepCmd() = 0;
+  virtual void setSingleCmd() = 0;
+  virtual void setAllCmd() = 0;
+  virtual void readEOLsensorsCmd() = 0;
+  virtual void readEncodersCmd() = 0;
+  virtual void autoReadCmd() = 0;
+  virtual void autoTestCmd() = 0;
+  virtual void stopCmd() = 0;
+  virtual void quitCmd() = 0;
+  virtual void unrecognizedCmd(const char *buffer) = 0;
+
+  virtual void setUp() = 0;
+  virtual void loop() = 0;
+#ifndef AYAB_TESTS
+  virtual void encoderAChange() = 0;
+#endif
+};
+
+class HardwareTest : public HardwareTestInterface {
 #if AYAB_TESTS
   FRIEND_TEST(HardwareTestTest, test_setUp);
   FRIEND_TEST(HardwareTestTest, test_loop_default);
-  FRIEND_TEST(HardwareTestTest, test_loop_autoRead);
+  FRIEND_TEST(HardwareTestTest, test_loop_null);
   FRIEND_TEST(HardwareTestTest, test_loop_autoTestEven);
   FRIEND_TEST(HardwareTestTest, test_loop_autoTestOdd);
   friend class HardwareTestTest;
 #endif
+
+public:
+  void helpCmd();
+  void sendCmd();
+  void beepCmd();
+  void setSingleCmd();
+  void setAllCmd();
+  void readEOLsensorsCmd();
+  void readEncodersCmd();
+  void autoReadCmd();
+  void autoTestCmd();
+  void stopCmd();
+  void quitCmd();
+  void unrecognizedCmd(const char *buffer);
+
+  void setUp();
+  void loop();
+#ifndef AYAB_TESTS
+  void encoderAChange();
+#endif
+
+private:
+  void beep();
+  void readEOLsensors();
+  void readEncoders();
+  void autoRead();
+  void autoTestEven();
+  void autoTestOdd();
+  void handleTimerEvent();
+
+  SerialCommand m_sCmd = SerialCommand();
+
+  bool m_autoReadOn = false;
+  bool m_autoTestOn = false;
+
+  unsigned long m_lastTime = 0U;
+  bool m_timerEventOdd = false;
+};
+
+class GlobalHardwareTest {
 public:
   static void helpCmd();
   static void sendCmd();
@@ -53,30 +117,13 @@ public:
 
   static void setUp();
   static void loop();
-
-  static SerialCommand m_sCmd;
-  /* static bool m_quitFlag; */
-
-private:
-  static void beep();
-  static void readEOLsensors();
-  static void readEncoders();
-  static void autoRead();
-  static void autoTestEven();
-  static void autoTestOdd();
-  static void handleTimerEvent();
-
 #ifndef AYAB_TESTS
   static void encoderAChange();
 #endif
 
-  static bool m_autoReadOn;
-  static bool m_autoTestOn;
-
-  static unsigned long m_lastTime;
-  static bool m_timerEventOdd;
+  static HardwareTestInterface *m_instance;
 };
 
-extern HardwareTest *hwTest;
+extern GlobalHardwareTest *hwTest;
 
 #endif // HW_TEST_H_

@@ -33,12 +33,15 @@
 
 using ::testing::_;
 using ::testing::AtLeast;
+using ::testing::Mock;
 using ::testing::Return;
 
 // global definitions
 // references everywhere else must use `extern`
 Knitter *knitter;
-HardwareTest *hwTest;
+
+// initialize static member
+HardwareTestInterface *GlobalHardwareTest::m_instance = new HardwareTestMock();
 
 void onPacketReceived(const uint8_t *buffer, size_t size) {
   (void)buffer;
@@ -53,7 +56,9 @@ protected:
     solenoidsMock = solenoidsMockInstance();
     encodersMock = encodersMockInstance();
     serialEncodingMock = serialEncodingMockInstance();
-    hwTestMock = hardwareTestMockInstance();
+    hwTestMock =
+        static_cast<HardwareTestMock *>(GlobalHardwareTest::m_instance);
+    Mock::AllowLeak(hwTestMock); // because it does not get destructed
     expect_constructor();
     k = new Knitter();
   }
@@ -73,7 +78,8 @@ protected:
   EncodersMock *encodersMock;
   SerialEncodingMock *serialEncodingMock;
   HardwareTestMock *hwTestMock;
-  Knitter *&k = knitter; // `k` is alias of global `knitter`
+  HardwareTestMock *dummy;
+  Knitter *&k = knitter; // alias of global `knitter`
 
   void expect_constructor() {
     EXPECT_CALL(*arduinoMock, pinMode(ENC_PIN_A, INPUT));
@@ -182,6 +188,7 @@ protected:
     expect_indState();
     EXPECT_CALL(*hwTestMock, loop);
     expected_fsm();
+    ASSERT_TRUE(Mock::VerifyAndClear(hwTestMock));
   }
 
   void expected_set_machine(Machine_t machineType) {
@@ -303,6 +310,8 @@ TEST_F(KnitterTest, test_fsm_test) {
   expect_indState<0>();
   EXPECT_CALL(*hwTestMock, loop);
   expected_fsm();
+
+  ASSERT_TRUE(Mock::VerifyAndClear(hwTestMock));
 }
 
 /*!
@@ -373,6 +382,7 @@ TEST_F(KnitterTest, test_startTest) {
   EXPECT_CALL(*hwTestMock, setUp);
   ASSERT_EQ(k->startTest(Kh910), true);
   ASSERT_EQ(k->getState(), s_test);
+  ASSERT_TRUE(Mock::VerifyAndClear(hwTestMock));
 }
 
 /*!
@@ -684,6 +694,8 @@ TEST_F(KnitterTest, test_calculatePixelAndSolenoid) {
   // K carriage direction right
   expected_isr(END_RIGHT[Kh270], Right, Left, Regular, Knit);
   expected_test();
+
+  ASSERT_TRUE(Mock::VerifyAndClear(hwTestMock));
 }
 
 /*!
@@ -724,6 +736,7 @@ TEST_F(KnitterTest, test_quit_hw_test) {
   EXPECT_CALL(*hwTestMock, loop);
   k->state_test();
   ASSERT_EQ(k->getState(), s_ready);
+  ASSERT_TRUE(Mock::VerifyAndClear(hwTestMock));
 }
 
 /*!

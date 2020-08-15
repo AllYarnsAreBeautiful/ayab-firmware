@@ -53,6 +53,7 @@ set(COMMON_SOURCES
     ${PROJECT_SOURCE_DIR}/test_serial_encoding.cpp
 
     ${SOURCE_DIRECTORY}/hw_test.cpp
+    ${SOURCE_DIRECTORY}/global_hw_test.cpp
     ${PROJECT_SOURCE_DIR}/test_hw_test.cpp
     ${PROJECT_SOURCE_DIR}/mocks/SerialCommand_mock.cpp
 
@@ -68,7 +69,12 @@ set(COMMON_FLAGS
     -Wall -Wextra -Wpedantic
     -Wno-vla
     -Werror
-    -fprofile-arcs -ftest-coverage
+    -fprofile-arcs -ftest-coverage 
+    
+    # exclude global_hw_test.cpp from profile analysis
+    # to avoid tedious mocking of these simple functions
+    -fprofile-exclude-files=global_hw_test.cpp
+    
     -g -Og
     )
 set(COMMON_LINKER_FLAGS
@@ -133,6 +139,7 @@ add_board(Mega)
 add_executable(${PROJECT_NAME}_knitter
     ${PROJECT_SOURCE_DIR}/test_all.cpp
     ${SOURCE_DIRECTORY}/knitter.cpp
+    ${SOURCE_DIRECTORY}/global_hw_test.cpp
     ${PROJECT_SOURCE_DIR}/mocks/solenoids_mock.cpp
     ${PROJECT_SOURCE_DIR}/mocks/encoders_mock.cpp
     ${PROJECT_SOURCE_DIR}/mocks/beeper_mock.cpp
