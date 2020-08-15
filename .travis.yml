@@ -1,15 +1,13 @@
 matrix:
   include:
   - language: cpp
-    dist: bionic
+    dist: focal
     addons:
       apt:
         sources:
         - ubuntu-toolchain-r-test
-        packages:
-        - g++
     env:
-    - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
+    - MATRIX_EVAL="CC=gcc-9 && CXX=g++-9"
     before_install:
     - eval "${MATRIX_EVAL}"
     - pip install gcovr
@@ -17,7 +15,7 @@ matrix:
     script:
     - "./test/test.sh"
   - language: c
-    dist: bionic
+    dist: focal
     addons:
         apt:
             packages:

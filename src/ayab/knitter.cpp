@@ -35,7 +35,6 @@ constexpr uint16_t UINT16_MAX = 0xFFFFU;
 #endif
 
 extern Knitter *knitter;
-extern HardwareTest *hwTest;
 
 #ifndef AYAB_TESTS
 /*!
@@ -185,7 +184,7 @@ bool Knitter::startTest(Machine_t machineType) {
   if (s_init == m_opState || s_ready == m_opState) {
     m_opState = s_test;
     m_machineType = machineType;
-    HardwareTest::setUp();
+    GlobalHardwareTest::setUp();
     success = true;
   }
   return success;
@@ -344,7 +343,7 @@ void Knitter::state_test() {
     calculatePixelAndSolenoid();
     indState();
   }
-  HardwareTest::loop();
+  GlobalHardwareTest::loop();
   if (m_quitFlag) {
     m_opState = s_ready;
   }

@@ -27,17 +27,18 @@
 #include "hw_test.h"
 #include "knitter.h"
 
-// global definitions
+// global definition
 // references everywhere else must use `extern`
 Knitter *knitter;
-HardwareTest *hwTest;
+
+// initialize static member
+HardwareTestInterface *GlobalHardwareTest::m_instance = new HardwareTest();
 
 /*!
  * Setup - steps to take before going to the main loop.
  */
 void setup() {
   knitter = new Knitter();
-  hwTest = new HardwareTest();
 }
 
 /*!

@@ -24,7 +24,8 @@
 #include <hw_test_mock.h>
 
 static HardwareTestMock *gHardwareTestMock = NULL;
-HardwareTestMock *hardwareTestMockInstance() {
+
+HardwareTestMock *hwTestMockInstance() {
   if (!gHardwareTestMock) {
     gHardwareTestMock = new HardwareTestMock();
   }
