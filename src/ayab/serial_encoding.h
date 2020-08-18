@@ -36,6 +36,7 @@ constexpr uint8_t API_VERSION = 6U;
 constexpr uint32_t SERIAL_BAUDRATE = 115200U;
 
 constexpr uint8_t MAX_LINE_BUFFER_LEN = 25U;
+constexpr uint8_t MAX_MSG_BUFFER_LEN = 255U;
 
 enum AYAB_API {
   reqStart_msgid = 0x01,
@@ -47,7 +48,9 @@ enum AYAB_API {
   reqTest_msgid = 0x04,
   cnfTest_msgid = 0xC4,
   indState_msgid = 0x84,
-  debug_msgid = 0xFF,
+  cmd_msgid = 0x25,
+  test_msgid = 0xA5,
+  debug_msgid = 0xBF,
 };
 using AYAB_API_t = enum AYAB_API;
 
@@ -56,11 +59,14 @@ public:
   SerialEncoding();
   void update();
   void send(uint8_t *payload, size_t length);
+  void sendMsg(AYAB_API_t id, const char *msg);
+  void sendMsg(AYAB_API_t id, char *msg);
   void onPacketReceived(const uint8_t *buffer, size_t size);
 
 private:
   SLIPPacketSerial m_packetSerial;
   uint8_t lineBuffer[MAX_LINE_BUFFER_LEN] = {0};
+  uint8_t msgBuffer[MAX_MSG_BUFFER_LEN] = {0};
 
   void h_reqStart(const uint8_t *buffer, size_t size);
   void h_cnfLine(const uint8_t *buffer, size_t size);

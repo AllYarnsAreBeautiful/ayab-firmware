@@ -65,6 +65,8 @@ public:
                       bool continuousReportingEnabled);
 
   void send(uint8_t *payload, size_t length);
+  void sendMsg(AYAB_API_t id, const char *msg);
+  void sendMsg(AYAB_API_t id, char *msg);
   void onPacketReceived(const uint8_t *buffer, size_t size);
 
   OpState_t getState() const;

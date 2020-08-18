@@ -38,11 +38,13 @@ To set up a working development environment follow these steps:
  Running `./build.sh` should work now.
 
 
- 2. Install `clang-format` and `gcovr`.
+ 2. Install `clang-format`, `gcovr`, and update `gcc` to version 9.
 
     Ubuntu:
     ```bash
-    sudo apt install clang-format gcovr
+    sudo apt install -y clang-format gcovr \
+                        gcc-9 g++-9 cpp-9 gcc-9-base gcc-10-base \
+                        libgcc-9-dev libstdc++-9-dev
     ```
 
  3. Install [pre-commit](https://pre-commit.com/) via pip and use it to install git hooks.

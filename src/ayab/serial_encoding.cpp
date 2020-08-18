@@ -70,7 +70,7 @@ static uint8_t CRC8(const uint8_t *buffer, size_t len) {
 }
 #endif
 
-/* Serial Command handling */
+// Serial command handling
 
 /*!
  * \brief Handle start request command.
@@ -247,4 +247,18 @@ void SerialEncoding::send(uint8_t *payload, size_t length) {
   #endif
   */
   m_packetSerial.send(payload, length);
+}
+
+// send initial msgid followed by null-terminated string
+void SerialEncoding::sendMsg(AYAB_API_t id, const char *msg) {
+  uint8_t length = 0;
+  msgBuffer[length++] = static_cast<uint8_t>(id);
+  while (*msg) {
+    msgBuffer[length++] = static_cast<uint8_t>(*msg++);
+  }
+  m_packetSerial.send(msgBuffer, length);
+}
+
+void SerialEncoding::sendMsg(AYAB_API_t id, char *msg) {
+  sendMsg(id, static_cast<const char *>(msg));
 }

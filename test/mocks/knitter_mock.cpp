@@ -83,6 +83,16 @@ void Knitter::send(uint8_t payload[], size_t length) {
   gKnitterMock->send(payload, length);
 }
 
+void Knitter::sendMsg(AYAB_API_t id, const char *msg) {
+  assert(gKnitterMock != NULL);
+  gKnitterMock->sendMsg(id, msg);
+}
+
+void Knitter::sendMsg(AYAB_API_t id, char *msg) {
+  assert(gKnitterMock != NULL);
+  gKnitterMock->sendMsg(id, msg);
+}
+
 void Knitter::onPacketReceived(const uint8_t *buffer, size_t size) {
   assert(gKnitterMock != NULL);
   gKnitterMock->onPacketReceived(buffer, size);

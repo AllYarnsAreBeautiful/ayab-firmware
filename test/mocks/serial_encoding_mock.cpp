@@ -21,8 +21,8 @@
  *    http://ayab-knitting.com
  */
 
-#include <serial_encoding_mock.h>
 #include <serial_encoding.h>
+#include <serial_encoding_mock.h>
 
 static SerialEncodingMock *gSerialEncodingMock = NULL;
 SerialEncodingMock *serialEncodingMockInstance() {
@@ -50,6 +50,16 @@ void SerialEncoding::update() {
 void SerialEncoding::send(uint8_t *payload, size_t length) {
   assert(gSerialEncodingMock != nullptr);
   gSerialEncodingMock->send(payload, length);
+}
+
+void SerialEncoding::sendMsg(AYAB_API_t id, const char *msg) {
+  assert(gSerialEncodingMock != nullptr);
+  gSerialEncodingMock->sendMsg(id, msg);
+}
+
+void SerialEncoding::sendMsg(AYAB_API_t id, char *msg) {
+  assert(gSerialEncodingMock != nullptr);
+  gSerialEncodingMock->sendMsg(id, msg);
 }
 
 void SerialEncoding::onPacketReceived(const uint8_t *buffer, size_t size) {
