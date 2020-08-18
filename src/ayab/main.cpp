@@ -24,12 +24,13 @@
 
 #include <Arduino.h>
 
-#include "hw_test.h"
+#include "global_hw_test.h"
 #include "knitter.h"
 
-// global definition
+// global definitions
 // references everywhere else must use `extern`
 Knitter *knitter;
+GlobalHardwareTest *hwTest;
 
 // initialize static member
 HardwareTestInterface *GlobalHardwareTest::m_instance = new HardwareTest();

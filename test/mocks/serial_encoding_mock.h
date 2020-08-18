@@ -30,10 +30,12 @@ class SerialEncodingMock {
 public:
   MOCK_METHOD0(update, void());
   MOCK_METHOD2(send, void(uint8_t *payload, size_t length));
+  MOCK_METHOD2(sendMsg, void(AYAB_API_t id, const char *msg));
+  MOCK_METHOD2(sendMsg, void(AYAB_API_t id, char *msg));
   MOCK_METHOD2(onPacketReceived, void(const uint8_t *buffer, size_t size));
 };
 
 SerialEncodingMock *serialEncodingMockInstance();
 void releaseSerialEncodingMock();
 
-#endif  // SERIAL_ENCODING_MOCK_H_
+#endif // SERIAL_ENCODING_MOCK_H_

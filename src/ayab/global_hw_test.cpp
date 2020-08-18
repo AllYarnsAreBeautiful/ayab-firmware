@@ -20,7 +20,7 @@
  *    http://ayab-knitting.com
  */
 
-#include "hw_test.h"
+#include "global_hw_test.h"
 
 // static member functions
 

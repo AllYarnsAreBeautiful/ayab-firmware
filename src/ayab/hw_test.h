@@ -28,6 +28,8 @@
 
 #include "beeper.h"
 
+constexpr uint8_t BUFFER_LEN = 20;
+
 class HardwareTestInterface {
 public:
   virtual ~HardwareTestInterface(){};
@@ -54,11 +56,13 @@ public:
 
 class HardwareTest : public HardwareTestInterface {
 #if AYAB_TESTS
+  FRIEND_TEST(HardwareTestTest, test_stopCmd);
   FRIEND_TEST(HardwareTestTest, test_setUp);
   FRIEND_TEST(HardwareTestTest, test_loop_default);
   FRIEND_TEST(HardwareTestTest, test_loop_null);
   FRIEND_TEST(HardwareTestTest, test_loop_autoTestEven);
   FRIEND_TEST(HardwareTestTest, test_loop_autoTestOdd);
+  // FRIEND_TEST(HardwareTestTest, test_scanHex);
   friend class HardwareTestTest;
 #endif
 
@@ -91,6 +95,8 @@ private:
   void autoTestOdd();
   void handleTimerEvent();
 
+  // static bool scanHex(char *str, uint8_t maxDigits, uint16_t *result);
+
   SerialCommand m_sCmd = SerialCommand();
 
   bool m_autoReadOn = false;
@@ -98,32 +104,8 @@ private:
 
   unsigned long m_lastTime = 0U;
   bool m_timerEventOdd = false;
+
+  char buf[BUFFER_LEN] = {0};
 };
-
-class GlobalHardwareTest {
-public:
-  static void helpCmd();
-  static void sendCmd();
-  static void beepCmd();
-  static void setSingleCmd();
-  static void setAllCmd();
-  static void readEOLsensorsCmd();
-  static void readEncodersCmd();
-  static void autoReadCmd();
-  static void autoTestCmd();
-  static void stopCmd();
-  static void quitCmd();
-  static void unrecognizedCmd(const char *buffer);
-
-  static void setUp();
-  static void loop();
-#ifndef AYAB_TESTS
-  static void encoderAChange();
-#endif
-
-  static HardwareTestInterface *m_instance;
-};
-
-extern GlobalHardwareTest *hwTest;
 
 #endif // HW_TEST_H_

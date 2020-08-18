@@ -186,3 +186,16 @@ TEST_F(SerialEncodingTest, test_send) {
   uint8_t p[] = {1, 2, 3};
   s->send(p, 3);
 }
+
+TEST_F(SerialEncodingTest, test_sendMsg1) {
+  EXPECT_CALL(*serialMock, write(_, _));
+  EXPECT_CALL(*serialMock, write(SLIP::END));
+  s->sendMsg(test_msgid, "abc");
+}
+
+TEST_F(SerialEncodingTest, test_sendMsg2) {
+  char buf[] = "abc\0";
+  EXPECT_CALL(*serialMock, write(_, _));
+  EXPECT_CALL(*serialMock, write(SLIP::END));
+  s->sendMsg(test_msgid, buf);
+}

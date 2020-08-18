@@ -24,7 +24,7 @@
 #include <Arduino.h>
 
 #include "board.h"
-#include "hw_test.h"
+#include "global_hw_test.h"
 #include "knitter.h"
 
 #ifdef CLANG_TIDY
@@ -80,6 +80,14 @@ void Knitter::setUpInterrupt() {
 
 void Knitter::send(uint8_t *payload, size_t length) {
   m_serial_encoding.send(payload, length);
+}
+
+void Knitter::sendMsg(AYAB_API_t id, const char *msg) {
+  m_serial_encoding.sendMsg(id, msg);
+}
+
+void Knitter::sendMsg(AYAB_API_t id, char *msg) {
+  m_serial_encoding.sendMsg(id, msg);
 }
 
 /*!
