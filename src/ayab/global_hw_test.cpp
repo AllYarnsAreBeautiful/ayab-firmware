@@ -24,6 +24,21 @@
 
 // static member functions
 
+void GlobalHardwareTest::setUp() {
+  m_instance->setUp();
+}
+
+void GlobalHardwareTest::loop() {
+  m_instance->loop();
+}
+
+#ifndef AYAB_TESTS
+void GlobalHardwareTest::encoderAChange() {
+  m_instance->encoderAChange();
+}
+#endif // AYAB_TESTS
+
+/*
 void GlobalHardwareTest::helpCmd() {
   m_instance->helpCmd();
 }
@@ -71,17 +86,4 @@ void GlobalHardwareTest::quitCmd() {
 void GlobalHardwareTest::unrecognizedCmd(const char *buffer) {
   m_instance->unrecognizedCmd(buffer);
 }
-
-void GlobalHardwareTest::setUp() {
-  m_instance->setUp();
-}
-
-void GlobalHardwareTest::loop() {
-  m_instance->loop();
-}
-
-#ifndef AYAB_TESTS
-void GlobalHardwareTest::encoderAChange() {
-  m_instance->encoderAChange();
-}
-#endif // AYAB_TESTS
+*/

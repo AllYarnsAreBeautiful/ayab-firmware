@@ -39,6 +39,11 @@ void releaseHardwareTestMock() {
   }
 }
 
+void HardwareTest::setUp() {
+  assert(gHardwareTestMock != NULL);
+  gHardwareTestMock->setUp();
+}
+
 void HardwareTest::helpCmd() {
   assert(gHardwareTestMock != NULL);
   gHardwareTestMock->helpCmd();
@@ -97,11 +102,6 @@ void HardwareTest::quitCmd() {
 void HardwareTest::unrecognizedCmd(const char *buffer) {
   assert(gHardwareTestMock != NULL);
   gHardwareTestMock->unrecognizedCmd(buffer);
-}
-
-void HardwareTest::setUp() {
-  assert(gHardwareTestMock != NULL);
-  gHardwareTestMock->setUp();
 }
 
 void HardwareTest::loop() {
