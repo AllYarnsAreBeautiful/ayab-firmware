@@ -30,7 +30,7 @@ set(COMMON_INCLUDES
     ${ARDUINO_MOCK_LIBS_DIR}/lib/gtest/gtest/src/gtest/googlemock/include
     ${PROJECT_SOURCE_DIR}/mocks
     ${SOURCE_DIRECTORY}
-    ${LIBRARY_DIRECTORY}/SerialCommand
+    #${LIBRARY_DIRECTORY}/SerialCommand
     ${LIBRARY_DIRECTORY}/PacketSerial/src
     )
 set(EXTERNAL_LIB_INCLUDES
@@ -55,7 +55,7 @@ set(COMMON_SOURCES
     ${SOURCE_DIRECTORY}/hw_test.cpp
     ${SOURCE_DIRECTORY}/global_hw_test.cpp
     ${PROJECT_SOURCE_DIR}/test_hw_test.cpp
-    ${PROJECT_SOURCE_DIR}/mocks/SerialCommand_mock.cpp
+    #${PROJECT_SOURCE_DIR}/mocks/SerialCommand_mock.cpp
 
     ${PROJECT_SOURCE_DIR}/mocks/knitter_mock.cpp
     )
@@ -146,7 +146,7 @@ add_executable(${PROJECT_NAME}_knitter
     ${PROJECT_SOURCE_DIR}/mocks/serial_encoding_mock.cpp
     ${PROJECT_SOURCE_DIR}/mocks/hw_test_mock.cpp
     ${PROJECT_SOURCE_DIR}/test_knitter.cpp
-    ${LIBRARY_DIRECTORY}/SerialCommand/SerialCommand.cpp
+    #${LIBRARY_DIRECTORY}/SerialCommand/SerialCommand.cpp
     ${SOFT_I2C_LIB}
 )
 target_include_directories(${PROJECT_NAME}_knitter

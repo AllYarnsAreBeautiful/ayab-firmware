@@ -68,6 +68,7 @@ void HardwareTest::beepCmd() {
  */
 void HardwareTest::setSingleCmd() {
   knitter->sendMsg(test_msgid, "Called setSingle\n");
+  /*
   char *arg = m_sCmd.next();
   if (arg == nullptr) {
     return;
@@ -90,6 +91,7 @@ void HardwareTest::setSingleCmd() {
   }
   knitter->setSolenoid(static_cast<uint8_t>(solenoidNumber),
                        static_cast<uint8_t>(solenoidState));
+  */
 }
 
 /*!
@@ -97,6 +99,7 @@ void HardwareTest::setSingleCmd() {
  */
 void HardwareTest::setAllCmd() {
   knitter->sendMsg(test_msgid, "Called setAll\n");
+  /*
   char *arg = m_sCmd.next();
   if (arg == nullptr) {
     return;
@@ -109,6 +112,7 @@ void HardwareTest::setAllCmd() {
     knitter->sendMsg(test_msgid, "Invalid argument. Please enter a hexadecimal "
                                  "number between 0 and FFFF.\n");
   }
+  */
 }
 
 /*!  // GCOVR_EXCL_LINE
@@ -180,6 +184,7 @@ void HardwareTest::unrecognizedCmd(const char *buffer) {
  */  // GCOVR_EXCL_STOP
 void HardwareTest::setUp() {
   // set up callbacks for SerialCommand commands
+  /*
   m_sCmd.addCommand("%setSingle", GlobalHardwareTest::setSingleCmd);
   m_sCmd.addCommand("%setAll", GlobalHardwareTest::setAllCmd);
   m_sCmd.addCommand("%readEOLsensors", GlobalHardwareTest::readEOLsensorsCmd);
@@ -192,6 +197,7 @@ void HardwareTest::setUp() {
   m_sCmd.addCommand("%quit", GlobalHardwareTest::quitCmd);
   m_sCmd.addCommand("%help", GlobalHardwareTest::helpCmd);
   m_sCmd.setDefaultHandler(GlobalHardwareTest::unrecognizedCmd);
+  */
 
   // Print welcome message
   knitter->sendMsg(test_msgid, "AYAB Hardware Test, ");
@@ -299,7 +305,9 @@ void HardwareTest::handleTimerEvent() {
     }
   }
   m_timerEventOdd = not m_timerEventOdd;
+  /*
   m_sCmd.readSerial();
+  */
 }
 
 /*

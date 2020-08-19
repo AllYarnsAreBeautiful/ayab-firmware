@@ -29,6 +29,8 @@
 
 class HardwareTestMock : public HardwareTestInterface {
 public:
+  MOCK_METHOD0(setUp, void());
+  MOCK_METHOD0(loop, void());
   MOCK_METHOD0(helpCmd, void());
   MOCK_METHOD0(sendCmd, void());
   MOCK_METHOD0(beepCmd, void());
@@ -41,8 +43,6 @@ public:
   MOCK_METHOD0(stopCmd, void());
   MOCK_METHOD0(quitCmd, void());
   MOCK_METHOD1(unrecognizedCmd, void(const char *));
-  MOCK_METHOD0(setUp, void());
-  MOCK_METHOD0(loop, void());
 };
 
 HardwareTestMock *hwTestMockInstance();

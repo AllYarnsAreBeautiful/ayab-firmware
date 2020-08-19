@@ -24,7 +24,7 @@
 #define HW_TEST_H_
 
 #include <Arduino.h>
-#include <SerialCommand.h>
+//#include <SerialCommand.h>
 
 #include "beeper.h"
 
@@ -33,7 +33,14 @@ constexpr uint8_t BUFFER_LEN = 20;
 class HardwareTestInterface {
 public:
   virtual ~HardwareTestInterface(){};
+  virtual void setUp() = 0;
+  virtual void loop() = 0;
 
+#ifndef AYAB_TESTS
+  virtual void encoderAChange() = 0;
+#endif
+
+  /*
   virtual void helpCmd() = 0;
   virtual void sendCmd() = 0;
   virtual void beepCmd() = 0;
@@ -46,12 +53,7 @@ public:
   virtual void stopCmd() = 0;
   virtual void quitCmd() = 0;
   virtual void unrecognizedCmd(const char *buffer) = 0;
-
-  virtual void setUp() = 0;
-  virtual void loop() = 0;
-#ifndef AYAB_TESTS
-  virtual void encoderAChange() = 0;
-#endif
+  */
 };
 
 class HardwareTest : public HardwareTestInterface {
@@ -67,6 +69,12 @@ class HardwareTest : public HardwareTestInterface {
 #endif
 
 public:
+  void setUp();
+  void loop();
+#ifndef AYAB_TESTS
+  void encoderAChange();
+#endif
+
   void helpCmd();
   void sendCmd();
   void beepCmd();
@@ -80,12 +88,6 @@ public:
   void quitCmd();
   void unrecognizedCmd(const char *buffer);
 
-  void setUp();
-  void loop();
-#ifndef AYAB_TESTS
-  void encoderAChange();
-#endif
-
 private:
   void beep();
   void readEOLsensors();
@@ -97,7 +99,7 @@ private:
 
   // static bool scanHex(char *str, uint8_t maxDigits, uint16_t *result);
 
-  SerialCommand m_sCmd = SerialCommand();
+  // SerialCommand m_sCmd = SerialCommand();
 
   bool m_autoReadOn = false;
   bool m_autoTestOn = false;

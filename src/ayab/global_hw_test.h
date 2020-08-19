@@ -32,6 +32,17 @@
 
 class GlobalHardwareTest {
 public:
+  static void setUp();
+  static void loop();
+#ifndef AYAB_TESTS
+  static void encoderAChange();
+#endif
+
+  // pointer to global instance whose methods are implemented
+  // in the static methods belonging to this class
+  static HardwareTestInterface *m_instance;
+
+  /*
   static void helpCmd();
   static void sendCmd();
   static void beepCmd();
@@ -44,16 +55,7 @@ public:
   static void stopCmd();
   static void quitCmd();
   static void unrecognizedCmd(const char *buffer);
-
-  static void setUp();
-  static void loop();
-#ifndef AYAB_TESTS
-  static void encoderAChange();
-#endif
-
-  // pointer to global instance whose methods are implemented
-  // in the static methods belonging to this class
-  static HardwareTestInterface *m_instance;
+  */
 };
 
 extern GlobalHardwareTest *hwTest;
