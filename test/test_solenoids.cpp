@@ -58,12 +58,25 @@ TEST_F(SolenoidsTest, test_init) {
   s.init();
 }
 
-TEST_F(SolenoidsTest, test_setSolenoid) {
-  s.setSolenoid(1, true);
-  s.setSolenoid(1, false);
-  s.setSolenoid(16, false);
+TEST_F(SolenoidsTest, test_setSolenoid1) {
+  s.setSolenoids(0);
+  ASSERT_EQ(s.solenoidState, 0U);
+  s.setSolenoid(0, true);
+  ASSERT_EQ(s.solenoidState, 1U);
 }
 
-TEST_F(SolenoidsTest, test_setSolenoids) {
-  s.setSolenoids(0xFFFF);
+TEST_F(SolenoidsTest, test_setSolenoid2) {
+  s.setSolenoids(0);
+  ASSERT_EQ(s.solenoidState, 0U);
+  s.setSolenoids(0);
+  ASSERT_EQ(s.solenoidState, 0U);
+  s.setSolenoid(0, false);
+  ASSERT_EQ(s.solenoidState, 0U);
+}
+
+TEST_F(SolenoidsTest, test_setSolenoid3) {
+  s.setSolenoids(0x8000);
+  ASSERT_EQ(s.solenoidState, 0x8000U);
+  s.setSolenoid(16, false);
+  ASSERT_EQ(s.solenoidState, 0x8000U);
 }

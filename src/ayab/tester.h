@@ -1,5 +1,5 @@
 /*!
- * \file hw_test.h
+ * \file tester.h
  * This file is part of AYAB.
  *
  *    AYAB is free software: you can redistribute it and/or modify
@@ -20,8 +20,8 @@
  *    http://ayab-knitting.com
  */
 
-#ifndef HW_TEST_H_
-#define HW_TEST_H_
+#ifndef TESTER_H_
+#define TESTER_H_
 
 #include <Arduino.h>
 //#include <SerialCommand.h>
@@ -30,17 +30,14 @@
 
 constexpr uint8_t BUFFER_LEN = 20;
 
-class HardwareTestInterface {
+class TesterInterface {
 public:
-  virtual ~HardwareTestInterface(){};
+  virtual ~TesterInterface(){};
+
+  // any methods that need to be mocked should go here
   virtual void setUp() = 0;
   virtual void loop() = 0;
-
-#ifndef AYAB_TESTS
-  virtual void encoderAChange() = 0;
-#endif
-
-  /*
+  virtual bool getQuitFlag() = 0;
   virtual void helpCmd() = 0;
   virtual void sendCmd() = 0;
   virtual void beepCmd() = 0;
@@ -53,28 +50,63 @@ public:
   virtual void stopCmd() = 0;
   virtual void quitCmd() = 0;
   virtual void unrecognizedCmd(const char *buffer) = 0;
-  */
+#ifndef AYAB_TESTS
+  virtual void encoderAChange();
+#endif
 };
 
-class HardwareTest : public HardwareTestInterface {
+// Container class for the static methods that implement the hardware test
+// commands. Originally these methods were called back by `SerialCommand`.
+// Dependency injection is enabled using a pointer to a global instance of
+// either `Tester` or `TesterMock`, both of which classes implement the
+// pure virtual methods of `TesterInterface`.
+
+class GlobalTester final {
+private:
+  // singleton class so private constructor is appropriate
+  GlobalTester() = default;
+
+public:
+  // pointer to global instance whose methods are implemented
+  static TesterInterface *m_instance;
+
+  static void setUp();
+  static void loop();
+  static bool getQuitFlag();
+  static void helpCmd();
+  static void sendCmd();
+  static void beepCmd();
+  static void setSingleCmd();
+  static void setAllCmd();
+  static void readEOLsensorsCmd();
+  static void readEncodersCmd();
+  static void autoReadCmd();
+  static void autoTestCmd();
+  static void stopCmd();
+  static void quitCmd();
+  static void unrecognizedCmd(const char *buffer);
+#ifndef AYAB_TESTS
+  static void encoderAChange();
+#endif
+};
+
+class Tester : public TesterInterface {
 #if AYAB_TESTS
-  FRIEND_TEST(HardwareTestTest, test_stopCmd);
-  FRIEND_TEST(HardwareTestTest, test_setUp);
-  FRIEND_TEST(HardwareTestTest, test_loop_default);
-  FRIEND_TEST(HardwareTestTest, test_loop_null);
-  FRIEND_TEST(HardwareTestTest, test_loop_autoTestEven);
-  FRIEND_TEST(HardwareTestTest, test_loop_autoTestOdd);
-  // FRIEND_TEST(HardwareTestTest, test_scanHex);
-  friend class HardwareTestTest;
+  FRIEND_TEST(TesterTest, test_stopCmd);
+  FRIEND_TEST(TesterTest, test_quitCmd);
+  FRIEND_TEST(TesterTest, test_setUp);
+  FRIEND_TEST(TesterTest, test_loop_default);
+  FRIEND_TEST(TesterTest, test_loop_null);
+  FRIEND_TEST(TesterTest, test_loop_autoTestEven);
+  FRIEND_TEST(TesterTest, test_loop_autoTestOdd);
+  // FRIEND_TEST(TesterTest, test_scanHex);
+  friend class TesterTest;
 #endif
 
 public:
   void setUp();
   void loop();
-#ifndef AYAB_TESTS
-  void encoderAChange();
-#endif
-
+  bool getQuitFlag();
   void helpCmd();
   void sendCmd();
   void beepCmd();
@@ -87,6 +119,9 @@ public:
   void stopCmd();
   void quitCmd();
   void unrecognizedCmd(const char *buffer);
+#ifndef AYAB_TESTS
+  void encoderAChange();
+#endif
 
 private:
   void beep();
@@ -101,13 +136,13 @@ private:
 
   // SerialCommand m_sCmd = SerialCommand();
 
+  bool m_quit = false;
   bool m_autoReadOn = false;
   bool m_autoTestOn = false;
-
   unsigned long m_lastTime = 0U;
   bool m_timerEventOdd = false;
 
   char buf[BUFFER_LEN] = {0};
 };
 
-#endif // HW_TEST_H_
+#endif // TESTER_H_

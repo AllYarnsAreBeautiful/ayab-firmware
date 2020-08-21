@@ -1,5 +1,7 @@
 /*!
  * \file knitter.cpp
+ * \brief Singleton class containing methods for the finite state machine
+ *    that co-ordinates the AYAB firmware.
  *
  * This file is part of AYAB.
  *
@@ -23,9 +25,11 @@
 
 #include <Arduino.h>
 
+#include "beeper.h"
 #include "board.h"
-#include "global_hw_test.h"
+#include "com.h"
 #include "knitter.h"
+#include "tester.h"
 
 #ifdef CLANG_TIDY
 // clang-tidy doesn't find these macros for some reason,
@@ -34,26 +38,12 @@ constexpr uint8_t UINT8_MAX = 0xFFU;
 constexpr uint16_t UINT16_MAX = 0xFFFFU;
 #endif
 
-extern Knitter *knitter;
-
-#ifndef AYAB_TESTS
-/*!
- * \brief Wrapper for knitter's isr.
- *
- * This is needed since a non-static method cannot be
- * passed to _attachInterrupt_.
- */
-static void isr_wrapper() {
-  knitter->isr();
-}
-#endif // AYAB_TESTS
-
 /*!
  * \brief Knitter constructor.
  *
  * Initializes the solenoids as well as pins and interrupts.
  */
-Knitter::Knitter() : m_beeper(), m_serial_encoding() {
+void Knitter::init() {
   pinMode(ENC_PIN_A, INPUT);
   pinMode(ENC_PIN_B, INPUT);
   pinMode(ENC_PIN_C, INPUT);
@@ -68,26 +58,35 @@ Knitter::Knitter() : m_beeper(), m_serial_encoding() {
 
   m_solenoids.init();
   setUpInterrupt();
+
+  // explicitly initialize members
+  m_opState = s_init;
+  m_machineType = NoMachine;
+  m_startNeedle = 0U;
+  m_stopNeedle = 0U;
+  m_lineBuffer = nullptr;
+  m_continuousReportingEnabled = false;
+  m_position = 0U;
+  m_direction = NoDirection;
+  m_hallActive = NoDirection;
+  m_beltshift = Unknown;
+  m_carriage = NoCarriage;
+  m_lineRequested = false;
+  m_currentLineNumber = 0U;
+  m_lastLineFlag = false;
+  m_sOldPosition = 0U;
+  m_firstRun = true;
+  m_workedOnLine = false;
+  m_solenoidToSet = 0U;
+  m_pixelToSet = 0U;
 }
 
 void Knitter::setUpInterrupt() {
   // (re-)attach ENC_PIN_A(=2), interrupt #0
   detachInterrupt(0);
 #ifndef AYAB_TESTS
-  attachInterrupt(0, isr_wrapper, CHANGE);
+  attachInterrupt(0, GlobalKnitter::isr, CHANGE);
 #endif // AYAB_TESTS
-}
-
-void Knitter::send(uint8_t *payload, size_t length) {
-  m_serial_encoding.send(payload, length);
-}
-
-void Knitter::sendMsg(AYAB_API_t id, const char *msg) {
-  m_serial_encoding.sendMsg(id, msg);
-}
-
-void Knitter::sendMsg(AYAB_API_t id, char *msg) {
-  m_serial_encoding.sendMsg(id, msg);
 }
 
 /*!
@@ -133,7 +132,7 @@ void Knitter::fsm() {
   default:
     break;
   }
-  m_serial_encoding.update();
+  GlobalCom::update();
 }
 
 /*!
@@ -170,15 +169,13 @@ bool Knitter::startOperation(Machine_t machineType, uint8_t startNeedle,
 
   // proceed to next state
   m_opState = s_operate;
-  Beeper::ready();
-
-  /* m_lastLinesCountdown = 2; */
+  GlobalBeeper::ready();
 
   // Attaching ENC_PIN_A, Interrupt #0
   // This interrupt cannot be enabled until
   // the machine type has been validated.
   /*
-  // `digitalPinToInterrupt` macro not backported until Arduino !DE v.1.0.6
+  // `digitalPinToInterrupt` macro not backported until Arduino IDE v.1.0.6
   attachInterrupt(digitalPinToInterrupt(ENC_PIN_A), isr_wrapper, CHANGE);
   */
   setUpInterrupt();
@@ -192,10 +189,28 @@ bool Knitter::startTest(Machine_t machineType) {
   if (s_init == m_opState || s_ready == m_opState) {
     m_opState = s_test;
     m_machineType = machineType;
-    GlobalHardwareTest::setUp();
+    GlobalTester::setUp();
     success = true;
   }
   return success;
+}
+
+uint8_t Knitter::getStartOffset(const Direction_t direction) {
+  if ((direction == NoDirection) || (direction >= NUM_DIRECTIONS) ||
+      (m_carriage == NoCarriage) || (m_carriage >= NUM_CARRIAGES) ||
+      (m_machineType == NoMachine) || (m_machineType >= NUM_MACHINES)) {
+    // TODO(TP): return error state
+    return 0U;
+  }
+  return START_OFFSET[m_machineType][direction][m_carriage];
+}
+
+Machine_t Knitter::getMachineType() {
+  return m_machineType;
+}
+
+void Knitter::setSolenoids(uint16_t state) {
+  m_solenoids.setSolenoids(state);
 }
 
 bool Knitter::setNextLine(uint8_t lineNumber) {
@@ -204,7 +219,7 @@ bool Knitter::setNextLine(uint8_t lineNumber) {
     // FIXME: Is there even a need for a new line?
     if (lineNumber == m_currentLineNumber) {
       m_lineRequested = false;
-      Beeper::finishedLine();
+      GlobalBeeper::finishedLine();
       success = true;
     } else {
       // line numbers didn't match -> request again
@@ -217,6 +232,14 @@ bool Knitter::setNextLine(uint8_t lineNumber) {
 void Knitter::setLastLine() {
   // lastLineFlag is evaluated in s_operate
   m_lastLineFlag = true;
+}
+
+void Knitter::setMachineType(Machine_t machineType) {
+  m_machineType = machineType;
+}
+
+void Knitter::setState(OpState_t state) {
+  m_opState = state;
 }
 
 // private methods
@@ -254,7 +277,7 @@ void Knitter::state_operate() {
     m_firstRun = false;
     // TODO(who?): optimize delay for various Arduino models
     delay(START_OPERATION_DELAY);
-    Beeper::finishedLine();
+    GlobalBeeper::finishedLine();
     reqLine(++m_currentLineNumber);
   }
 
@@ -328,21 +351,6 @@ void Knitter::state_operate() {
 #endif // DBG_NOMACHINE
 }
 
-void Knitter::stopOperation() {
-  Beeper::endWork();
-  m_opState = s_ready;
-
-  m_solenoids.setSolenoids(SOLENOIDS_BITMASK);
-  Beeper::finishedLine();
-
-  // detaching ENC_PIN_A, Interrupt #0
-  /*
-  // `digitalPinToInterrupt` macro not backported until Arduino !DE v.1.0.6
-  detachInterrupt(digitalPinToInterrupt(ENC_PIN_A));
-  */
-  detachInterrupt(0);
-}
-
 void Knitter::state_test() {
   if (m_sOldPosition != m_position) {
     // only act if there is an actual change of position
@@ -351,14 +359,10 @@ void Knitter::state_test() {
     calculatePixelAndSolenoid();
     indState();
   }
-  GlobalHardwareTest::loop();
-  if (m_quitFlag) {
+  GlobalTester::loop();
+  if (GlobalTester::getQuitFlag()) {
     m_opState = s_ready;
   }
-}
-
-void Knitter::setQuitFlag(bool flag) {
-  m_quitFlag = flag;
 }
 
 bool Knitter::calculatePixelAndSolenoid() {
@@ -422,30 +426,12 @@ bool Knitter::calculatePixelAndSolenoid() {
   return success;
 }
 
-void Knitter::setSolenoids(uint16_t state) {
-  m_solenoids.setSolenoids(state);
-}
-
-void Knitter::setSolenoid(uint8_t solenoid, uint8_t state) {
-  m_solenoids.setSolenoid(solenoid, state);
-}
-
-uint8_t Knitter::getStartOffset(const Direction_t direction) const {
-  if ((direction == NoDirection) || (direction >= NUM_DIRECTIONS) ||
-      (m_carriage == NoCarriage) || (m_carriage >= NUM_CARRIAGES) ||
-      (m_machineType == NoMachine) || (m_machineType >= NUM_MACHINES)) {
-    // TODO(TP): return error state
-    return 0U;
-  }
-  return START_OFFSET[m_machineType][direction][m_carriage];
-}
-
 void Knitter::reqLine(const uint8_t lineNumber) {
   uint8_t payload[REQLINE_LEN] = {
       reqLine_msgid,
       lineNumber,
   };
-  send(static_cast<uint8_t *>(payload), REQLINE_LEN);
+  GlobalCom::send(static_cast<uint8_t *>(payload), REQLINE_LEN);
 
   m_lineRequested = true;
 }
@@ -464,27 +450,24 @@ void Knitter::indState(const bool initState) {
       static_cast<uint8_t>(m_position),
       static_cast<uint8_t>(m_encoders.getDirection()),
   };
-  send(static_cast<uint8_t *>(payload), INDSTATE_LEN);
+  GlobalCom::send(static_cast<uint8_t *>(payload), INDSTATE_LEN);
 }
 
-void Knitter::onPacketReceived(const uint8_t *buffer, size_t size) {
-  m_serial_encoding.onPacketReceived(buffer, size);
+void Knitter::stopOperation() {
+  GlobalBeeper::endWork();
+  m_opState = s_ready;
+
+  m_solenoids.setSolenoids(SOLENOIDS_BITMASK);
+  GlobalBeeper::finishedLine();
+
+  // detaching ENC_PIN_A, Interrupt #0
+  /*
+  // `digitalPinToInterrupt` macro not backported until Arduino !DE v.1.0.6
+  detachInterrupt(digitalPinToInterrupt(ENC_PIN_A));
+  */
+  detachInterrupt(0);
 }
 
 OpState_t Knitter::getState() const {
   return m_opState;
-}
-
-Machine_t Knitter::getMachineType() const {
-  return m_machineType;
-}
-
-void Knitter::setMachineType(Machine_t machineType) {
-  m_machineType = machineType;
-}
-
-// for testing purposes only
-
-void Knitter::setState(OpState_t state) {
-  m_opState = state;
 }

@@ -23,20 +23,20 @@
 
 #include "gtest/gtest.h"
 
-#include <knitter.h>
+#include <beeper.h>
+#include <com.h>
+#include <tester.h>
 
-#include <beeper_mock.h>
-#include <com_mock.h>
-#include <tester_mock.h>
+#include <knitter_mock.h>
 
 // global definitions
 // references everywhere else must use `extern`
-Knitter *knitter = new Knitter();
-BeeperMock *beeper = new BeeperMock();
-ComMock *com = new ComMock();
-TesterMock *tester = new TesterMock();
+KnitterMock *knitter = new KnitterMock();
+Beeper *beeper = new Beeper();
+Com *com = new Com();
+Tester *tester = new Tester();
 
-// instantiate singleton classes with mock objects
+// initialize static members
 KnitterInterface *GlobalKnitter::m_instance = knitter;
 BeeperInterface *GlobalBeeper::m_instance = beeper;
 ComInterface *GlobalCom::m_instance = com;

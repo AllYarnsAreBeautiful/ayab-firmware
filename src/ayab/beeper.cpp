@@ -1,5 +1,6 @@
 /*!
  * \file beeper.cpp
+ * \brief Singleton class containing methods for beeper.
  *
  * This file is part of AYAB.
  *

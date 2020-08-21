@@ -1,6 +1,5 @@
-/*!`
- * \file hw_test_mock.h
- *
+/*!
+ * \file global_beeper.cpp
  * This file is part of AYAB.
  *
  *    AYAB is free software: you can redistribute it and/or modify
@@ -21,31 +20,18 @@
  *    http://ayab-knitting.com
  */
 
-#ifndef HW_TEST_MOCK_H_
-#define HW_TEST_MOCK_H_
+#include "beeper.h"
 
-#include <gmock/gmock.h>
-#include <hw_test.h>
+// static member functions
 
-class HardwareTestMock : public HardwareTestInterface {
-public:
-  MOCK_METHOD0(setUp, void());
-  MOCK_METHOD0(loop, void());
-  MOCK_METHOD0(helpCmd, void());
-  MOCK_METHOD0(sendCmd, void());
-  MOCK_METHOD0(beepCmd, void());
-  MOCK_METHOD0(setSingleCmd, void());
-  MOCK_METHOD0(setAllCmd, void());
-  MOCK_METHOD0(readEOLsensorsCmd, void());
-  MOCK_METHOD0(readEncodersCmd, void());
-  MOCK_METHOD0(autoReadCmd, void());
-  MOCK_METHOD0(autoTestCmd, void());
-  MOCK_METHOD0(stopCmd, void());
-  MOCK_METHOD0(quitCmd, void());
-  MOCK_METHOD1(unrecognizedCmd, void(const char *));
-};
+void GlobalBeeper::ready() {
+  m_instance->ready();
+}
 
-HardwareTestMock *hwTestMockInstance();
-void releaseHardwareTestMock();
+void GlobalBeeper::finishedLine() {
+  m_instance->finishedLine();
+}
 
-#endif // HW_TEST_MOCK_H_
+void GlobalBeeper::endWork() {
+  m_instance->endWork();
+}

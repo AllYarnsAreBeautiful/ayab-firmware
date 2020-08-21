@@ -43,7 +43,9 @@ GTEST_COLOR=1 ctest $ctest_verbose --output-on-failure .
 cd ../..
 
 GCOVR_ARGS="--exclude-unreachable-branches --exclude-throw-branches \
-            --exclude-directories 'test/build/arduino_mock$' -e test_* -e libraries*"  # -e src/ayab/global_hw_test.cpp
+            --exclude-directories 'test/build/arduino_mock$' \
+	    -e test_* -e libraries* -e src/ayab/global_knitter.cpp \
+	    -e src/ayab/global_tester.cpp"
 
 gcovr -k -r . $GCOVR_ARGS  --html-details -o ./test/build/coverage.html
 # gcovr -r . $GCOVR_ARGS  --json-pretty -o ./test/build/coverage-report.json

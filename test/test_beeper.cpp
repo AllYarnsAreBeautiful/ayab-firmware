@@ -28,11 +28,12 @@
 
 using ::testing::Return;
 
+extern Beeper *beeper;
+
 class BeeperTest : public ::testing::Test {
 protected:
   void SetUp() override {
     arduinoMock = arduinoMockInstance();
-    b = Beeper();
   }
 
   void TearDown() override {
@@ -47,20 +48,19 @@ protected:
   }
 
   ArduinoMock *arduinoMock;
-  Beeper b;
 };
 
 TEST_F(BeeperTest, test_ready) {
   checkBeepTime(5);
-  b.ready();
+  beeper->ready();
 }
 
 TEST_F(BeeperTest, test_finishedLine) {
   checkBeepTime(3);
-  b.finishedLine();
+  beeper->finishedLine();
 }
 
 TEST_F(BeeperTest, test_endWork) {
   checkBeepTime(10);
-  b.endWork();
+  beeper->endWork();
 }

@@ -1,5 +1,6 @@
 /*!
  * \file solenoids.cpp
+ * \brief Class containing methods governing solenoids.
  *
  * This file is part of AYAB.
  *
@@ -51,14 +52,17 @@ void Solenoids::setSolenoid(uint8_t solenoid, bool state) {
     return;
   }
 
+  uint16_t oldState = solenoidState;
   if (state) {
     bitSet(solenoidState, solenoid);
   } else {
     bitClear(solenoidState, solenoid);
   }
-
-  // TODO(Who?): Optimize to act only when there is an actual change of state
-  write(solenoidState);
+  if (oldState != solenoidState) {
+#ifndef AYAB_TESTS
+    write(solenoidState);
+#endif
+  }
 }
 
 /*!
@@ -68,8 +72,12 @@ void Solenoids::setSolenoid(uint8_t solenoid, bool state) {
  * one bit per solenoid.
  */
 void Solenoids::setSolenoids(uint16_t state) {
-  solenoidState = state;
-  write(state);
+  if (state != solenoidState) {
+    solenoidState = state;
+#ifndef AYAB_TESTS
+    write(state);
+#endif
+  }
 }
 
 /*
@@ -85,7 +93,9 @@ void Solenoids::setSolenoids(uint16_t state) {
  * \param newState Two bytes describing the state of the solenoids,
  * one bit per solenoid.
  */
+// GCOVR_EXCL_START
 void Solenoids::write(uint16_t newState) {
+  (void)newState;
 #ifdef HARD_I2C
   mcp_0.writeGPIO(lowByte(newState));
   mcp_1.writeGPIO(highByte(newState));
@@ -98,3 +108,4 @@ void Solenoids::write(uint16_t newState) {
   SoftI2C.endTransmission();
 #endif
 }
+// GCOVR_EXCL_STOP

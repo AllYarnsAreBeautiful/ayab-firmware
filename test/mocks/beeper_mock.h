@@ -24,10 +24,11 @@
 #ifndef BEEPER_MOCK_H_
 #define BEEPER_MOCK_H_
 
-#include <beeper.h>
 #include <gmock/gmock.h>
 
-class BeeperMock {
+#include <beeper.h>
+
+class BeeperMock : public BeeperInterface {
 public:
   MOCK_METHOD0(ready, void());
   MOCK_METHOD0(finishedLine, void());
@@ -37,4 +38,4 @@ public:
 BeeperMock *beeperMockInstance();
 void releaseBeeperMock();
 
-#endif  // BEEPER_MOCK_H_
+#endif // BEEPER_MOCK_H_

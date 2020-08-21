@@ -43,6 +43,11 @@ constexpr uint8_t SOLENOIDS_I2C_ADDRESS_MASK = 0x20U;
  * \brief Control of the needles via solenoids connected to IO expanders.
  */
 class Solenoids {
+#ifdef AYAB_TESTS
+  FRIEND_TEST(SolenoidsTest, test_setSolenoid1);
+  FRIEND_TEST(SolenoidsTest, test_setSolenoid2);
+  FRIEND_TEST(SolenoidsTest, test_setSolenoid3);
+#endif
 public:
   Solenoids()
 #if defined(HARD_I2C)
@@ -69,4 +74,4 @@ private:
 #endif
 };
 
-#endif  // SOLENOIDS_H_
+#endif // SOLENOIDS_H_

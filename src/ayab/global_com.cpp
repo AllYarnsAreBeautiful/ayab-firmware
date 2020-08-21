@@ -1,6 +1,5 @@
-/*!`
- * \file serial_encoding_mock.h
- *
+/*!
+ * \file global_com.cpp
  * This file is part of AYAB.
  *
  *    AYAB is free software: you can redistribute it and/or modify
@@ -21,21 +20,34 @@
  *    http://ayab-knitting.com
  */
 
-#ifndef SERIAL_ENCODING_MOCK_H_
-#define SERIAL_ENCODING_MOCK_H_
+#include "com.h"
 
-#include <gmock/gmock.h>
+// static member functions
 
-class SerialEncodingMock {
-public:
-  MOCK_METHOD0(update, void());
-  MOCK_METHOD2(send, void(uint8_t *payload, size_t length));
-  MOCK_METHOD2(sendMsg, void(AYAB_API_t id, const char *msg));
-  MOCK_METHOD2(sendMsg, void(AYAB_API_t id, char *msg));
-  MOCK_METHOD2(onPacketReceived, void(const uint8_t *buffer, size_t size));
-};
+// GCOVR_EXCL_START
+void GlobalCom::init() {
+  m_instance->init();
+}
+// GCOVR_EXCL_STOP
 
-SerialEncodingMock *serialEncodingMockInstance();
-void releaseSerialEncodingMock();
+void GlobalCom::update() {
+  m_instance->update();
+}
 
-#endif // SERIAL_ENCODING_MOCK_H_
+void GlobalCom::send(uint8_t *payload, size_t length) {
+  m_instance->send(payload, length);
+}
+
+void GlobalCom::sendMsg(AYAB_API_t id, const char *msg) {
+  m_instance->sendMsg(id, msg);
+}
+
+void GlobalCom::sendMsg(AYAB_API_t id, char *msg) {
+  m_instance->sendMsg(id, msg);
+}
+
+// GCOVR_EXCL_START
+void GlobalCom::onPacketReceived(const uint8_t *buffer, size_t size) {
+  m_instance->onPacketReceived(buffer, size);
+}
+// GCOVR_EXCL_STOP

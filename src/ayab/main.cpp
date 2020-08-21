@@ -1,6 +1,6 @@
 /*!
  * \file main.cpp
- * \brief Main entry point of ayab-firmware.
+ * \brief Main entry point for AYAB firmware.
  *
  * This file is part of AYAB.
  *
@@ -24,28 +24,33 @@
 
 #include <Arduino.h>
 
-#include "global_hw_test.h"
 #include "knitter.h"
+#include "tester.h"
 
 // global definitions
 // references everywhere else must use `extern`
-Knitter *knitter;
-GlobalHardwareTest *hwTest;
+GlobalKnitter *knitter;
+GlobalBeeper *beeper;
+GlobalCom *com;
+GlobalTester *tester;
 
-// initialize static member
-HardwareTestInterface *GlobalHardwareTest::m_instance = new HardwareTest();
+// initialize static members
+KnitterInterface *GlobalKnitter::m_instance = new Knitter();
+BeeperInterface *GlobalBeeper::m_instance = new Beeper();
+ComInterface *GlobalCom::m_instance = new Com();
+TesterInterface *GlobalTester::m_instance = new Tester();
 
 /*!
- * Setup - steps to take before going to the main loop.
+ * Setup - do once before going to the main loop.
  */
 void setup() {
-  knitter = new Knitter();
+  GlobalKnitter::init();
+  GlobalCom::init();
 }
 
 /*!
- * Main Loop - repeated until the heat death of the universe,
- * or someone cuts power to us.
+ * Main Loop - repeat forever.
  */
 void loop() {
-  knitter->fsm();
+  GlobalKnitter::fsm();
 }
