@@ -1,5 +1,5 @@
 /*!
- * \file serial_encoding.h
+ * \file com.h
  *
  * This file is part of AYAB.
  *
@@ -21,8 +21,8 @@
  *    http://ayab-knitting.com
  */
 
-#ifndef SERIAL_ENCODING_H_
-#define SERIAL_ENCODING_H_
+#ifndef COM_H_
+#define COM_H_
 
 #include <Arduino.h>
 #include <PacketSerial.h>
@@ -54,9 +54,47 @@ enum AYAB_API {
 };
 using AYAB_API_t = enum AYAB_API;
 
-class SerialEncoding {
+class ComInterface {
 public:
-  SerialEncoding();
+  virtual ~ComInterface(){};
+
+  // any methods that need to be mocked should go here
+  virtual void init() = 0;
+  virtual void update() = 0;
+  virtual void send(uint8_t *payload, size_t length) = 0;
+  virtual void sendMsg(AYAB_API_t id, const char *msg) = 0;
+  virtual void sendMsg(AYAB_API_t id, char *msg) = 0;
+  virtual void onPacketReceived(const uint8_t *buffer, size_t size) = 0;
+};
+
+// Container class for the static methods that implement the serial API.
+// Dependency injection is enabled using a pointer to a global instance of
+// either `Com` or `ComMock`, both of which classes implement the
+// pure virtual methods of `ComInterface`.
+
+class GlobalCom final {
+private:
+  // singleton class so private constructor is appropriate
+  GlobalCom() = default;
+
+public:
+  // pointer to global instance whose methods are implemented
+  static ComInterface *m_instance;
+
+  static void init();
+  static void update();
+  static void send(uint8_t *payload, size_t length);
+  static void sendMsg(AYAB_API_t id, const char *msg);
+  static void sendMsg(AYAB_API_t id, char *msg);
+  static void onPacketReceived(const uint8_t *buffer, size_t size);
+
+private:
+  static SLIPPacketSerial m_packetSerial;
+};
+
+class Com : public ComInterface {
+public:
+  void init();
   void update();
   void send(uint8_t *payload, size_t length);
   void sendMsg(AYAB_API_t id, const char *msg);
@@ -72,6 +110,7 @@ private:
   void h_cnfLine(const uint8_t *buffer, size_t size);
   void h_reqInfo();
   void h_reqTest(const uint8_t *buffer, size_t size);
+  void h_unrecognized();
 };
 
-#endif // SERIAL_ENCODING_H_
+#endif // COM_H_

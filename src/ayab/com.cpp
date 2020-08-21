@@ -1,5 +1,6 @@
 /*!
- * \file serial_encoding.cpp
+ * \file com.cpp
+ * \brief Singleton class containing methods for serial communication.
  *
  * This file is part of AYAB.
  *
@@ -21,23 +22,8 @@
  *    http://ayab-knitting.com
  */
 
-#include "serial_encoding.h"
+#include "com.h"
 #include "knitter.h"
-
-extern Knitter *knitter;
-
-#ifndef AYAB_TESTS
-/*!
- * \brief Wrapper for knitter's onPacketReceived.
- *
- * This is needed since a non-static method cannot be
- * passed to _setPacketHandler_, and the only global variable
- * is knitter.
- */
-static void gOnPacketReceived(const uint8_t *buffer, size_t size) {
-  knitter->onPacketReceived(buffer, size);
-}
-#endif // AYAB_TESTS
 
 #ifdef AYAB_ENABLE_CRC
 /*!
@@ -70,6 +56,72 @@ static uint8_t CRC8(const uint8_t *buffer, size_t len) {
 }
 #endif
 
+void Com::init() {
+  m_packetSerial.begin(SERIAL_BAUDRATE);
+#ifndef AYAB_TESTS
+  m_packetSerial.setPacketHandler(GlobalCom::onPacketReceived);
+#endif // AYAB_TESTS
+}
+
+/*!
+ * \brief Callback for PacketSerial.
+ */
+void Com::onPacketReceived(const uint8_t *buffer, size_t size) {
+  switch (buffer[0]) {
+  case reqStart_msgid:
+    h_reqStart(buffer, size);
+    break;
+
+  case cnfLine_msgid:
+    h_cnfLine(buffer, size);
+    break;
+
+  case reqInfo_msgid:
+    h_reqInfo();
+    break;
+
+  case reqTest_msgid:
+    h_reqTest(buffer, size);
+    break;
+
+  default:
+    h_unrecognized();
+    break;
+  }
+}
+
+void Com::update() {
+  m_packetSerial.update();
+}
+
+void Com::send(uint8_t *payload, size_t length) {
+  // TODO(TP): insert a workaround for hardware test code
+  /*
+  #ifdef AYAB_HW_TEST
+    Serial.print("Sent: ");
+    for (uint8_t i = 0; i < length; ++i) {
+      Serial.print(payload[i]);
+    }
+    Serial.print(", Encoded as: ");
+  #endif
+  */
+  m_packetSerial.send(payload, length);
+}
+
+// send initial msgid followed by null-terminated string
+void Com::sendMsg(AYAB_API_t id, const char *msg) {
+  uint8_t length = 0;
+  msgBuffer[length++] = static_cast<uint8_t>(id);
+  while (*msg) {
+    msgBuffer[length++] = static_cast<uint8_t>(*msg++);
+  }
+  m_packetSerial.send(msgBuffer, length);
+}
+
+void Com::sendMsg(AYAB_API_t id, char *msg) {
+  sendMsg(id, static_cast<const char *>(msg));
+}
+
 // Serial command handling
 
 /*!
@@ -78,7 +130,7 @@ static uint8_t CRC8(const uint8_t *buffer, size_t len) {
  * \todo sl: Assert size? Handle error?
  * \todo TP: Handle CRC-8 error?
  */
-void SerialEncoding::h_reqStart(const uint8_t *buffer, size_t size) {
+void Com::h_reqStart(const uint8_t *buffer, size_t size) {
 
 #ifdef AYAB_ENABLE_CRC
   if (size < 6U) {
@@ -113,8 +165,8 @@ void SerialEncoding::h_reqStart(const uint8_t *buffer, size_t size) {
   }
 
   bool success =
-      knitter->startOperation(machineType, startNeedle, stopNeedle, lineBuffer,
-                              continuousReportingEnabled);
+      GlobalKnitter::startOperation(machineType, startNeedle, stopNeedle,
+                                    lineBuffer, continuousReportingEnabled);
 
   uint8_t payload[2];
   payload[0] = cnfStart_msgid;
@@ -128,8 +180,9 @@ void SerialEncoding::h_reqStart(const uint8_t *buffer, size_t size) {
  * \todo sl: Handle CRC-8 error?
  * \todo sl: Assert size? Handle error?
  */
-void SerialEncoding::h_cnfLine(const uint8_t *buffer, size_t size) {
-  uint8_t lenLineBuffer = LINE_BUFFER_LEN[knitter->getMachineType()];
+void Com::h_cnfLine(const uint8_t *buffer, size_t size) {
+  uint8_t m = static_cast<uint8_t>(GlobalKnitter::getMachineType());
+  uint8_t lenLineBuffer = LINE_BUFFER_LEN[m];
   if (size < lenLineBuffer + 5U) {
     // message is too short
     // TODO(sl): handle error?
@@ -154,16 +207,16 @@ void SerialEncoding::h_cnfLine(const uint8_t *buffer, size_t size) {
   }
 #endif
 
-  if (knitter->setNextLine(lineNumber)) {
+  if (GlobalKnitter::setNextLine(lineNumber)) {
     // Line was accepted
     bool flagLastLine = bitRead(flags, 0U);
     if (flagLastLine) {
-      knitter->setLastLine();
+      GlobalKnitter::setLastLine();
     }
   }
 }
 
-void SerialEncoding::h_reqInfo() {
+void Com::h_reqInfo() {
   uint8_t payload[4];
   payload[0] = cnfInfo_msgid;
   payload[1] = API_VERSION;
@@ -177,15 +230,15 @@ void SerialEncoding::h_reqInfo() {
  *
  * \todo TP: Assert size? Handle error?
  */
-void SerialEncoding::h_reqTest(const uint8_t *buffer, size_t size) {
-  if (size < 1U) {
+void Com::h_reqTest(const uint8_t *buffer, size_t size) {
+  if (size < 2U) {
     // message is too short
     // TODO(TP): handle error?
     return;
   }
 
   Machine_t machineType = static_cast<Machine_t>(buffer[0]);
-  bool success = knitter->startTest(machineType);
+  bool success = GlobalKnitter::startTest(machineType);
 
   uint8_t payload[2];
   payload[0] = cnfTest_msgid;
@@ -193,72 +246,8 @@ void SerialEncoding::h_reqTest(const uint8_t *buffer, size_t size) {
   send(payload, 2);
 }
 
-static void h_unrecognized() {
+// GCOVR_EXCL_START
+void Com::h_unrecognized() {
   // do nothing
 }
-
-/*!
- * \brief Callback for PacketSerial.
- */
-void SerialEncoding::onPacketReceived(const uint8_t *buffer, size_t size) {
-  switch (buffer[0]) {
-  case reqStart_msgid:
-    h_reqStart(buffer, size);
-    break;
-
-  case cnfLine_msgid:
-    h_cnfLine(buffer, size);
-    break;
-
-  case reqInfo_msgid:
-    h_reqInfo();
-    break;
-
-  case reqTest_msgid:
-    h_reqTest(buffer, size);
-    break;
-
-  default:
-    h_unrecognized();
-    break;
-  }
-}
-
-SerialEncoding::SerialEncoding() {
-  m_packetSerial.begin(SERIAL_BAUDRATE);
-#ifndef AYAB_TESTS
-  m_packetSerial.setPacketHandler(gOnPacketReceived);
-#endif // AYAB_TESTS
-}
-
-void SerialEncoding::update() {
-  m_packetSerial.update();
-}
-
-void SerialEncoding::send(uint8_t *payload, size_t length) {
-  // TODO(TP): insert a workaround for hardware test code
-  /*
-  #ifdef AYAB_HW_TEST
-    Serial.print("Sent: ");
-    for (uint8_t i = 0; i < length; ++i) {
-      Serial.print(payload[i]);
-    }
-    Serial.print(", Encoded as: ");
-  #endif
-  */
-  m_packetSerial.send(payload, length);
-}
-
-// send initial msgid followed by null-terminated string
-void SerialEncoding::sendMsg(AYAB_API_t id, const char *msg) {
-  uint8_t length = 0;
-  msgBuffer[length++] = static_cast<uint8_t>(id);
-  while (*msg) {
-    msgBuffer[length++] = static_cast<uint8_t>(*msg++);
-  }
-  m_packetSerial.send(msgBuffer, length);
-}
-
-void SerialEncoding::sendMsg(AYAB_API_t id, char *msg) {
-  sendMsg(id, static_cast<const char *>(msg));
-}
+// GCOVR_EXCL_STOP

@@ -36,19 +36,46 @@ constexpr uint8_t BEEP_ON_DUTY = 0U;
 constexpr uint8_t BEEP_OFF_DUTY = 20U;
 constexpr uint8_t BEEP_NO_DUTY = 255U;
 
-/*!
- *  Class to actuate a beeper connected to PIEZO_PIN
- */
-class Beeper {
+class BeeperInterface {
 public:
-  Beeper() = default;
+  virtual ~BeeperInterface(){};
+
+  // any methods that need to be mocked should go here
+  virtual void ready() = 0;
+  virtual void finishedLine() = 0;
+  virtual void endWork() = 0;
+};
+
+// Container class for the static methods that implement the serial API.
+// Dependency injection is enabled using a pointer to a global instance of
+// either `Beeper` or `BeeperMock`, both of which classes implement the
+// pure virtual methods of `BeeperInterface`.
+
+class GlobalBeeper final {
+private:
+  // singleton class so private constructor is appropriate
+  GlobalBeeper() = default;
+
+public:
+  // pointer to global instance whose methods are implemented
+  static BeeperInterface *m_instance;
 
   static void ready();
   static void finishedLine();
   static void endWork();
-
-private:
-  static void beep(uint8_t length);
 };
 
-#endif  // BEEPER_H_
+/*!
+ *  Class to actuate a beeper connected to PIEZO_PIN
+ */
+class Beeper : public BeeperInterface {
+public:
+  void ready();
+  void finishedLine();
+  void endWork();
+
+private:
+  void beep(uint8_t length);
+};
+
+#endif // BEEPER_H_

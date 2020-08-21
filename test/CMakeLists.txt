@@ -38,25 +38,28 @@ set(EXTERNAL_LIB_INCLUDES
     ${LIBRARY_DIRECTORY}/SoftI2CMaster
     )
 set(COMMON_SOURCES
-    ${PROJECT_SOURCE_DIR}/test_all.cpp
+    ${PROJECT_SOURCE_DIR}/test_boards.cpp
 
     ${SOURCE_DIRECTORY}/encoders.cpp
     ${PROJECT_SOURCE_DIR}/test_encoders.cpp
 
-    ${SOURCE_DIRECTORY}/beeper.cpp
-    ${PROJECT_SOURCE_DIR}/test_beeper.cpp
-
     ${SOURCE_DIRECTORY}/solenoids.cpp
     ${PROJECT_SOURCE_DIR}/test_solenoids.cpp
 
-    ${SOURCE_DIRECTORY}/serial_encoding.cpp
-    ${PROJECT_SOURCE_DIR}/test_serial_encoding.cpp
+    ${SOURCE_DIRECTORY}/beeper.cpp
+    ${SOURCE_DIRECTORY}/global_beeper.cpp
+    ${PROJECT_SOURCE_DIR}/test_beeper.cpp
 
-    ${SOURCE_DIRECTORY}/hw_test.cpp
-    ${SOURCE_DIRECTORY}/global_hw_test.cpp
-    ${PROJECT_SOURCE_DIR}/test_hw_test.cpp
+    ${SOURCE_DIRECTORY}/com.cpp
+    ${SOURCE_DIRECTORY}/global_com.cpp
+    ${PROJECT_SOURCE_DIR}/test_com.cpp
+
+    ${SOURCE_DIRECTORY}/tester.cpp
+    ${SOURCE_DIRECTORY}/global_tester.cpp
+    ${PROJECT_SOURCE_DIR}/test_tester.cpp
     #${PROJECT_SOURCE_DIR}/mocks/SerialCommand_mock.cpp
 
+    ${SOURCE_DIRECTORY}/global_knitter.cpp
     ${PROJECT_SOURCE_DIR}/mocks/knitter_mock.cpp
     )
 set(COMMON_DEFINES
@@ -70,11 +73,6 @@ set(COMMON_FLAGS
     -Wno-vla
     -Werror
     --coverage
-    
-    # exclude global_hw_test.cpp from profile analysis
-    # to avoid tedious testing of these simple functions
-    -fprofile-exclude-files=global_hw_test.cpp
-    
     -g -Og
     )
 set(COMMON_LINKER_FLAGS
@@ -139,12 +137,15 @@ add_board(Mega)
 add_executable(${PROJECT_NAME}_knitter
     ${PROJECT_SOURCE_DIR}/test_all.cpp
     ${SOURCE_DIRECTORY}/knitter.cpp
-    ${SOURCE_DIRECTORY}/global_hw_test.cpp  # not mockable
+    ${SOURCE_DIRECTORY}/global_knitter.cpp
+    ${SOURCE_DIRECTORY}/global_com.cpp
+    ${SOURCE_DIRECTORY}/global_beeper.cpp
+    ${SOURCE_DIRECTORY}/global_tester.cpp
     ${PROJECT_SOURCE_DIR}/mocks/solenoids_mock.cpp
     ${PROJECT_SOURCE_DIR}/mocks/encoders_mock.cpp
     ${PROJECT_SOURCE_DIR}/mocks/beeper_mock.cpp
-    ${PROJECT_SOURCE_DIR}/mocks/serial_encoding_mock.cpp
-    ${PROJECT_SOURCE_DIR}/mocks/hw_test_mock.cpp
+    ${PROJECT_SOURCE_DIR}/mocks/com_mock.cpp
+    ${PROJECT_SOURCE_DIR}/mocks/tester_mock.cpp
     ${PROJECT_SOURCE_DIR}/test_knitter.cpp
     #${LIBRARY_DIRECTORY}/SerialCommand/SerialCommand.cpp
     ${SOFT_I2C_LIB}

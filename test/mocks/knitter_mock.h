@@ -27,26 +27,23 @@
 #include <gmock/gmock.h>
 #include <knitter.h>
 
-class KnitterMock {
+class KnitterMock : public KnitterInterface {
 public:
+  MOCK_METHOD0(init, void());
+  MOCK_METHOD0(fsm, void());
+  MOCK_METHOD0(isr, void());
+  MOCK_METHOD0(setUpInterrupt, void());
   MOCK_METHOD5(startOperation, bool(Machine_t machineType, uint8_t startNeedle,
                                     uint8_t stopNeedle, uint8_t *pattern_start,
                                     bool continuousReportingEnabled));
   MOCK_METHOD1(startTest, bool(Machine_t));
   MOCK_METHOD1(setNextLine, bool(uint8_t lineNumber));
   MOCK_METHOD0(setLastLine, void());
-  MOCK_METHOD2(send, void(uint8_t *payload, size_t length));
-  MOCK_METHOD2(sendMsg, void(AYAB_API_t id, const char *msg));
-  MOCK_METHOD2(sendMsg, void(AYAB_API_t id, char *msg));
-  MOCK_METHOD2(onPacketReceived, void(const uint8_t *buffer, size_t size));
-  MOCK_CONST_METHOD0(getMachineType, Machine_t());
+  MOCK_METHOD0(getMachineType, Machine_t());
+  MOCK_METHOD1(setSolenoids, void(uint16_t));
   MOCK_METHOD1(setMachineType, void(Machine_t));
-  MOCK_CONST_METHOD1(getStartOffset, uint8_t(const Direction_t direction));
+  MOCK_METHOD1(getStartOffset, uint8_t(const Direction_t direction));
   MOCK_METHOD1(setState, void(OpState_t));
-  MOCK_METHOD1(setSolenoids, void(uint16_t state));
-  MOCK_METHOD2(setSolenoid, void(uint8_t solenoid, uint8_t state));
-  MOCK_METHOD1(setQuitFlag, void(bool flag));
-  MOCK_METHOD0(setUpInterrupt, void());
 };
 
 KnitterMock *knitterMockInstance();

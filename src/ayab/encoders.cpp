@@ -1,5 +1,6 @@
 /*!
  * \file encoders.cpp
+ * \brief Class containing method governing encoders.
  *
  * This file is part of AYAB.
  *
@@ -30,7 +31,7 @@
  * \brief Service encoder A interrupt routine.
  *
  * Determines edge of signal and dispatches to private rising/falling functions.
- * m_machineType assumed valid.
+ * `m_machineType` assumed valid.
  */
 void Encoders::encA_interrupt() {
   m_hallActive = NoDirection;
@@ -115,7 +116,7 @@ uint16_t Encoders::getHallValue(Direction_t pSensor) {
  *
  * Called when encoder pin A is rising.
  * Must execute as fast as possible.
- * Bounds on m_machineType not checked.
+ * Bounds on `m_machineType` not checked.
  */
 void Encoders::encA_rising() {
   // Direction only decided on rising edge of encoder A
@@ -157,7 +158,7 @@ void Encoders::encA_rising() {
  *
  * Called when encoder pin A is falling.
  * Must execute as fast as possible.
- * Bounds on m_machineType not checked.
+ * Bounds on `m_machineType` not checked.
  */
 void Encoders::encA_falling() {
   // Update carriage position

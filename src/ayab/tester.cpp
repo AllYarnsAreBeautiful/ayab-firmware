@@ -1,5 +1,7 @@
 /*!
- * \file hw_test.cpp
+ * \file tester.cpp
+ * \brief Singleton class containing methods for hardware testing.
+ *
  * This file is part of AYAB.
  *
  *    AYAB is free software: you can redistribute it and/or modify
@@ -22,52 +24,54 @@
 
 #include <Arduino.h>
 
-#include "global_hw_test.h"
+#include "beeper.h"
+#include "com.h"
 #include "knitter.h"
+#include "tester.h"
 
-// public interface
+// public methods
 
 /*!
  * \brief Help command handler.
  */
-void HardwareTest::helpCmd() {
-  knitter->sendMsg(test_msgid, "The following commands are available:\n");
-  knitter->sendMsg(test_msgid, "setSingle [0..15] [1/0]\n");
-  knitter->sendMsg(test_msgid, "setAll [0..FFFF]\n");
-  knitter->sendMsg(test_msgid, "readEOLsensors\n");
-  knitter->sendMsg(test_msgid, "readEncoders\n");
-  knitter->sendMsg(test_msgid, "beep\n");
-  knitter->sendMsg(test_msgid, "autoRead\n");
-  knitter->sendMsg(test_msgid, "autoTest\n");
-  knitter->sendMsg(test_msgid, "send\n");
-  knitter->sendMsg(test_msgid, "stop\n");
-  knitter->sendMsg(test_msgid, "quit\n");
-  knitter->sendMsg(test_msgid, "help\n");
+void Tester::helpCmd() {
+  GlobalCom::sendMsg(test_msgid, "The following commands are available:\n");
+  GlobalCom::sendMsg(test_msgid, "setSingle [0..15] [1/0]\n");
+  GlobalCom::sendMsg(test_msgid, "setAll [0..FFFF]\n");
+  GlobalCom::sendMsg(test_msgid, "readEOLsensors\n");
+  GlobalCom::sendMsg(test_msgid, "readEncoders\n");
+  GlobalCom::sendMsg(test_msgid, "beep\n");
+  GlobalCom::sendMsg(test_msgid, "autoRead\n");
+  GlobalCom::sendMsg(test_msgid, "autoTest\n");
+  GlobalCom::sendMsg(test_msgid, "send\n");
+  GlobalCom::sendMsg(test_msgid, "stop\n");
+  GlobalCom::sendMsg(test_msgid, "quit\n");
+  GlobalCom::sendMsg(test_msgid, "help\n");
 }
 
 /*!
  * \brief Send command handler.
  */
-void HardwareTest::sendCmd() {
-  knitter->sendMsg(test_msgid, "Called send\n");
+void Tester::sendCmd() {
+  GlobalCom::sendMsg(test_msgid, "Called send\n");
   uint8_t p[] = {1, 2, 3};
-  knitter->send(p, 3);
-  knitter->sendMsg(test_msgid, "\n");
+  GlobalCom::send(p, 3);
+  GlobalCom::sendMsg(test_msgid, "\n");
 }
 
 /*!
  * \brief Beep command handler.
  */
-void HardwareTest::beepCmd() {
-  knitter->sendMsg(test_msgid, "Called beep\n");
+void Tester::beepCmd() {
+  GlobalCom::sendMsg(test_msgid, "Called beep\n");
   beep();
 }
 
 /*!
  * \brief Set single solenoid command handler.
  */
-void HardwareTest::setSingleCmd() {
-  knitter->sendMsg(test_msgid, "Called setSingle\n");
+void Tester::setSingleCmd() {
+  GlobalCom::sendMsg(test_msgid, "Called setSingle\n");
   /*
   char *arg = m_sCmd.next();
   if (arg == nullptr) {
@@ -76,7 +80,7 @@ void HardwareTest::setSingleCmd() {
   int solenoidNumber = atoi(arg);
   if (solenoidNumber < 0 or solenoidNumber > 15) {
     sprintf(buf, "Invalid argument: %i\n", solenoidNumber);
-    knitter->sendMsg(test_msgid, buf);
+    GlobalCom::sendMsg(test_msgid, buf);
     return;
   }
   arg = m_sCmd.next();
@@ -86,10 +90,10 @@ void HardwareTest::setSingleCmd() {
   int solenoidState = atoi(arg);
   if (solenoidState < 0 or solenoidState > 1) {
     sprintf(buf, "Invalid argument: %i\n", solenoidState);
-    knitter->sendMsg(test_msgid, buf);
+    GlobalCom::sendMsg(test_msgid, buf);
     return;
   }
-  knitter->setSolenoid(static_cast<uint8_t>(solenoidNumber),
+  GlobalKnitter::setSolenoid(static_cast<uint8_t>(solenoidNumber),
                        static_cast<uint8_t>(solenoidState));
   */
 }
@@ -97,8 +101,8 @@ void HardwareTest::setSingleCmd() {
 /*!
  * \brief Set all solenoids command handler.
  */
-void HardwareTest::setAllCmd() {
-  knitter->sendMsg(test_msgid, "Called setAll\n");
+void Tester::setAllCmd() {
+  GlobalCom::sendMsg(test_msgid, "Called setAll\n");
   /*
   char *arg = m_sCmd.next();
   if (arg == nullptr) {
@@ -107,10 +111,10 @@ void HardwareTest::setAllCmd() {
   short unsigned int solenoidState;
   // if (scanHex(arg, 4, &solenoidState)) {
   if (sscanf(arg, "%hx", &solenoidState)) {
-    knitter->setSolenoids(solenoidState);
+    GlobalKnitter::setSolenoids(solenoidState);
   } else {
-    knitter->sendMsg(test_msgid, "Invalid argument. Please enter a hexadecimal "
-                                 "number between 0 and FFFF.\n");
+    GlobalCom::sendMsg(test_msgid, "Invalid argument. Please enter a hexadecimal
+  " "number between 0 and FFFF.\n");
   }
   */
 }
@@ -118,41 +122,41 @@ void HardwareTest::setAllCmd() {
 /*!  // GCOVR_EXCL_LINE
  * \brief Read EOL sensors command handler.
  */
-void HardwareTest::readEOLsensorsCmd() {
-  knitter->sendMsg(test_msgid, "Called readEOLsensors\n");
+void Tester::readEOLsensorsCmd() {
+  GlobalCom::sendMsg(test_msgid, "Called readEOLsensors\n");
   readEOLsensors();
-  knitter->sendMsg(test_msgid, "\n");
+  GlobalCom::sendMsg(test_msgid, "\n");
 }
 
 /*!  // GCOVR_EXCL_START
  * \brief Read encoders command handler.
  */  // GCOVR_EXCL_STOP
-void HardwareTest::readEncodersCmd() {
-  knitter->sendMsg(test_msgid, "Called readEncoders\n");
+void Tester::readEncodersCmd() {
+  GlobalCom::sendMsg(test_msgid, "Called readEncoders\n");
   readEncoders();
-  knitter->sendMsg(test_msgid, "\n");
+  GlobalCom::sendMsg(test_msgid, "\n");
 }
 
 /*!  // GCOVR_EXCL_START
  * \brief Auto read command handler.
  */  // GCOVR_EXCL_STOP
-void HardwareTest::autoReadCmd() {
-  knitter->sendMsg(test_msgid, "Called autoRead, send stop to quit\n");
+void Tester::autoReadCmd() {
+  GlobalCom::sendMsg(test_msgid, "Called autoRead, send stop to quit\n");
   m_autoReadOn = true;
 }
 
 /*!  // GCOVR_EXCL_START
  * \brief Auto test command handler.
  */  // GCOVR_EXCL_STOP
-void HardwareTest::autoTestCmd() {
-  knitter->sendMsg(test_msgid, "Called autoTest, send stop to quit\n");
+void Tester::autoTestCmd() {
+  GlobalCom::sendMsg(test_msgid, "Called autoTest, send stop to quit\n");
   m_autoTestOn = true;
 }
 
 /*!  // GCOVR_EXCL_START
  * \brief Stop command handler.
  */  // GCOVR_EXCL_STOP
-void HardwareTest::stopCmd() {
+void Tester::stopCmd() {
   m_autoReadOn = false;
   m_autoTestOn = false;
 }
@@ -160,9 +164,9 @@ void HardwareTest::stopCmd() {
 /*!  // GCOVR_EXCL_START
  * \brief Quit command handler.
  */  // GCOVR_EXCL_STOP
-void HardwareTest::quitCmd() {
-  knitter->setQuitFlag(true);
-  knitter->setUpInterrupt();
+void Tester::quitCmd() {
+  m_quit = true;
+  GlobalKnitter::setUpInterrupt();
 }
 
 /*!  // GCOVR_EXCL_START
@@ -173,8 +177,8 @@ void HardwareTest::quitCmd() {
  * This gets set as the default handler, and gets called when no other command
  * matches.
  */  // GCOVR_EXCL_STOP
-void HardwareTest::unrecognizedCmd(const char *buffer) {
-  knitter->sendMsg(test_msgid, "Unrecognized command\n");
+void Tester::unrecognizedCmd(const char *buffer) {
+  GlobalCom::sendMsg(test_msgid, "Unrecognized command\n");
   (void)(buffer); // does nothing but prevents 'unused variable' compile error
   helpCmd();
 }
@@ -182,50 +186,50 @@ void HardwareTest::unrecognizedCmd(const char *buffer) {
 /*!  // GCOVR_EXCL_START
  * \brief Setup for hardware tests.
  */  // GCOVR_EXCL_STOP
-void HardwareTest::setUp() {
+void Tester::setUp() {
   // set up callbacks for SerialCommand commands
   /*
-  m_sCmd.addCommand("%setSingle", GlobalHardwareTest::setSingleCmd);
-  m_sCmd.addCommand("%setAll", GlobalHardwareTest::setAllCmd);
-  m_sCmd.addCommand("%readEOLsensors", GlobalHardwareTest::readEOLsensorsCmd);
-  m_sCmd.addCommand("%readEncoders", GlobalHardwareTest::readEncodersCmd);
-  m_sCmd.addCommand("%beep", GlobalHardwareTest::beepCmd);
-  m_sCmd.addCommand("%autoRead", GlobalHardwareTest::autoReadCmd);
-  m_sCmd.addCommand("%autoTest", GlobalHardwareTest::autoTestCmd);
-  m_sCmd.addCommand("%send", GlobalHardwareTest::sendCmd);
-  m_sCmd.addCommand("%stop", GlobalHardwareTest::stopCmd);
-  m_sCmd.addCommand("%quit", GlobalHardwareTest::quitCmd);
-  m_sCmd.addCommand("%help", GlobalHardwareTest::helpCmd);
-  m_sCmd.setDefaultHandler(GlobalHardwareTest::unrecognizedCmd);
+  m_sCmd.addCommand("%setSingle", GlobalTester::setSingleCmd);
+  m_sCmd.addCommand("%setAll", GlobalTester::setAllCmd);
+  m_sCmd.addCommand("%readEOLsensors", GlobalTester::readEOLsensorsCmd);
+  m_sCmd.addCommand("%readEncoders", GlobalTester::readEncodersCmd);
+  m_sCmd.addCommand("%beep", GlobalTester::beepCmd);
+  m_sCmd.addCommand("%autoRead", GlobalTester::autoReadCmd);
+  m_sCmd.addCommand("%autoTest", GlobalTester::autoTestCmd);
+  m_sCmd.addCommand("%send", GlobalTester::sendCmd);
+  m_sCmd.addCommand("%stop", GlobalTester::stopCmd);
+  m_sCmd.addCommand("%quit", GlobalTester::quitCmd);
+  m_sCmd.addCommand("%help", GlobalTester::helpCmd);
+  m_sCmd.setDefaultHandler(GlobalTester::unrecognizedCmd);
   */
 
   // Print welcome message
-  knitter->sendMsg(test_msgid, "AYAB Hardware Test, ");
+  GlobalCom::sendMsg(test_msgid, "AYAB Hardware Test, ");
   sprintf(buf, "Firmware v%hhu", FW_VERSION_MAJ);
-  knitter->sendMsg(test_msgid, buf);
+  GlobalCom::sendMsg(test_msgid, buf);
   sprintf(buf, ".%hhu", FW_VERSION_MIN);
-  knitter->sendMsg(test_msgid, buf);
+  GlobalCom::sendMsg(test_msgid, buf);
   sprintf(buf, " API v%hhu\n\n", API_VERSION);
-  knitter->sendMsg(test_msgid, buf);
+  GlobalCom::sendMsg(test_msgid, buf);
   helpCmd();
 
   // attach interrupt for ENC_PIN_A(=2), interrupt #0
   detachInterrupt(0);
 #ifndef AYAB_TESTS
-  attachInterrupt(0, GlobalHardwareTest::encoderAChange, RISING);
+  attachInterrupt(0, GlobalTester::encoderAChange, RISING);
 #endif // AYAB_TESTS  // GCOVR_EXCL_LINE
 
-  m_lastTime = millis();
+  m_quit = false;
   m_autoReadOn = false;
   m_autoTestOn = false;
+  m_lastTime = millis();
   m_timerEventOdd = false;
-  knitter->setQuitFlag(false);
 }
 
 /*!  // GCOVR_EXCL_START
  * \brief Main loop for hardware tests.
  */  // GCOVR_EXCL_STOP
-void HardwareTest::loop() {
+void Tester::loop() {
   unsigned long now = millis();
   if (now - m_lastTime >= 500) {
     m_lastTime = now;
@@ -233,67 +237,71 @@ void HardwareTest::loop() {
   }
 }
 
-// Private member functions
-
-void HardwareTest::beep() {
-  knitter->m_beeper.ready();
-}
-
-void HardwareTest::readEncoders() {
-  knitter->sendMsg(test_msgid, "  ENC_A: ");
-  bool state = digitalRead(ENC_PIN_A);
-  knitter->sendMsg(test_msgid, state ? "HIGH" : "LOW");
-  knitter->sendMsg(test_msgid, "  ENC_B: ");
-  state = digitalRead(ENC_PIN_B);
-  knitter->sendMsg(test_msgid, state ? "HIGH" : "LOW");
-  knitter->sendMsg(test_msgid, "  ENC_C: ");
-  state = digitalRead(ENC_PIN_C);
-  knitter->sendMsg(test_msgid, state ? "HIGH" : "LOW");
-}
-
-void HardwareTest::readEOLsensors() { // GCOVR_EXCL_LINE (?)
-  uint16_t hallSensor = static_cast<uint16_t>(analogRead(EOL_PIN_L));
-  sprintf(buf, "  EOL_L: %hu", hallSensor);
-  knitter->sendMsg(test_msgid, buf);
-  hallSensor = static_cast<uint16_t>(analogRead(EOL_PIN_R));
-  sprintf(buf, "  EOL_R: %hu", hallSensor);
-  knitter->sendMsg(test_msgid, buf);
-}
-
-void HardwareTest::autoRead() {
-  knitter->sendMsg(test_msgid, "\n");
-  readEOLsensors();
-  readEncoders();
-  knitter->sendMsg(test_msgid, "\n");
-}
-
-void HardwareTest::autoTestEven() {
-  knitter->sendMsg(test_msgid, "Set even solenoids\n");
-  digitalWrite(LED_PIN_A, HIGH);
-  digitalWrite(LED_PIN_B, HIGH);
-  knitter->setSolenoids(0xAAAA);
-}
-
-void HardwareTest::autoTestOdd() {
-  knitter->sendMsg(test_msgid, "Set odd solenoids\n");
-  digitalWrite(LED_PIN_A, LOW);
-  digitalWrite(LED_PIN_B, LOW);
-  knitter->setSolenoids(0x5555);
-}
-
+#ifndef AYAB_TESTS
 /*!
  * \brief Interrupt service routine for encoder A.
  */
-#ifndef AYAB_TESTS
-void HardwareTest::encoderAChange() {
+void Tester::encoderAChange() {
   beep();
 }
 #endif // AYAB_TESTS
 
+bool Tester::getQuitFlag() {
+  return m_quit;
+}
+
+// Private member functions
+
+void Tester::beep() {
+  GlobalBeeper::ready();
+}
+
+void Tester::readEncoders() {
+  GlobalCom::sendMsg(test_msgid, "  ENC_A: ");
+  bool state = digitalRead(ENC_PIN_A);
+  GlobalCom::sendMsg(test_msgid, state ? "HIGH" : "LOW");
+  GlobalCom::sendMsg(test_msgid, "  ENC_B: ");
+  state = digitalRead(ENC_PIN_B);
+  GlobalCom::sendMsg(test_msgid, state ? "HIGH" : "LOW");
+  GlobalCom::sendMsg(test_msgid, "  ENC_C: ");
+  state = digitalRead(ENC_PIN_C);
+  GlobalCom::sendMsg(test_msgid, state ? "HIGH" : "LOW");
+}
+
+void Tester::readEOLsensors() { // GCOVR_EXCL_LINE (?)
+  uint16_t hallSensor = static_cast<uint16_t>(analogRead(EOL_PIN_L));
+  sprintf(buf, "  EOL_L: %hu", hallSensor);
+  GlobalCom::sendMsg(test_msgid, buf);
+  hallSensor = static_cast<uint16_t>(analogRead(EOL_PIN_R));
+  sprintf(buf, "  EOL_R: %hu", hallSensor);
+  GlobalCom::sendMsg(test_msgid, buf);
+}
+
+void Tester::autoRead() {
+  GlobalCom::sendMsg(test_msgid, "\n");
+  readEOLsensors();
+  readEncoders();
+  GlobalCom::sendMsg(test_msgid, "\n");
+}
+
+void Tester::autoTestEven() {
+  GlobalCom::sendMsg(test_msgid, "Set even solenoids\n");
+  digitalWrite(LED_PIN_A, HIGH);
+  digitalWrite(LED_PIN_B, HIGH);
+  GlobalKnitter::setSolenoids(0xAAAA);
+}
+
+void Tester::autoTestOdd() {
+  GlobalCom::sendMsg(test_msgid, "Set odd solenoids\n");
+  digitalWrite(LED_PIN_A, LOW);
+  digitalWrite(LED_PIN_B, LOW);
+  GlobalKnitter::setSolenoids(0x5555);
+}
+
 /*!
  * \brief Timer event every 500ms to handle auto functions.
  */
-void HardwareTest::handleTimerEvent() {
+void Tester::handleTimerEvent() {
   if (m_autoReadOn and m_timerEventOdd) {
     autoRead();
   }
@@ -313,7 +321,7 @@ void HardwareTest::handleTimerEvent() {
 /*
 // homebrew `sscanf(str, "%hx", &result);`
 // does not trim white space
-bool HardwareTest::scanHex(char *str, uint8_t maxDigits, uint16_t *result) {
+bool Tester::scanHex(char *str, uint8_t maxDigits, uint16_t *result) {
   if (maxDigits == 0 or *str == 0) {
     return false;
   }

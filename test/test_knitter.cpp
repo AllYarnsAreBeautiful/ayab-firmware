@@ -23,14 +23,15 @@
 
 #include <gtest/gtest.h>
 
-#include <beeper_mock.h>
 #include <board.h>
-#include <encoders_mock.h>
-#include <global_hw_test.h>
-#include <hw_test_mock.h>
 #include <knitter.h>
-#include <serial_encoding_mock.h>
+#include <tester.h>
+
+#include <beeper_mock.h>
+#include <com_mock.h>
+#include <encoders_mock.h>
 #include <solenoids_mock.h>
+#include <tester_mock.h>
 
 using ::testing::_;
 using ::testing::AtLeast;
@@ -38,62 +39,48 @@ using ::testing::Mock;
 using ::testing::Return;
 using ::testing::TypedEq;
 
-// Global definition.
-// References everywhere else must use `extern`
-Knitter *knitter;
-
-// GlobalHardwareTest has static methods which cannot be mocked directly.
-// These static methods delegate to non-static methods of a global instance
-// implementing the HardwareTestInterface class (i.e. either HardwareTest or
-// HardwareTestMock). Here we initialize the member of GlobalHardwareTest
-// that points to this instance. This is a form of dependency injection.
-HardwareTestInterface *GlobalHardwareTest::m_instance = new HardwareTestMock();
-
-void onPacketReceived(const uint8_t *buffer, size_t size) {
-  (void)buffer;
-  (void)size;
-}
+extern Knitter *knitter;
+extern BeeperMock *beeper;
+extern ComMock *com;
+extern TesterMock *tester;
 
 class KnitterTest : public ::testing::Test {
 protected:
   void SetUp() override {
     arduinoMock = arduinoMockInstance();
-    beeperMock = beeperMockInstance();
     solenoidsMock = solenoidsMockInstance();
     encodersMock = encodersMockInstance();
-    serialEncodingMock = serialEncodingMockInstance();
 
-    // Pointer to global HardwareTestMock instance
-    hwTestMock =
-        static_cast<HardwareTestMock *>(GlobalHardwareTest::m_instance);
+    // pointers to global instances
+    beeperMock = beeper;
+    comMock = com;
+    testerMock = tester;
 
-    // The global instance does not get destroyed at the end of each test.
-    // Ordinarily the mock instance would be local and such behaviour would
+    // The global instances do not get destroyed at the end of each test.
+    // Ordinarily the mock instances would be local and such behaviour would
     // cause a memory leak. We must notify the test that this is not the case.
-    Mock::AllowLeak(hwTestMock);
+    Mock::AllowLeak(beeperMock);
+    Mock::AllowLeak(comMock);
+    Mock::AllowLeak(testerMock);
 
-    expect_constructor();
-    k = new Knitter();
+    expect_init();
+    knitter->init();
   }
 
   void TearDown() override {
     releaseArduinoMock();
-    releaseBeeperMock();
     releaseSolenoidsMock();
     releaseEncodersMock();
-    releaseSerialEncodingMock();
-    releaseHardwareTestMock();
   }
 
   ArduinoMock *arduinoMock;
   BeeperMock *beeperMock;
-  SolenoidsMock *solenoidsMock;
+  ComMock *comMock;
   EncodersMock *encodersMock;
-  SerialEncodingMock *serialEncodingMock;
-  HardwareTestMock *hwTestMock; // pointer to global instance
-  Knitter *&k = knitter;        // alias of global `knitter`
+  SolenoidsMock *solenoidsMock;
+  TesterMock *testerMock;
 
-  void expect_constructor() {
+  void expect_init() {
     EXPECT_CALL(*arduinoMock, pinMode(ENC_PIN_A, INPUT));
     EXPECT_CALL(*arduinoMock, pinMode(ENC_PIN_B, INPUT));
     EXPECT_CALL(*arduinoMock, pinMode(ENC_PIN_C, INPUT));
@@ -120,7 +107,7 @@ protected:
   void expected_isr(uint16_t pos, Direction_t dir, Direction_t hall,
                     Beltshift_t belt, Carriage_t carriage) {
     expect_isr(pos, dir, hall, belt, carriage);
-    k->isr();
+    knitter->isr();
   }
 
   void expect_isr(Direction_t dir, Direction_t hall) {
@@ -129,7 +116,7 @@ protected:
 
   void expected_isr(Direction_t dir, Direction_t hall) {
     expect_isr(dir, hall);
-    k->isr();
+    knitter->isr();
   }
 
   void expect_isr(uint16_t pos) {
@@ -138,7 +125,7 @@ protected:
 
   void expected_isr(uint16_t pos) {
     expect_isr(pos);
-    k->isr();
+    knitter->isr();
   }
 
   void expected_isr() {
@@ -146,7 +133,7 @@ protected:
   }
 
   template <int times = 1> void expect_send() {
-    EXPECT_CALL(*serialEncodingMock, send).Times(times);
+    EXPECT_CALL(*comMock, send).Times(times);
   }
 
   template <int times = 1> void expect_indState() {
@@ -157,18 +144,18 @@ protected:
   }
 
   void expect_fsm() {
-    EXPECT_CALL(*serialEncodingMock, update);
+    EXPECT_CALL(*comMock, update);
   }
 
   void expected_fsm() {
     expect_fsm();
-    k->fsm();
+    knitter->fsm();
   }
 
   void get_to_ready() {
     // machine is initialized when left hall sensor
     // is passed in Right direction inside active needles
-    Machine_t m = k->getMachineType();
+    Machine_t m = knitter->getMachineType();
     expected_isr(40 + END_OF_LINE_OFFSET_L[m] + 1);
 
     // initialize
@@ -182,7 +169,7 @@ protected:
     uint8_t pattern[] = {1};
     EXPECT_CALL(*beeperMock, ready);
     EXPECT_CALL(*encodersMock, init);
-    k->startOperation(m, 0, NUM_NEEDLES[m] - 1, pattern, false);
+    knitter->startOperation(m, 0, NUM_NEEDLES[m] - 1, pattern, false);
   }
 
   void expected_operate(bool first) {
@@ -198,16 +185,18 @@ protected:
 
   void expected_test() {
     expect_indState();
-    EXPECT_CALL(*hwTestMock, loop);
+    EXPECT_CALL(*testerMock, loop);
     expected_fsm();
-    ASSERT_TRUE(Mock::VerifyAndClear(hwTestMock));
+
+    // test expectations without destroying instance
+    ASSERT_TRUE(Mock::VerifyAndClear(testerMock));
   }
 
   void expected_set_machine(Machine_t machineType) {
-    k->setMachineType(machineType);
+    knitter->setMachineType(machineType);
     EXPECT_CALL(*encodersMock, init);
     encodersMock->init(machineType);
-    ASSERT_EQ(k->startTest(machineType), true);
+    ASSERT_EQ(knitter->startTest(machineType), true);
   }
 
   void test_operate_line_request() {
@@ -217,7 +206,7 @@ protected:
 
     // Position has changed since last call to operate function
     // `m_pixelToSet` is set above `m_stopNeedle` + END_OF_LINE_OFFSET_R
-    Machine_t m = k->getMachineType(); // Kh910
+    Machine_t m = knitter->getMachineType(); // Kh910
     expected_isr(NUM_NEEDLES[m] + 8 + END_OF_LINE_OFFSET_R[m] + 1);
 
     EXPECT_CALL(*solenoidsMock, setSolenoid);
@@ -229,195 +218,184 @@ protected:
   }
 };
 
-/*!
- * \test
- */
-TEST_F(KnitterTest, test_constructor) {
-  ASSERT_EQ(k->getState(), s_init);
-  // NOTE: probing private data!
-  ASSERT_EQ(k->m_startNeedle, 0);
+TEST_F(KnitterTest, test_init) {
+  ASSERT_EQ(knitter->getState(), s_init);
+  ASSERT_EQ(knitter->m_startNeedle, 0);
 }
 
-/*!
- * \test
- *
- * \todo sl: Maybe mock packet serial?
- */
 TEST_F(KnitterTest, test_send) {
   uint8_t p[] = {1, 2, 3, 4, 5};
   expect_send();
-  k->send(p, 5);
+  comMock->send(p, 5);
 }
 
-/*!
- * \test
- */
 TEST_F(KnitterTest, test_isr) {
   expected_isr(1);
 }
 
-/*!
- * \test
- */
+TEST_F(KnitterTest, test_setSolenoids) {
+  EXPECT_CALL(*solenoidsMock, setSolenoids);
+  knitter->setSolenoids(0xFADE);
+}
+
 TEST_F(KnitterTest, test_fsm_default_case) {
-  k->setState(static_cast<OpState_t>(4));
+  knitter->setState(static_cast<OpState_t>(4));
   expected_fsm();
 }
 
-/*!
- * \test
- */
-TEST_F(KnitterTest, test_fsm_init) {
+TEST_F(KnitterTest, test_fsm_init_LL) {
   // not ready
   expected_isr(Left, Left);
   expected_fsm();
-  ASSERT_EQ(k->getState(), s_init);
+  ASSERT_EQ(knitter->getState(), s_init);
+}
 
+TEST_F(KnitterTest, test_fsm_init_RR) {
   // still not ready
   expected_isr(Right, Right);
   expected_fsm();
-  ASSERT_EQ(k->getState(), s_init);
+  ASSERT_EQ(knitter->getState(), s_init);
+}
 
+TEST_F(KnitterTest, test_fsm_init_RL) {
   // ready
   expected_isr(Right, Left);
   EXPECT_CALL(*solenoidsMock, setSolenoids(0xFFFF));
   expect_indState();
   expected_fsm();
-  ASSERT_EQ(k->getState(), s_ready);
+  ASSERT_EQ(knitter->getState(), s_ready);
 }
 
-/*!
- * \test
- */
 TEST_F(KnitterTest, test_fsm_ready) {
   get_to_ready();
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, 0));
   expected_fsm();
 
   // still in ready state
-  ASSERT_EQ(k->getState(), s_ready);
+  ASSERT_EQ(knitter->getState(), s_ready);
 
   // again
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, 0));
   expected_fsm();
 
   // still in ready state
-  ASSERT_EQ(k->getState(), s_ready);
+  ASSERT_EQ(knitter->getState(), s_ready);
 }
 
-/*!
- * \test
- */
-TEST_F(KnitterTest, test_fsm_hwtest) {
+TEST_F(KnitterTest, test_fsm_test) {
   // enter test state
-  EXPECT_CALL(*hwTestMock, setUp);
-  ASSERT_EQ(k->startTest(Kh910), true);
+  EXPECT_CALL(*testerMock, setUp);
+  ASSERT_EQ(knitter->startTest(Kh910), true);
 
   expected_isr();
   expect_indState();
-  EXPECT_CALL(*hwTestMock, loop);
+  EXPECT_CALL(*testerMock, loop);
   expected_fsm();
 
   // again with same position, no `indState` this time.
   expected_isr();
   expect_indState<0>();
-  EXPECT_CALL(*hwTestMock, loop);
+  EXPECT_CALL(*testerMock, loop);
   expected_fsm();
 
-  ASSERT_TRUE(Mock::VerifyAndClear(hwTestMock));
+  // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(testerMock));
 }
 
-/*!
- * \test
- */
+TEST_F(KnitterTest, test_fsm_test_quit) {
+  // enter test state
+  EXPECT_CALL(*testerMock, setUp);
+  ASSERT_EQ(knitter->startTest(Kh910), true);
+
+  // quit
+  EXPECT_CALL(*testerMock, getQuitFlag).WillOnce(Return(true));
+  expected_fsm();
+
+  // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(testerMock));
+}
+
 TEST_F(KnitterTest, test_startOperation_NoMachine) {
   uint8_t pattern[] = {1};
-  ASSERT_EQ(k->getState(), s_init);
-  Machine_t m = k->getMachineType();
+  ASSERT_EQ(knitter->getState(), s_init);
+  Machine_t m = knitter->getMachineType();
   ASSERT_EQ(m, NoMachine);
   get_to_ready();
-  ASSERT_EQ(k->startOperation(m, 0, NUM_NEEDLES[m] - 1, pattern, false), false);
-}
-
-/*!
- * \test
- */
-TEST_F(KnitterTest, test_startOperation_notReady) {
-  uint8_t pattern[] = {1};
-  ASSERT_EQ(k->getState(), s_init);
-  ASSERT_EQ(k->startOperation(Kh910, 0, NUM_NEEDLES[Kh910] - 1, pattern, false),
+  ASSERT_EQ(knitter->startOperation(m, 0, NUM_NEEDLES[m] - 1, pattern, false),
             false);
 }
 
-/*!
- * \test
- */
+TEST_F(KnitterTest, test_startOperation_notReady) {
+  uint8_t pattern[] = {1};
+  ASSERT_EQ(knitter->getState(), s_init);
+  ASSERT_EQ(
+      knitter->startOperation(Kh910, 0, NUM_NEEDLES[Kh910] - 1, pattern, false),
+      false);
+}
+
 TEST_F(KnitterTest, test_startOperation_Kh910) {
   uint8_t pattern[] = {1};
   get_to_ready();
   EXPECT_CALL(*encodersMock, init);
   EXPECT_CALL(*beeperMock, ready);
-  ASSERT_EQ(k->startOperation(Kh910, 0, NUM_NEEDLES[Kh910] - 1, pattern, false),
-            true);
+  ASSERT_EQ(
+      knitter->startOperation(Kh910, 0, NUM_NEEDLES[Kh910] - 1, pattern, false),
+      true);
+
+  // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(beeperMock));
 }
 
-/*!
- * \test
- */
 TEST_F(KnitterTest, test_startOperation_Kh270) {
   uint8_t pattern[] = {1};
   get_to_ready();
   EXPECT_CALL(*encodersMock, init);
   EXPECT_CALL(*beeperMock, ready);
-  ASSERT_EQ(k->startOperation(Kh270, 0, NUM_NEEDLES[Kh270] - 1, pattern, false),
-            true);
+  ASSERT_EQ(
+      knitter->startOperation(Kh270, 0, NUM_NEEDLES[Kh270] - 1, pattern, false),
+      true);
+
+  // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(beeperMock));
 }
 
-/*!
- * \test
- */
 TEST_F(KnitterTest, test_startOperation_failures) {
   uint8_t pattern[] = {1};
   get_to_ready();
 
   // `m_stopNeedle` lower than `m_startNeedle`
-  ASSERT_EQ(k->startOperation(Kh910, 1, 0, pattern, false), false);
+  ASSERT_EQ(knitter->startOperation(Kh910, 1, 0, pattern, false), false);
 
   // `m_stopNeedle` out of range
-  ASSERT_EQ(k->startOperation(Kh910, 0, NUM_NEEDLES[Kh910], pattern, false),
-            false);
+  ASSERT_EQ(
+      knitter->startOperation(Kh910, 0, NUM_NEEDLES[Kh910], pattern, false),
+      false);
 
   // null pattern
-  ASSERT_EQ(k->startOperation(Kh910, 0, NUM_NEEDLES[Kh910] - 1, nullptr, false),
-            false);
+  ASSERT_EQ(
+      knitter->startOperation(Kh910, 0, NUM_NEEDLES[Kh910] - 1, nullptr, false),
+      false);
 }
 
-/*!
- * \test
- */
 TEST_F(KnitterTest, test_startTest) {
-  EXPECT_CALL(*hwTestMock, setUp);
-  ASSERT_EQ(k->startTest(Kh910), true);
-  ASSERT_EQ(k->getState(), s_test);
-  ASSERT_TRUE(Mock::VerifyAndClear(hwTestMock));
+  EXPECT_CALL(*testerMock, setUp);
+  ASSERT_EQ(knitter->startTest(Kh910), true);
+  ASSERT_EQ(knitter->getState(), s_test);
+
+  // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(testerMock));
 }
 
-/*!
- * \test
- */
 TEST_F(KnitterTest, test_startTest_in_operation) {
   get_to_operate(Kh910);
-  ASSERT_EQ(k->getState(), s_operate);
+  ASSERT_EQ(knitter->getState(), s_operate);
 
   // can't start test
-  ASSERT_EQ(k->startTest(Kh910), false);
+  ASSERT_EQ(knitter->startTest(Kh910), false);
 }
 
-/*!
- * \test
- */
 TEST_F(KnitterTest, test_setNextLine) {
-  ASSERT_EQ(k->setNextLine(1), false);
+  ASSERT_EQ(knitter->setNextLine(1), false);
 
   // set `m_lineRequested`
   EXPECT_CALL(*solenoidsMock, setSolenoid).Times(1);
@@ -427,24 +405,24 @@ TEST_F(KnitterTest, test_setNextLine) {
   expected_isr(40 + NUM_NEEDLES[Kh910] - 1 + END_OF_LINE_OFFSET_R[Kh910] + 1);
   EXPECT_CALL(*solenoidsMock, setSolenoid).Times(1);
   expected_operate(false);
-  ASSERT_EQ(k->getState(), s_operate);
+  ASSERT_EQ(knitter->getState(), s_operate);
 
   // wrong line number
   EXPECT_CALL(*beeperMock, finishedLine).Times(0);
   expect_send();
-  ASSERT_EQ(k->setNextLine(1), false);
+  ASSERT_EQ(knitter->setNextLine(1), false);
 
   // correct line number
   EXPECT_CALL(*beeperMock, finishedLine).Times(1);
-  ASSERT_EQ(k->setNextLine(0), true);
+  ASSERT_EQ(knitter->setNextLine(0), true);
 
   // `m_lineRequested` has been set to `false`
-  ASSERT_EQ(k->setNextLine(0), false);
+  ASSERT_EQ(knitter->setNextLine(0), false);
+
+  // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(beeperMock));
 }
 
-/*!
- * \test
- */
 TEST_F(KnitterTest, test_operate_Kh910) {
   // `m_pixelToSet` gets set to 0
   expected_isr(8);
@@ -464,7 +442,7 @@ TEST_F(KnitterTest, test_operate_Kh910) {
   const uint8_t START_NEEDLE = NUM_NEEDLES[Kh910] - 2;
   const uint8_t STOP_NEEDLE = NUM_NEEDLES[Kh910] - 1;
   const uint8_t OFFSET = END_OF_LINE_OFFSET_R[Kh910];
-  k->startOperation(Kh910, START_NEEDLE, STOP_NEEDLE, pattern, true);
+  knitter->startOperation(Kh910, START_NEEDLE, STOP_NEEDLE, pattern, true);
 
   // first operate
   EXPECT_CALL(*arduinoMock, delay(2000));
@@ -493,11 +471,11 @@ TEST_F(KnitterTest, test_operate_Kh910) {
   EXPECT_CALL(*solenoidsMock, setSolenoid);
   expect_indState();
   expected_operate(false);
+
+  // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(beeperMock));
 }
 
-/*!
- * \test
- */
 TEST_F(KnitterTest, test_operate_Kh270) {
   // `m_pixelToSet` gets set to 0
   expected_isr(8);
@@ -517,7 +495,7 @@ TEST_F(KnitterTest, test_operate_Kh270) {
   const uint8_t START_NEEDLE = NUM_NEEDLES[Kh270] - 2;
   const uint8_t STOP_NEEDLE = NUM_NEEDLES[Kh270] - 1;
   const uint8_t OFFSET = END_OF_LINE_OFFSET_R[Kh270];
-  k->startOperation(Kh270, START_NEEDLE, STOP_NEEDLE, pattern, true);
+  knitter->startOperation(Kh270, START_NEEDLE, STOP_NEEDLE, pattern, true);
 
   // first operate
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_B, 0))
@@ -552,11 +530,11 @@ TEST_F(KnitterTest, test_operate_Kh270) {
   EXPECT_CALL(*solenoidsMock, setSolenoid);
   expect_indState();
   expected_operate(false);
+
+  // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(beeperMock));
 }
 
-/*!
- * \test
- */
 TEST_F(KnitterTest, test_operate_line_request) {
   EXPECT_CALL(*solenoidsMock, setSolenoid);
 
@@ -575,9 +553,6 @@ TEST_F(KnitterTest, test_operate_line_request) {
   expected_operate(false);
 }
 
-/*!
- * \test
- */
 TEST_F(KnitterTest, test_operate_lastline) {
   EXPECT_CALL(*solenoidsMock, setSolenoid);
 
@@ -589,46 +564,47 @@ TEST_F(KnitterTest, test_operate_lastline) {
   expected_isr(NUM_NEEDLES[Kh910] + 8 + END_OF_LINE_OFFSET_R[Kh910] + 1);
 
   // `m_lastLineFlag` is `true`
-  k->setLastLine();
+  knitter->setLastLine();
 
   EXPECT_CALL(*solenoidsMock, setSolenoid);
   EXPECT_CALL(*beeperMock, endWork);
   EXPECT_CALL(*solenoidsMock, setSolenoids(0xFFFF));
   EXPECT_CALL(*beeperMock, finishedLine);
   expected_operate(false);
+
+  // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(beeperMock));
 }
 
-/*!
- * \test
- */
 TEST_F(KnitterTest, test_operate_lastline_and_no_req) {
   get_to_operate(Kh910);
 
   // Note: probing private data and methods to get full branch coverage.
-  k->m_stopNeedle = 100;
-  uint8_t wanted_pixel = k->m_stopNeedle + END_OF_LINE_OFFSET_R[Kh910] + 1;
-  k->m_firstRun = false;
-  k->m_direction = Left;
-  k->m_position = wanted_pixel + k->getStartOffset(Right);
-  k->m_workedOnLine = true;
-  k->m_lineRequested = false;
-  k->m_lastLineFlag = true;
+  knitter->m_stopNeedle = 100;
+  uint8_t wanted_pixel =
+      knitter->m_stopNeedle + END_OF_LINE_OFFSET_R[Kh910] + 1;
+  knitter->m_firstRun = false;
+  knitter->m_direction = Left;
+  knitter->m_position = wanted_pixel + knitter->getStartOffset(Right);
+  knitter->m_workedOnLine = true;
+  knitter->m_lineRequested = false;
+  knitter->m_lastLineFlag = true;
 
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, 1));
   EXPECT_CALL(*solenoidsMock, setSolenoid);
   EXPECT_CALL(*beeperMock, endWork);
   EXPECT_CALL(*solenoidsMock, setSolenoids(0xFFFF));
   EXPECT_CALL(*beeperMock, finishedLine);
-  k->state_operate();
+  knitter->state_operate();
 
-  ASSERT_EQ(k->getStartOffset(NUM_DIRECTIONS), 0);
-  k->m_carriage = NUM_CARRIAGES;
-  ASSERT_EQ(k->getStartOffset(Right), 0);
+  ASSERT_EQ(knitter->getStartOffset(NUM_DIRECTIONS), 0);
+  knitter->m_carriage = NUM_CARRIAGES;
+  ASSERT_EQ(knitter->getStartOffset(Right), 0);
+
+  // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(beeperMock));
 }
 
-/*!
- * \test
- */
 TEST_F(KnitterTest, test_operate_same_position) {
   EXPECT_CALL(*solenoidsMock, setSolenoid);
   expected_operate(true);
@@ -638,9 +614,6 @@ TEST_F(KnitterTest, test_operate_same_position) {
   expected_operate(false);
 }
 
-/*!
- * \test
- */
 TEST_F(KnitterTest, test_operate_new_line) {
   EXPECT_CALL(*solenoidsMock, setSolenoid);
 
@@ -653,20 +626,20 @@ TEST_F(KnitterTest, test_operate_new_line) {
 
   // set `m_lineRequested` to `false`
   EXPECT_CALL(*beeperMock, finishedLine);
-  k->setNextLine(0);
+  knitter->setNextLine(0);
 
   EXPECT_CALL(*solenoidsMock, setSolenoid);
 
   // `reqLine()` is called which calls `send()`
   expect_send();
   expected_operate(false);
+
+  // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(beeperMock));
 }
 
-/*!
- * \test
- */
 TEST_F(KnitterTest, test_calculatePixelAndSolenoid) {
-  EXPECT_CALL(*hwTestMock, setUp);
+  EXPECT_CALL(*testerMock, setUp);
   expected_set_machine(Kh910);
 
   // new position, different beltshift and active hall
@@ -706,7 +679,7 @@ TEST_F(KnitterTest, test_calculatePixelAndSolenoid) {
   expected_test();
 
   // KH270
-  k->setMachineType(Kh270);
+  knitter->setMachineType(Kh270);
 
   // K carriage direction left
   expected_isr(0, Left, Right, Regular, Knit);
@@ -717,90 +690,26 @@ TEST_F(KnitterTest, test_calculatePixelAndSolenoid) {
   expected_test();
 
   // test expectations without destroying instance
-  ASSERT_TRUE(Mock::VerifyAndClear(hwTestMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(testerMock));
 }
 
-/*!
- * \test
- */
 TEST_F(KnitterTest, test_getStartOffset) {
   // out of range values
-  k->m_carriage = Knit;
-  ASSERT_EQ(k->getStartOffset(NoDirection), 0);
+  knitter->m_carriage = Knit;
+  ASSERT_EQ(knitter->getStartOffset(NoDirection), 0);
 
-  ASSERT_EQ(k->getStartOffset(NUM_DIRECTIONS), 0);
+  ASSERT_EQ(knitter->getStartOffset(NUM_DIRECTIONS), 0);
 
-  k->m_carriage = NoCarriage;
-  ASSERT_EQ(k->getStartOffset(Left), 0);
+  knitter->m_carriage = NoCarriage;
+  ASSERT_EQ(knitter->getStartOffset(Left), 0);
 
-  k->m_carriage = NUM_CARRIAGES;
-  ASSERT_EQ(k->getStartOffset(Right), 0);
+  knitter->m_carriage = NUM_CARRIAGES;
+  ASSERT_EQ(knitter->getStartOffset(Right), 0);
 
-  k->m_carriage = Lace;
-  k->m_machineType = NoMachine;
-  ASSERT_EQ(k->getStartOffset(Left), 0);
+  knitter->m_carriage = Lace;
+  knitter->m_machineType = NoMachine;
+  ASSERT_EQ(knitter->getStartOffset(Left), 0);
 
-  k->m_machineType = NUM_MACHINES;
-  ASSERT_EQ(k->getStartOffset(Right), 0);
-}
-
-/*!
- * \test
- */
-TEST_F(KnitterTest, test_onPacketReceived) {
-  EXPECT_CALL(*serialEncodingMock, onPacketReceived);
-  k->onPacketReceived(nullptr, 0);
-}
-
-/*!
- * \test
- */
-TEST_F(KnitterTest, test_quit_hw_test) {
-  // get to test state
-  EXPECT_CALL(*hwTestMock, setUp);
-  ASSERT_EQ(k->startTest(Kh910), true);
-  ASSERT_EQ(k->getState(), s_test);
-
-  // quit
-  k->setQuitFlag(true);
-  EXPECT_CALL(*hwTestMock, loop);
-  k->state_test();
-  ASSERT_EQ(k->getState(), s_ready);
-
-  // test expectations without destroying instance
-  ASSERT_TRUE(Mock::VerifyAndClear(hwTestMock));
-}
-
-/*!
- * \test
- */
-TEST_F(KnitterTest, test_setSolenoids) {
-  EXPECT_CALL(*solenoidsMock, setSolenoids);
-  k->setSolenoids(0xFADE);
-}
-
-/*!
- * \test
- */
-TEST_F(KnitterTest, test_setSolenoid) {
-  EXPECT_CALL(*solenoidsMock, setSolenoid);
-  k->setSolenoid(15, 1);
-}
-
-/*!
- * \test
- */
-TEST_F(KnitterTest, test_sendMsg1) {
-  EXPECT_CALL(*serialEncodingMock,
-              sendMsg(test_msgid, TypedEq<const char *>("abc")));
-  k->sendMsg(test_msgid, "abc");
-}
-
-/*!
- * \test
- */
-TEST_F(KnitterTest, test_sendMsg2) {
-  char buf[] = "abc\0";
-  EXPECT_CALL(*serialEncodingMock, sendMsg(test_msgid, TypedEq<char *>(buf)));
-  k->sendMsg(test_msgid, buf);
+  knitter->m_machineType = NUM_MACHINES;
+  ASSERT_EQ(knitter->getStartOffset(Right), 0);
 }

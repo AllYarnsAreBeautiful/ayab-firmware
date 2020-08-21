@@ -1,5 +1,5 @@
 /*!`
- * \file test_all.cpp
+ * \file com_mock.h
  *
  * This file is part of AYAB.
  *
@@ -21,28 +21,24 @@
  *    http://ayab-knitting.com
  */
 
-#include "gtest/gtest.h"
+#ifndef COM_MOCK_H_
+#define COM_MOCK_H_
 
-#include <knitter.h>
+#include <gmock/gmock.h>
 
-#include <beeper_mock.h>
-#include <com_mock.h>
-#include <tester_mock.h>
+#include <com.h>
 
-// global definitions
-// references everywhere else must use `extern`
-Knitter *knitter = new Knitter();
-BeeperMock *beeper = new BeeperMock();
-ComMock *com = new ComMock();
-TesterMock *tester = new TesterMock();
+class ComMock : public ComInterface {
+public:
+  MOCK_METHOD0(init, void());
+  MOCK_METHOD0(update, void());
+  MOCK_METHOD2(send, void(uint8_t *payload, size_t length));
+  MOCK_METHOD2(sendMsg, void(AYAB_API_t id, const char *msg));
+  MOCK_METHOD2(sendMsg, void(AYAB_API_t id, char *msg));
+  MOCK_METHOD2(onPacketReceived, void(const uint8_t *buffer, size_t size));
+};
 
-// instantiate singleton classes with mock objects
-KnitterInterface *GlobalKnitter::m_instance = knitter;
-BeeperInterface *GlobalBeeper::m_instance = beeper;
-ComInterface *GlobalCom::m_instance = com;
-TesterInterface *GlobalTester::m_instance = tester;
+ComMock *comMockInstance();
+void releaseComMock();
 
-int main(int argc, char *argv[]) {
-  ::testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
-}
+#endif // COM_MOCK_H_

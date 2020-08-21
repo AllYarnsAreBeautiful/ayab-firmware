@@ -39,24 +39,24 @@ void releaseKnitterMock() {
   }
 }
 
-bool Knitter::startTest(Machine_t machineType) {
+void Knitter::init() {
   assert(gKnitterMock != NULL);
-  return gKnitterMock->startTest(machineType);
+  gKnitterMock->init();
 }
 
-Machine_t Knitter::getMachineType() const {
+void Knitter::fsm() {
   assert(gKnitterMock != NULL);
-  return gKnitterMock->getMachineType();
+  gKnitterMock->fsm();
 }
 
-void Knitter::setMachineType(Machine_t machineType) {
+void Knitter::isr() {
   assert(gKnitterMock != NULL);
-  return gKnitterMock->setMachineType(machineType);
+  gKnitterMock->isr();
 }
 
-uint8_t Knitter::getStartOffset(const Direction_t direction) const {
+void Knitter::setUpInterrupt() {
   assert(gKnitterMock != NULL);
-  return gKnitterMock->getStartOffset(direction);
+  gKnitterMock->setUpInterrupt();
 }
 
 bool Knitter::startOperation(Machine_t machineType, uint8_t startNeedle,
@@ -66,6 +66,11 @@ bool Knitter::startOperation(Machine_t machineType, uint8_t startNeedle,
   return gKnitterMock->startOperation(machineType, startNeedle, stopNeedle,
                                       pattern_start,
                                       continuousReportingEnabled);
+}
+
+bool Knitter::startTest(Machine_t machineType) {
+  assert(gKnitterMock != NULL);
+  return gKnitterMock->startTest(machineType);
 }
 
 bool Knitter::setNextLine(uint8_t lineNumber) {
@@ -78,49 +83,27 @@ void Knitter::setLastLine() {
   gKnitterMock->setLastLine();
 }
 
-void Knitter::send(uint8_t payload[], size_t length) {
+Machine_t Knitter::getMachineType() {
   assert(gKnitterMock != NULL);
-  gKnitterMock->send(payload, length);
+  return gKnitterMock->getMachineType();
 }
 
-void Knitter::sendMsg(AYAB_API_t id, const char *msg) {
+void Knitter::setSolenoids(uint16_t state) {
   assert(gKnitterMock != NULL);
-  gKnitterMock->sendMsg(id, msg);
+  return gKnitterMock->setSolenoids(state);
 }
 
-void Knitter::sendMsg(AYAB_API_t id, char *msg) {
+void Knitter::setMachineType(Machine_t machineType) {
   assert(gKnitterMock != NULL);
-  gKnitterMock->sendMsg(id, msg);
+  return gKnitterMock->setMachineType(machineType);
 }
 
-void Knitter::onPacketReceived(const uint8_t *buffer, size_t size) {
+uint8_t Knitter::getStartOffset(const Direction_t direction) {
   assert(gKnitterMock != NULL);
-  gKnitterMock->onPacketReceived(buffer, size);
+  return gKnitterMock->getStartOffset(direction);
 }
 
 void Knitter::setState(OpState_t state) {
   assert(gKnitterMock != NULL);
   gKnitterMock->setState(state);
 }
-
-void Knitter::setSolenoids(uint16_t state) {
-  assert(gKnitterMock != NULL);
-  gKnitterMock->setSolenoids(state);
-}
-
-void Knitter::setSolenoid(uint8_t solenoid, uint8_t state) {
-  assert(gKnitterMock != NULL);
-  gKnitterMock->setSolenoid(solenoid, state);
-}
-
-void Knitter::setQuitFlag(bool flag) {
-  assert(gKnitterMock != NULL);
-  gKnitterMock->setQuitFlag(flag);
-}
-
-void Knitter::setUpInterrupt() {
-  assert(gKnitterMock != NULL);
-  gKnitterMock->setUpInterrupt();
-}
-
-Knitter *knitter;

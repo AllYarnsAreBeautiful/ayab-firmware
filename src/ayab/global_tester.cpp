@@ -1,5 +1,5 @@
 /*!
- * \file global_hw_test.cpp
+ * \file global_tester.cpp
  * This file is part of AYAB.
  *
  *    AYAB is free software: you can redistribute it and/or modify
@@ -20,70 +20,72 @@
  *    http://ayab-knitting.com
  */
 
-#include "global_hw_test.h"
+#include "tester.h"
 
 // static member functions
 
-void GlobalHardwareTest::setUp() {
+void GlobalTester::setUp() {
   m_instance->setUp();
 }
 
-void GlobalHardwareTest::loop() {
+void GlobalTester::loop() {
   m_instance->loop();
 }
 
-#ifndef AYAB_TESTS
-void GlobalHardwareTest::encoderAChange() {
-  m_instance->encoderAChange();
+bool GlobalTester::getQuitFlag() {
+  return m_instance->getQuitFlag();
 }
-#endif // AYAB_TESTS
 
-/*
-void GlobalHardwareTest::helpCmd() {
+void GlobalTester::helpCmd() {
   m_instance->helpCmd();
 }
 
-void GlobalHardwareTest::sendCmd() {
+void GlobalTester::sendCmd() {
   m_instance->sendCmd();
 }
 
-void GlobalHardwareTest::beepCmd() {
+void GlobalTester::beepCmd() {
   m_instance->beepCmd();
 }
 
-void GlobalHardwareTest::setSingleCmd() {
+void GlobalTester::setSingleCmd() {
   m_instance->setSingleCmd();
 }
 
-void GlobalHardwareTest::setAllCmd() {
+void GlobalTester::setAllCmd() {
   m_instance->setAllCmd();
 }
 
-void GlobalHardwareTest::readEOLsensorsCmd() {
+void GlobalTester::readEOLsensorsCmd() {
   m_instance->readEOLsensorsCmd();
 }
 
-void GlobalHardwareTest::readEncodersCmd() {
+void GlobalTester::readEncodersCmd() {
   m_instance->readEncodersCmd();
 }
 
-void GlobalHardwareTest::autoReadCmd() {
+void GlobalTester::autoReadCmd() {
   m_instance->autoReadCmd();
 }
 
-void GlobalHardwareTest::autoTestCmd() {
+void GlobalTester::autoTestCmd() {
   m_instance->autoTestCmd();
 }
 
-void GlobalHardwareTest::stopCmd() {
+void GlobalTester::stopCmd() {
   m_instance->stopCmd();
 }
 
-void GlobalHardwareTest::quitCmd() {
+void GlobalTester::quitCmd() {
   m_instance->quitCmd();
 }
 
-void GlobalHardwareTest::unrecognizedCmd(const char *buffer) {
+void GlobalTester::unrecognizedCmd(const char *buffer) {
   m_instance->unrecognizedCmd(buffer);
 }
-*/
+
+#ifndef AYAB_TESTS
+void GlobalTester::encoderAChange() {
+  m_instance->encoderAChange();
+}
+#endif // AYAB_TESTS
