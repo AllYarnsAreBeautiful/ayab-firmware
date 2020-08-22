@@ -34,12 +34,14 @@
 KnitterMock *knitter = new KnitterMock();
 Beeper *beeper = new Beeper();
 Com *com = new Com();
+Solenoids *solenoids = new Solenoids();
 Tester *tester = new Tester();
 
 // initialize static members
 KnitterInterface *GlobalKnitter::m_instance = knitter;
 BeeperInterface *GlobalBeeper::m_instance = beeper;
 ComInterface *GlobalCom::m_instance = com;
+SolenoidsInterface *GlobalSolenoids::m_instance = solenoids;
 TesterInterface *GlobalTester::m_instance = tester;
 
 int main(int argc, char *argv[]) {

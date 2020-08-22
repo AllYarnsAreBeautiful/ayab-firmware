@@ -1,6 +1,7 @@
 /*!
  * \file solenoids.cpp
- * \brief Class containing methods governing solenoids.
+ * \brief Class containing methods that control the needles
+ *    via solenoids connected to IO expanders on the device.
  *
  * This file is part of AYAB.
  *
@@ -38,6 +39,7 @@ void Solenoids::init() {
   }
 #endif
   // No Action needed for SOFT_I2C
+  solenoidState = 0x0000U;
 }
 
 /*!

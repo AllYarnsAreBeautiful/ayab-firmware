@@ -24,10 +24,10 @@
 #ifndef SOLENOIDS_MOCK_H_
 #define SOLENOIDS_MOCK_H_
 
-#include <solenoids.h>
 #include <gmock/gmock.h>
+#include <solenoids.h>
 
-class SolenoidsMock : public Solenoids {
+class SolenoidsMock : public SolenoidsInterface {
 public:
   MOCK_METHOD0(init, void());
   MOCK_METHOD2(setSolenoid, void(uint8_t, bool));
@@ -37,4 +37,4 @@ public:
 SolenoidsMock *solenoidsMockInstance();
 void releaseSolenoidsMock();
 
-#endif  // SOLENOIDS_MOCK_H_
+#endif // SOLENOIDS_MOCK_H_

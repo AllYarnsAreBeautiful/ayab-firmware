@@ -1,6 +1,7 @@
 /*!
  * \file beeper.cpp
- * \brief Singleton class containing methods for beeper.
+ * \brief Singleton class containing methods to actuate a beeper
+ *    connected to PIEZO_PIN.
  *
  * This file is part of AYAB.
  *

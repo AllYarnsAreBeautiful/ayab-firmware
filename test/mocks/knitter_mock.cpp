@@ -59,13 +59,12 @@ void Knitter::setUpInterrupt() {
   gKnitterMock->setUpInterrupt();
 }
 
-bool Knitter::startOperation(Machine_t machineType, uint8_t startNeedle,
-                             uint8_t stopNeedle, uint8_t *pattern_start,
-                             bool continuousReportingEnabled) {
+bool Knitter::startKnitting(Machine_t machineType, uint8_t startNeedle,
+                            uint8_t stopNeedle, uint8_t *pattern_start,
+                            bool continuousReportingEnabled) {
   assert(gKnitterMock != NULL);
-  return gKnitterMock->startOperation(machineType, startNeedle, stopNeedle,
-                                      pattern_start,
-                                      continuousReportingEnabled);
+  return gKnitterMock->startKnitting(machineType, startNeedle, stopNeedle,
+                                     pattern_start, continuousReportingEnabled);
 }
 
 bool Knitter::startTest(Machine_t machineType) {
@@ -86,11 +85,6 @@ void Knitter::setLastLine() {
 Machine_t Knitter::getMachineType() {
   assert(gKnitterMock != NULL);
   return gKnitterMock->getMachineType();
-}
-
-void Knitter::setSolenoids(uint16_t state) {
-  assert(gKnitterMock != NULL);
-  return gKnitterMock->setSolenoids(state);
 }
 
 void Knitter::setMachineType(Machine_t machineType) {

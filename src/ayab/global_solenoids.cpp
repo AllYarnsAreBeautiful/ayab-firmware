@@ -1,7 +1,5 @@
 /*!
- * \file main.cpp
- * \brief Main entry point for AYAB firmware.
- *
+ * \file global_solenoids.cpp
  * This file is part of AYAB.
  *
  *    AYAB is free software: you can redistribute it and/or modify
@@ -22,38 +20,18 @@
  *    http://ayab-knitting.com
  */
 
-#include <Arduino.h>
+#include "solenoids.h"
 
-#include "knitter.h"
-#include "tester.h"
+// static member functions
 
-// global definitions
-// references everywhere else must use `extern`
-GlobalBeeper *beeper;
-GlobalCom *com;
-GlobalKnitter *knitter;
-GlobalSolenoids *solenoids;
-GlobalTester *tester;
-
-// initialize static members
-BeeperInterface *GlobalBeeper::m_instance = new Beeper();
-ComInterface *GlobalCom::m_instance = new Com();
-KnitterInterface *GlobalKnitter::m_instance = new Knitter();
-SolenoidsInterface *GlobalSolenoids::m_instance = new Solenoids();
-TesterInterface *GlobalTester::m_instance = new Tester();
-
-/*!
- * Setup - do once before going to the main loop.
- */
-void setup() {
-  GlobalCom::init();
-  GlobalKnitter::init();
-  GlobalSolenoids::init();
+void GlobalSolenoids::init() {
+  m_instance->init();
 }
 
-/*!
- * Main Loop - repeat forever.
- */
-void loop() {
-  GlobalKnitter::fsm();
+void GlobalSolenoids::setSolenoid(uint8_t solenoid, bool state) {
+  m_instance->setSolenoid(solenoid, state);
+}
+
+void GlobalSolenoids::setSolenoids(uint16_t state) {
+  m_instance->setSolenoids(state);
 }

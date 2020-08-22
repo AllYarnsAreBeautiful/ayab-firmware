@@ -24,9 +24,8 @@
 #ifndef SOLENOIDS_H_
 #define SOLENOIDS_H_
 
-#include <Arduino.h>
-
 #include "board.h"
+#include <Arduino.h>
 
 #if defined(HARD_I2C)
 #include <Adafruit_MCP23008.h>
@@ -39,10 +38,36 @@ constexpr uint8_t SOLENOIDS_NUM = 16U;
 constexpr uint8_t HALF_SOLENOIDS_NUM = 8U;
 constexpr uint8_t SOLENOIDS_I2C_ADDRESS_MASK = 0x20U;
 
-/*!
- * \brief Control of the needles via solenoids connected to IO expanders.
- */
-class Solenoids {
+class SolenoidsInterface {
+public:
+  virtual ~SolenoidsInterface(){};
+
+  // any methods that need to be mocked should go here
+  virtual void init() = 0;
+  virtual void setSolenoid(uint8_t solenoid, bool state) = 0;
+  virtual void setSolenoids(uint16_t state) = 0;
+};
+
+// Container class for the static methods that control the solenoids.
+// Dependency injection is enabled using a pointer to a global instance of
+// either `Solenoids` or `SolenoidsMock`, both of which classes implement
+// the pure virtual methods of `SolenoidsInterface`.
+
+class GlobalSolenoids final {
+private:
+  // singleton class so private constructor is appropriate
+  GlobalSolenoids() = default;
+
+public:
+  // pointer to global instance whose methods are implemented
+  static SolenoidsInterface *m_instance;
+
+  static void init();
+  static void setSolenoid(uint8_t solenoid, bool state);
+  static void setSolenoids(uint16_t state);
+};
+
+class Solenoids : public SolenoidsInterface {
 #ifdef AYAB_TESTS
   FRIEND_TEST(SolenoidsTest, test_setSolenoid1);
   FRIEND_TEST(SolenoidsTest, test_setSolenoid2);

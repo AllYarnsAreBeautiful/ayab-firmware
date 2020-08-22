@@ -69,14 +69,14 @@ void Tester::beepCmd() {
   gTesterMock->beepCmd();
 }
 
-void Tester::setSingleCmd() {
+void Tester::setSingleCmd(const uint8_t *buffer, size_t size) {
   assert(gTesterMock != NULL);
-  gTesterMock->setSingleCmd();
+  gTesterMock->setSingleCmd(buffer, size);
 }
 
-void Tester::setAllCmd() {
+void Tester::setAllCmd(const uint8_t *buffer, size_t size) {
   assert(gTesterMock != NULL);
-  gTesterMock->setAllCmd();
+  gTesterMock->setAllCmd(buffer, size);
 }
 
 void Tester::readEOLsensorsCmd() {

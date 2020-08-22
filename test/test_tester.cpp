@@ -105,69 +105,43 @@ TEST_F(TesterTest, test_beepCmd) {
 TEST_F(TesterTest, test_setSingleCmd_fail1) {
   // EXPECT_CALL(*knitterMock, sendMsg(test_msgid, An<const char *>()))
   //    .Times(AtLeast(1));
-  // EXPECT_CALL(*serialCommandMock, next).WillOnce(Return(nullptr));
-  EXPECT_CALL(*knitterMock, setSolenoids).Times(0);
-  tester->setSingleCmd();
+  const uint8_t buf[] = {setSingleCmd_msgid, 0};
+  tester->setSingleCmd(buf, 2);
 }
 
 TEST_F(TesterTest, test_setSingleCmd_fail2) {
   // EXPECT_CALL(*knitterMock, sendMsg(test_msgid, An<const char *>()))
   //    .Times(AtLeast(1));
-  // EXPECT_CALL(*serialCommandMock, next).WillOnce(Return(sixteen));
-  EXPECT_CALL(*knitterMock, setSolenoids).Times(0);
-  tester->setSingleCmd();
+  const uint8_t buf[] = {setSingleCmd_msgid, 16, 0};
+  tester->setSingleCmd(buf, 3);
 }
 
 TEST_F(TesterTest, test_setSingleCmd_fail3) {
   // EXPECT_CALL(*knitterMock, sendMsg(test_msgid, An<const char *>()))
   //    .Times(AtLeast(1));
-  // EXPECT_CALL(*serialCommandMock, next)
-  //    .WillOnce(Return(zero))
-  //    .WillOnce(Return(nullptr));
-  EXPECT_CALL(*knitterMock, setSolenoids).Times(0);
-  tester->setSingleCmd();
-}
-
-TEST_F(TesterTest, test_setSingleCmd_fail4) {
-  // EXPECT_CALL(*knitterMock, sendMsg(test_msgid, An<const char *>()))
-  //    .Times(AtLeast(1));
-  // EXPECT_CALL(*serialCommandMock, next)
-  //    .WillOnce(Return(zero))
-  //    .WillOnce(Return(two));
-  EXPECT_CALL(*knitterMock, setSolenoids).Times(0);
-  tester->setSingleCmd();
+  const uint8_t buf[] = {setSingleCmd_msgid, 15, 2};
+  tester->setSingleCmd(buf, 3);
 }
 
 TEST_F(TesterTest, test_setSingleCmd_success) {
   // EXPECT_CALL(*knitterMock, sendMsg(test_msgid, An<const char *>()))
   //    .Times(AtLeast(1));
-  // EXPECT_CALL(*serialCommandMock, next).WillRepeatedly(Return(zero));
-  EXPECT_CALL(*knitterMock, setSolenoids);
-  tester->setSingleCmd();
+  const uint8_t buf[] = {setSingleCmd_msgid, 15, 1};
+  tester->setSingleCmd(buf, 3);
 }
 
 TEST_F(TesterTest, test_setAllCmd_fail1) {
   // EXPECT_CALL(*knitterMock, sendMsg(test_msgid, An<const char *>()))
   //    .Times(AtLeast(1));
-  // EXPECT_CALL(*serialCommandMock, next).WillOnce(Return(nullptr));
-  EXPECT_CALL(*knitterMock, setSolenoids).Times(0);
-  tester->setAllCmd();
-}
-
-TEST_F(TesterTest, test_setAllCmd_fail2) {
-  // EXPECT_CALL(*knitterMock, sendMsg(test_msgid, An<const char *>()))
-  //    .Times(AtLeast(1));
-  // EXPECT_CALL(*serialCommandMock, next).WillOnce(Return(g));
-  EXPECT_CALL(*knitterMock, setSolenoids).Times(0);
-  tester->setAllCmd();
+  const uint8_t buf[] = {setAllCmd_msgid, 0};
+  tester->setAllCmd(buf, 2);
 }
 
 TEST_F(TesterTest, test_setAllCmd_success) {
   // EXPECT_CALL(*knitterMock, sendMsg(test_msgid, An<const char *>()))
   //    .Times(AtLeast(1));
-  // EXPECT_CALL(*serialCommandMock, next).WillOnce(Return(fAdE));
-  EXPECT_CALL(*knitterMock, setSolenoids);
-  tester->setAllCmd();
+  const uint8_t buf[] = {setAllCmd_msgid, 0xff, 0xff};
+  tester->setAllCmd(buf, 3);
 }
 
 TEST_F(TesterTest, test_readEOLsensorsCmd) {
@@ -244,7 +218,7 @@ TEST_F(TesterTest, test_loop_autoTestEven) {
   tester->m_autoTestOn = true;
   EXPECT_CALL(*arduinoMock, digitalRead).Times(0);
   EXPECT_CALL(*arduinoMock, digitalWrite).Times(2);
-  EXPECT_CALL(*knitterMock, setSolenoids);
+  // EXPECT_CALL(*knitterMock, setSolenoids);
   tester->loop();
 }
 
@@ -256,7 +230,7 @@ TEST_F(TesterTest, test_loop_autoTestOdd) {
   tester->m_autoTestOn = true;
   EXPECT_CALL(*arduinoMock, digitalRead).Times(3);
   EXPECT_CALL(*arduinoMock, digitalWrite).Times(2);
-  EXPECT_CALL(*knitterMock, setSolenoids);
+  // EXPECT_CALL(*knitterMock, setSolenoids);
   tester->loop();
 }
 

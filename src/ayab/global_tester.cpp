@@ -48,12 +48,12 @@ void GlobalTester::beepCmd() {
   m_instance->beepCmd();
 }
 
-void GlobalTester::setSingleCmd() {
-  m_instance->setSingleCmd();
+void GlobalTester::setSingleCmd(const uint8_t *buffer, size_t size) {
+  m_instance->setSingleCmd(buffer, size);
 }
 
-void GlobalTester::setAllCmd() {
-  m_instance->setAllCmd();
+void GlobalTester::setAllCmd(const uint8_t *buffer, size_t size) {
+  m_instance->setAllCmd(buffer, size);
 }
 
 void GlobalTester::readEOLsensorsCmd() {

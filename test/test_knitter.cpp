@@ -42,18 +42,19 @@ using ::testing::TypedEq;
 extern Knitter *knitter;
 extern BeeperMock *beeper;
 extern ComMock *com;
+extern SolenoidsMock *solenoids;
 extern TesterMock *tester;
 
 class KnitterTest : public ::testing::Test {
 protected:
   void SetUp() override {
     arduinoMock = arduinoMockInstance();
-    solenoidsMock = solenoidsMockInstance();
     encodersMock = encodersMockInstance();
 
     // pointers to global instances
     beeperMock = beeper;
     comMock = com;
+    solenoidsMock = solenoids;
     testerMock = tester;
 
     // The global instances do not get destroyed at the end of each test.
@@ -61,6 +62,7 @@ protected:
     // cause a memory leak. We must notify the test that this is not the case.
     Mock::AllowLeak(beeperMock);
     Mock::AllowLeak(comMock);
+    Mock::AllowLeak(solenoidsMock);
     Mock::AllowLeak(testerMock);
 
     expect_init();
@@ -69,7 +71,6 @@ protected:
 
   void TearDown() override {
     releaseArduinoMock();
-    releaseSolenoidsMock();
     releaseEncodersMock();
   }
 
@@ -90,8 +91,6 @@ protected:
 
     EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, 1)); // green LED on
     EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_B, 1)); // yellow LED on
-
-    EXPECT_CALL(*solenoidsMock, init);
   }
 
   void expect_isr(uint16_t pos, Direction_t dir, Direction_t hall,
@@ -164,17 +163,17 @@ protected:
     expected_fsm();
   }
 
-  void get_to_operate(Machine_t m) {
+  void get_to_knit(Machine_t m) {
     get_to_ready();
     uint8_t pattern[] = {1};
     EXPECT_CALL(*beeperMock, ready);
     EXPECT_CALL(*encodersMock, init);
-    knitter->startOperation(m, 0, NUM_NEEDLES[m] - 1, pattern, false);
+    knitter->startKnitting(m, 0, NUM_NEEDLES[m] - 1, pattern, false);
   }
 
-  void expected_operate(bool first) {
+  void expected_knit(bool first) {
     if (first) {
-      get_to_operate(Kh910);
+      get_to_knit(Kh910);
       EXPECT_CALL(*arduinoMock, delay(2000));
       EXPECT_CALL(*beeperMock, finishedLine);
       expect_send();
@@ -187,9 +186,6 @@ protected:
     expect_indState();
     EXPECT_CALL(*testerMock, loop);
     expected_fsm();
-
-    // test expectations without destroying instance
-    ASSERT_TRUE(Mock::VerifyAndClear(testerMock));
   }
 
   void expected_set_machine(Machine_t machineType) {
@@ -197,24 +193,6 @@ protected:
     EXPECT_CALL(*encodersMock, init);
     encodersMock->init(machineType);
     ASSERT_EQ(knitter->startTest(machineType), true);
-  }
-
-  void test_operate_line_request() {
-    EXPECT_CALL(*solenoidsMock, setSolenoid);
-    expected_operate(true);
-    // `m_workedOnLine` is set to `true`
-
-    // Position has changed since last call to operate function
-    // `m_pixelToSet` is set above `m_stopNeedle` + END_OF_LINE_OFFSET_R
-    Machine_t m = knitter->getMachineType(); // Kh910
-    expected_isr(NUM_NEEDLES[m] + 8 + END_OF_LINE_OFFSET_R[m] + 1);
-
-    EXPECT_CALL(*solenoidsMock, setSolenoid);
-    expected_operate(false);
-
-    // no change in position, no action.
-    EXPECT_CALL(*solenoidsMock, setSolenoid).Times(0);
-    expected_operate(false);
   }
 };
 
@@ -233,14 +211,12 @@ TEST_F(KnitterTest, test_isr) {
   expected_isr(1);
 }
 
-TEST_F(KnitterTest, test_setSolenoids) {
-  EXPECT_CALL(*solenoidsMock, setSolenoids);
-  knitter->setSolenoids(0xFADE);
-}
-
 TEST_F(KnitterTest, test_fsm_default_case) {
   knitter->setState(static_cast<OpState_t>(4));
   expected_fsm();
+
+  // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(comMock));
 }
 
 TEST_F(KnitterTest, test_fsm_init_LL) {
@@ -248,6 +224,9 @@ TEST_F(KnitterTest, test_fsm_init_LL) {
   expected_isr(Left, Left);
   expected_fsm();
   ASSERT_EQ(knitter->getState(), s_init);
+
+  // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(comMock));
 }
 
 TEST_F(KnitterTest, test_fsm_init_RR) {
@@ -255,6 +234,9 @@ TEST_F(KnitterTest, test_fsm_init_RR) {
   expected_isr(Right, Right);
   expected_fsm();
   ASSERT_EQ(knitter->getState(), s_init);
+
+  // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(comMock));
 }
 
 TEST_F(KnitterTest, test_fsm_init_RL) {
@@ -264,6 +246,10 @@ TEST_F(KnitterTest, test_fsm_init_RL) {
   expect_indState();
   expected_fsm();
   ASSERT_EQ(knitter->getState(), s_ready);
+
+  // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(comMock));
 }
 
 TEST_F(KnitterTest, test_fsm_ready) {
@@ -280,6 +266,10 @@ TEST_F(KnitterTest, test_fsm_ready) {
 
   // still in ready state
   ASSERT_EQ(knitter->getState(), s_ready);
+
+  // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(comMock));
 }
 
 TEST_F(KnitterTest, test_fsm_test) {
@@ -300,6 +290,7 @@ TEST_F(KnitterTest, test_fsm_test) {
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(testerMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(comMock));
 }
 
 TEST_F(KnitterTest, test_fsm_test_quit) {
@@ -313,68 +304,81 @@ TEST_F(KnitterTest, test_fsm_test_quit) {
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(testerMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(comMock));
 }
 
-TEST_F(KnitterTest, test_startOperation_NoMachine) {
+TEST_F(KnitterTest, test_startKnitting_NoMachine) {
   uint8_t pattern[] = {1};
   ASSERT_EQ(knitter->getState(), s_init);
   Machine_t m = knitter->getMachineType();
   ASSERT_EQ(m, NoMachine);
   get_to_ready();
-  ASSERT_EQ(knitter->startOperation(m, 0, NUM_NEEDLES[m] - 1, pattern, false),
+  ASSERT_EQ(knitter->startKnitting(m, 0, NUM_NEEDLES[m] - 1, pattern, false),
             false);
+
+  // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(comMock));
 }
 
-TEST_F(KnitterTest, test_startOperation_notReady) {
+TEST_F(KnitterTest, test_startKnitting_notReady) {
   uint8_t pattern[] = {1};
   ASSERT_EQ(knitter->getState(), s_init);
   ASSERT_EQ(
-      knitter->startOperation(Kh910, 0, NUM_NEEDLES[Kh910] - 1, pattern, false),
+      knitter->startKnitting(Kh910, 0, NUM_NEEDLES[Kh910] - 1, pattern, false),
       false);
 }
 
-TEST_F(KnitterTest, test_startOperation_Kh910) {
+TEST_F(KnitterTest, test_startKnitting_Kh910) {
   uint8_t pattern[] = {1};
   get_to_ready();
   EXPECT_CALL(*encodersMock, init);
   EXPECT_CALL(*beeperMock, ready);
   ASSERT_EQ(
-      knitter->startOperation(Kh910, 0, NUM_NEEDLES[Kh910] - 1, pattern, false),
+      knitter->startKnitting(Kh910, 0, NUM_NEEDLES[Kh910] - 1, pattern, false),
       true);
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(beeperMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(comMock));
 }
 
-TEST_F(KnitterTest, test_startOperation_Kh270) {
+TEST_F(KnitterTest, test_startKnitting_Kh270) {
   uint8_t pattern[] = {1};
   get_to_ready();
   EXPECT_CALL(*encodersMock, init);
   EXPECT_CALL(*beeperMock, ready);
   ASSERT_EQ(
-      knitter->startOperation(Kh270, 0, NUM_NEEDLES[Kh270] - 1, pattern, false),
+      knitter->startKnitting(Kh270, 0, NUM_NEEDLES[Kh270] - 1, pattern, false),
       true);
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(beeperMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(comMock));
 }
 
-TEST_F(KnitterTest, test_startOperation_failures) {
+TEST_F(KnitterTest, test_startKnitting_failures) {
   uint8_t pattern[] = {1};
   get_to_ready();
 
   // `m_stopNeedle` lower than `m_startNeedle`
-  ASSERT_EQ(knitter->startOperation(Kh910, 1, 0, pattern, false), false);
+  ASSERT_EQ(knitter->startKnitting(Kh910, 1, 0, pattern, false), false);
 
   // `m_stopNeedle` out of range
   ASSERT_EQ(
-      knitter->startOperation(Kh910, 0, NUM_NEEDLES[Kh910], pattern, false),
+      knitter->startKnitting(Kh910, 0, NUM_NEEDLES[Kh910], pattern, false),
       false);
 
   // null pattern
   ASSERT_EQ(
-      knitter->startOperation(Kh910, 0, NUM_NEEDLES[Kh910] - 1, nullptr, false),
+      knitter->startKnitting(Kh910, 0, NUM_NEEDLES[Kh910] - 1, nullptr, false),
       false);
+
+  // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(comMock));
 }
 
 TEST_F(KnitterTest, test_startTest) {
@@ -387,11 +391,16 @@ TEST_F(KnitterTest, test_startTest) {
 }
 
 TEST_F(KnitterTest, test_startTest_in_operation) {
-  get_to_operate(Kh910);
-  ASSERT_EQ(knitter->getState(), s_operate);
+  get_to_knit(Kh910);
+  ASSERT_EQ(knitter->getState(), s_knit);
 
   // can't start test
   ASSERT_EQ(knitter->startTest(Kh910), false);
+
+  // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(beeperMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(comMock));
 }
 
 TEST_F(KnitterTest, test_setNextLine) {
@@ -399,13 +408,13 @@ TEST_F(KnitterTest, test_setNextLine) {
 
   // set `m_lineRequested`
   EXPECT_CALL(*solenoidsMock, setSolenoid).Times(1);
-  expected_operate(true);
+  expected_knit(true);
 
   // outside of the active needles
   expected_isr(40 + NUM_NEEDLES[Kh910] - 1 + END_OF_LINE_OFFSET_R[Kh910] + 1);
   EXPECT_CALL(*solenoidsMock, setSolenoid).Times(1);
-  expected_operate(false);
-  ASSERT_EQ(knitter->getState(), s_operate);
+  expected_knit(false);
+  ASSERT_EQ(knitter->getState(), s_knit);
 
   // wrong line number
   EXPECT_CALL(*beeperMock, finishedLine).Times(0);
@@ -421,6 +430,8 @@ TEST_F(KnitterTest, test_setNextLine) {
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(beeperMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(comMock));
 }
 
 TEST_F(KnitterTest, test_operate_Kh910) {
@@ -442,7 +453,7 @@ TEST_F(KnitterTest, test_operate_Kh910) {
   const uint8_t START_NEEDLE = NUM_NEEDLES[Kh910] - 2;
   const uint8_t STOP_NEEDLE = NUM_NEEDLES[Kh910] - 1;
   const uint8_t OFFSET = END_OF_LINE_OFFSET_R[Kh910];
-  knitter->startOperation(Kh910, START_NEEDLE, STOP_NEEDLE, pattern, true);
+  knitter->startKnitting(Kh910, START_NEEDLE, STOP_NEEDLE, pattern, true);
 
   // first operate
   EXPECT_CALL(*arduinoMock, delay(2000));
@@ -454,26 +465,28 @@ TEST_F(KnitterTest, test_operate_Kh910) {
   EXPECT_CALL(*encodersMock, getHallValue(Right));
   EXPECT_CALL(*encodersMock, getDirection);
   EXPECT_CALL(*solenoidsMock, setSolenoid);
-  expected_operate(false);
+  expected_knit(false);
 
   // no useful position calculated by `calculatePixelAndSolenoid()`
   expected_isr(100, NoDirection, Right, Shifted, Garter);
   expect_indState();
-  expected_operate(false);
+  expected_knit(false);
 
   // don't set `m_workedonline` to `true`
   expected_isr(8 + STOP_NEEDLE + OFFSET);
   EXPECT_CALL(*solenoidsMock, setSolenoid);
   expect_indState();
-  expected_operate(false);
+  expected_knit(false);
 
   expected_isr(START_NEEDLE);
   EXPECT_CALL(*solenoidsMock, setSolenoid);
   expect_indState();
-  expected_operate(false);
+  expected_knit(false);
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(beeperMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(comMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
 }
 
 TEST_F(KnitterTest, test_operate_Kh270) {
@@ -495,7 +508,7 @@ TEST_F(KnitterTest, test_operate_Kh270) {
   const uint8_t START_NEEDLE = NUM_NEEDLES[Kh270] - 2;
   const uint8_t STOP_NEEDLE = NUM_NEEDLES[Kh270] - 1;
   const uint8_t OFFSET = END_OF_LINE_OFFSET_R[Kh270];
-  knitter->startOperation(Kh270, START_NEEDLE, STOP_NEEDLE, pattern, true);
+  knitter->startKnitting(Kh270, START_NEEDLE, STOP_NEEDLE, pattern, true);
 
   // first operate
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_B, 0))
@@ -513,51 +526,58 @@ TEST_F(KnitterTest, test_operate_Kh270) {
   EXPECT_CALL(*encodersMock, getHallValue(Right));
   EXPECT_CALL(*encodersMock, getDirection);
   EXPECT_CALL(*solenoidsMock, setSolenoid);
-  expected_operate(false);
+  expected_knit(false);
 
   // no useful position calculated by `calculatePixelAndSolenoid()`
   expected_isr(100, NoDirection, Right, Shifted, Garter);
   expect_indState();
-  expected_operate(false);
+  expected_knit(false);
 
   // don't set `m_workedonline` to `true`
   expected_isr(8 + STOP_NEEDLE + OFFSET);
   EXPECT_CALL(*solenoidsMock, setSolenoid);
   expect_indState();
-  expected_operate(false);
+  expected_knit(false);
 
   expected_isr(START_NEEDLE);
   EXPECT_CALL(*solenoidsMock, setSolenoid);
   expect_indState();
-  expected_operate(false);
+  expected_knit(false);
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(beeperMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(comMock));
 }
 
 TEST_F(KnitterTest, test_operate_line_request) {
   EXPECT_CALL(*solenoidsMock, setSolenoid);
 
   // `m_workedOnLine` is set to `true`
-  expected_operate(true);
+  expected_knit(true);
 
   // Position has changed since last call to operate function
   // `m_pixelToSet` is set above `m_stopNeedle` + END_OF_LINE_OFFSET_R
   expected_isr(NUM_NEEDLES[Kh910] + 8 + END_OF_LINE_OFFSET_R[Kh910] + 1);
 
   EXPECT_CALL(*solenoidsMock, setSolenoid);
-  expected_operate(false);
+  expected_knit(false);
 
   // no change in position, no action.
   EXPECT_CALL(*solenoidsMock, setSolenoid).Times(0);
-  expected_operate(false);
+  expected_knit(false);
+
+  // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(beeperMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(comMock));
 }
 
 TEST_F(KnitterTest, test_operate_lastline) {
   EXPECT_CALL(*solenoidsMock, setSolenoid);
 
   // `m_workedOnLine` is set to true
-  expected_operate(true);
+  expected_knit(true);
 
   // Position has changed since last call to operate function
   // `m_pixelToSet` is above `m_stopNeedle` + END_OF_LINE_OFFSET_R
@@ -570,14 +590,16 @@ TEST_F(KnitterTest, test_operate_lastline) {
   EXPECT_CALL(*beeperMock, endWork);
   EXPECT_CALL(*solenoidsMock, setSolenoids(0xFFFF));
   EXPECT_CALL(*beeperMock, finishedLine);
-  expected_operate(false);
+  expected_knit(false);
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(beeperMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(comMock));
 }
 
 TEST_F(KnitterTest, test_operate_lastline_and_no_req) {
-  get_to_operate(Kh910);
+  get_to_knit(Kh910);
 
   // Note: probing private data and methods to get full branch coverage.
   knitter->m_stopNeedle = 100;
@@ -595,7 +617,7 @@ TEST_F(KnitterTest, test_operate_lastline_and_no_req) {
   EXPECT_CALL(*beeperMock, endWork);
   EXPECT_CALL(*solenoidsMock, setSolenoids(0xFFFF));
   EXPECT_CALL(*beeperMock, finishedLine);
-  knitter->state_operate();
+  knitter->state_knit();
 
   ASSERT_EQ(knitter->getStartOffset(NUM_DIRECTIONS), 0);
   knitter->m_carriage = NUM_CARRIAGES;
@@ -603,22 +625,29 @@ TEST_F(KnitterTest, test_operate_lastline_and_no_req) {
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(beeperMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(comMock));
 }
 
 TEST_F(KnitterTest, test_operate_same_position) {
   EXPECT_CALL(*solenoidsMock, setSolenoid);
-  expected_operate(true);
+  expected_knit(true);
 
   // no call to `setSolenoid()` since position was the same
   EXPECT_CALL(*solenoidsMock, setSolenoid).Times(0);
-  expected_operate(false);
+  expected_knit(false);
+
+  // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(beeperMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(comMock));
 }
 
 TEST_F(KnitterTest, test_operate_new_line) {
   EXPECT_CALL(*solenoidsMock, setSolenoid);
 
   // _workedOnLine is set to true
-  expected_operate(true);
+  expected_knit(true);
 
   // Position has changed since last call to operate function
   // `m_pixelToSet` is above `m_stopNeedle` + END_OF_LINE_OFFSET_R
@@ -632,10 +661,12 @@ TEST_F(KnitterTest, test_operate_new_line) {
 
   // `reqLine()` is called which calls `send()`
   expect_send();
-  expected_operate(false);
+  expected_knit(false);
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(beeperMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(comMock));
 }
 
 TEST_F(KnitterTest, test_calculatePixelAndSolenoid) {
@@ -691,6 +722,8 @@ TEST_F(KnitterTest, test_calculatePixelAndSolenoid) {
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(testerMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(comMock));
 }
 
 TEST_F(KnitterTest, test_getStartOffset) {
