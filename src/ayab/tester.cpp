@@ -1,6 +1,6 @@
 /*!
  * \file tester.cpp
- * \brief Singleton class containing methods for hardware testing.
+ * \brief Class containing methods for hardware testing.
  *
  * This file is part of AYAB.
  *

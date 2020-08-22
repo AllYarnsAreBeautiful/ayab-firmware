@@ -1,6 +1,6 @@
 /*!
  * \file com.cpp
- * \brief Singleton class containing methods for serial communication.
+ * \brief Class containing methods for serial communication.
  *
  * This file is part of AYAB.
  *

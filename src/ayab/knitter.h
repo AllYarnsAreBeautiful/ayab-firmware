@@ -106,8 +106,9 @@ class Knitter : public KnitterInterface {
   FRIEND_TEST(KnitterTest, test_fsm_test_quit);
   FRIEND_TEST(KnitterTest, test_startKnitting_NoMachine);
   FRIEND_TEST(KnitterTest, test_startKnitting_notReady);
-  FRIEND_TEST(KnitterTest, test_startTest);
-  FRIEND_TEST(KnitterTest, test_startTest_in_operation);
+  FRIEND_TEST(KnitterTest, test_startTest_in_init);
+  FRIEND_TEST(KnitterTest, test_startTest_in_ready);
+  FRIEND_TEST(KnitterTest, test_startTest_in_knit);
   FRIEND_TEST(KnitterTest, test_setNextLine);
 #endif
   friend class Tester;
@@ -140,39 +141,37 @@ private:
   void stopKnitting();
   OpState_t getState() const;
 
-  Encoders m_encoders;
-
   // machine state
   OpState_t m_opState;
 
   // job parameters
-  Machine_t m_machineType = NoMachine;
-  uint8_t m_startNeedle = 0U;
-  uint8_t m_stopNeedle = 0U;
-  uint8_t *m_lineBuffer = nullptr;
-  bool m_continuousReportingEnabled = false;
+  Machine_t m_machineType;
+  uint8_t m_startNeedle;
+  uint8_t m_stopNeedle;
+  uint8_t *m_lineBuffer;
+  bool m_continuousReportingEnabled;
 
   // current machine state
-  uint8_t m_position = 0U;
-  Direction_t m_direction = NoDirection;
-  Direction_t m_hallActive = NoDirection;
-  Beltshift_t m_beltshift = Unknown;
-  Carriage_t m_carriage = NoCarriage;
+  uint8_t m_position;
+  Direction_t m_direction;
+  Direction_t m_hallActive;
+  BeltShift_t m_beltShift;
+  Carriage_t m_carriage;
 
-  bool m_lineRequested = false;
-  uint8_t m_currentLineNumber = 0U;
-  bool m_lastLineFlag = false;
+  bool m_lineRequested;
+  uint8_t m_currentLineNumber;
+  bool m_lastLineFlag;
 
-  uint8_t m_sOldPosition = 0U;
-  bool m_firstRun = true;
-  bool m_workedOnLine = false;
+  uint8_t m_sOldPosition;
+  bool m_firstRun;
+  bool m_workedOnLine;
 #ifdef DBG_NOMACHINE
-  bool m_prevState = false;
+  bool m_prevState;
 #endif
 
   // resulting needle data
-  uint8_t m_solenoidToSet = 0U;
-  uint8_t m_pixelToSet = 0U;
+  uint8_t m_solenoidToSet;
+  uint8_t m_pixelToSet;
 };
 
 #endif // KNITTER_H_

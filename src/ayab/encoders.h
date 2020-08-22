@@ -21,8 +21,6 @@
  *    http://ayab-knitting.com
  */
 
-// TODO(TP): incorporate into machine instead of knitter
-
 #ifndef ENCODERS_H_
 #define ENCODERS_H_
 
@@ -42,8 +40,8 @@ enum Carriage {
 };
 using Carriage_t = enum Carriage;
 
-enum Beltshift { Unknown, Regular, Shifted, Lace_Regular, Lace_Shifted };
-using Beltshift_t = enum Beltshift;
+enum BeltShift { Unknown, Regular, Shifted, Lace_Regular, Lace_Shifted };
+using BeltShift_t = enum BeltShift;
 
 enum MachineType {
   NoMachine = -1,
@@ -99,34 +97,105 @@ constexpr uint16_t SOLENOIDS_BITMASK = 0xFFFFU;
 /*!
  * \brief Encoder interface.
  *
- * Encoders for Beltshift, Direction, Active Hall sensor and Carriage Type.
+ * Encoders for BeltShift, Direction, Active Hall sensor and Carriage Type.
  */
-class Encoders {
+class EncodersInterface {
+public:
+  virtual ~EncodersInterface(){};
+
+  // any methods that need to be mocked should go here
+  virtual void encA_interrupt() = 0;
+  virtual uint16_t getHallValue(Direction_t pSensor) = 0;
+
+  virtual void init(Machine_t machineType) = 0;
+  virtual Machine_t getMachineType() = 0;
+
+  // virtual void setBeltShift(BeltShift_t beltShift) = 0;
+  virtual BeltShift_t getBeltShift() = 0;
+
+  // virtual void setCarriage(Carriage_t carriage) = 0;
+  virtual Carriage_t getCarriage() = 0;
+
+  // virtual void setDirection(Direction_t direction) = 0;
+  virtual Direction_t getDirection() = 0;
+
+  // virtual void setHallActive(Direction_t hallActive) = 0;
+  virtual Direction_t getHallActive() = 0;
+
+  // virtual void setPosition(uint8_t position) = 0;
+  virtual uint8_t getPosition() = 0;
+};
+
+// Container class for the static methods for the encoders.
+// Dependency injection is enabled using a pointer to a global instance of
+// either `Encoders` or `EncodersMock`, both of which classes implement the
+// pure virtual methods of `EncodersInterface`.
+
+class GlobalEncoders final {
+private:
+  // singleton class so private constructor is appropriate
+  GlobalEncoders() = default;
+
+public:
+  // pointer to global instance whose methods are implemented
+  static EncodersInterface *m_instance;
+
+  static void encA_interrupt();
+  static uint16_t getHallValue(Direction_t pSensor);
+
+  static void init(Machine_t machineType);
+  static Machine_t getMachineType();
+
+  // static void setBeltShift(BeltShift_t beltShift);
+  static BeltShift_t getBeltShift();
+
+  // static void setCarriage(Carriage_t carriage);
+  static Carriage_t getCarriage();
+
+  // static void setDirection(Direction_t direction);
+  static Direction_t getDirection();
+
+  // static void setHallActive(Direction_t hallActive);
+  static Direction_t getHallActive();
+
+  // static void setPosition(uint8_t position);
+  static uint8_t getPosition();
+};
+
+class Encoders : public EncodersInterface {
 public:
   Encoders() = default;
 
   void encA_interrupt();
+  uint16_t getHallValue(Direction_t pSensor);
 
-  static uint16_t getHallValue(Direction_t pSensor);
-
-  // getter/setter functions to assist mocking
-  uint8_t getPosition() const;
-  Beltshift_t getBeltshift() const;
-  Direction_t getDirection() const;
-  Direction_t getHallActive() const;
-  Carriage_t getCarriage() const;
-  Machine_t getMachineType() const;
   void init(Machine_t machineType);
+  Machine_t getMachineType();
+
+  // void setBeltShift(BeltShift_t beltShift);
+  BeltShift_t getBeltShift();
+
+  // void setCarriage(Carriage_t carriage);
+  Carriage_t getCarriage();
+
+  // void setDirection(Direction_t direction);
+  Direction_t getDirection();
+
+  // void setHallActive(Direction_t hallActive);
+  Direction_t getHallActive();
+
+  // void setPosition(uint8_t position);
+  uint8_t getPosition();
 
 private:
-  Machine_t m_machineType = NoMachine;
+  Machine_t m_machineType;
 
-  volatile Direction_t m_direction = NoDirection;
-  volatile Direction_t m_hallActive = NoDirection;
-  volatile Beltshift_t m_beltShift = Unknown;
-  volatile Carriage_t m_carriage = NoCarriage;
-  volatile uint8_t m_encoderPos = 0x00;
-  volatile bool m_oldState = false;
+  volatile BeltShift_t m_beltShift;
+  volatile Carriage_t m_carriage;
+  volatile Direction_t m_direction;
+  volatile Direction_t m_hallActive;
+  volatile uint8_t m_position;
+  volatile bool m_oldState;
 
   void encA_rising();
   void encA_falling();

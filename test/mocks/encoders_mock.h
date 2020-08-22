@@ -27,10 +27,10 @@
 #include <encoders.h>
 #include <gmock/gmock.h>
 
-class EncodersMock {
+class EncodersMock : public EncodersInterface {
 public:
   MOCK_METHOD1(init, void(Machine_t));
-  MOCK_METHOD0(getBeltshift, Beltshift_t());
+  MOCK_METHOD0(getBeltShift, BeltShift_t());
   MOCK_METHOD0(getDirection, Direction_t());
   MOCK_METHOD0(getCarriage, Carriage_t());
   MOCK_METHOD0(getMachineType, Machine_t());
@@ -43,4 +43,4 @@ public:
 EncodersMock *encodersMockInstance();
 void releaseEncodersMock();
 
-#endif  // ENCODERS_MOCK_H_
+#endif // ENCODERS_MOCK_H_

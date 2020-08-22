@@ -25,6 +25,8 @@
 
 #include <beeper.h>
 #include <com.h>
+#include <encoders.h>
+#include <solenoids.h>
 #include <tester.h>
 
 #include <knitter_mock.h>
@@ -34,6 +36,7 @@
 KnitterMock *knitter = new KnitterMock();
 Beeper *beeper = new Beeper();
 Com *com = new Com();
+Encoders *encoders = new Encoders();
 Solenoids *solenoids = new Solenoids();
 Tester *tester = new Tester();
 
@@ -41,6 +44,7 @@ Tester *tester = new Tester();
 KnitterInterface *GlobalKnitter::m_instance = knitter;
 BeeperInterface *GlobalBeeper::m_instance = beeper;
 ComInterface *GlobalCom::m_instance = com;
+EncodersInterface *GlobalEncoders::m_instance = encoders;
 SolenoidsInterface *GlobalSolenoids::m_instance = solenoids;
 TesterInterface *GlobalTester::m_instance = tester;
 

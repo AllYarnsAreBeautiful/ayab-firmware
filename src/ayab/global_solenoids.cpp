@@ -1,5 +1,8 @@
 /*!
  * \file global_solenoids.cpp
+ * \brief Singleton class containing methods that control the needles
+ *    via solenoids connected to IO expanders on the device.
+ *
  * This file is part of AYAB.
  *
  *    AYAB is free software: you can redistribute it and/or modify

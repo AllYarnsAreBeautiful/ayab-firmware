@@ -1,6 +1,7 @@
 /*!
  * \file encoders.cpp
- * \brief Class containing method governing encoders.
+ * \brief Class containing methods governing encoders
+ *    for BeltShift, Direction, Active Hall sensor and Carriage Type.
  *
  * This file is part of AYAB.
  *
@@ -22,9 +23,9 @@
  *    http://ayab-knitting.com
  */
 
+#include "board.h"
 #include <Arduino.h>
 
-#include "board.h"
 #include "encoders.h"
 
 /*!
@@ -47,55 +48,6 @@ void Encoders::encA_interrupt() {
 }
 
 /*!
- * \brief Get position member.
- */
-uint8_t Encoders::getPosition() const {
-  return m_encoderPos;
-}
-
-/*!
- * \brief Get beltshift member.
- */
-Beltshift_t Encoders::getBeltshift() const {
-  return m_beltShift;
-}
-
-/*!
- * \brief Get direction member.
- */
-Direction_t Encoders::getDirection() const {
-  return m_direction;
-}
-
-/*!
- * \brief Get hallActive member.
- */
-Direction_t Encoders::getHallActive() const {
-  return m_hallActive;
-}
-
-/*!
- * \brief Get carriage member.
- */
-Carriage_t Encoders::getCarriage() const {
-  return m_carriage;
-}
-
-/*!
- * \brief Get machine type.
- */
-Machine_t Encoders::getMachineType() const {
-  return m_machineType;
-}
-
-/*!
- * \brief Set machine type.
- */
-void Encoders::init(Machine_t machineType) {
-  m_machineType = machineType;
-}
-
-/*!
  * \brief Read hall sensor on left and right.
  */
 uint16_t Encoders::getHallValue(Direction_t pSensor) {
@@ -107,6 +59,61 @@ uint16_t Encoders::getHallValue(Direction_t pSensor) {
   default:
     return 0;
   }
+}
+
+/*!
+ * \brief Initialize machine type.
+ */
+void Encoders::init(Machine_t machineType) {
+  m_machineType = machineType;
+  m_position = 0U;
+  m_direction = NoDirection;
+  m_hallActive = NoDirection;
+  m_beltShift = Unknown;
+  m_carriage = NoCarriage;
+  m_oldState = false;
+}
+
+/*!
+ * \brief Get position member.
+ */
+uint8_t Encoders::getPosition() {
+  return m_position;
+}
+
+/*!
+ * \brief Get beltShift member.
+ */
+BeltShift_t Encoders::getBeltShift() {
+  return m_beltShift;
+}
+
+/*!
+ * \brief Get direction member.
+ */
+Direction_t Encoders::getDirection() {
+  return m_direction;
+}
+
+/*!
+ * \brief Get hallActive member.
+ */
+Direction_t Encoders::getHallActive() {
+  return m_hallActive;
+}
+
+/*!
+ * \brief Get carriage member.
+ */
+Carriage_t Encoders::getCarriage() {
+  return m_carriage;
+}
+
+/*!
+ * \brief Get machine type.
+ */
+Machine_t Encoders::getMachineType() {
+  return m_machineType;
 }
 
 // Private Methods
@@ -124,8 +131,8 @@ void Encoders::encA_rising() {
 
   // Update carriage position
   if (Right == m_direction) {
-    if (m_encoderPos < END_RIGHT[m_machineType]) {
-      m_encoderPos++;
+    if (m_position < END_RIGHT[m_machineType]) {
+      m_position++;
     }
   }
 
@@ -139,7 +146,7 @@ void Encoders::encA_rising() {
     if ((m_machineType == Kh270) ||
         (hallValue >= FILTER_L_MIN[m_machineType])) {
       m_carriage = Knit;
-    } else if (m_carriage == Knit /*&& m_encoderPos == ?? */) {
+    } else if (m_carriage == Knit /*&& m_position == ?? */) {
       m_carriage = Garter;
     } else {
       m_carriage = Lace;
@@ -149,7 +156,7 @@ void Encoders::encA_rising() {
     m_beltShift = digitalRead(ENC_PIN_C) != 0 ? Regular : Shifted;
 
     // Known position of the carriage -> overwrite position
-    m_encoderPos = END_LEFT[m_machineType] + END_OFFSET[m_machineType];
+    m_position = END_LEFT[m_machineType] + END_OFFSET[m_machineType];
   }
 }
 
@@ -163,8 +170,8 @@ void Encoders::encA_rising() {
 void Encoders::encA_falling() {
   // Update carriage position
   if (Left == m_direction) {
-    if (m_encoderPos > END_LEFT[m_machineType]) {
-      m_encoderPos--;
+    if (m_position > END_LEFT[m_machineType]) {
+      m_position--;
     }
   }
 
@@ -188,6 +195,6 @@ void Encoders::encA_falling() {
     m_beltShift = digitalRead(ENC_PIN_C) != 0 ? Shifted : Regular;
 
     // Known position of the carriage -> overwrite position
-    m_encoderPos = END_RIGHT[m_machineType] - END_OFFSET[m_machineType];
+    m_position = END_RIGHT[m_machineType] - END_OFFSET[m_machineType];
   }
 }
