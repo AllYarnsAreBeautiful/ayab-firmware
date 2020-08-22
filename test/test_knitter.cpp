@@ -25,7 +25,6 @@
 
 #include <board.h>
 #include <knitter.h>
-#include <tester.h>
 
 #include <beeper_mock.h>
 #include <com_mock.h>
@@ -42,6 +41,7 @@ using ::testing::TypedEq;
 extern Knitter *knitter;
 extern BeeperMock *beeper;
 extern ComMock *com;
+extern EncodersMock *encoders;
 extern SolenoidsMock *solenoids;
 extern TesterMock *tester;
 
@@ -49,11 +49,11 @@ class KnitterTest : public ::testing::Test {
 protected:
   void SetUp() override {
     arduinoMock = arduinoMockInstance();
-    encodersMock = encodersMockInstance();
 
     // pointers to global instances
     beeperMock = beeper;
     comMock = com;
+    encodersMock = encoders;
     solenoidsMock = solenoids;
     testerMock = tester;
 
@@ -62,6 +62,7 @@ protected:
     // cause a memory leak. We must notify the test that this is not the case.
     Mock::AllowLeak(beeperMock);
     Mock::AllowLeak(comMock);
+    Mock::AllowLeak(encodersMock);
     Mock::AllowLeak(solenoidsMock);
     Mock::AllowLeak(testerMock);
 
@@ -71,7 +72,6 @@ protected:
 
   void TearDown() override {
     releaseArduinoMock();
-    releaseEncodersMock();
   }
 
   ArduinoMock *arduinoMock;
@@ -94,17 +94,17 @@ protected:
   }
 
   void expect_isr(uint16_t pos, Direction_t dir, Direction_t hall,
-                  Beltshift_t belt, Carriage_t carriage) {
+                  BeltShift_t belt, Carriage_t carriage) {
     EXPECT_CALL(*encodersMock, encA_interrupt);
     EXPECT_CALL(*encodersMock, getPosition).WillRepeatedly(Return(pos));
     EXPECT_CALL(*encodersMock, getDirection).WillRepeatedly(Return(dir));
     EXPECT_CALL(*encodersMock, getHallActive).WillRepeatedly(Return(hall));
-    EXPECT_CALL(*encodersMock, getBeltshift).WillRepeatedly(Return(belt));
+    EXPECT_CALL(*encodersMock, getBeltShift).WillRepeatedly(Return(belt));
     EXPECT_CALL(*encodersMock, getCarriage).WillRepeatedly(Return(carriage));
   }
 
   void expected_isr(uint16_t pos, Direction_t dir, Direction_t hall,
-                    Beltshift_t belt, Carriage_t carriage) {
+                    BeltShift_t belt, Carriage_t carriage) {
     expect_isr(pos, dir, hall, belt, carriage);
     knitter->isr();
   }
@@ -205,10 +205,16 @@ TEST_F(KnitterTest, test_send) {
   uint8_t p[] = {1, 2, 3, 4, 5};
   expect_send();
   comMock->send(p, 5);
+
+  // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(comMock));
 }
 
 TEST_F(KnitterTest, test_isr) {
   expected_isr(1);
+
+  // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(encodersMock));
 }
 
 TEST_F(KnitterTest, test_fsm_default_case) {
@@ -226,6 +232,7 @@ TEST_F(KnitterTest, test_fsm_init_LL) {
   ASSERT_EQ(knitter->getState(), s_init);
 
   // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(encodersMock));
   ASSERT_TRUE(Mock::VerifyAndClear(comMock));
 }
 
@@ -236,6 +243,7 @@ TEST_F(KnitterTest, test_fsm_init_RR) {
   ASSERT_EQ(knitter->getState(), s_init);
 
   // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(encodersMock));
   ASSERT_TRUE(Mock::VerifyAndClear(comMock));
 }
 
@@ -248,6 +256,7 @@ TEST_F(KnitterTest, test_fsm_init_RL) {
   ASSERT_EQ(knitter->getState(), s_ready);
 
   // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(encodersMock));
   ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
   ASSERT_TRUE(Mock::VerifyAndClear(comMock));
 }
@@ -268,6 +277,7 @@ TEST_F(KnitterTest, test_fsm_ready) {
   ASSERT_EQ(knitter->getState(), s_ready);
 
   // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(encodersMock));
   ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
   ASSERT_TRUE(Mock::VerifyAndClear(comMock));
 }
@@ -289,6 +299,7 @@ TEST_F(KnitterTest, test_fsm_test) {
   expected_fsm();
 
   // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(encodersMock));
   ASSERT_TRUE(Mock::VerifyAndClear(testerMock));
   ASSERT_TRUE(Mock::VerifyAndClear(comMock));
 }
@@ -317,6 +328,7 @@ TEST_F(KnitterTest, test_startKnitting_NoMachine) {
             false);
 
   // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(encodersMock));
   ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
   ASSERT_TRUE(Mock::VerifyAndClear(comMock));
 }
@@ -339,6 +351,7 @@ TEST_F(KnitterTest, test_startKnitting_Kh910) {
       true);
 
   // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(encodersMock));
   ASSERT_TRUE(Mock::VerifyAndClear(beeperMock));
   ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
   ASSERT_TRUE(Mock::VerifyAndClear(comMock));
@@ -354,6 +367,7 @@ TEST_F(KnitterTest, test_startKnitting_Kh270) {
       true);
 
   // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(encodersMock));
   ASSERT_TRUE(Mock::VerifyAndClear(beeperMock));
   ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
   ASSERT_TRUE(Mock::VerifyAndClear(comMock));
@@ -377,20 +391,38 @@ TEST_F(KnitterTest, test_startKnitting_failures) {
       false);
 
   // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(encodersMock));
   ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
   ASSERT_TRUE(Mock::VerifyAndClear(comMock));
 }
 
-TEST_F(KnitterTest, test_startTest) {
+TEST_F(KnitterTest, test_startTest_in_init) {
+  // from state `s_init`
   EXPECT_CALL(*testerMock, setUp);
+  ASSERT_EQ(knitter->getState(), s_init);
   ASSERT_EQ(knitter->startTest(Kh910), true);
+
+  // fail if call `startTest()` while already in state `s_test`
   ASSERT_EQ(knitter->getState(), s_test);
+  ASSERT_EQ(knitter->startTest(Kh270), false);
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(testerMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(encodersMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(comMock));
 }
 
-TEST_F(KnitterTest, test_startTest_in_operation) {
+TEST_F(KnitterTest, test_startTest_in_ready) {
+  get_to_ready();
+  ASSERT_EQ(knitter->getState(), s_ready);
+  ASSERT_EQ(knitter->startTest(Kh930), true);
+
+  // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(encodersMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(comMock));
+}
+
+TEST_F(KnitterTest, test_startTest_in_knit) {
   get_to_knit(Kh910);
   ASSERT_EQ(knitter->getState(), s_knit);
 
@@ -398,6 +430,7 @@ TEST_F(KnitterTest, test_startTest_in_operation) {
   ASSERT_EQ(knitter->startTest(Kh910), false);
 
   // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(encodersMock));
   ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
   ASSERT_TRUE(Mock::VerifyAndClear(beeperMock));
   ASSERT_TRUE(Mock::VerifyAndClear(comMock));
@@ -429,6 +462,7 @@ TEST_F(KnitterTest, test_setNextLine) {
   ASSERT_EQ(knitter->setNextLine(0), false);
 
   // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(encodersMock));
   ASSERT_TRUE(Mock::VerifyAndClear(beeperMock));
   ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
   ASSERT_TRUE(Mock::VerifyAndClear(comMock));
@@ -484,6 +518,7 @@ TEST_F(KnitterTest, test_operate_Kh910) {
   expected_knit(false);
 
   // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(encodersMock));
   ASSERT_TRUE(Mock::VerifyAndClear(beeperMock));
   ASSERT_TRUE(Mock::VerifyAndClear(comMock));
   ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
@@ -545,6 +580,7 @@ TEST_F(KnitterTest, test_operate_Kh270) {
   expected_knit(false);
 
   // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(encodersMock));
   ASSERT_TRUE(Mock::VerifyAndClear(beeperMock));
   ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
   ASSERT_TRUE(Mock::VerifyAndClear(comMock));
@@ -568,6 +604,7 @@ TEST_F(KnitterTest, test_operate_line_request) {
   expected_knit(false);
 
   // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(encodersMock));
   ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
   ASSERT_TRUE(Mock::VerifyAndClear(beeperMock));
   ASSERT_TRUE(Mock::VerifyAndClear(comMock));
@@ -593,6 +630,7 @@ TEST_F(KnitterTest, test_operate_lastline) {
   expected_knit(false);
 
   // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(encodersMock));
   ASSERT_TRUE(Mock::VerifyAndClear(beeperMock));
   ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
   ASSERT_TRUE(Mock::VerifyAndClear(comMock));
@@ -624,6 +662,7 @@ TEST_F(KnitterTest, test_operate_lastline_and_no_req) {
   ASSERT_EQ(knitter->getStartOffset(Right), 0);
 
   // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(encodersMock));
   ASSERT_TRUE(Mock::VerifyAndClear(beeperMock));
   ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
   ASSERT_TRUE(Mock::VerifyAndClear(comMock));
@@ -638,6 +677,7 @@ TEST_F(KnitterTest, test_operate_same_position) {
   expected_knit(false);
 
   // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(encodersMock));
   ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
   ASSERT_TRUE(Mock::VerifyAndClear(beeperMock));
   ASSERT_TRUE(Mock::VerifyAndClear(comMock));
@@ -664,6 +704,7 @@ TEST_F(KnitterTest, test_operate_new_line) {
   expected_knit(false);
 
   // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(encodersMock));
   ASSERT_TRUE(Mock::VerifyAndClear(beeperMock));
   ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
   ASSERT_TRUE(Mock::VerifyAndClear(comMock));
@@ -673,7 +714,7 @@ TEST_F(KnitterTest, test_calculatePixelAndSolenoid) {
   EXPECT_CALL(*testerMock, setUp);
   expected_set_machine(Kh910);
 
-  // new position, different beltshift and active hall
+  // new position, different beltShift and active hall
   expected_isr(100, Right, Right, Shifted, Lace);
   expected_test();
 
@@ -721,6 +762,7 @@ TEST_F(KnitterTest, test_calculatePixelAndSolenoid) {
   expected_test();
 
   // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(encodersMock));
   ASSERT_TRUE(Mock::VerifyAndClear(testerMock));
   ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
   ASSERT_TRUE(Mock::VerifyAndClear(comMock));

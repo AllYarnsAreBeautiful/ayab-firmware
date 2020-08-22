@@ -1,6 +1,6 @@
 /*!
  * \file knitter.cpp
- * \brief Singleton class containing methods for the finite state machine
+ * \brief Class containing methods for the finite state machine
  *    that co-ordinates the AYAB firmware.
  *
  * This file is part of AYAB.
@@ -28,6 +28,7 @@
 #include "beeper.h"
 #include "board.h"
 #include "com.h"
+#include "encoders.h"
 #include "knitter.h"
 #include "tester.h"
 
@@ -58,28 +59,31 @@ void Knitter::init() {
 
   setUpInterrupt();
 
+  GlobalSolenoids::init();
+
   // explicitly initialize members
+
+  // machine state
   m_opState = s_init;
+
+  // job parameters
   m_machineType = NoMachine;
   m_startNeedle = 0U;
   m_stopNeedle = 0U;
   m_lineBuffer = nullptr;
   m_continuousReportingEnabled = false;
-  m_position = 0U;
-  m_direction = NoDirection;
-  m_hallActive = NoDirection;
-  m_beltshift = Unknown;
-  m_carriage = NoCarriage;
+
   m_lineRequested = false;
   m_currentLineNumber = 0U;
   m_lastLineFlag = false;
   m_sOldPosition = 0U;
   m_firstRun = true;
   m_workedOnLine = false;
+#ifdef DBG_NOMACHINE
+  m_prevState = false;
+#endif
   m_solenoidToSet = 0U;
   m_pixelToSet = 0U;
-
-  GlobalSolenoids::init();
 }
 
 void Knitter::setUpInterrupt() {
@@ -99,12 +103,12 @@ void Knitter::setUpInterrupt() {
  */
 void Knitter::isr() {
   // update machine state data
-  m_encoders.encA_interrupt();
-  m_position = m_encoders.getPosition();
-  m_direction = m_encoders.getDirection();
-  m_hallActive = m_encoders.getHallActive();
-  m_beltshift = m_encoders.getBeltshift();
-  m_carriage = m_encoders.getCarriage();
+  GlobalEncoders::encA_interrupt();
+  m_position = GlobalEncoders::getPosition();
+  m_direction = GlobalEncoders::getDirection();
+  m_hallActive = GlobalEncoders::getHallActive();
+  m_beltShift = GlobalEncoders::getBeltShift();
+  m_carriage = GlobalEncoders::getCarriage();
 }
 
 /*!
@@ -145,7 +149,7 @@ void Knitter::fsm() {
 bool Knitter::startKnitting(Machine_t machineType, uint8_t startNeedle,
                             uint8_t stopNeedle, uint8_t *pattern_start,
                             bool continuousReportingEnabled) {
-  if ((m_opState != s_ready) || (machineType == NoMachine) ||
+  if ((getState() != s_ready) || (machineType == NoMachine) ||
       (machineType >= NUM_MACHINES) || (pattern_start == nullptr) ||
       (startNeedle >= stopNeedle) || (stopNeedle >= NUM_NEEDLES[machineType])) {
     // TODO(TP): error code
@@ -166,10 +170,10 @@ bool Knitter::startKnitting(Machine_t machineType, uint8_t startNeedle,
   m_lastLineFlag = false;
 
   // initialize encoders
-  m_encoders.init(machineType);
+  GlobalEncoders::init(machineType);
 
   // proceed to next state
-  m_opState = s_knit;
+  setState(s_knit);
   GlobalBeeper::ready();
 
   // Attaching ENC_PIN_A, Interrupt #0
@@ -187,8 +191,8 @@ bool Knitter::startKnitting(Machine_t machineType, uint8_t startNeedle,
 
 bool Knitter::startTest(Machine_t machineType) {
   bool success = false;
-  if (s_init == m_opState || s_ready == m_opState) {
-    m_opState = s_test;
+  if (s_init == getState() || s_ready == getState()) {
+    setState(s_test);
     m_machineType = machineType;
     GlobalTester::setUp();
     success = true;
@@ -251,7 +255,7 @@ void Knitter::state_init() {
   // machine is initialized when left hall sensor is passed in Right direction
   if (Right == m_direction && Left == m_hallActive) {
 #endif // DBG_NOMACHINE
-    m_opState = s_ready;
+    setState(s_ready);
     GlobalSolenoids::setSolenoids(SOLENOIDS_BITMASK);
     indState(true);
   }
@@ -358,7 +362,7 @@ void Knitter::state_test() {
   }
   GlobalTester::loop();
   if (GlobalTester::getQuitFlag()) {
-    m_opState = s_ready;
+    setState(s_ready);
   }
 }
 
@@ -379,9 +383,9 @@ bool Knitter::calculatePixelAndSolenoid() {
         // TODO(who?): check
         m_solenoidToSet = (m_position % 12) + 3;
       } else {
-        if (Regular == m_beltshift) {
+        if (Regular == m_beltShift) {
           m_solenoidToSet = m_position % SOLENOIDS_NUM;
-        } else if (Shifted == m_beltshift) {
+        } else if (Shifted == m_beltShift) {
           m_solenoidToSet = (m_position - HALF_SOLENOIDS_NUM) % SOLENOIDS_NUM;
         }
         if (Lace == m_carriage) {
@@ -402,9 +406,9 @@ bool Knitter::calculatePixelAndSolenoid() {
         // TODO(who?): check
         m_solenoidToSet = ((m_position + 6) % 12) + 3;
       } else {
-        if (Regular == m_beltshift) {
+        if (Regular == m_beltShift) {
           m_solenoidToSet = (m_position + HALF_SOLENOIDS_NUM) % SOLENOIDS_NUM;
-        } else if (Shifted == m_beltshift) {
+        } else if (Shifted == m_beltShift) {
           m_solenoidToSet = m_position % SOLENOIDS_NUM;
         }
         if (Lace == m_carriage) {
@@ -434,8 +438,8 @@ void Knitter::reqLine(const uint8_t lineNumber) {
 }
 
 void Knitter::indState(const bool initState) {
-  uint16_t leftHallValue = Encoders::getHallValue(Left);
-  uint16_t rightHallValue = Encoders::getHallValue(Right);
+  uint16_t leftHallValue = GlobalEncoders::getHallValue(Left);
+  uint16_t rightHallValue = GlobalEncoders::getHallValue(Right);
   uint8_t payload[INDSTATE_LEN] = {
       indState_msgid,
       static_cast<uint8_t>(initState),
@@ -445,14 +449,14 @@ void Knitter::indState(const bool initState) {
       lowByte(rightHallValue),
       static_cast<uint8_t>(m_carriage),
       static_cast<uint8_t>(m_position),
-      static_cast<uint8_t>(m_encoders.getDirection()),
+      static_cast<uint8_t>(GlobalEncoders::getDirection()),
   };
   GlobalCom::send(static_cast<uint8_t *>(payload), INDSTATE_LEN);
 }
 
 void Knitter::stopKnitting() {
   GlobalBeeper::endWork();
-  m_opState = s_ready;
+  setState(s_ready);
 
   GlobalSolenoids::setSolenoids(SOLENOIDS_BITMASK);
   GlobalBeeper::finishedLine();

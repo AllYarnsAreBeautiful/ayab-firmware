@@ -49,32 +49,32 @@ void Encoders::encA_interrupt() {
   gEncodersMock->encA_interrupt();
 }
 
-uint8_t Encoders::getPosition() const {
+uint8_t Encoders::getPosition() {
   assert(gEncodersMock != NULL);
   return gEncodersMock->getPosition();
 }
 
-Beltshift_t Encoders::getBeltshift() const {
+BeltShift_t Encoders::getBeltShift() {
   assert(gEncodersMock != NULL);
-  return gEncodersMock->getBeltshift();
+  return gEncodersMock->getBeltShift();
 }
 
-Direction_t Encoders::getDirection() const {
+Direction_t Encoders::getDirection() {
   assert(gEncodersMock != NULL);
   return gEncodersMock->getDirection();
 }
 
-Direction_t Encoders::getHallActive() const {
+Direction_t Encoders::getHallActive() {
   assert(gEncodersMock != NULL);
   return gEncodersMock->getHallActive();
 }
 
-Carriage_t Encoders::getCarriage() const {
+Carriage_t Encoders::getCarriage() {
   assert(gEncodersMock != NULL);
   return gEncodersMock->getCarriage();
 }
 
-Machine_t Encoders::getMachineType() const {
+Machine_t Encoders::getMachineType() {
   assert(gEncodersMock != NULL);
   return gEncodersMock->getMachineType();
 }

@@ -1,5 +1,8 @@
 /*!
  * \file global_knitter.cpp
+ * \brief Singleton class containing methods for the finite state machine
+ *    that co-ordinates the AYAB firmware.
+ *
  * This file is part of AYAB.
  *
  *    AYAB is free software: you can redistribute it and/or modify

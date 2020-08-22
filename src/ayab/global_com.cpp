@@ -1,5 +1,7 @@
 /*!
  * \file global_com.cpp
+ * \brief Singleton class containing methods for serial communication.
+ *
  * This file is part of AYAB.
  *
  *    AYAB is free software: you can redistribute it and/or modify

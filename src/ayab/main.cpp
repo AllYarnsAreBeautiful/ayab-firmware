@@ -24,13 +24,18 @@
 
 #include <Arduino.h>
 
+#include "beeper.h"
+#include "com.h"
+#include "encoders.h"
 #include "knitter.h"
+#include "solenoids.h"
 #include "tester.h"
 
 // global definitions
 // references everywhere else must use `extern`
 GlobalBeeper *beeper;
 GlobalCom *com;
+GlobalEncoders *encoders;
 GlobalKnitter *knitter;
 GlobalSolenoids *solenoids;
 GlobalTester *tester;
@@ -38,6 +43,7 @@ GlobalTester *tester;
 // initialize static members
 BeeperInterface *GlobalBeeper::m_instance = new Beeper();
 ComInterface *GlobalCom::m_instance = new Com();
+EncodersInterface *GlobalEncoders::m_instance = new Encoders();
 KnitterInterface *GlobalKnitter::m_instance = new Knitter();
 SolenoidsInterface *GlobalSolenoids::m_instance = new Solenoids();
 TesterInterface *GlobalTester::m_instance = new Tester();

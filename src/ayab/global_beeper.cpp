@@ -1,5 +1,8 @@
 /*!
  * \file global_beeper.cpp
+ * \brief Singleton class containing methods to actuate a beeper
+ *    connected to PIEZO_PIN.
+ *
  * This file is part of AYAB.
  *
  *    AYAB is free software: you can redistribute it and/or modify
