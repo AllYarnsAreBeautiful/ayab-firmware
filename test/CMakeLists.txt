@@ -30,7 +30,6 @@ set(COMMON_INCLUDES
     ${ARDUINO_MOCK_LIBS_DIR}/lib/gtest/gtest/src/gtest/googlemock/include
     ${PROJECT_SOURCE_DIR}/mocks
     ${SOURCE_DIRECTORY}
-    #${LIBRARY_DIRECTORY}/SerialCommand
     ${LIBRARY_DIRECTORY}/PacketSerial/src
     )
 set(EXTERNAL_LIB_INCLUDES
@@ -44,6 +43,7 @@ set(COMMON_SOURCES
     ${PROJECT_SOURCE_DIR}/test_encoders.cpp
 
     ${SOURCE_DIRECTORY}/solenoids.cpp
+    ${SOURCE_DIRECTORY}/global_solenoids.cpp
     ${PROJECT_SOURCE_DIR}/test_solenoids.cpp
 
     ${SOURCE_DIRECTORY}/beeper.cpp
@@ -57,7 +57,6 @@ set(COMMON_SOURCES
     ${SOURCE_DIRECTORY}/tester.cpp
     ${SOURCE_DIRECTORY}/global_tester.cpp
     ${PROJECT_SOURCE_DIR}/test_tester.cpp
-    #${PROJECT_SOURCE_DIR}/mocks/SerialCommand_mock.cpp
 
     ${SOURCE_DIRECTORY}/global_knitter.cpp
     ${PROJECT_SOURCE_DIR}/mocks/knitter_mock.cpp
@@ -140,6 +139,7 @@ add_executable(${PROJECT_NAME}_knitter
     ${SOURCE_DIRECTORY}/global_knitter.cpp
     ${SOURCE_DIRECTORY}/global_com.cpp
     ${SOURCE_DIRECTORY}/global_beeper.cpp
+    ${SOURCE_DIRECTORY}/global_solenoids.cpp
     ${SOURCE_DIRECTORY}/global_tester.cpp
     ${PROJECT_SOURCE_DIR}/mocks/solenoids_mock.cpp
     ${PROJECT_SOURCE_DIR}/mocks/encoders_mock.cpp
@@ -147,7 +147,6 @@ add_executable(${PROJECT_NAME}_knitter
     ${PROJECT_SOURCE_DIR}/mocks/com_mock.cpp
     ${PROJECT_SOURCE_DIR}/mocks/tester_mock.cpp
     ${PROJECT_SOURCE_DIR}/test_knitter.cpp
-    #${LIBRARY_DIRECTORY}/SerialCommand/SerialCommand.cpp
     ${SOFT_I2C_LIB}
 )
 target_include_directories(${PROJECT_NAME}_knitter

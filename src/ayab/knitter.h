@@ -34,7 +34,7 @@
 constexpr uint8_t INDSTATE_LEN = 9U;
 constexpr uint8_t REQLINE_LEN = 2U;
 
-enum OpState { s_init, s_ready, s_operate, s_test };
+enum OpState { s_init, s_ready, s_knit, s_test };
 using OpState_t = enum OpState;
 
 class KnitterInterface {
@@ -46,13 +46,12 @@ public:
   virtual void fsm() = 0;
   virtual void setUpInterrupt() = 0;
   virtual void isr() = 0;
-  virtual bool startOperation(Machine_t machineType, uint8_t startNeedle,
-                              uint8_t stopNeedle, uint8_t *pattern_start,
-                              bool continuousReportingEnabled) = 0;
+  virtual bool startKnitting(Machine_t machineType, uint8_t startNeedle,
+                             uint8_t stopNeedle, uint8_t *pattern_start,
+                             bool continuousReportingEnabled) = 0;
   virtual bool startTest(Machine_t machineType) = 0;
   virtual uint8_t getStartOffset(const Direction_t direction) = 0;
   virtual Machine_t getMachineType() = 0;
-  virtual void setSolenoids(uint16_t state) = 0;
   virtual bool setNextLine(uint8_t lineNumber) = 0;
   virtual void setLastLine() = 0;
   virtual void setMachineType(Machine_t) = 0;
@@ -80,13 +79,12 @@ public:
 #ifndef AYAB_TESTS
   static void isr();
 #endif
-  static bool startOperation(Machine_t machineType, uint8_t startNeedle,
-                             uint8_t stopNeedle, uint8_t *pattern_start,
-                             bool continuousReportingEnabled);
+  static bool startKnitting(Machine_t machineType, uint8_t startNeedle,
+                            uint8_t stopNeedle, uint8_t *pattern_start,
+                            bool continuousReportingEnabled);
   static bool startTest(Machine_t machineType);
   static uint8_t getStartOffset(const Direction_t direction);
   static Machine_t getMachineType();
-  static void setSolenoids(uint16_t state);
   static bool setNextLine(uint8_t lineNumber);
   static void setLastLine();
   static void setMachineType(Machine_t);
@@ -106,8 +104,8 @@ class Knitter : public KnitterInterface {
   FRIEND_TEST(KnitterTest, test_fsm_ready);
   FRIEND_TEST(KnitterTest, test_fsm_test);
   FRIEND_TEST(KnitterTest, test_fsm_test_quit);
-  FRIEND_TEST(KnitterTest, test_startOperation_NoMachine);
-  FRIEND_TEST(KnitterTest, test_startOperation_notReady);
+  FRIEND_TEST(KnitterTest, test_startKnitting_NoMachine);
+  FRIEND_TEST(KnitterTest, test_startKnitting_notReady);
   FRIEND_TEST(KnitterTest, test_startTest);
   FRIEND_TEST(KnitterTest, test_startTest_in_operation);
   FRIEND_TEST(KnitterTest, test_setNextLine);
@@ -119,13 +117,12 @@ public:
   void fsm();
   void setUpInterrupt();
   void isr();
-  bool startOperation(Machine_t machineType, uint8_t startNeedle,
-                      uint8_t stopNeedle, uint8_t *pattern_start,
-                      bool continuousReportingEnabled);
+  bool startKnitting(Machine_t machineType, uint8_t startNeedle,
+                     uint8_t stopNeedle, uint8_t *pattern_start,
+                     bool continuousReportingEnabled);
   bool startTest(Machine_t machineType);
   uint8_t getStartOffset(const Direction_t direction);
   Machine_t getMachineType();
-  void setSolenoids(uint16_t state);
   bool setNextLine(uint8_t lineNumber);
   void setLastLine();
   void setMachineType(Machine_t);
@@ -134,17 +131,16 @@ public:
 private:
   void state_init();
   static void state_ready();
-  void state_operate();
+  void state_knit();
   void state_test();
 
   bool calculatePixelAndSolenoid();
   void reqLine(uint8_t lineNumber);
   void indState(bool initState = false);
-  void stopOperation();
+  void stopKnitting();
   OpState_t getState() const;
 
   Encoders m_encoders;
-  Solenoids m_solenoids;
 
   // machine state
   OpState_t m_opState;

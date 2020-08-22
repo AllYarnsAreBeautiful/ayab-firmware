@@ -37,6 +37,7 @@ extern KnitterMock *knitter;
 class ComTest : public ::testing::Test {
 protected:
   void SetUp() override {
+    arduinoMock = arduinoMockInstance();
     serialMock = serialMockInstance();
 
     // pointer to global instance
@@ -52,12 +53,14 @@ protected:
   }
 
   void TearDown() override {
-    releaseKnitterMock();
+    releaseArduinoMock();
     releaseSerialMock();
+    releaseKnitterMock();
   }
 
-  KnitterMock *knitterMock;
+  ArduinoMock *arduinoMock;
   SerialMock *serialMock;
+  KnitterMock *knitterMock;
 
   void expect_init() {
     EXPECT_CALL(*serialMock, begin);
@@ -88,7 +91,7 @@ TEST_F(ComTest, test_reqtest_success) {
 TEST_F(ComTest, test_reqstart_fail1) {
   // checksum wrong
   uint8_t buffer[] = {reqStart_msgid, 0, 0, 10, 1, 0x73};
-  EXPECT_CALL(*knitterMock, startOperation).Times(0);
+  EXPECT_CALL(*knitterMock, startKnitting).Times(0);
   com->onPacketReceived(buffer, sizeof(buffer));
   ASSERT_TRUE(Mock::VerifyAndClear(knitterMock));
 }
@@ -96,27 +99,82 @@ TEST_F(ComTest, test_reqstart_fail1) {
 TEST_F(ComTest, test_reqstart_fail2) {
   // not enough bytes
   uint8_t buffer[] = {reqStart_msgid, 0, 0, 10, 1, 0x74};
-  EXPECT_CALL(*knitterMock, startOperation).Times(0);
+  EXPECT_CALL(*knitterMock, startKnitting).Times(0);
   com->onPacketReceived(buffer, sizeof(buffer) - 1);
   ASSERT_TRUE(Mock::VerifyAndClear(knitterMock));
 }
 
 TEST_F(ComTest, test_reqstart_success_KH910) {
   uint8_t buffer[] = {reqStart_msgid, 0, 0, 10, 1, 0x74};
-  EXPECT_CALL(*knitterMock, startOperation);
+  EXPECT_CALL(*knitterMock, startKnitting);
   com->onPacketReceived(buffer, sizeof(buffer));
   ASSERT_TRUE(Mock::VerifyAndClear(knitterMock));
 }
 
 TEST_F(ComTest, test_reqstart_success_KH270) {
   uint8_t buffer[] = {reqStart_msgid, 2, 0, 10, 1, 0x73};
-  EXPECT_CALL(*knitterMock, startOperation);
+  EXPECT_CALL(*knitterMock, startKnitting);
   com->onPacketReceived(buffer, sizeof(buffer));
   ASSERT_TRUE(Mock::VerifyAndClear(knitterMock));
 }
 
 TEST_F(ComTest, test_reqinfo) {
   uint8_t buffer[] = {reqInfo_msgid};
+  com->onPacketReceived(buffer, sizeof(buffer));
+}
+
+TEST_F(ComTest, test_helpCmd) {
+  uint8_t buffer[] = {helpCmd_msgid};
+  com->onPacketReceived(buffer, sizeof(buffer));
+}
+
+TEST_F(ComTest, test_sendCmd) {
+  uint8_t buffer[] = {sendCmd_msgid};
+  com->onPacketReceived(buffer, sizeof(buffer));
+}
+
+TEST_F(ComTest, test_beepCmd) {
+  uint8_t buffer[] = {beepCmd_msgid};
+  com->onPacketReceived(buffer, sizeof(buffer));
+}
+
+TEST_F(ComTest, test_setSingleCmd) {
+  uint8_t buffer[] = {setSingleCmd_msgid, 0, 0};
+  com->onPacketReceived(buffer, sizeof(buffer));
+}
+
+TEST_F(ComTest, test_setAllCmd) {
+  uint8_t buffer[] = {setAllCmd_msgid, 0, 0};
+  com->onPacketReceived(buffer, sizeof(buffer));
+}
+
+TEST_F(ComTest, test_readEOLsensorsCmd) {
+  uint8_t buffer[] = {readEOLsensorsCmd_msgid};
+  com->onPacketReceived(buffer, sizeof(buffer));
+}
+
+TEST_F(ComTest, test_readEncodersCmd) {
+  uint8_t buffer[] = {readEncodersCmd_msgid};
+  com->onPacketReceived(buffer, sizeof(buffer));
+}
+
+TEST_F(ComTest, test_autoReadCmd) {
+  uint8_t buffer[] = {autoReadCmd_msgid};
+  com->onPacketReceived(buffer, sizeof(buffer));
+}
+
+TEST_F(ComTest, test_autoTestCmd) {
+  uint8_t buffer[] = {autoTestCmd_msgid};
+  com->onPacketReceived(buffer, sizeof(buffer));
+}
+
+TEST_F(ComTest, test_stopCmd) {
+  uint8_t buffer[] = {stopCmd_msgid};
+  com->onPacketReceived(buffer, sizeof(buffer));
+}
+
+TEST_F(ComTest, test_quitCmd) {
+  uint8_t buffer[] = {quitCmd_msgid};
   com->onPacketReceived(buffer, sizeof(buffer));
 }
 
@@ -162,7 +220,7 @@ TEST_F(ComTest, test_cnfline_kh910) {
                         0xa7}; // CRC8
 
   // start KH910 job
-  knitterMock->startOperation(Kh910, 0, 199, pattern, false);
+  knitterMock->startKnitting(Kh910, 0, 199, pattern, false);
 
   // first call increments line number to zero, not accepted
   EXPECT_CALL(*knitterMock, setNextLine).WillOnce(Return(false));
@@ -232,12 +290,12 @@ TEST_F(ComTest, test_send) {
 TEST_F(ComTest, test_sendMsg1) {
   EXPECT_CALL(*serialMock, write(_, _));
   EXPECT_CALL(*serialMock, write(SLIP::END));
-  com->sendMsg(test_msgid, "abc");
+  com->sendMsg(testRes_msgid, "abc");
 }
 
 TEST_F(ComTest, test_sendMsg2) {
   char buf[] = "abc\0";
   EXPECT_CALL(*serialMock, write(_, _));
   EXPECT_CALL(*serialMock, write(SLIP::END));
-  com->sendMsg(test_msgid, buf);
+  com->sendMsg(testRes_msgid, buf);
 }

@@ -33,14 +33,13 @@ public:
   MOCK_METHOD0(fsm, void());
   MOCK_METHOD0(isr, void());
   MOCK_METHOD0(setUpInterrupt, void());
-  MOCK_METHOD5(startOperation, bool(Machine_t machineType, uint8_t startNeedle,
-                                    uint8_t stopNeedle, uint8_t *pattern_start,
-                                    bool continuousReportingEnabled));
+  MOCK_METHOD5(startKnitting, bool(Machine_t machineType, uint8_t startNeedle,
+                                   uint8_t stopNeedle, uint8_t *pattern_start,
+                                   bool continuousReportingEnabled));
   MOCK_METHOD1(startTest, bool(Machine_t));
   MOCK_METHOD1(setNextLine, bool(uint8_t lineNumber));
   MOCK_METHOD0(setLastLine, void());
   MOCK_METHOD0(getMachineType, Machine_t());
-  MOCK_METHOD1(setSolenoids, void(uint16_t));
   MOCK_METHOD1(setMachineType, void(Machine_t));
   MOCK_METHOD1(getStartOffset, uint8_t(const Direction_t direction));
   MOCK_METHOD1(setState, void(OpState_t));

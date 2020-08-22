@@ -24,6 +24,7 @@
 
 #include "com.h"
 #include "knitter.h"
+#include "tester.h"
 
 #ifdef AYAB_ENABLE_CRC
 /*!
@@ -82,6 +83,50 @@ void Com::onPacketReceived(const uint8_t *buffer, size_t size) {
 
   case reqTest_msgid:
     h_reqTest(buffer, size);
+    break;
+
+  case helpCmd_msgid:
+    GlobalTester::helpCmd();
+    break;
+
+  case sendCmd_msgid:
+    GlobalTester::sendCmd();
+    break;
+
+  case beepCmd_msgid:
+    GlobalTester::beepCmd();
+    break;
+
+  case setSingleCmd_msgid:
+    GlobalTester::setSingleCmd(buffer, size);
+    break;
+
+  case setAllCmd_msgid:
+    GlobalTester::setAllCmd(buffer, size);
+    break;
+
+  case readEOLsensorsCmd_msgid:
+    GlobalTester::readEOLsensorsCmd();
+    break;
+
+  case readEncodersCmd_msgid:
+    GlobalTester::readEncodersCmd();
+    break;
+
+  case autoReadCmd_msgid:
+    GlobalTester::autoReadCmd();
+    break;
+
+  case autoTestCmd_msgid:
+    GlobalTester::autoTestCmd();
+    break;
+
+  case stopCmd_msgid:
+    GlobalTester::stopCmd();
+    break;
+
+  case quitCmd_msgid:
+    GlobalTester::quitCmd();
     break;
 
   default:
@@ -165,8 +210,8 @@ void Com::h_reqStart(const uint8_t *buffer, size_t size) {
   }
 
   bool success =
-      GlobalKnitter::startOperation(machineType, startNeedle, stopNeedle,
-                                    lineBuffer, continuousReportingEnabled);
+      GlobalKnitter::startKnitting(machineType, startNeedle, stopNeedle,
+                                   lineBuffer, continuousReportingEnabled);
 
   uint8_t payload[2];
   payload[0] = cnfStart_msgid;

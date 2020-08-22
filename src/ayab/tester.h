@@ -28,7 +28,7 @@
 
 #include "beeper.h"
 
-constexpr uint8_t BUFFER_LEN = 20;
+constexpr uint8_t BUFFER_LEN = 40;
 
 class TesterInterface {
 public:
@@ -41,8 +41,8 @@ public:
   virtual void helpCmd() = 0;
   virtual void sendCmd() = 0;
   virtual void beepCmd() = 0;
-  virtual void setSingleCmd() = 0;
-  virtual void setAllCmd() = 0;
+  virtual void setSingleCmd(const uint8_t *buffer, size_t size) = 0;
+  virtual void setAllCmd(const uint8_t *buffer, size_t size) = 0;
   virtual void readEOLsensorsCmd() = 0;
   virtual void readEncodersCmd() = 0;
   virtual void autoReadCmd() = 0;
@@ -76,8 +76,8 @@ public:
   static void helpCmd();
   static void sendCmd();
   static void beepCmd();
-  static void setSingleCmd();
-  static void setAllCmd();
+  static void setSingleCmd(const uint8_t *buffer, size_t size);
+  static void setAllCmd(const uint8_t *buffer, size_t size);
   static void readEOLsensorsCmd();
   static void readEncodersCmd();
   static void autoReadCmd();
@@ -99,8 +99,7 @@ class Tester : public TesterInterface {
   FRIEND_TEST(TesterTest, test_loop_null);
   FRIEND_TEST(TesterTest, test_loop_autoTestEven);
   FRIEND_TEST(TesterTest, test_loop_autoTestOdd);
-  // FRIEND_TEST(TesterTest, test_scanHex);
-  friend class TesterTest;
+  // friend class TesterTest;
 #endif
 
 public:
@@ -110,8 +109,8 @@ public:
   void helpCmd();
   void sendCmd();
   void beepCmd();
-  void setSingleCmd();
-  void setAllCmd();
+  void setSingleCmd(const uint8_t *buffer, size_t size);
+  void setAllCmd(const uint8_t *buffer, size_t size);
   void readEOLsensorsCmd();
   void readEncodersCmd();
   void autoReadCmd();
@@ -131,10 +130,6 @@ private:
   void autoTestEven();
   void autoTestOdd();
   void handleTimerEvent();
-
-  // static bool scanHex(char *str, uint8_t maxDigits, uint16_t *result);
-
-  // SerialCommand m_sCmd = SerialCommand();
 
   bool m_quit = false;
   bool m_autoReadOn = false;

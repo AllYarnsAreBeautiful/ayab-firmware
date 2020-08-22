@@ -56,7 +56,6 @@ void Knitter::init() {
   pinMode(DBG_BTN_PIN, INPUT);
 #endif
 
-  m_solenoids.init();
   setUpInterrupt();
 
   // explicitly initialize members
@@ -79,6 +78,8 @@ void Knitter::init() {
   m_workedOnLine = false;
   m_solenoidToSet = 0U;
   m_pixelToSet = 0U;
+
+  GlobalSolenoids::init();
 }
 
 void Knitter::setUpInterrupt() {
@@ -121,8 +122,8 @@ void Knitter::fsm() {
     state_ready();
     break;
 
-  case s_operate:
-    state_operate();
+  case s_knit:
+    state_knit();
     break;
 
   case s_test:
@@ -141,9 +142,9 @@ void Knitter::fsm() {
  * \todo sl: check that functionality is correct after removing always true
  * comparison.
  */
-bool Knitter::startOperation(Machine_t machineType, uint8_t startNeedle,
-                             uint8_t stopNeedle, uint8_t *pattern_start,
-                             bool continuousReportingEnabled) {
+bool Knitter::startKnitting(Machine_t machineType, uint8_t startNeedle,
+                            uint8_t stopNeedle, uint8_t *pattern_start,
+                            bool continuousReportingEnabled) {
   if ((m_opState != s_ready) || (machineType == NoMachine) ||
       (machineType >= NUM_MACHINES) || (pattern_start == nullptr) ||
       (startNeedle >= stopNeedle) || (stopNeedle >= NUM_NEEDLES[machineType])) {
@@ -168,7 +169,7 @@ bool Knitter::startOperation(Machine_t machineType, uint8_t startNeedle,
   m_encoders.init(machineType);
 
   // proceed to next state
-  m_opState = s_operate;
+  m_opState = s_knit;
   GlobalBeeper::ready();
 
   // Attaching ENC_PIN_A, Interrupt #0
@@ -207,10 +208,6 @@ uint8_t Knitter::getStartOffset(const Direction_t direction) {
 
 Machine_t Knitter::getMachineType() {
   return m_machineType;
-}
-
-void Knitter::setSolenoids(uint16_t state) {
-  m_solenoids.setSolenoids(state);
 }
 
 bool Knitter::setNextLine(uint8_t lineNumber) {
@@ -255,7 +252,7 @@ void Knitter::state_init() {
   if (Right == m_direction && Left == m_hallActive) {
 #endif // DBG_NOMACHINE
     m_opState = s_ready;
-    m_solenoids.setSolenoids(SOLENOIDS_BITMASK);
+    GlobalSolenoids::setSolenoids(SOLENOIDS_BITMASK);
     indState(true);
   }
 
@@ -270,13 +267,13 @@ void Knitter::state_ready() {
   // is called successfully by fsm()
 }
 
-void Knitter::state_operate() {
+void Knitter::state_knit() {
   digitalWrite(LED_PIN_A, 1); // green LED on
 
   if (m_firstRun) {
     m_firstRun = false;
     // TODO(who?): optimize delay for various Arduino models
-    delay(START_OPERATION_DELAY);
+    delay(START_KNITTING_DELAY);
     GlobalBeeper::finishedLine();
     reqLine(++m_currentLineNumber);
   }
@@ -325,7 +322,7 @@ void Knitter::state_operate() {
       bool pixelValue =
           bitRead(m_lineBuffer[currentByte], m_pixelToSet - (8U * currentByte));
       // write Pixel state to the appropriate needle
-      m_solenoids.setSolenoid(m_solenoidToSet, pixelValue);
+      GlobalSolenoids::setSolenoid(m_solenoidToSet, pixelValue);
     } else {
       // outside of the active needles
       if (m_machineType == Kh270) {
@@ -333,7 +330,7 @@ void Knitter::state_operate() {
       }
 
       // reset solenoids when out of range
-      m_solenoids.setSolenoid(m_solenoidToSet, true);
+      GlobalSolenoids::setSolenoid(m_solenoidToSet, true);
 
       if (m_workedOnLine) {
         // already worked on the current line -> finished the line
@@ -343,7 +340,7 @@ void Knitter::state_operate() {
           // request new line from host
           reqLine(++m_currentLineNumber);
         } else if (m_lastLineFlag) {
-          stopOperation();
+          stopKnitting();
         }
       }
     }
@@ -453,11 +450,11 @@ void Knitter::indState(const bool initState) {
   GlobalCom::send(static_cast<uint8_t *>(payload), INDSTATE_LEN);
 }
 
-void Knitter::stopOperation() {
+void Knitter::stopKnitting() {
   GlobalBeeper::endWork();
   m_opState = s_ready;
 
-  m_solenoids.setSolenoids(SOLENOIDS_BITMASK);
+  GlobalSolenoids::setSolenoids(SOLENOIDS_BITMASK);
   GlobalBeeper::finishedLine();
 
   // detaching ENC_PIN_A, Interrupt #0

@@ -46,7 +46,7 @@ public:
   virtual void endWork() = 0;
 };
 
-// Container class for the static methods that implement the serial API.
+// Container class for the static methods that control the beeper.
 // Dependency injection is enabled using a pointer to a global instance of
 // either `Beeper` or `BeeperMock`, both of which classes implement the
 // pure virtual methods of `BeeperInterface`.
@@ -66,7 +66,7 @@ public:
 };
 
 /*!
- *  Class to actuate a beeper connected to PIEZO_PIN
+ * \brief Class to actuate a beeper connected to PIEZO_PIN
  */
 class Beeper : public BeeperInterface {
 public:

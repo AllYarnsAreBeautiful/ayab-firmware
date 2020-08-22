@@ -35,8 +35,8 @@ public:
   MOCK_METHOD0(helpCmd, void());
   MOCK_METHOD0(sendCmd, void());
   MOCK_METHOD0(beepCmd, void());
-  MOCK_METHOD0(setSingleCmd, void());
-  MOCK_METHOD0(setAllCmd, void());
+  MOCK_METHOD2(setSingleCmd, void(const uint8_t *, size_t));
+  MOCK_METHOD2(setAllCmd, void(const uint8_t *, size_t));
   MOCK_METHOD0(readEOLsensorsCmd, void());
   MOCK_METHOD0(readEncodersCmd, void());
   MOCK_METHOD0(autoReadCmd, void());

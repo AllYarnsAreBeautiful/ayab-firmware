@@ -40,17 +40,27 @@ constexpr uint8_t MAX_MSG_BUFFER_LEN = 255U;
 
 enum AYAB_API {
   reqStart_msgid = 0x01,
-  cnfStart_msgid = 0xC1,
+  cnfStart_msgid = 0xc1,
   reqLine_msgid = 0x82,
   cnfLine_msgid = 0x42,
   reqInfo_msgid = 0x03,
-  cnfInfo_msgid = 0xC3,
+  cnfInfo_msgid = 0xc3,
   reqTest_msgid = 0x04,
-  cnfTest_msgid = 0xC4,
+  cnfTest_msgid = 0xc4,
   indState_msgid = 0x84,
-  cmd_msgid = 0x25,
-  test_msgid = 0xA5,
-  debug_msgid = 0xBF,
+  helpCmd_msgid = 0x25,
+  sendCmd_msgid = 0x26,
+  beepCmd_msgid = 0x27,
+  setSingleCmd_msgid = 0x28,
+  setAllCmd_msgid = 0x29,
+  readEOLsensorsCmd_msgid = 0x2a,
+  readEncodersCmd_msgid = 0x2b,
+  autoReadCmd_msgid = 0x2c,
+  autoTestCmd_msgid = 0x2d,
+  stopCmd_msgid = 0x2e,
+  quitCmd_msgid = 0x2f,
+  testRes_msgid = 0xe0,
+  debug_msgid = 0x99
 };
 using AYAB_API_t = enum AYAB_API;
 

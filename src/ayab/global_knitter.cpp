@@ -42,11 +42,11 @@ void GlobalKnitter::isr() {
 }
 #endif
 
-bool GlobalKnitter::startOperation(Machine_t machineType, uint8_t startNeedle,
-                                   uint8_t stopNeedle, uint8_t *pattern_start,
-                                   bool continuousReportingEnabled) {
-  return m_instance->startOperation(machineType, startNeedle, stopNeedle,
-                                    pattern_start, continuousReportingEnabled);
+bool GlobalKnitter::startKnitting(Machine_t machineType, uint8_t startNeedle,
+                                  uint8_t stopNeedle, uint8_t *pattern_start,
+                                  bool continuousReportingEnabled) {
+  return m_instance->startKnitting(machineType, startNeedle, stopNeedle,
+                                   pattern_start, continuousReportingEnabled);
 }
 
 bool GlobalKnitter::startTest(Machine_t machineType) {
@@ -59,10 +59,6 @@ uint8_t GlobalKnitter::getStartOffset(const Direction_t direction) {
 
 Machine_t GlobalKnitter::getMachineType() {
   return m_instance->getMachineType();
-}
-
-void GlobalKnitter::setSolenoids(uint16_t state) {
-  m_instance->setSolenoids(state);
 }
 
 bool GlobalKnitter::setNextLine(uint8_t lineNumber) {

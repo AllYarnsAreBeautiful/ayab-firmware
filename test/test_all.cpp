@@ -27,6 +27,7 @@
 
 #include <beeper_mock.h>
 #include <com_mock.h>
+#include <solenoids_mock.h>
 #include <tester_mock.h>
 
 // global definitions
@@ -34,12 +35,14 @@
 Knitter *knitter = new Knitter();
 BeeperMock *beeper = new BeeperMock();
 ComMock *com = new ComMock();
+SolenoidsMock *solenoids = new SolenoidsMock();
 TesterMock *tester = new TesterMock();
 
 // instantiate singleton classes with mock objects
 KnitterInterface *GlobalKnitter::m_instance = knitter;
 BeeperInterface *GlobalBeeper::m_instance = beeper;
 ComInterface *GlobalCom::m_instance = com;
+SolenoidsInterface *GlobalSolenoids::m_instance = solenoids;
 TesterInterface *GlobalTester::m_instance = tester;
 
 int main(int argc, char *argv[]) {
