@@ -23,6 +23,7 @@
 
 #include "gtest/gtest.h"
 
+#include <fsm.h>
 #include <knitter.h>
 
 #include <beeper_mock.h>
@@ -33,7 +34,9 @@
 
 // global definitions
 // references everywhere else must use `extern`
+Fsm *fsm = new Fsm();
 Knitter *knitter = new Knitter();
+
 BeeperMock *beeper = new BeeperMock();
 ComMock *com = new ComMock();
 EncodersMock *encoders = new EncodersMock();
@@ -41,7 +44,9 @@ SolenoidsMock *solenoids = new SolenoidsMock();
 TesterMock *tester = new TesterMock();
 
 // instantiate singleton classes with mock objects
+FsmInterface *GlobalFsm::m_instance = fsm;
 KnitterInterface *GlobalKnitter::m_instance = knitter;
+
 BeeperInterface *GlobalBeeper::m_instance = beeper;
 ComInterface *GlobalCom::m_instance = com;
 EncodersInterface *GlobalEncoders::m_instance = encoders;

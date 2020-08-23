@@ -25,6 +25,7 @@
 #include <com_mock.h>
 
 static ComMock *gComMock = NULL;
+
 ComMock *comMockInstance() {
   if (!gComMock) {
     gComMock = new ComMock();
@@ -62,6 +63,17 @@ void Com::sendMsg(AYAB_API_t id, const char *msg) {
 void Com::sendMsg(AYAB_API_t id, char *msg) {
   assert(gComMock != nullptr);
   gComMock->sendMsg(id, msg);
+}
+
+void Com::send_reqLine(const uint8_t lineNumber) {
+  assert(gComMock != nullptr);
+  gComMock->send_reqLine(lineNumber);
+}
+
+void Com::send_indState(Carriage_t carriage, uint8_t position,
+                        const bool initState) {
+  assert(gComMock != nullptr);
+  gComMock->send_indState(carriage, position, initState);
 }
 
 void Com::onPacketReceived(const uint8_t *buffer, size_t size) {

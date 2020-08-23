@@ -29,7 +29,7 @@
 
 class TesterMock : public TesterInterface {
 public:
-  MOCK_METHOD0(setUp, void());
+  MOCK_METHOD1(startTest, bool(Machine_t machineType));
   MOCK_METHOD0(loop, void());
   MOCK_METHOD0(getQuitFlag, bool());
   MOCK_METHOD0(helpCmd, void());
@@ -43,7 +43,6 @@ public:
   MOCK_METHOD0(autoTestCmd, void());
   MOCK_METHOD0(stopCmd, void());
   MOCK_METHOD0(quitCmd, void());
-  MOCK_METHOD1(unrecognizedCmd, void(const char *));
 };
 
 TesterMock *testerMockInstance();

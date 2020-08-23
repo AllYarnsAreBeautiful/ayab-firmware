@@ -39,9 +39,9 @@ void releaseTesterMock() {
   }
 }
 
-void Tester::setUp() {
+bool Tester::startTest(Machine_t machineType) {
   assert(gTesterMock != NULL);
-  gTesterMock->setUp();
+  return gTesterMock->startTest(machineType);
 }
 
 void Tester::loop() {
@@ -107,9 +107,4 @@ void Tester::stopCmd() {
 void Tester::quitCmd() {
   assert(gTesterMock != NULL);
   gTesterMock->quitCmd();
-}
-
-void Tester::unrecognizedCmd(const char *buffer) {
-  assert(gTesterMock != NULL);
-  gTesterMock->unrecognizedCmd(buffer);
 }

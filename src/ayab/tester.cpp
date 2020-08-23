@@ -26,6 +26,7 @@
 
 #include "beeper.h"
 #include "com.h"
+#include "fsm.h"
 #include "knitter.h"
 #include "tester.h"
 
@@ -154,45 +155,16 @@ void Tester::quitCmd() {
   GlobalKnitter::setUpInterrupt();
 }
 
-/*!
- * \brief Unrecognized command handler.
- *
- * \param buffer: pointer to string containing unrecognized command
- *
- * This gets set as the default handler, and gets called when no other command
- * matches.
- */
-void Tester::unrecognizedCmd(const char *buffer) {
-  GlobalCom::sendMsg(testRes_msgid, "Unrecognized command\n");
-  (void)(buffer); // does nothing but prevents 'unused variable' compile error
-  helpCmd();
-}
-
-/*!
- * \brief Setup for hardware tests.
- */
-void Tester::setUp() {
-  // Print welcome message
-  GlobalCom::sendMsg(testRes_msgid, "AYAB Hardware Test, ");
-  sprintf(buf, "Firmware v%hhu", FW_VERSION_MAJ);
-  GlobalCom::sendMsg(testRes_msgid, buf);
-  sprintf(buf, ".%hhu", FW_VERSION_MIN);
-  GlobalCom::sendMsg(testRes_msgid, buf);
-  sprintf(buf, " API v%hhu\n\n", API_VERSION);
-  GlobalCom::sendMsg(testRes_msgid, buf);
-  helpCmd();
-
-  // attach interrupt for ENC_PIN_A(=2), interrupt #0
-  detachInterrupt(0);
-#ifndef AYAB_TESTS
-  attachInterrupt(0, GlobalTester::encoderAChange, RISING);
-#endif // AYAB_TESTS
-
-  m_quit = false;
-  m_autoReadOn = false;
-  m_autoTestOn = false;
-  m_lastTime = millis();
-  m_timerEventOdd = false;
+bool Tester::startTest(Machine_t machineType) {
+  bool success = false;
+  OpState_t currentState = GlobalFsm::getState();
+  if (s_init == currentState || s_ready == currentState) {
+    GlobalFsm::setState(s_test);
+    GlobalKnitter::setMachineType(machineType);
+    setUp();
+    success = true;
+  }
+  return success;
 }
 
 /*!
@@ -220,6 +192,40 @@ bool Tester::getQuitFlag() {
 }
 
 // Private member functions
+
+/*!
+ * \brief Setup for hardware tests.
+ */
+void Tester::setUp() {
+  // Print welcome message
+  GlobalCom::sendMsg(testRes_msgid, "AYAB Hardware Test, ");
+  sprintf(buf, "Firmware v%hhu", FW_VERSION_MAJ);
+  GlobalCom::sendMsg(testRes_msgid, buf);
+  sprintf(buf, ".%hhu", FW_VERSION_MIN);
+  GlobalCom::sendMsg(testRes_msgid, buf);
+  sprintf(buf, " API v%hhu\n\n", API_VERSION);
+  GlobalCom::sendMsg(testRes_msgid, buf);
+  helpCmd();
+
+  // attach interrupt for ENC_PIN_A(=2), interrupt #0
+  detachInterrupt(0);
+#ifndef AYAB_TESTS
+  // Attaching ENC_PIN_A, Interrupt #0
+  // This interrupt cannot be enabled until
+  // the machine type has been validated.
+  /*
+  // `digitalPinToInterrupt` macro not backported until Arduino IDE v.1.0.6
+  attachInterrupt(digitalPinToInterrupt(ENC_PIN_A), isr_wrapper, CHANGE);
+  */
+  attachInterrupt(0, GlobalTester::encoderAChange, RISING);
+#endif // AYAB_TESTS
+
+  m_quit = false;
+  m_autoReadOn = false;
+  m_autoTestOn = false;
+  m_lastTime = millis();
+  m_timerEventOdd = false;
+}
 
 void Tester::beep() {
   GlobalBeeper::ready();

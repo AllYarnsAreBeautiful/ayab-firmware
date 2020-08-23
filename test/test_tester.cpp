@@ -23,10 +23,10 @@
 
 #include <gtest/gtest.h>
 
-//#include <SerialCommand_mock.h>
 #include <com.h>
 #include <tester.h>
 
+#include <fsm_mock.h>
 #include <knitter_mock.h>
 
 using ::testing::An;
@@ -35,13 +35,9 @@ using ::testing::Mock;
 using ::testing::Return;
 
 extern Tester *tester;
-extern KnitterMock *knitter;
 
-// static char zero[2] = {'0', 0};
-// static char two[2] = {'2', 0};
-// static char g[2] = {'g', 0};
-// static char fAdE[5] = {'f', 'A', 'd', 'E', 0};
-// static char sixteen[3] = {'1', '6', 0};
+extern FsmMock *fsm;
+extern KnitterMock *knitter;
 
 class TesterTest : public ::testing::Test {
 protected:
@@ -50,25 +46,25 @@ protected:
     serialMock = serialMockInstance();
     // serialCommandMock = serialCommandMockInstance();
 
-    // pointer to global instance
+    // pointers to global instances
+    fsmMock = fsm;
     knitterMock = knitter;
 
-    // The global instance does not get destroyed at the end of each test.
+    // The global instances do not get destroyed at the end of each test.
     // Ordinarily the mock instance would be local and such behaviour would
     // cause a memory leak. We must notify the test that this is not the case.
+    Mock::AllowLeak(fsmMock);
     Mock::AllowLeak(knitterMock);
   }
 
   void TearDown() override {
     releaseArduinoMock();
     releaseSerialMock();
-    // releaseSerialCommandMock();
-    releaseKnitterMock();
   }
 
   ArduinoMock *arduinoMock;
   SerialMock *serialMock;
-  // SerialCommandMock *serialCommandMock;
+  FsmMock *fsmMock;
   KnitterMock *knitterMock;
 };
 
@@ -82,97 +78,70 @@ TEST_F(TesterTest, test_setUp) {
 }
 
 TEST_F(TesterTest, test_helpCmd) {
-  // EXPECT_CALL(*knitterMock, sendMsg(test_msgid, An<const char *>()))
-  //    .Times(AtLeast(1));
   tester->helpCmd();
 }
 
 TEST_F(TesterTest, test_sendCmd) {
-  // EXPECT_CALL(*knitterMock, sendMsg(test_msgid, An<const char *>()))
-  //    .Times(AtLeast(1));
-  // EXPECT_CALL(*knitterMock, send);
   tester->sendCmd();
 }
 
 TEST_F(TesterTest, test_beepCmd) {
-  // EXPECT_CALL(*knitterMock, sendMsg(test_msgid, An<const char *>()))
-  //    .Times(AtLeast(1));
   EXPECT_CALL(*arduinoMock, analogWrite).Times(AtLeast(1));
   EXPECT_CALL(*arduinoMock, delay).Times(AtLeast(1));
   tester->beepCmd();
 }
 
 TEST_F(TesterTest, test_setSingleCmd_fail1) {
-  // EXPECT_CALL(*knitterMock, sendMsg(test_msgid, An<const char *>()))
-  //    .Times(AtLeast(1));
   const uint8_t buf[] = {setSingleCmd_msgid, 0};
   tester->setSingleCmd(buf, 2);
 }
 
 TEST_F(TesterTest, test_setSingleCmd_fail2) {
-  // EXPECT_CALL(*knitterMock, sendMsg(test_msgid, An<const char *>()))
-  //    .Times(AtLeast(1));
   const uint8_t buf[] = {setSingleCmd_msgid, 16, 0};
   tester->setSingleCmd(buf, 3);
 }
 
 TEST_F(TesterTest, test_setSingleCmd_fail3) {
-  // EXPECT_CALL(*knitterMock, sendMsg(test_msgid, An<const char *>()))
-  //    .Times(AtLeast(1));
   const uint8_t buf[] = {setSingleCmd_msgid, 15, 2};
   tester->setSingleCmd(buf, 3);
 }
 
 TEST_F(TesterTest, test_setSingleCmd_success) {
-  // EXPECT_CALL(*knitterMock, sendMsg(test_msgid, An<const char *>()))
-  //    .Times(AtLeast(1));
   const uint8_t buf[] = {setSingleCmd_msgid, 15, 1};
   tester->setSingleCmd(buf, 3);
 }
 
 TEST_F(TesterTest, test_setAllCmd_fail1) {
-  // EXPECT_CALL(*knitterMock, sendMsg(test_msgid, An<const char *>()))
-  //    .Times(AtLeast(1));
   const uint8_t buf[] = {setAllCmd_msgid, 0};
   tester->setAllCmd(buf, 2);
 }
 
 TEST_F(TesterTest, test_setAllCmd_success) {
-  // EXPECT_CALL(*knitterMock, sendMsg(test_msgid, An<const char *>()))
-  //    .Times(AtLeast(1));
   const uint8_t buf[] = {setAllCmd_msgid, 0xff, 0xff};
   tester->setAllCmd(buf, 3);
 }
 
 TEST_F(TesterTest, test_readEOLsensorsCmd) {
-  // EXPECT_CALL(*knitterMock, sendMsg(test_msgid, An<const char *>()))
-  //    .Times(AtLeast(1));
+  EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_L));
+  EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_R));
   tester->readEOLsensorsCmd();
 }
 
 TEST_F(TesterTest, test_readEncodersCmd_low) {
-  // EXPECT_CALL(*knitterMock, sendMsg(test_msgid, An<const char *>()))
-  //    .Times(AtLeast(1));
   EXPECT_CALL(*arduinoMock, digitalRead).WillRepeatedly(Return(LOW));
   tester->readEncodersCmd();
 }
 
 TEST_F(TesterTest, test_readEncodersCmd_high) {
-  // EXPECT_CALL(*knitterMock, sendMsg(test_msgid, An<const char *>()))
-  //    .Times(AtLeast(1));
   EXPECT_CALL(*arduinoMock, digitalRead).WillRepeatedly(Return(HIGH));
   tester->readEncodersCmd();
 }
 
 TEST_F(TesterTest, test_autoReadCmd) {
-  // EXPECT_CALL(*knitterMock, sendMsg(test_msgid, An<const char *>()))
-  //    .Times(AtLeast(1));
   tester->autoReadCmd();
 }
 
 TEST_F(TesterTest, test_autoTestCmd) {
-  // EXPECT_CALL(*knitterMock, sendMsg(test_msgid, An<const char *>()))
-  //    .Times(AtLeast(1));
   tester->autoTestCmd();
 }
 
@@ -185,15 +154,12 @@ TEST_F(TesterTest, test_stopCmd) {
 }
 
 TEST_F(TesterTest, test_quitCmd) {
+  EXPECT_CALL(*knitterMock, setUpInterrupt);
   tester->quitCmd();
   ASSERT_TRUE(tester->m_quit);
-}
 
-TEST_F(TesterTest, test_unrecognizedCmd) {
-  // EXPECT_CALL(*knitterMock, sendMsg(test_msgid, An<const char *>()))
-  //    .Times(AtLeast(1));
-  const char buffer[1] = {1};
-  tester->unrecognizedCmd(buffer);
+  // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(knitterMock));
 }
 
 TEST_F(TesterTest, test_loop_default) {
@@ -218,7 +184,6 @@ TEST_F(TesterTest, test_loop_autoTestEven) {
   tester->m_autoTestOn = true;
   EXPECT_CALL(*arduinoMock, digitalRead).Times(0);
   EXPECT_CALL(*arduinoMock, digitalWrite).Times(2);
-  // EXPECT_CALL(*knitterMock, setSolenoids);
   tester->loop();
 }
 
@@ -228,27 +193,26 @@ TEST_F(TesterTest, test_loop_autoTestOdd) {
   tester->m_timerEventOdd = true;
   tester->m_autoReadOn = true;
   tester->m_autoTestOn = true;
+  EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_L));
+  EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_R));
   EXPECT_CALL(*arduinoMock, digitalRead).Times(3);
   EXPECT_CALL(*arduinoMock, digitalWrite).Times(2);
-  // EXPECT_CALL(*knitterMock, setSolenoids);
   tester->loop();
 }
 
-/*
-TEST_F(TesterTest, test_scanHex) {
-  uint16_t result;
-  ASSERT_FALSE(tester->scanHex(zero, 0, &result));
-  ASSERT_FALSE(tester->scanHex(g, 4, &result));
-  ASSERT_FALSE(tester->scanHex(g + 1, 1, &result));
-  ASSERT_TRUE(tester->scanHex(zero, 1, &result));
-  ASSERT_TRUE(result == 0);
-  ASSERT_TRUE(tester->scanHex(zero, 4, &result));
-  ASSERT_TRUE(result == 0);
-  ASSERT_TRUE(tester->scanHex(a, 1, &result));
-  ASSERT_TRUE(result == 0xa);
-  ASSERT_TRUE(tester->scanHex(A, 4, &result));
-  ASSERT_TRUE(result == 0xA);
-  ASSERT_TRUE(tester->scanHex(fAdE, 4, &result));
-  ASSERT_TRUE(result == 0xfAdE);
+TEST_F(TesterTest, test_startTest_fail) {
+  // can't start test from state `s_knit`
+  EXPECT_CALL(*fsmMock, getState).WillOnce(Return(s_knit));
+  ASSERT_EQ(tester->startTest(Kh910), false);
+
+  // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(fsmMock));
 }
-*/
+
+TEST_F(TesterTest, test_startTest_success) {
+  EXPECT_CALL(*fsmMock, getState).WillOnce(Return(s_ready));
+  ASSERT_EQ(tester->startTest(Kh930), true);
+
+  // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(fsmMock));
+}
