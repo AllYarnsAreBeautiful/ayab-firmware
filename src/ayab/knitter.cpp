@@ -64,6 +64,8 @@ void Knitter::init() {
   setUpInterrupt();
 
   // explicitly initialize members
+
+  // job parameters
   m_machineType = NoMachine;
   m_startNeedle = 0U;
   m_stopNeedle = 0U;
@@ -79,8 +81,6 @@ void Knitter::init() {
 #ifdef DBG_NOMACHINE
   m_prevState = false;
 #endif
-  m_solenoidToSet = 0U;
-  m_pixelToSet = 0U;
 }
 
 void Knitter::setUpInterrupt() {
@@ -163,7 +163,8 @@ void Knitter::encodePosition() {
   }
 }
 
-// return true -> move from state `s_init` to `s_ready`
+// if this function returns true then
+// the FSM will move from state `s_init` to `s_ready`
 bool Knitter::isReady() {
 #ifdef DBG_NOMACHINE
   bool state = digitalRead(DBG_BTN_PIN);
@@ -171,8 +172,12 @@ bool Knitter::isReady() {
   // TODO(who?): check if debounce is needed
   if (m_prevState && !state) {
 #else
-  // machine is initialized when left hall sensor is passed in Right direction
-  if (Right == m_direction && Left == m_hallActive) {
+  // Machine is initialized when left Hall sensor is passed in Right direction
+  // New feature (August 2020): the machine is also initialized
+  // when the right Hall sensor is passed in Left direction.
+  if ((Right == m_direction and Left == m_hallActive) or
+      (Left == m_direction and Right == m_hallActive)) {
+
 #endif // DBG_NOMACHINE
     GlobalSolenoids::setSolenoids(SOLENOIDS_BITMASK);
     indState(true);
