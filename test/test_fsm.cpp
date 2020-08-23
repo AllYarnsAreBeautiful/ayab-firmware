@@ -67,6 +67,20 @@ protected:
   ComMock *comMock;
   SolenoidsMock *solenoidsMock;
   TesterMock *testerMock;
+
+  void expect_init() {
+    EXPECT_CALL(*arduinoMock, pinMode(ENC_PIN_A, INPUT));
+    EXPECT_CALL(*arduinoMock, pinMode(ENC_PIN_B, INPUT));
+    EXPECT_CALL(*arduinoMock, pinMode(ENC_PIN_C, INPUT));
+
+    EXPECT_CALL(*arduinoMock, pinMode(LED_PIN_A, OUTPUT));
+    EXPECT_CALL(*arduinoMock, pinMode(LED_PIN_B, OUTPUT));
+
+    EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, 1)); // green LED on
+    EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_B, 1)); // yellow LED on
+
+    EXPECT_CALL(*solenoidsMock, init);
+  }
 };
 
 TEST_F(FsmTest, test_init) {
@@ -123,11 +137,13 @@ TEST_F(FsmTest, test_dispatch_test) {
   EXPECT_CALL(*testerMock, loop);
   EXPECT_CALL(*testerMock, getQuitFlag).WillOnce(Return(true));
   EXPECT_CALL(*comMock, update);
+  expect_init();
   fsm->dispatch();
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(testerMock));
   ASSERT_TRUE(Mock::VerifyAndClear(comMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
 }
 
 TEST_F(FsmTest, test_dispatch_knit) {

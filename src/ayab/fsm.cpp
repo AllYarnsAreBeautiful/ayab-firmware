@@ -94,6 +94,8 @@ void Fsm::state_test() {
   GlobalKnitter::encodePosition();
   GlobalTester::loop();
   if (GlobalTester::getQuitFlag()) {
-    setState(s_ready);
+    // return to state `s_init	 after quitting test
+    GlobalKnitter::init();
+    setState(s_init);
   }
 }
