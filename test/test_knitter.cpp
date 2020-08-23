@@ -116,7 +116,7 @@ protected:
   }
 
   void expect_isr(Direction_t dir, Direction_t hall) {
-    expect_isr(1, dir, hall, Regular, Garter);
+    expect_isr(1, dir, hall, Regular, Knit);
   }
 
   void expected_isr(Direction_t dir, Direction_t hall) {
@@ -151,10 +151,10 @@ protected:
   }
 
   void get_to_ready() {
-    // machine is initialized when left hall sensor
-    // is passed in Right direction inside active needles
+    // Machine is initialized when Left hall sensor
+    // is passed in Right direction inside active needles.
     Machine_t m = knitter->getMachineType();
-    expected_isr(40 + END_OF_LINE_OFFSET_L[m] + 1);
+    expected_isr(40 + END_OF_LINE_OFFSET_L[m] + 1, Right, Left, Regular, Knit);
 
     // initialize
     EXPECT_CALL(*solenoidsMock, setSolenoids(0xFFFF));
@@ -355,7 +355,7 @@ TEST_F(KnitterTest, test_knit_Kh910) {
   expected_knit(false);
 
   // no useful position calculated by `calculatePixelAndSolenoid()`
-  expected_isr(100, NoDirection, Right, Shifted, Garter);
+  expected_isr(100, NoDirection, Right, Shifted, Knit);
   EXPECT_CALL(*solenoidsMock, setSolenoid).Times(0);
   expect_indState();
   expected_knit(false);
@@ -670,8 +670,24 @@ TEST_F(KnitterTest, test_fsm_init_RR) {
 }
 
 TEST_F(KnitterTest, test_fsm_init_RL) {
-  // ready
+  // Machine is initialized when Left hall sensor
+  // is passed in Right direction inside active needles.
   expected_isr(Right, Left);
+  EXPECT_CALL(*solenoidsMock, setSolenoids(0xFFFF));
+  expect_indState();
+  expected_fsm();
+  ASSERT_EQ(fsm->getState(), s_ready);
+
+  // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(comMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(encodersMock));
+}
+
+TEST_F(KnitterTest, test_fsm_init_LR) {
+  // New feature (August 2020): the machine is also initialized
+  // when the right Hall sensor is passed in the Left direction.
+  expected_isr(Left, Right);
   EXPECT_CALL(*solenoidsMock, setSolenoids(0xFFFF));
   expect_indState();
   expected_fsm();
