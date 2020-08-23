@@ -54,9 +54,9 @@ void Knitter::isr() {
   gKnitterMock->isr();
 }
 
-bool Knitter::startKnitting(Machine_t machineType, uint8_t startNeedle,
-                            uint8_t stopNeedle, uint8_t *pattern_start,
-                            bool continuousReportingEnabled) {
+Err_t Knitter::startKnitting(Machine_t machineType, uint8_t startNeedle,
+                             uint8_t stopNeedle, uint8_t *pattern_start,
+                             bool continuousReportingEnabled) {
   assert(gKnitterMock != NULL);
   return gKnitterMock->startKnitting(machineType, startNeedle, stopNeedle,
                                      pattern_start, continuousReportingEnabled);

@@ -41,9 +41,9 @@ void GlobalKnitter::isr() {
 }
 #endif
 
-bool GlobalKnitter::startKnitting(Machine_t machineType, uint8_t startNeedle,
-                                  uint8_t stopNeedle, uint8_t *pattern_start,
-                                  bool continuousReportingEnabled) {
+Err_t GlobalKnitter::startKnitting(Machine_t machineType, uint8_t startNeedle,
+                                   uint8_t stopNeedle, uint8_t *pattern_start,
+                                   bool continuousReportingEnabled) {
   return m_instance->startKnitting(machineType, startNeedle, stopNeedle,
                                    pattern_start, continuousReportingEnabled);
 }

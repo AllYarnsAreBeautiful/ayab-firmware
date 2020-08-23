@@ -26,7 +26,7 @@
 
 // static member functions
 
-bool GlobalTester::startTest(Machine_t machineType) {
+Err_t GlobalTester::startTest(Machine_t machineType) {
   return m_instance->startTest(machineType);
 }
 

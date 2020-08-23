@@ -54,8 +54,8 @@ void GlobalCom::onPacketReceived(const uint8_t *buffer, size_t size) {
 }
 // GCOVR_EXCL_STOP
 
-void GlobalCom::send_reqLine(const uint8_t lineNumber) {
-  m_instance->send_reqLine(lineNumber);
+void GlobalCom::send_reqLine(const uint8_t lineNumber, Err_t error) {
+  m_instance->send_reqLine(lineNumber, error);
 }
 
 void GlobalCom::send_indState(Carriage_t carriage, uint8_t position,

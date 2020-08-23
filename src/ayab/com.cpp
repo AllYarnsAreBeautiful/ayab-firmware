@@ -60,19 +60,24 @@ void Com::sendMsg(AYAB_API_t id, const char *msg) {
   }
   m_packetSerial.send(msgBuffer, length);
 }
-
 void Com::sendMsg(AYAB_API_t id, char *msg) {
   sendMsg(id, static_cast<const char *>(msg));
 }
 
-void Com::send_reqLine(const uint8_t lineNumber) {
-  uint8_t payload[REQLINE_LEN] = {
-      reqLine_msgid,
-      lineNumber,
-  };
+/*!
+ * \brief Send `reqLine` message.
+ *
+ * if the second argument takes any value other than `0`
+ * this is a request for information to be re-sent
+ */
+void Com::send_reqLine(const uint8_t lineNumber, Err_t error) {
+  uint8_t payload[REQLINE_LEN] = {reqLine_msgid, lineNumber, error};
   send(static_cast<uint8_t *>(payload), REQLINE_LEN);
 }
 
+/*!
+ * \brief Send `indState` message.
+ */
 void Com::send_indState(Carriage_t carriage, uint8_t position,
                         const bool initState) {
   uint16_t leftHallValue = GlobalEncoders::getHallValue(Left);
@@ -165,7 +170,7 @@ void Com::onPacketReceived(const uint8_t *buffer, size_t size) {
 // Serial command handling
 
 /*!
- * \brief Handle start request command.
+ * \brief Handle `reqStart` (start request) command.
  *
  * \todo sl: Assert size? Handle error?
  * \todo TP: Handle CRC-8 error?
@@ -175,11 +180,13 @@ void Com::h_reqStart(const uint8_t *buffer, size_t size) {
 #ifdef AYAB_ENABLE_CRC
   if (size < 6U) {
     // Need 6 bytes from buffer below.
+    send_cnfStart(EXPECTED_LONGER_MESSAGE);
     return;
   }
 #else
   if (size < 5U) {
     // Need 5 bytes from buffer below.
+    send_cnfStart(EXPECTED_LONGER_MESSAGE);
     return;
   }
 #endif
@@ -193,29 +200,32 @@ void Com::h_reqStart(const uint8_t *buffer, size_t size) {
   uint8_t crc8 = buffer[5];
   // Check crc on bytes 0-4 of buffer.
   if (crc8 != CRC8(buffer, 5)) {
+    send_cnfStart(CHECKSUM_ERROR);
     return;
   }
 #endif
 
   // TODO(who?): verify operation
   // memset(lineBuffer,0,sizeof(lineBuffer));
+  /*
   // temporary solution:
   for (uint8_t i = 0U; i < MAX_LINE_BUFFER_LEN; i++) {
     lineBuffer[i] = 0xFFU;
   }
+  */
+  memset(lineBuffer, 0xFF, MAX_LINE_BUFFER_LEN);
 
-  bool success =
+  // Note (August 2020): the return value of this function has changed.
+  // Previously, it returned `true` for success and `false` for failure.
+  // Now, it returns `0` for success and an informative error code otherwise.
+  Err_t error =
       GlobalKnitter::startKnitting(machineType, startNeedle, stopNeedle,
                                    lineBuffer, continuousReportingEnabled);
-
-  uint8_t payload[2];
-  payload[0] = cnfStart_msgid;
-  payload[1] = static_cast<uint8_t>(success);
-  send(payload, 2);
+  send_cnfStart(error);
 }
 
 /*!
- * \brief Handle configure line command.
+ * \brief Handle `cnfLine` (configure line) command.
  *
  * \todo sl: Handle CRC-8 error?
  * \todo sl: Assert size? Handle error?
@@ -226,6 +236,7 @@ void Com::h_cnfLine(const uint8_t *buffer, size_t size) {
   if (size < lenLineBuffer + 5U) {
     // message is too short
     // TODO(sl): handle error?
+    // TODO(TP): send repeat request with error code?
     return;
   }
 
@@ -243,6 +254,7 @@ void Com::h_cnfLine(const uint8_t *buffer, size_t size) {
   // Calculate checksum of buffer contents
   if (crc8 != CRC8(buffer, lenLineBuffer + 4)) {
     // TODO(sl): handle checksum error?
+    // TODO(TP): send repeat request with error code?
     return;
   }
 #endif
@@ -256,7 +268,47 @@ void Com::h_cnfLine(const uint8_t *buffer, size_t size) {
   }
 }
 
+/*!
+ * \brief Handle `reqInfo` (request information) command.
+ */
 void Com::h_reqInfo() {
+  send_cnfInfo();
+}
+
+/*!
+ * \brief Handle `reqTest` (request hardware test) command.
+ *
+ * \todo TP: Assert size? Handle error?
+ */
+void Com::h_reqTest(const uint8_t *buffer, size_t size) {
+  if (size < 2U) {
+    // message is too short
+    send_cnfTest(EXPECTED_LONGER_MESSAGE);
+    return;
+  }
+
+  Machine_t machineType = static_cast<Machine_t>(buffer[1]);
+
+  // Note (August 2020): the return value of this function has changed.
+  // Previously, it returned `true` for success and `false` for failure.
+  // Now, it returns `0` for success and an informative error code otherwise.
+  Err_t error = GlobalTester::startTest(machineType);
+  send_cnfTest(error);
+}
+
+// GCOVR_EXCL_START
+/*!
+ * \brief Handle unrecognized command.
+ */
+void Com::h_unrecognized() {
+  // do nothing
+}
+// GCOVR_EXCL_STOP
+
+/*!
+ * \brief Send `cnfInfo` message.
+ */
+void Com::send_cnfInfo() {
   uint8_t payload[4];
   payload[0] = cnfInfo_msgid;
   payload[1] = API_VERSION;
@@ -266,31 +318,24 @@ void Com::h_reqInfo() {
 }
 
 /*!
- * \brief Handle request hardware test command.
- *
- * \todo TP: Assert size? Handle error?
+ * \brief Send `cnfStart` message.
  */
-void Com::h_reqTest(const uint8_t *buffer, size_t size) {
-  if (size < 2U) {
-    // message is too short
-    // TODO(TP): handle error?
-    return;
-  }
-
-  Machine_t machineType = static_cast<Machine_t>(buffer[0]);
-  bool success = GlobalTester::startTest(machineType);
-
+void Com::send_cnfStart(Err_t error) {
   uint8_t payload[2];
-  payload[0] = cnfTest_msgid;
-  payload[1] = static_cast<uint8_t>(success);
+  payload[0] = cnfStart_msgid;
+  payload[1] = static_cast<uint8_t>(error);
   send(payload, 2);
 }
 
-// GCOVR_EXCL_START
-void Com::h_unrecognized() {
-  // do nothing
+/*!
+ * \brief Send `cnfTest` message.
+ */
+void Com::send_cnfTest(Err_t error) {
+  uint8_t payload[2];
+  payload[0] = cnfTest_msgid;
+  payload[1] = static_cast<uint8_t>(error);
+  send(payload, 2);
 }
-// GCOVR_EXCL_STOP
 
 #ifdef AYAB_ENABLE_CRC
 /*!

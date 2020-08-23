@@ -219,8 +219,17 @@ TEST_F(KnitterTest, test_startKnitting_NoMachine) {
   Machine_t m = knitter->getMachineType();
   ASSERT_EQ(m, NoMachine);
   fsm->setState(s_ready);
-  ASSERT_EQ(knitter->startKnitting(m, 0, NUM_NEEDLES[m] - 1, pattern, false),
-            false);
+  ASSERT_TRUE(
+      knitter->startKnitting(m, 0, NUM_NEEDLES[m] - 1, pattern, false) != 0);
+
+  // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
+}
+
+TEST_F(KnitterTest, test_startKnitting_invalidMachine) {
+  uint8_t pattern[] = {1};
+  fsm->setState(s_ready);
+  ASSERT_TRUE(knitter->startKnitting(NUM_MACHINES, 0, 1, pattern, false) != 0);
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
@@ -229,9 +238,8 @@ TEST_F(KnitterTest, test_startKnitting_NoMachine) {
 TEST_F(KnitterTest, test_startKnitting_notReady) {
   uint8_t pattern[] = {1};
   // fsm->setState(s_init);
-  ASSERT_EQ(
-      knitter->startKnitting(Kh910, 0, NUM_NEEDLES[Kh910] - 1, pattern, false),
-      false);
+  ASSERT_TRUE(knitter->startKnitting(Kh910, 0, NUM_NEEDLES[Kh910] - 1, pattern,
+                                     false) != 0);
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
@@ -242,9 +250,8 @@ TEST_F(KnitterTest, test_startKnitting_Kh910) {
   get_to_ready();
   EXPECT_CALL(*encodersMock, init);
   EXPECT_CALL(*beeperMock, ready);
-  ASSERT_EQ(
-      knitter->startKnitting(Kh910, 0, NUM_NEEDLES[Kh910] - 1, pattern, false),
-      true);
+  ASSERT_TRUE(knitter->startKnitting(Kh910, 0, NUM_NEEDLES[Kh910] - 1, pattern,
+                                     false) == 0);
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
@@ -258,9 +265,8 @@ TEST_F(KnitterTest, test_startKnitting_Kh270) {
   get_to_ready();
   EXPECT_CALL(*encodersMock, init);
   EXPECT_CALL(*beeperMock, ready);
-  ASSERT_EQ(
-      knitter->startKnitting(Kh270, 0, NUM_NEEDLES[Kh270] - 1, pattern, false),
-      true);
+  ASSERT_TRUE(knitter->startKnitting(Kh270, 0, NUM_NEEDLES[Kh270] - 1, pattern,
+                                     false) == 0);
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
@@ -274,17 +280,15 @@ TEST_F(KnitterTest, test_startKnitting_failures) {
   get_to_ready();
 
   // `m_stopNeedle` lower than `m_startNeedle`
-  ASSERT_EQ(knitter->startKnitting(Kh910, 1, 0, pattern, false), false);
+  ASSERT_TRUE(knitter->startKnitting(Kh910, 1, 0, pattern, false) != 0);
 
   // `m_stopNeedle` out of range
-  ASSERT_EQ(
-      knitter->startKnitting(Kh910, 0, NUM_NEEDLES[Kh910], pattern, false),
-      false);
+  ASSERT_TRUE(knitter->startKnitting(Kh910, 0, NUM_NEEDLES[Kh910], pattern,
+                                     false) != 0);
 
   // null pattern
-  ASSERT_EQ(
-      knitter->startKnitting(Kh910, 0, NUM_NEEDLES[Kh910] - 1, nullptr, false),
-      false);
+  ASSERT_TRUE(knitter->startKnitting(Kh910, 0, NUM_NEEDLES[Kh910] - 1, nullptr,
+                                     false) != 0);
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
