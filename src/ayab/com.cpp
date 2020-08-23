@@ -26,37 +26,6 @@
 #include "knitter.h"
 #include "tester.h"
 
-#ifdef AYAB_ENABLE_CRC
-/*!
- * \brief Calculate CRC8 of a buffer
- *
- * Based on
- * https://www.leonardomiliani.com/en/2013/un-semplice-crc8-per-arduino/
- *
- * CRC-8 - based on the CRC8 formulas by Dallas/Maxim
- * code released under the therms of the GNU GPL 3.0 license
- */
-static uint8_t CRC8(const uint8_t *buffer, size_t len) {
-  uint8_t crc = 0x00U;
-
-  while (len--) {
-    uint8_t extract = *buffer;
-    buffer++;
-
-    for (uint8_t tempI = 8U; tempI; tempI--) {
-      uint8_t sum = (crc ^ extract) & 0x01U;
-      crc >>= 1U;
-
-      if (sum) {
-        crc ^= 0x8CU;
-      }
-      extract >>= 1U;
-    }
-  }
-  return crc;
-}
-#endif
-
 void Com::init() {
   m_packetSerial.begin(SERIAL_BAUDRATE);
 #ifndef AYAB_TESTS
@@ -322,4 +291,34 @@ void Com::h_unrecognized() {
   // do nothing
 }
 // GCOVR_EXCL_STOP
-//
+
+#ifdef AYAB_ENABLE_CRC
+/*!
+ * \brief Calculate CRC8 of a buffer
+ *
+ * Based on
+ * https://www.leonardomiliani.com/en/2013/un-semplice-crc8-per-arduino/
+ *
+ * CRC-8 - based on the CRC8 formulas by Dallas/Maxim
+ * code released under the therms of the GNU GPL 3.0 license
+ */
+uint8_t Com::CRC8(const uint8_t *buffer, size_t len) {
+  uint8_t crc = 0x00U;
+
+  while (len--) {
+    uint8_t extract = *buffer;
+    buffer++;
+
+    for (uint8_t tempI = 8U; tempI; tempI--) {
+      uint8_t sum = (crc ^ extract) & 0x01U;
+      crc >>= 1U;
+
+      if (sum) {
+        crc ^= 0x8CU;
+      }
+      extract >>= 1U;
+    }
+  }
+  return crc;
+}
+#endif
