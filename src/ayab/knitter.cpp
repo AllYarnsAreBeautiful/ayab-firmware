@@ -117,15 +117,28 @@ void Knitter::isr() {
 
 /*!
  * \brief Enter knit state.
+ *
+ * Note (August 2020): the return value of this function has changed.
+ * Previously, it returned `true` for success and `false` for failure.
+ * Now, it returns `0` for success and an informative error code otherwise.
  */
-bool Knitter::startKnitting(Machine_t machineType, uint8_t startNeedle,
-                            uint8_t stopNeedle, uint8_t *pattern_start,
-                            bool continuousReportingEnabled) {
-  if ((GlobalFsm::getState() != s_ready) || (machineType == NoMachine) ||
-      (machineType >= NUM_MACHINES) || (pattern_start == nullptr) ||
-      (startNeedle >= stopNeedle) || (stopNeedle >= NUM_NEEDLES[machineType])) {
-    // TODO(TP): error code
-    return false;
+Err_t Knitter::startKnitting(Machine_t machineType, uint8_t startNeedle,
+                             uint8_t stopNeedle, uint8_t *pattern_start,
+                             bool continuousReportingEnabled) {
+  if (GlobalFsm::getState() != s_ready) {
+    return WRONG_MACHINE_STATE;
+  }
+  if (machineType == NoMachine) {
+    return NO_MACHINE_TYPE;
+  }
+  if (machineType >= NUM_MACHINES) {
+    return MACHINE_TYPE_INVALID;
+  }
+  if (pattern_start == nullptr) {
+    return NULL_POINTER_ARGUMENT;
+  }
+  if (startNeedle >= stopNeedle || stopNeedle >= NUM_NEEDLES[machineType]) {
+    return NEEDLE_VALUE_INVALID;
   }
 
   // record argument values
@@ -149,7 +162,7 @@ bool Knitter::startKnitting(Machine_t machineType, uint8_t startNeedle,
   GlobalBeeper::ready();
 
   // success
-  return true;
+  return SUCCESS;
 }
 
 // used in hardware test loop
@@ -279,7 +292,7 @@ uint8_t Knitter::getStartOffset(const Direction_t direction) {
   if ((direction == NoDirection) || (direction >= NUM_DIRECTIONS) ||
       (m_carriage == NoCarriage) || (m_carriage >= NUM_CARRIAGES) ||
       (m_machineType == NoMachine) || (m_machineType >= NUM_MACHINES)) {
-    // TODO(TP): return error state
+    // TODO(TP): return error state?
     return 0U;
   }
   return START_OFFSET[m_machineType][direction][m_carriage];
@@ -313,7 +326,7 @@ void Knitter::setMachineType(Machine_t machineType) {
 // private methods
 
 void Knitter::reqLine(uint8_t lineNumber) {
-  GlobalCom::send_reqLine(lineNumber);
+  GlobalCom::send_reqLine(lineNumber, SUCCESS);
   m_lineRequested = true;
 }
 

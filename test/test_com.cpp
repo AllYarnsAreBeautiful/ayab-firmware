@@ -30,6 +30,7 @@
 #include <knitter_mock.h>
 
 using ::testing::_;
+using ::testing::AtLeast;
 using ::testing::Mock;
 using ::testing::Return;
 
@@ -82,21 +83,30 @@ TEST_F(ComTest, test_API) {
 TEST_F(ComTest, test_reqtest_fail) {
   // no machineType
   uint8_t buffer[] = {reqTest_msgid};
+  EXPECT_CALL(*serialMock, write(_, _));
+  EXPECT_CALL(*serialMock, write(SLIP::END));
   EXPECT_CALL(*fsmMock, setState(s_test)).Times(0);
   com->onPacketReceived(buffer, sizeof(buffer));
   ASSERT_TRUE(Mock::VerifyAndClear(fsmMock));
 }
 
-TEST_F(ComTest, test_reqtest_success) {
+TEST_F(ComTest, test_reqtest_success_KH270) {
   uint8_t buffer[] = {reqTest_msgid, Kh270};
+  EXPECT_CALL(*serialMock, write(_, _)).Times(AtLeast(1));
+  EXPECT_CALL(*serialMock, write(SLIP::END)).Times(AtLeast(1));
   EXPECT_CALL(*fsmMock, setState(s_test));
+  EXPECT_CALL(*knitterMock, setMachineType(Kh270));
+  EXPECT_CALL(*arduinoMock, millis);
   com->onPacketReceived(buffer, sizeof(buffer));
   ASSERT_TRUE(Mock::VerifyAndClear(fsmMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(knitterMock));
 }
 
 TEST_F(ComTest, test_reqstart_fail1) {
   // checksum wrong
   uint8_t buffer[] = {reqStart_msgid, 0, 0, 10, 1, 0x73};
+  EXPECT_CALL(*serialMock, write(_, _));
+  EXPECT_CALL(*serialMock, write(SLIP::END));
   EXPECT_CALL(*knitterMock, startKnitting).Times(0);
   com->onPacketReceived(buffer, sizeof(buffer));
   ASSERT_TRUE(Mock::VerifyAndClear(knitterMock));
@@ -105,6 +115,8 @@ TEST_F(ComTest, test_reqstart_fail1) {
 TEST_F(ComTest, test_reqstart_fail2) {
   // not enough bytes
   uint8_t buffer[] = {reqStart_msgid, 0, 0, 10, 1, 0x74};
+  EXPECT_CALL(*serialMock, write(_, _));
+  EXPECT_CALL(*serialMock, write(SLIP::END));
   EXPECT_CALL(*knitterMock, startKnitting).Times(0);
   com->onPacketReceived(buffer, sizeof(buffer) - 1);
   ASSERT_TRUE(Mock::VerifyAndClear(knitterMock));
@@ -112,6 +124,8 @@ TEST_F(ComTest, test_reqstart_fail2) {
 
 TEST_F(ComTest, test_reqstart_success_KH910) {
   uint8_t buffer[] = {reqStart_msgid, 0, 0, 10, 1, 0x74};
+  EXPECT_CALL(*serialMock, write(_, _)).Times(AtLeast(1));
+  EXPECT_CALL(*serialMock, write(SLIP::END)).Times(AtLeast(1));
   EXPECT_CALL(*knitterMock, startKnitting);
   com->onPacketReceived(buffer, sizeof(buffer));
   ASSERT_TRUE(Mock::VerifyAndClear(knitterMock));
@@ -119,6 +133,8 @@ TEST_F(ComTest, test_reqstart_success_KH910) {
 
 TEST_F(ComTest, test_reqstart_success_KH270) {
   uint8_t buffer[] = {reqStart_msgid, 2, 0, 10, 1, 0x73};
+  EXPECT_CALL(*serialMock, write(_, _)).Times(AtLeast(1));
+  EXPECT_CALL(*serialMock, write(SLIP::END)).Times(AtLeast(1));
   EXPECT_CALL(*knitterMock, startKnitting);
   com->onPacketReceived(buffer, sizeof(buffer));
   ASSERT_TRUE(Mock::VerifyAndClear(knitterMock));
@@ -126,51 +142,77 @@ TEST_F(ComTest, test_reqstart_success_KH270) {
 
 TEST_F(ComTest, test_reqinfo) {
   uint8_t buffer[] = {reqInfo_msgid};
+  EXPECT_CALL(*serialMock, write(_, _));
+  EXPECT_CALL(*serialMock, write(SLIP::END));
   com->onPacketReceived(buffer, sizeof(buffer));
 }
 
 TEST_F(ComTest, test_helpCmd) {
   uint8_t buffer[] = {helpCmd_msgid};
+  EXPECT_CALL(*serialMock, write(_, _)).Times(AtLeast(1));
+  EXPECT_CALL(*serialMock, write(SLIP::END)).Times(AtLeast(1));
   com->onPacketReceived(buffer, sizeof(buffer));
 }
 
 TEST_F(ComTest, test_sendCmd) {
   uint8_t buffer[] = {sendCmd_msgid};
+  EXPECT_CALL(*serialMock, write(_, _)).Times(AtLeast(1));
+  EXPECT_CALL(*serialMock, write(SLIP::END)).Times(AtLeast(1));
   com->onPacketReceived(buffer, sizeof(buffer));
 }
 
 TEST_F(ComTest, test_beepCmd) {
   uint8_t buffer[] = {beepCmd_msgid};
+  EXPECT_CALL(*serialMock, write(_, _));
+  EXPECT_CALL(*serialMock, write(SLIP::END));
+  EXPECT_CALL(*arduinoMock, analogWrite(PIEZO_PIN, _)).Times(AtLeast(1));
   com->onPacketReceived(buffer, sizeof(buffer));
 }
 
 TEST_F(ComTest, test_setSingleCmd) {
   uint8_t buffer[] = {setSingleCmd_msgid, 0, 0};
+  EXPECT_CALL(*serialMock, write(_, _));
+  EXPECT_CALL(*serialMock, write(SLIP::END));
   com->onPacketReceived(buffer, sizeof(buffer));
 }
 
 TEST_F(ComTest, test_setAllCmd) {
   uint8_t buffer[] = {setAllCmd_msgid, 0, 0};
+  EXPECT_CALL(*serialMock, write(_, _));
+  EXPECT_CALL(*serialMock, write(SLIP::END));
   com->onPacketReceived(buffer, sizeof(buffer));
 }
 
 TEST_F(ComTest, test_readEOLsensorsCmd) {
   uint8_t buffer[] = {readEOLsensorsCmd_msgid};
+  EXPECT_CALL(*serialMock, write(_, _)).Times(AtLeast(1));
+  EXPECT_CALL(*serialMock, write(SLIP::END)).Times(AtLeast(1));
+  EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_L));
+  EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_R));
   com->onPacketReceived(buffer, sizeof(buffer));
 }
 
 TEST_F(ComTest, test_readEncodersCmd) {
   uint8_t buffer[] = {readEncodersCmd_msgid};
+  EXPECT_CALL(*serialMock, write(_, _)).Times(AtLeast(1));
+  EXPECT_CALL(*serialMock, write(SLIP::END)).Times(AtLeast(1));
+  EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_A));
+  EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_B));
+  EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_C));
   com->onPacketReceived(buffer, sizeof(buffer));
 }
 
 TEST_F(ComTest, test_autoReadCmd) {
   uint8_t buffer[] = {autoReadCmd_msgid};
+  EXPECT_CALL(*serialMock, write(_, _));
+  EXPECT_CALL(*serialMock, write(SLIP::END));
   com->onPacketReceived(buffer, sizeof(buffer));
 }
 
 TEST_F(ComTest, test_autoTestCmd) {
   uint8_t buffer[] = {autoTestCmd_msgid};
+  EXPECT_CALL(*serialMock, write(_, _));
+  EXPECT_CALL(*serialMock, write(SLIP::END));
   com->onPacketReceived(buffer, sizeof(buffer));
 }
 
@@ -181,7 +223,9 @@ TEST_F(ComTest, test_stopCmd) {
 
 TEST_F(ComTest, test_quitCmd) {
   uint8_t buffer[] = {quitCmd_msgid};
+  EXPECT_CALL(*knitterMock, setUpInterrupt);
   com->onPacketReceived(buffer, sizeof(buffer));
+  ASSERT_TRUE(Mock::VerifyAndClear(knitterMock));
 }
 
 TEST_F(ComTest, test_unrecognized) {
@@ -198,10 +242,10 @@ TEST_F(ComTest, test_cnfline_kh910) {
                         0,
                         0,
                         1,
-                        0xde,
-                        0xad,
-                        0xbe,
-                        0xef,
+                        0xDE,
+                        0xAD,
+                        0xBE,
+                        0xEF,
                         0x00,
                         0x00,
                         0x00,
@@ -223,7 +267,7 @@ TEST_F(ComTest, test_cnfline_kh910) {
                         0x00,
                         0x00,
                         0x00,
-                        0xa7}; // CRC8
+                        0xA7}; // CRC8
 
   // start KH910 job
   knitterMock->startKnitting(Kh910, 0, 199, pattern, false);
@@ -240,7 +284,7 @@ TEST_F(ComTest, test_cnfline_kh910) {
 
   // not last line
   buffer[3] = 0x00;
-  buffer[29] = 0xc0;
+  buffer[29] = 0xC0;
   EXPECT_CALL(*knitterMock, setNextLine).WillOnce(Return(true));
   EXPECT_CALL(*knitterMock, setLastLine).Times(0);
   com->onPacketReceived(buffer, sizeof(buffer));
@@ -266,7 +310,7 @@ TEST_F(ComTest, test_cnfline_kh270) {
   // CRC8 calculated with
   // http://tomeko.net/online_tools/crc8.php?lang=en
   uint8_t buffer[20] = {cnfLine_msgid, 0, 0, 1,
-                        0xde, 0xad, 0xbe, 0xef, 0x00,
+                        0xDE, 0xAD, 0xBE, 0xEF, 0x00,
                         0x00, 0x00, 0x00, 0x00, 0x00,
                         0x00, 0x00, 0x00, 0x00, 0x00,
                         0xab};  // CRC8

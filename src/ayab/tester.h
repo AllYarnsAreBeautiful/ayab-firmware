@@ -27,6 +27,7 @@
 //#include <SerialCommand.h>
 
 #include "beeper.h"
+#include "com.h"
 #include "encoders.h"
 
 constexpr uint8_t BUFFER_LEN = 40;
@@ -36,7 +37,7 @@ public:
   virtual ~TesterInterface(){};
 
   // any methods that need to be mocked should go here
-  virtual bool startTest(Machine_t machineType) = 0;
+  virtual Err_t startTest(Machine_t machineType) = 0;
   virtual void loop() = 0;
   virtual bool getQuitFlag() = 0;
   virtual void helpCmd() = 0;
@@ -70,7 +71,7 @@ public:
   // pointer to global instance whose methods are implemented
   static TesterInterface *m_instance;
 
-  static bool startTest(Machine_t machineType);
+  static Err_t startTest(Machine_t machineType);
   static void loop();
   static bool getQuitFlag();
   static void helpCmd();
@@ -102,7 +103,7 @@ class Tester : public TesterInterface {
 #endif
 
 public:
-  bool startTest(Machine_t machineType);
+  Err_t startTest(Machine_t machineType);
   void loop();
   bool getQuitFlag();
   void helpCmd();

@@ -66,9 +66,53 @@ enum AYAB_API {
 };
 using AYAB_API_t = enum AYAB_API;
 
+// As of APIv6, the only important distinction
+// is between `SUCCESS` (0) and any other value.
+// Informative error codes are provided for
+// diagnostic purposes (that is, for debugging).
+// Non-zero error codes are subject to change.
+// Such changes will be considered non-breaking.
+enum ErrorCode {
+  SUCCESS = 0x00,
+
+  // message not understood
+  EXPECTED_LONGER_MESSAGE = 0x01,
+  UNRECOGNIZED_MSGID = 0x02,
+  UNEXPECTED_MSGID = 0x03,
+  CHECKSUM_ERROR = 0x04,
+
+  // invalid arguments
+  MACHINE_TYPE_INVALID = 0x10,
+  NEEDLE_VALUE_INVALID = 0x11,
+  NULL_POINTER_ARGUMENT = 0x12,
+  ARGUMENT_INVALID = 0x13,
+  ARGUMENTS_INCOMPATIBLE = 0x13,
+
+  // device not initialized
+  NO_MACHINE_TYPE = 0x20,
+  NO_CARRIAGE = 0x21,
+  NO_DIRECTION = 0x22,
+  NO_BELTSHIFT = 0x23,
+
+  // machine in wrong FSM state
+  MACHINE_STATE_INIT = 0xE0,
+  MACHINE_STATE_READY = 0xE1,
+  MACHINE_STATE_KNIT = 0xE2,
+  MACHINE_STATE_TEST = 0xE3,
+  WRONG_MACHINE_STATE = 0xEF,
+
+  // generic error codes
+  WARNING = 0xF0, // ignorable error
+  RECOVERABLE_ERROR = 0xF1,
+  CRITICAL_ERROR = 0xF2,
+  FATAL_ERROR = 0xF3,
+  UNSPECIFIED_FAILURE = 0xFF
+};
+using Err_t = enum ErrorCode;
+
 // API constants
 constexpr uint8_t INDSTATE_LEN = 9U;
-constexpr uint8_t REQLINE_LEN = 2U;
+constexpr uint8_t REQLINE_LEN = 3U;
 
 class ComInterface {
 public:
@@ -80,7 +124,8 @@ public:
   virtual void send(uint8_t *payload, size_t length) = 0;
   virtual void sendMsg(AYAB_API_t id, const char *msg) = 0;
   virtual void sendMsg(AYAB_API_t id, char *msg) = 0;
-  virtual void send_reqLine(const uint8_t lineNumber) = 0;
+  virtual void send_reqLine(const uint8_t lineNumber,
+                            Err_t error = SUCCESS) = 0;
   virtual void send_indState(Carriage_t carriage, uint8_t position,
                              const bool initState = false) = 0;
   virtual void onPacketReceived(const uint8_t *buffer, size_t size) = 0;
@@ -105,7 +150,7 @@ public:
   static void send(uint8_t *payload, size_t length);
   static void sendMsg(AYAB_API_t id, const char *msg);
   static void sendMsg(AYAB_API_t id, char *msg);
-  static void send_reqLine(const uint8_t lineNumber);
+  static void send_reqLine(const uint8_t lineNumber, Err_t error = SUCCESS);
   static void send_indState(Carriage_t carriage, uint8_t position,
                             const bool initState = false);
   static void onPacketReceived(const uint8_t *buffer, size_t size);
@@ -121,7 +166,7 @@ public:
   void send(uint8_t *payload, size_t length);
   void sendMsg(AYAB_API_t id, const char *msg);
   void sendMsg(AYAB_API_t id, char *msg);
-  void send_reqLine(const uint8_t lineNumber);
+  void send_reqLine(const uint8_t lineNumber, Err_t error = SUCCESS);
   void send_indState(Carriage_t carriage, uint8_t position,
                      const bool initState = false);
   void onPacketReceived(const uint8_t *buffer, size_t size);
@@ -136,6 +181,10 @@ private:
   void h_reqInfo();
   void h_reqTest(const uint8_t *buffer, size_t size);
   void h_unrecognized();
+
+  void send_cnfInfo();
+  void send_cnfStart(Err_t error);
+  void send_cnfTest(Err_t error);
 #ifdef AYAB_ENABLE_CRC
   uint8_t CRC8(const uint8_t *buffer, size_t len);
 #endif

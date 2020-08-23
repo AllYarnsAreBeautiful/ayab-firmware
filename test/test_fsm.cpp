@@ -26,6 +26,7 @@
 #include <fsm.h>
 #include <knitter.h>
 
+#include <beeper_mock.h>
 #include <com_mock.h>
 #include <solenoids_mock.h>
 #include <tester_mock.h>
@@ -37,6 +38,7 @@ using ::testing::Test;
 extern Fsm *fsm;
 extern Knitter *knitter;
 
+extern BeeperMock *beeper;
 extern ComMock *com;
 extern SolenoidsMock *solenoids;
 extern TesterMock *tester;
@@ -47,6 +49,7 @@ protected:
     arduinoMock = arduinoMockInstance();
 
     // pointers to global instances
+    beeperMock = beeper;
     comMock = com;
     solenoidsMock = solenoids;
     testerMock = tester;
@@ -54,6 +57,7 @@ protected:
     // The global instance does not get destroyed at the end of each test.
     // Ordinarily the mock instance would be local and such behaviour would
     // cause a memory leak. We must notify the test that this is not the case.
+    Mock::AllowLeak(beeperMock);
     Mock::AllowLeak(comMock);
     Mock::AllowLeak(solenoidsMock);
     Mock::AllowLeak(testerMock);
@@ -64,6 +68,7 @@ protected:
   }
 
   ArduinoMock *arduinoMock;
+  BeeperMock *beeperMock;
   ComMock *comMock;
   SolenoidsMock *solenoidsMock;
   TesterMock *testerMock;
@@ -150,9 +155,12 @@ TEST_F(FsmTest, test_dispatch_knit) {
   fsm->setState(s_knit);
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, 1));
   EXPECT_CALL(*comMock, update);
+  EXPECT_CALL(*comMock, send_reqLine);
+  EXPECT_CALL(*beeperMock, finishedLine);
   fsm->dispatch();
 
   // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(beeperMock));
   ASSERT_TRUE(Mock::VerifyAndClear(comMock));
 }
 

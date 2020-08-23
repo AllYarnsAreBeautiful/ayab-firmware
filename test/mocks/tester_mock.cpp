@@ -39,7 +39,7 @@ void releaseTesterMock() {
   }
 }
 
-bool Tester::startTest(Machine_t machineType) {
+Err_t Tester::startTest(Machine_t machineType) {
   assert(gTesterMock != NULL);
   return gTesterMock->startTest(machineType);
 }

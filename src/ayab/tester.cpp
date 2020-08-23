@@ -155,16 +155,23 @@ void Tester::quitCmd() {
   GlobalKnitter::setUpInterrupt();
 }
 
-bool Tester::startTest(Machine_t machineType) {
-  bool success = false;
+/*!
+ * \brief Start hardware test.
+ *
+ * Note (August 2020): the return value of this function has changed.
+ * Previously, it returned `true` for success and `false` for failure.
+ * Now, it returns `0` for success and an informative error code otherwise.
+ */
+Err_t Tester::startTest(Machine_t machineType) {
   OpState_t currentState = GlobalFsm::getState();
   if (s_init == currentState || s_ready == currentState) {
     GlobalFsm::setState(s_test);
     GlobalKnitter::setMachineType(machineType);
     setUp();
-    success = true;
+    return SUCCESS;
   }
-  return success;
+  // TODO(TP): return informative error code.
+  return WRONG_MACHINE_STATE;
 }
 
 /*!

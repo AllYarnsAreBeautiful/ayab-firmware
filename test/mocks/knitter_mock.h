@@ -32,9 +32,9 @@ public:
   MOCK_METHOD0(init, void());
   MOCK_METHOD0(setUpInterrupt, void());
   MOCK_METHOD0(isr, void());
-  MOCK_METHOD5(startKnitting, bool(Machine_t machineType, uint8_t startNeedle,
-                                   uint8_t stopNeedle, uint8_t *pattern_start,
-                                   bool continuousReportingEnabled));
+  MOCK_METHOD5(startKnitting, Err_t(Machine_t machineType, uint8_t startNeedle,
+                                    uint8_t stopNeedle, uint8_t *pattern_start,
+                                    bool continuousReportingEnabled));
   MOCK_METHOD0(encodePosition, void());
   MOCK_METHOD0(isReady, bool());
   MOCK_METHOD0(knit, void());
