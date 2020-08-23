@@ -27,6 +27,7 @@
 #include "beeper.h"
 #include "com.h"
 #include "encoders.h"
+#include "fsm.h"
 #include "knitter.h"
 #include "solenoids.h"
 #include "tester.h"
@@ -36,6 +37,7 @@
 GlobalBeeper *beeper;
 GlobalCom *com;
 GlobalEncoders *encoders;
+GlobalFsm *fsm;
 GlobalKnitter *knitter;
 GlobalSolenoids *solenoids;
 GlobalTester *tester;
@@ -44,6 +46,7 @@ GlobalTester *tester;
 BeeperInterface *GlobalBeeper::m_instance = new Beeper();
 ComInterface *GlobalCom::m_instance = new Com();
 EncodersInterface *GlobalEncoders::m_instance = new Encoders();
+FsmInterface *GlobalFsm::m_instance = new Fsm();
 KnitterInterface *GlobalKnitter::m_instance = new Knitter();
 SolenoidsInterface *GlobalSolenoids::m_instance = new Solenoids();
 TesterInterface *GlobalTester::m_instance = new Tester();
@@ -53,6 +56,7 @@ TesterInterface *GlobalTester::m_instance = new Tester();
  */
 void setup() {
   GlobalCom::init();
+  GlobalFsm::init();
   GlobalKnitter::init();
   GlobalSolenoids::init();
 }
@@ -61,5 +65,5 @@ void setup() {
  * Main Loop - repeat forever.
  */
 void loop() {
-  GlobalKnitter::fsm();
+  GlobalFsm::dispatch();
 }

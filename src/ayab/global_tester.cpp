@@ -26,8 +26,8 @@
 
 // static member functions
 
-void GlobalTester::setUp() {
-  m_instance->setUp();
+bool GlobalTester::startTest(Machine_t machineType) {
+  return m_instance->startTest(machineType);
 }
 
 void GlobalTester::loop() {
@@ -80,10 +80,6 @@ void GlobalTester::stopCmd() {
 
 void GlobalTester::quitCmd() {
   m_instance->quitCmd();
-}
-
-void GlobalTester::unrecognizedCmd(const char *buffer) {
-  m_instance->unrecognizedCmd(buffer);
 }
 
 #ifndef AYAB_TESTS

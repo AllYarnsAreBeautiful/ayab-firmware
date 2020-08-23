@@ -31,10 +31,6 @@ void GlobalKnitter::init() {
   m_instance->init();
 }
 
-void GlobalKnitter::fsm() {
-  m_instance->fsm();
-}
-
 void GlobalKnitter::setUpInterrupt() {
   m_instance->setUpInterrupt();
 }
@@ -52,8 +48,16 @@ bool GlobalKnitter::startKnitting(Machine_t machineType, uint8_t startNeedle,
                                    pattern_start, continuousReportingEnabled);
 }
 
-bool GlobalKnitter::startTest(Machine_t machineType) {
-  return m_instance->startTest(machineType);
+void GlobalKnitter::encodePosition() {
+  m_instance->encodePosition();
+}
+
+bool GlobalKnitter::isReady() {
+  return m_instance->isReady();
+}
+
+void GlobalKnitter::knit() {
+  m_instance->knit();
 }
 
 uint8_t GlobalKnitter::getStartOffset(const Direction_t direction) {
@@ -74,8 +78,4 @@ void GlobalKnitter::setLastLine() {
 
 void GlobalKnitter::setMachineType(Machine_t machineType) {
   m_instance->setMachineType(machineType);
-}
-
-void GlobalKnitter::setState(OpState_t state) {
-  m_instance->setState(state);
 }

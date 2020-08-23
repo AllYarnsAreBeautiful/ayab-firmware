@@ -1,5 +1,5 @@
 /*!`
- * \file com_mock.h
+ * \file fsm_mock.cpp
  *
  * This file is part of AYAB.
  *
@@ -21,27 +21,41 @@
  *    http://ayab-knitting.com
  */
 
-#ifndef COM_MOCK_H_
-#define COM_MOCK_H_
+#include <fsm.h>
+#include <fsm_mock.h>
 
-#include <gmock/gmock.h>
+static FsmMock *gFsmMock = NULL;
 
-#include <com.h>
+FsmMock *fsmMockInstance() {
+  if (!gFsmMock) {
+    gFsmMock = new FsmMock();
+  }
+  return gFsmMock;
+}
 
-class ComMock : public ComInterface {
-public:
-  MOCK_METHOD0(init, void());
-  MOCK_METHOD0(update, void());
-  MOCK_METHOD2(send, void(uint8_t *payload, size_t length));
-  MOCK_METHOD2(sendMsg, void(AYAB_API_t id, const char *msg));
-  MOCK_METHOD2(sendMsg, void(AYAB_API_t id, char *msg));
-  MOCK_METHOD1(send_reqLine, void(const uint8_t lineNumber));
-  MOCK_METHOD3(send_indState, void(Carriage_t carriage, uint8_t position,
-                                   const bool initState));
-  MOCK_METHOD2(onPacketReceived, void(const uint8_t *buffer, size_t size));
-};
+void releaseFsmMock() {
+  if (gFsmMock) {
+    delete gFsmMock;
+    gFsmMock = NULL;
+  }
+}
 
-ComMock *comMockInstance();
-void releaseComMock();
+void Fsm::init() {
+  assert(gFsmMock != NULL);
+  gFsmMock->init();
+}
 
-#endif // COM_MOCK_H_
+OpState_t Fsm::getState() {
+  assert(gFsmMock != NULL);
+  return gFsmMock->getState();
+}
+
+void Fsm::setState(OpState_t state) {
+  assert(gFsmMock != NULL);
+  gFsmMock->setState(state);
+}
+
+void Fsm::dispatch() {
+  assert(gFsmMock != NULL);
+  gFsmMock->dispatch();
+}

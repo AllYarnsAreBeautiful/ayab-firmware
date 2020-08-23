@@ -1,5 +1,5 @@
 /*!`
- * \file knitter_mock.h
+ * \file fsm_mock.h
  *
  * This file is part of AYAB.
  *
@@ -21,31 +21,21 @@
  *    http://ayab-knitting.com
  */
 
-#ifndef KNITTER_MOCK_H_
-#define KNITTER_MOCK_H_
+#ifndef FSM_MOCK_H_
+#define FSM_MOCK_H_
 
+#include <fsm.h>
 #include <gmock/gmock.h>
-#include <knitter.h>
 
-class KnitterMock : public KnitterInterface {
+class FsmMock : public FsmInterface {
 public:
   MOCK_METHOD0(init, void());
-  MOCK_METHOD0(setUpInterrupt, void());
-  MOCK_METHOD0(isr, void());
-  MOCK_METHOD5(startKnitting, bool(Machine_t machineType, uint8_t startNeedle,
-                                   uint8_t stopNeedle, uint8_t *pattern_start,
-                                   bool continuousReportingEnabled));
-  MOCK_METHOD0(encodePosition, void());
-  MOCK_METHOD0(isReady, bool());
-  MOCK_METHOD0(knit, void());
-  MOCK_METHOD1(getStartOffset, uint8_t(const Direction_t direction));
-  MOCK_METHOD0(getMachineType, Machine_t());
-  MOCK_METHOD1(setNextLine, bool(uint8_t lineNumber));
-  MOCK_METHOD0(setLastLine, void());
-  MOCK_METHOD1(setMachineType, void(Machine_t));
+  MOCK_METHOD0(getState, OpState_t());
+  MOCK_METHOD1(setState, void(OpState_t state));
+  MOCK_METHOD0(dispatch, void());
 };
 
-KnitterMock *knitterMockInstance();
-void releaseKnitterMock();
+FsmMock *fsmMockInstance();
+void releaseFsmMock();
 
-#endif // KNITTER_MOCK_H_
+#endif // FSM_MOCK_H_

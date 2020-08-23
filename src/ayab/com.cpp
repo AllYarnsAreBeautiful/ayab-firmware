@@ -64,6 +64,64 @@ void Com::init() {
 #endif // AYAB_TESTS
 }
 
+void Com::update() {
+  m_packetSerial.update();
+}
+
+void Com::send(uint8_t *payload, size_t length) {
+  // TODO(TP): insert a workaround for hardware test code
+  /*
+  #ifdef AYAB_HW_TEST
+    Serial.print("Sent: ");
+    for (uint8_t i = 0; i < length; ++i) {
+      Serial.print(payload[i]);
+    }
+    Serial.print(", Encoded as: ");
+  #endif
+  */
+  m_packetSerial.send(payload, length);
+}
+
+// send initial msgid followed by null-terminated string
+void Com::sendMsg(AYAB_API_t id, const char *msg) {
+  uint8_t length = 0;
+  msgBuffer[length++] = static_cast<uint8_t>(id);
+  while (*msg) {
+    msgBuffer[length++] = static_cast<uint8_t>(*msg++);
+  }
+  m_packetSerial.send(msgBuffer, length);
+}
+
+void Com::sendMsg(AYAB_API_t id, char *msg) {
+  sendMsg(id, static_cast<const char *>(msg));
+}
+
+void Com::send_reqLine(const uint8_t lineNumber) {
+  uint8_t payload[REQLINE_LEN] = {
+      reqLine_msgid,
+      lineNumber,
+  };
+  send(static_cast<uint8_t *>(payload), REQLINE_LEN);
+}
+
+void Com::send_indState(Carriage_t carriage, uint8_t position,
+                        const bool initState) {
+  uint16_t leftHallValue = GlobalEncoders::getHallValue(Left);
+  uint16_t rightHallValue = GlobalEncoders::getHallValue(Right);
+  uint8_t payload[INDSTATE_LEN] = {
+      indState_msgid,
+      static_cast<uint8_t>(initState),
+      highByte(leftHallValue),
+      lowByte(leftHallValue),
+      highByte(rightHallValue),
+      lowByte(rightHallValue),
+      static_cast<uint8_t>(carriage),
+      static_cast<uint8_t>(position),
+      static_cast<uint8_t>(GlobalEncoders::getDirection()),
+  };
+  GlobalCom::send(static_cast<uint8_t *>(payload), INDSTATE_LEN);
+}
+
 /*!
  * \brief Callback for PacketSerial.
  */
@@ -133,38 +191,6 @@ void Com::onPacketReceived(const uint8_t *buffer, size_t size) {
     h_unrecognized();
     break;
   }
-}
-
-void Com::update() {
-  m_packetSerial.update();
-}
-
-void Com::send(uint8_t *payload, size_t length) {
-  // TODO(TP): insert a workaround for hardware test code
-  /*
-  #ifdef AYAB_HW_TEST
-    Serial.print("Sent: ");
-    for (uint8_t i = 0; i < length; ++i) {
-      Serial.print(payload[i]);
-    }
-    Serial.print(", Encoded as: ");
-  #endif
-  */
-  m_packetSerial.send(payload, length);
-}
-
-// send initial msgid followed by null-terminated string
-void Com::sendMsg(AYAB_API_t id, const char *msg) {
-  uint8_t length = 0;
-  msgBuffer[length++] = static_cast<uint8_t>(id);
-  while (*msg) {
-    msgBuffer[length++] = static_cast<uint8_t>(*msg++);
-  }
-  m_packetSerial.send(msgBuffer, length);
-}
-
-void Com::sendMsg(AYAB_API_t id, char *msg) {
-  sendMsg(id, static_cast<const char *>(msg));
 }
 
 // Serial command handling
@@ -283,7 +309,7 @@ void Com::h_reqTest(const uint8_t *buffer, size_t size) {
   }
 
   Machine_t machineType = static_cast<Machine_t>(buffer[0]);
-  bool success = GlobalKnitter::startTest(machineType);
+  bool success = GlobalTester::startTest(machineType);
 
   uint8_t payload[2];
   payload[0] = cnfTest_msgid;
@@ -296,3 +322,4 @@ void Com::h_unrecognized() {
   // do nothing
 }
 // GCOVR_EXCL_STOP
+//

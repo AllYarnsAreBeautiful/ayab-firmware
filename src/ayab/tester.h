@@ -27,6 +27,7 @@
 //#include <SerialCommand.h>
 
 #include "beeper.h"
+#include "encoders.h"
 
 constexpr uint8_t BUFFER_LEN = 40;
 
@@ -35,7 +36,7 @@ public:
   virtual ~TesterInterface(){};
 
   // any methods that need to be mocked should go here
-  virtual void setUp() = 0;
+  virtual bool startTest(Machine_t machineType) = 0;
   virtual void loop() = 0;
   virtual bool getQuitFlag() = 0;
   virtual void helpCmd() = 0;
@@ -49,7 +50,6 @@ public:
   virtual void autoTestCmd() = 0;
   virtual void stopCmd() = 0;
   virtual void quitCmd() = 0;
-  virtual void unrecognizedCmd(const char *buffer) = 0;
 #ifndef AYAB_TESTS
   virtual void encoderAChange();
 #endif
@@ -70,7 +70,7 @@ public:
   // pointer to global instance whose methods are implemented
   static TesterInterface *m_instance;
 
-  static void setUp();
+  static bool startTest(Machine_t machineType);
   static void loop();
   static bool getQuitFlag();
   static void helpCmd();
@@ -84,7 +84,6 @@ public:
   static void autoTestCmd();
   static void stopCmd();
   static void quitCmd();
-  static void unrecognizedCmd(const char *buffer);
 #ifndef AYAB_TESTS
   static void encoderAChange();
 #endif
@@ -103,7 +102,7 @@ class Tester : public TesterInterface {
 #endif
 
 public:
-  void setUp();
+  bool startTest(Machine_t machineType);
   void loop();
   bool getQuitFlag();
   void helpCmd();
@@ -117,12 +116,12 @@ public:
   void autoTestCmd();
   void stopCmd();
   void quitCmd();
-  void unrecognizedCmd(const char *buffer);
 #ifndef AYAB_TESTS
   void encoderAChange();
 #endif
 
 private:
+  void setUp();
   void beep();
   void readEOLsensors();
   void readEncoders();

@@ -44,19 +44,14 @@ void Knitter::init() {
   gKnitterMock->init();
 }
 
-void Knitter::fsm() {
+void Knitter::setUpInterrupt() {
   assert(gKnitterMock != NULL);
-  gKnitterMock->fsm();
+  gKnitterMock->setUpInterrupt();
 }
 
 void Knitter::isr() {
   assert(gKnitterMock != NULL);
   gKnitterMock->isr();
-}
-
-void Knitter::setUpInterrupt() {
-  assert(gKnitterMock != NULL);
-  gKnitterMock->setUpInterrupt();
 }
 
 bool Knitter::startKnitting(Machine_t machineType, uint8_t startNeedle,
@@ -67,9 +62,29 @@ bool Knitter::startKnitting(Machine_t machineType, uint8_t startNeedle,
                                      pattern_start, continuousReportingEnabled);
 }
 
-bool Knitter::startTest(Machine_t machineType) {
+void Knitter::encodePosition() {
   assert(gKnitterMock != NULL);
-  return gKnitterMock->startTest(machineType);
+  gKnitterMock->encodePosition();
+}
+
+bool Knitter::isReady() {
+  assert(gKnitterMock != NULL);
+  return gKnitterMock->isReady();
+}
+
+void Knitter::knit() {
+  assert(gKnitterMock != NULL);
+  gKnitterMock->knit();
+}
+
+uint8_t Knitter::getStartOffset(const Direction_t direction) {
+  assert(gKnitterMock != NULL);
+  return gKnitterMock->getStartOffset(direction);
+}
+
+Machine_t Knitter::getMachineType() {
+  assert(gKnitterMock != NULL);
+  return gKnitterMock->getMachineType();
 }
 
 bool Knitter::setNextLine(uint8_t lineNumber) {
@@ -82,22 +97,7 @@ void Knitter::setLastLine() {
   gKnitterMock->setLastLine();
 }
 
-Machine_t Knitter::getMachineType() {
-  assert(gKnitterMock != NULL);
-  return gKnitterMock->getMachineType();
-}
-
 void Knitter::setMachineType(Machine_t machineType) {
   assert(gKnitterMock != NULL);
   return gKnitterMock->setMachineType(machineType);
-}
-
-uint8_t Knitter::getStartOffset(const Direction_t direction) {
-  assert(gKnitterMock != NULL);
-  return gKnitterMock->getStartOffset(direction);
-}
-
-void Knitter::setState(OpState_t state) {
-  assert(gKnitterMock != NULL);
-  gKnitterMock->setState(state);
 }

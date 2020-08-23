@@ -24,7 +24,9 @@
 #include <gtest/gtest.h>
 
 #include <com.h>
+#include <encoders.h>
 
+#include <fsm_mock.h>
 #include <knitter_mock.h>
 
 using ::testing::_;
@@ -32,6 +34,8 @@ using ::testing::Mock;
 using ::testing::Return;
 
 extern Com *com;
+
+extern FsmMock *fsm;
 extern KnitterMock *knitter;
 
 class ComTest : public ::testing::Test {
@@ -41,11 +45,13 @@ protected:
     serialMock = serialMockInstance();
 
     // pointer to global instance
+    fsmMock = fsm;
     knitterMock = knitter;
 
     // The global instance does not get destroyed at the end of each test.
     // Ordinarily the mock instance would be local and such behaviour would
     // cause a memory leak. We must notify the test that this is not the case.
+    Mock::AllowLeak(fsmMock);
     Mock::AllowLeak(knitterMock);
 
     expect_init();
@@ -55,12 +61,12 @@ protected:
   void TearDown() override {
     releaseArduinoMock();
     releaseSerialMock();
-    releaseKnitterMock();
   }
 
   ArduinoMock *arduinoMock;
-  SerialMock *serialMock;
+  FsmMock *fsmMock;
   KnitterMock *knitterMock;
+  SerialMock *serialMock;
 
   void expect_init() {
     EXPECT_CALL(*serialMock, begin);
@@ -76,16 +82,16 @@ TEST_F(ComTest, test_API) {
 TEST_F(ComTest, test_reqtest_fail) {
   // no machineType
   uint8_t buffer[] = {reqTest_msgid};
-  EXPECT_CALL(*knitterMock, startTest).Times(0);
+  EXPECT_CALL(*fsmMock, setState(s_test)).Times(0);
   com->onPacketReceived(buffer, sizeof(buffer));
-  ASSERT_TRUE(Mock::VerifyAndClear(knitterMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(fsmMock));
 }
 
 TEST_F(ComTest, test_reqtest_success) {
   uint8_t buffer[] = {reqTest_msgid, Kh270};
-  EXPECT_CALL(*knitterMock, startTest).WillOnce(Return(false));
+  EXPECT_CALL(*fsmMock, setState(s_test));
   com->onPacketReceived(buffer, sizeof(buffer));
-  ASSERT_TRUE(Mock::VerifyAndClear(knitterMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(fsmMock));
 }
 
 TEST_F(ComTest, test_reqstart_fail1) {
@@ -298,4 +304,21 @@ TEST_F(ComTest, test_sendMsg2) {
   EXPECT_CALL(*serialMock, write(_, _));
   EXPECT_CALL(*serialMock, write(SLIP::END));
   com->sendMsg(testRes_msgid, buf);
+}
+
+TEST_F(ComTest, test_send_reqLine) {
+  EXPECT_CALL(*serialMock, write(_, _));
+  EXPECT_CALL(*serialMock, write(SLIP::END));
+  com->send_reqLine(0);
+}
+
+TEST_F(ComTest, test_send_indState) {
+  EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_L));
+  EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_R));
+  EXPECT_CALL(*serialMock, write(_, _));
+  EXPECT_CALL(*serialMock, write(SLIP::END));
+  com->send_indState(Knit, 0, true);
+
+  // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(fsmMock));
 }

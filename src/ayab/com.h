@@ -27,6 +27,8 @@
 #include <Arduino.h>
 #include <PacketSerial.h>
 
+#include "encoders.h"
+
 constexpr uint8_t FW_VERSION_MAJ = 1U;
 constexpr uint8_t FW_VERSION_MIN = 0U;
 constexpr uint8_t FW_VERSION_PATCH = 0U;
@@ -64,6 +66,10 @@ enum AYAB_API {
 };
 using AYAB_API_t = enum AYAB_API;
 
+// API constants
+constexpr uint8_t INDSTATE_LEN = 9U;
+constexpr uint8_t REQLINE_LEN = 2U;
+
 class ComInterface {
 public:
   virtual ~ComInterface(){};
@@ -74,6 +80,9 @@ public:
   virtual void send(uint8_t *payload, size_t length) = 0;
   virtual void sendMsg(AYAB_API_t id, const char *msg) = 0;
   virtual void sendMsg(AYAB_API_t id, char *msg) = 0;
+  virtual void send_reqLine(const uint8_t lineNumber) = 0;
+  virtual void send_indState(Carriage_t carriage, uint8_t position,
+                             const bool initState = false) = 0;
   virtual void onPacketReceived(const uint8_t *buffer, size_t size) = 0;
 };
 
@@ -96,6 +105,9 @@ public:
   static void send(uint8_t *payload, size_t length);
   static void sendMsg(AYAB_API_t id, const char *msg);
   static void sendMsg(AYAB_API_t id, char *msg);
+  static void send_reqLine(const uint8_t lineNumber);
+  static void send_indState(Carriage_t carriage, uint8_t position,
+                            const bool initState = false);
   static void onPacketReceived(const uint8_t *buffer, size_t size);
 
 private:
@@ -109,6 +121,9 @@ public:
   void send(uint8_t *payload, size_t length);
   void sendMsg(AYAB_API_t id, const char *msg);
   void sendMsg(AYAB_API_t id, char *msg);
+  void send_reqLine(const uint8_t lineNumber);
+  void send_indState(Carriage_t carriage, uint8_t position,
+                     const bool initState = false);
   void onPacketReceived(const uint8_t *buffer, size_t size);
 
 private:
