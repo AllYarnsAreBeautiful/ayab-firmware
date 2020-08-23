@@ -136,6 +136,9 @@ private:
   void h_reqInfo();
   void h_reqTest(const uint8_t *buffer, size_t size);
   void h_unrecognized();
+#ifdef AYAB_ENABLE_CRC
+  uint8_t CRC8(const uint8_t *buffer, size_t len);
+#endif
 };
 
 #endif // COM_H_
