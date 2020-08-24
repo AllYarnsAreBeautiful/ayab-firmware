@@ -1,27 +1,23 @@
-# Finite State Machine
+### Finite State Machine
 
-The knitting machine finite state machine is defined in the Knitter class.
+The finite state machine is defined in the `Fsm` class.
 
-A graphical representation follows.
+|State||
+--:|:--
+`Init` | Wait for carriage to be put in the correct location.
+`Ready` | Wait to start operation.
+`Knit` | Knitting mode.
+`Test` | Hardware testing mode.
+|||
 
-\startuml
-skinparam shadowing false
-skinparam ArrowColor DimGray
-skinparam state {
-  backgroundColor LightSteelBlue
-  BorderColor Gray
-}
-hide empty description
+A tabular representation of state transitions follows.
 
-Init : Wait for carriage to be put in the correct location.
-Ready: Wait to start operation.
-Operate: Knit.
-Test: Calculate but don't exercise solenoids.
+|Transition||
+--:|:--
+`Init  -> Test`  |`Tester::startTest()`  
+`Ready -> Test`  |`Tester::startTest()`  
+`Test -> Init` | `Tester::quitCmd()`
+`Init  -> Ready` | `Knitter::isReady()`
+`Ready -> Knit` | `Knitter::startKnitting()`
+`Knit  -> Ready` | `m_workedOnLine && m_lastLineFlag`
 
-Reset --> Init
-Init --> Test : startTest()
-Ready --> Test : startTest()
-Init -> Ready : Direction == Right\n&& HallActive == Left
-Ready -> Operate : startOperation()
-Operate -> Ready : lastLine()\n&& finished
-\enduml

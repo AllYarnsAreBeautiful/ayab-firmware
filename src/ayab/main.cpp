@@ -32,8 +32,9 @@
 #include "solenoids.h"
 #include "tester.h"
 
-// global definitions
-// references everywhere else must use `extern`
+// Global definitions: references elsewhere must use `extern`.
+// Each of the following is a pointer to a singleton class
+// containing static methods.
 GlobalBeeper *beeper;
 GlobalCom *com;
 GlobalEncoders *encoders;
@@ -42,7 +43,10 @@ GlobalKnitter *knitter;
 GlobalSolenoids *solenoids;
 GlobalTester *tester;
 
-// initialize static members
+// Initialize static members.
+// Each singleton class contains a pointer to a static instance
+// that implements a public interface. When testing, a pointer
+// to an instance of a mock class can be substituted.
 BeeperInterface *GlobalBeeper::m_instance = new Beeper();
 ComInterface *GlobalCom::m_instance = new Com();
 EncodersInterface *GlobalEncoders::m_instance = new Encoders();
