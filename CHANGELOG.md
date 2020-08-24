@@ -8,10 +8,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## 1.0.0 / Unreleased
 
+* Migrate to AYAB API v6
+* Remove dependency on SerialCommand library
+* Add informative error codes
+* Allow carriage to start on the right-hand side moving left
+* Add run-time hardware tests
 * Migrate to generic firmware from machine-specific versions
 * Change libraries to submodules
 * Add unit tests that can run in the absence of the hardware
-* Add GPLv3 license for the repository, and LGPLv2.1 for the SerialCommand library
+* Add GPLv3 license
 * Add development environment documentation to README
 * Add firmware update instructions to README
 * Add CHANGELOG.md
