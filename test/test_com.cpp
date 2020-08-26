@@ -72,6 +72,22 @@ protected:
   void expect_init() {
     EXPECT_CALL(*serialMock, begin);
   }
+
+  void expect_write(bool once) {
+    if (once) {
+      EXPECT_CALL(*serialMock, write(_, _));
+      EXPECT_CALL(*serialMock, write(SLIP::END));
+    } else {
+      EXPECT_CALL(*serialMock, write(_, _)).Times(AtLeast(1));
+      EXPECT_CALL(*serialMock, write(SLIP::END)).Times(AtLeast(1));
+    }
+  }
+
+  void expected_write_onPacketReceived(uint8_t *buffer, size_t size,
+                                       bool once) {
+    expect_write(once);
+    com->onPacketReceived(buffer, size);
+  }
 };
 
 /*
@@ -83,21 +99,21 @@ TEST_F(ComTest, test_API) {
 TEST_F(ComTest, test_reqtest_fail) {
   // no machineType
   uint8_t buffer[] = {reqTest_msgid};
-  EXPECT_CALL(*serialMock, write(_, _));
-  EXPECT_CALL(*serialMock, write(SLIP::END));
   EXPECT_CALL(*fsmMock, setState(s_test)).Times(0);
-  com->onPacketReceived(buffer, sizeof(buffer));
+  expected_write_onPacketReceived(buffer, sizeof(buffer), true);
+
+  // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(fsmMock));
 }
 
 TEST_F(ComTest, test_reqtest_success_KH270) {
   uint8_t buffer[] = {reqTest_msgid, Kh270};
-  EXPECT_CALL(*serialMock, write(_, _)).Times(AtLeast(1));
-  EXPECT_CALL(*serialMock, write(SLIP::END)).Times(AtLeast(1));
   EXPECT_CALL(*fsmMock, setState(s_test));
   EXPECT_CALL(*knitterMock, setMachineType(Kh270));
   EXPECT_CALL(*arduinoMock, millis);
-  com->onPacketReceived(buffer, sizeof(buffer));
+  expected_write_onPacketReceived(buffer, sizeof(buffer), false);
+
+  // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(fsmMock));
   ASSERT_TRUE(Mock::VerifyAndClear(knitterMock));
 }
@@ -105,115 +121,96 @@ TEST_F(ComTest, test_reqtest_success_KH270) {
 TEST_F(ComTest, test_reqstart_fail1) {
   // checksum wrong
   uint8_t buffer[] = {reqStart_msgid, 0, 0, 10, 1, 0x73};
-  EXPECT_CALL(*serialMock, write(_, _));
-  EXPECT_CALL(*serialMock, write(SLIP::END));
   EXPECT_CALL(*knitterMock, startKnitting).Times(0);
-  com->onPacketReceived(buffer, sizeof(buffer));
+  expected_write_onPacketReceived(buffer, sizeof(buffer), true);
+
+  // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(knitterMock));
 }
 
 TEST_F(ComTest, test_reqstart_fail2) {
   // not enough bytes
   uint8_t buffer[] = {reqStart_msgid, 0, 0, 10, 1, 0x74};
-  EXPECT_CALL(*serialMock, write(_, _));
-  EXPECT_CALL(*serialMock, write(SLIP::END));
   EXPECT_CALL(*knitterMock, startKnitting).Times(0);
-  com->onPacketReceived(buffer, sizeof(buffer) - 1);
+  expected_write_onPacketReceived(buffer, sizeof(buffer) - 1, true);
+
+  // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(knitterMock));
 }
 
 TEST_F(ComTest, test_reqstart_success_KH910) {
   uint8_t buffer[] = {reqStart_msgid, 0, 0, 10, 1, 0x74};
-  EXPECT_CALL(*serialMock, write(_, _)).Times(AtLeast(1));
-  EXPECT_CALL(*serialMock, write(SLIP::END)).Times(AtLeast(1));
   EXPECT_CALL(*knitterMock, startKnitting);
-  com->onPacketReceived(buffer, sizeof(buffer));
+  expected_write_onPacketReceived(buffer, sizeof(buffer), false);
+
+  // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(knitterMock));
 }
 
 TEST_F(ComTest, test_reqstart_success_KH270) {
   uint8_t buffer[] = {reqStart_msgid, 2, 0, 10, 1, 0x73};
-  EXPECT_CALL(*serialMock, write(_, _)).Times(AtLeast(1));
-  EXPECT_CALL(*serialMock, write(SLIP::END)).Times(AtLeast(1));
   EXPECT_CALL(*knitterMock, startKnitting);
-  com->onPacketReceived(buffer, sizeof(buffer));
+  expected_write_onPacketReceived(buffer, sizeof(buffer), false);
+
+  // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(knitterMock));
 }
 
 TEST_F(ComTest, test_reqinfo) {
   uint8_t buffer[] = {reqInfo_msgid};
-  EXPECT_CALL(*serialMock, write(_, _));
-  EXPECT_CALL(*serialMock, write(SLIP::END));
-  com->onPacketReceived(buffer, sizeof(buffer));
+  expected_write_onPacketReceived(buffer, sizeof(buffer), true);
 }
 
 TEST_F(ComTest, test_helpCmd) {
   uint8_t buffer[] = {helpCmd_msgid};
-  EXPECT_CALL(*serialMock, write(_, _)).Times(AtLeast(1));
-  EXPECT_CALL(*serialMock, write(SLIP::END)).Times(AtLeast(1));
-  com->onPacketReceived(buffer, sizeof(buffer));
+  expected_write_onPacketReceived(buffer, sizeof(buffer), false);
 }
 
 TEST_F(ComTest, test_sendCmd) {
   uint8_t buffer[] = {sendCmd_msgid};
-  EXPECT_CALL(*serialMock, write(_, _)).Times(AtLeast(1));
-  EXPECT_CALL(*serialMock, write(SLIP::END)).Times(AtLeast(1));
-  com->onPacketReceived(buffer, sizeof(buffer));
+  expected_write_onPacketReceived(buffer, sizeof(buffer), false);
 }
 
 TEST_F(ComTest, test_beepCmd) {
   uint8_t buffer[] = {beepCmd_msgid};
-  EXPECT_CALL(*serialMock, write(_, _));
-  EXPECT_CALL(*serialMock, write(SLIP::END));
   EXPECT_CALL(*arduinoMock, analogWrite(PIEZO_PIN, _)).Times(AtLeast(1));
-  com->onPacketReceived(buffer, sizeof(buffer));
+  EXPECT_CALL(*arduinoMock, delay(50)).Times(AtLeast(1));
+  expected_write_onPacketReceived(buffer, sizeof(buffer), true);
 }
 
 TEST_F(ComTest, test_setSingleCmd) {
   uint8_t buffer[] = {setSingleCmd_msgid, 0, 0};
-  EXPECT_CALL(*serialMock, write(_, _));
-  EXPECT_CALL(*serialMock, write(SLIP::END));
-  com->onPacketReceived(buffer, sizeof(buffer));
+  expected_write_onPacketReceived(buffer, sizeof(buffer), true);
 }
 
 TEST_F(ComTest, test_setAllCmd) {
   uint8_t buffer[] = {setAllCmd_msgid, 0, 0};
-  EXPECT_CALL(*serialMock, write(_, _));
-  EXPECT_CALL(*serialMock, write(SLIP::END));
-  com->onPacketReceived(buffer, sizeof(buffer));
+  expected_write_onPacketReceived(buffer, sizeof(buffer), true);
 }
 
 TEST_F(ComTest, test_readEOLsensorsCmd) {
   uint8_t buffer[] = {readEOLsensorsCmd_msgid};
-  EXPECT_CALL(*serialMock, write(_, _)).Times(AtLeast(1));
-  EXPECT_CALL(*serialMock, write(SLIP::END)).Times(AtLeast(1));
   EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_L));
   EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_R));
-  com->onPacketReceived(buffer, sizeof(buffer));
+  expected_write_onPacketReceived(buffer, sizeof(buffer), false);
 }
 
 TEST_F(ComTest, test_readEncodersCmd) {
   uint8_t buffer[] = {readEncodersCmd_msgid};
-  EXPECT_CALL(*serialMock, write(_, _)).Times(AtLeast(1));
-  EXPECT_CALL(*serialMock, write(SLIP::END)).Times(AtLeast(1));
   EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_A));
   EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_B));
   EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_C));
-  com->onPacketReceived(buffer, sizeof(buffer));
+  expected_write_onPacketReceived(buffer, sizeof(buffer), false);
 }
 
 TEST_F(ComTest, test_autoReadCmd) {
   uint8_t buffer[] = {autoReadCmd_msgid};
-  EXPECT_CALL(*serialMock, write(_, _));
-  EXPECT_CALL(*serialMock, write(SLIP::END));
-  com->onPacketReceived(buffer, sizeof(buffer));
+  expected_write_onPacketReceived(buffer, sizeof(buffer), true);
 }
 
 TEST_F(ComTest, test_autoTestCmd) {
   uint8_t buffer[] = {autoTestCmd_msgid};
-  EXPECT_CALL(*serialMock, write(_, _));
-  EXPECT_CALL(*serialMock, write(SLIP::END));
-  com->onPacketReceived(buffer, sizeof(buffer));
+  expected_write_onPacketReceived(buffer, sizeof(buffer), true);
 }
 
 TEST_F(ComTest, test_stopCmd) {
@@ -224,8 +221,12 @@ TEST_F(ComTest, test_stopCmd) {
 TEST_F(ComTest, test_quitCmd) {
   uint8_t buffer[] = {quitCmd_msgid};
   EXPECT_CALL(*knitterMock, setUpInterrupt);
+  EXPECT_CALL(*fsmMock, setState(s_init));
   com->onPacketReceived(buffer, sizeof(buffer));
+
+  // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(knitterMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(fsmMock));
 }
 
 TEST_F(ComTest, test_unrecognized) {
@@ -298,6 +299,7 @@ TEST_F(ComTest, test_cnfline_kh910) {
   EXPECT_CALL(*knitterMock, setNextLine).Times(0);
   com->onPacketReceived(buffer, sizeof(buffer) - 1);
 
+  // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(knitterMock));
 }
 
@@ -331,38 +333,30 @@ TEST_F(ComTest, test_update) {
 }
 
 TEST_F(ComTest, test_send) {
-  EXPECT_CALL(*serialMock, write(_, _));
-  EXPECT_CALL(*serialMock, write(SLIP::END));
+  expect_write(true);
   uint8_t p[] = {1, 2, 3};
   com->send(p, 3);
 }
 
 TEST_F(ComTest, test_sendMsg1) {
-  EXPECT_CALL(*serialMock, write(_, _));
-  EXPECT_CALL(*serialMock, write(SLIP::END));
+  expect_write(true);
   com->sendMsg(testRes_msgid, "abc");
 }
 
 TEST_F(ComTest, test_sendMsg2) {
   char buf[] = "abc\0";
-  EXPECT_CALL(*serialMock, write(_, _));
-  EXPECT_CALL(*serialMock, write(SLIP::END));
+  expect_write(true);
   com->sendMsg(testRes_msgid, buf);
 }
 
 TEST_F(ComTest, test_send_reqLine) {
-  EXPECT_CALL(*serialMock, write(_, _));
-  EXPECT_CALL(*serialMock, write(SLIP::END));
+  expect_write(true);
   com->send_reqLine(0);
 }
 
 TEST_F(ComTest, test_send_indState) {
   EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_L));
   EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_R));
-  EXPECT_CALL(*serialMock, write(_, _));
-  EXPECT_CALL(*serialMock, write(SLIP::END));
+  expect_write(true);
   com->send_indState(Knit, 0, true);
-
-  // test expectations without destroying instance
-  ASSERT_TRUE(Mock::VerifyAndClear(fsmMock));
 }

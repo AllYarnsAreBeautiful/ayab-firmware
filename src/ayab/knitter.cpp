@@ -53,7 +53,6 @@ void Knitter::init() {
   pinMode(LED_PIN_B, OUTPUT);
   digitalWrite(LED_PIN_A, 1);
   digitalWrite(LED_PIN_B, 1);
-
 #if DBG_NOMACHINE
   pinMode(DBG_BTN_PIN, INPUT);
 #endif
@@ -172,7 +171,7 @@ void Knitter::encodePosition() {
     // store current encoder position for next call of this function
     m_sOldPosition = m_position;
     calculatePixelAndSolenoid();
-    indState(false);
+    indState(UNSPECIFIED_FAILURE);
   }
 }
 
@@ -193,7 +192,7 @@ bool Knitter::isReady() {
 
 #endif // DBG_NOMACHINE
     GlobalSolenoids::setSolenoids(SOLENOIDS_BITMASK);
-    indState(true);
+    indState(SUCCESS);
     return true; // move to `s_ready`
   }
 
@@ -233,7 +232,7 @@ void Knitter::knit() {
 
   if (m_continuousReportingEnabled) {
     // send current position to GUI
-    indState(true);
+    indState(SUCCESS);
   }
 
   if (!calculatePixelAndSolenoid()) {
@@ -284,6 +283,10 @@ void Knitter::knit() {
 #endif // DBG_NOMACHINE
 }
 
+void Knitter::indState(Err_t error) {
+  GlobalCom::send_indState(m_carriage, m_position, error);
+}
+
 Machine_t Knitter::getMachineType() {
   return m_machineType;
 }
@@ -328,10 +331,6 @@ void Knitter::setMachineType(Machine_t machineType) {
 void Knitter::reqLine(uint8_t lineNumber) {
   GlobalCom::send_reqLine(lineNumber, SUCCESS);
   m_lineRequested = true;
-}
-
-void Knitter::indState(const bool initState) {
-  GlobalCom::send_indState(m_carriage, m_position, initState);
 }
 
 bool Knitter::calculatePixelAndSolenoid() {

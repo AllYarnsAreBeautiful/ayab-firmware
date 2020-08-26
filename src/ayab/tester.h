@@ -24,7 +24,6 @@
 #define TESTER_H_
 
 #include <Arduino.h>
-//#include <SerialCommand.h>
 
 #include "beeper.h"
 #include "com.h"
@@ -39,7 +38,6 @@ public:
   // any methods that need to be mocked should go here
   virtual Err_t startTest(Machine_t machineType) = 0;
   virtual void loop() = 0;
-  virtual bool getQuitFlag() = 0;
   virtual void helpCmd() = 0;
   virtual void sendCmd() = 0;
   virtual void beepCmd() = 0;
@@ -73,7 +71,6 @@ public:
 
   static Err_t startTest(Machine_t machineType);
   static void loop();
-  static bool getQuitFlag();
   static void helpCmd();
   static void sendCmd();
   static void beepCmd();
@@ -91,21 +88,9 @@ public:
 };
 
 class Tester : public TesterInterface {
-#if AYAB_TESTS
-  FRIEND_TEST(TesterTest, test_stopCmd);
-  FRIEND_TEST(TesterTest, test_quitCmd);
-  FRIEND_TEST(TesterTest, test_setUp);
-  FRIEND_TEST(TesterTest, test_loop_default);
-  FRIEND_TEST(TesterTest, test_loop_null);
-  FRIEND_TEST(TesterTest, test_loop_autoTestEven);
-  FRIEND_TEST(TesterTest, test_loop_autoTestOdd);
-  // friend class TesterTest;
-#endif
-
 public:
   Err_t startTest(Machine_t machineType);
   void loop();
-  bool getQuitFlag();
   void helpCmd();
   void sendCmd();
   void beepCmd();
@@ -131,7 +116,6 @@ private:
   void autoTestOdd();
   void handleTimerEvent();
 
-  bool m_quit = false;
   bool m_autoReadOn = false;
   bool m_autoTestOn = false;
   unsigned long m_lastTime = 0U;

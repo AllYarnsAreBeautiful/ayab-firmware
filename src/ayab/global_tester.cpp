@@ -34,10 +34,6 @@ void GlobalTester::loop() {
   m_instance->loop();
 }
 
-bool GlobalTester::getQuitFlag() {
-  return m_instance->getQuitFlag();
-}
-
 void GlobalTester::helpCmd() {
   m_instance->helpCmd();
 }

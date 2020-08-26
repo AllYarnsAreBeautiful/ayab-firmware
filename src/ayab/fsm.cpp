@@ -23,6 +23,11 @@
  *    http://ayab-knitting.com
  */
 
+// GCOVR_EXCL_START
+// There are some odd gaps in the `gcovr` coverage for this file.
+// Maybe this could happen if there were missing `Mock::VerifyAndClear`
+// statements in `test_fsm.cpp`.
+
 #include "board.h"
 #include <Arduino.h>
 
@@ -33,15 +38,24 @@
 // Public methods
 
 void Fsm::init() {
-  m_opState = s_init;
+  m_currentState = s_init;
+  m_nextState = s_init;
+  m_flash = false;
+  m_flashTime = millis();
+  m_error = SUCCESS;
 }
 
 OpState_t Fsm::getState() {
-  return m_opState;
+  return m_currentState;
 }
 
+/*!
+ * \brief Set machine state.
+ *
+ * Does not take effect until next `dispatch()`
+ */
 void Fsm::setState(OpState_t state) {
-  m_opState = state;
+  m_nextState = state;
 }
 
 /*!
@@ -50,7 +64,7 @@ void Fsm::setState(OpState_t state) {
  * \todo TP: add error state(s)
  */
 void Fsm::dispatch() {
-  switch (m_opState) {
+  switch (m_currentState) {
   case s_init:
     state_init();
     break;
@@ -67,35 +81,62 @@ void Fsm::dispatch() {
     state_test();
     break;
 
+  case s_error:
+    state_error();
+    break;
+
   default:
     break;
   }
+  m_currentState = m_nextState;
   GlobalCom::update();
 }
+// GCOVR_EXCL_STOP
 
 // Private methods
 
 void Fsm::state_init() {
+  digitalWrite(LED_PIN_A, LOW); // green LED off
   if (GlobalKnitter::isReady()) {
     setState(s_ready);
   }
 }
 
 void Fsm::state_ready() {
-  digitalWrite(LED_PIN_A, 0); // green LED off
+  digitalWrite(LED_PIN_A, LOW); // green LED off
 }
 
 void Fsm::state_knit() {
-  digitalWrite(LED_PIN_A, 1); // green LED on
+  digitalWrite(LED_PIN_A, HIGH); // green LED on
   GlobalKnitter::knit();
 }
 
 void Fsm::state_test() {
   GlobalKnitter::encodePosition();
   GlobalTester::loop();
-  if (GlobalTester::getQuitFlag()) {
-    // return to state `s_init	 after quitting test
+  if (m_nextState == s_init) {
+    // quit test
     GlobalKnitter::init();
-    setState(s_init);
+  }
+}
+
+void Fsm::state_error() {
+  if (m_nextState == s_init) {
+    // exit error state
+    digitalWrite(LED_PIN_B, LOW); // yellow LED off
+    GlobalKnitter::init();
+    return;
+  }
+  // every 500ms
+  // send `indState` and flash LEDs
+  unsigned long now = millis();
+  if (now - m_flashTime >= 500) {
+    digitalWrite(LED_PIN_A, m_flash);     // green LED
+    digitalWrite(LED_PIN_B, not m_flash); // yellow LED
+    m_flash = not m_flash;
+    m_flashTime = now;
+
+    // send error message
+    GlobalKnitter::indState(m_error);
   }
 }

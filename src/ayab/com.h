@@ -127,7 +127,7 @@ public:
   virtual void send_reqLine(const uint8_t lineNumber,
                             Err_t error = SUCCESS) = 0;
   virtual void send_indState(Carriage_t carriage, uint8_t position,
-                             const bool initState = false) = 0;
+                             const uint8_t initState = SUCCESS) = 0;
   virtual void onPacketReceived(const uint8_t *buffer, size_t size) = 0;
 };
 
@@ -152,7 +152,7 @@ public:
   static void sendMsg(AYAB_API_t id, char *msg);
   static void send_reqLine(const uint8_t lineNumber, Err_t error = SUCCESS);
   static void send_indState(Carriage_t carriage, uint8_t position,
-                            const bool initState = false);
+                            const uint8_t initState = SUCCESS);
   static void onPacketReceived(const uint8_t *buffer, size_t size);
 
 private:
@@ -168,7 +168,7 @@ public:
   void sendMsg(AYAB_API_t id, char *msg);
   void send_reqLine(const uint8_t lineNumber, Err_t error = SUCCESS);
   void send_indState(Carriage_t carriage, uint8_t position,
-                     const bool initState = false);
+                     const uint8_t initState = SUCCESS);
   void onPacketReceived(const uint8_t *buffer, size_t size);
 
 private:

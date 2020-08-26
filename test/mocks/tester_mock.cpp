@@ -49,11 +49,6 @@ void Tester::loop() {
   gTesterMock->loop();
 }
 
-bool Tester::getQuitFlag() {
-  assert(gTesterMock != NULL);
-  return gTesterMock->getQuitFlag();
-}
-
 void Tester::helpCmd() {
   assert(gTesterMock != NULL);
   gTesterMock->helpCmd();

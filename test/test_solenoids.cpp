@@ -30,6 +30,8 @@
 
 using ::testing::Return;
 
+extern Solenoids *solenoids;
+
 class SolenoidsTest : public ::testing::Test {
 protected:
   void SetUp() override {
@@ -37,7 +39,6 @@ protected:
 #ifdef HARD_I2C
     wireMock = WireMockInstance();
 #endif
-    s = Solenoids();
   }
 
   void TearDown() override {
@@ -48,35 +49,34 @@ protected:
 #ifdef HARD_I2C
   WireMock *wireMock;
 #endif
-  Solenoids s;
 };
 
 TEST_F(SolenoidsTest, test_construct) {
 }
 
 TEST_F(SolenoidsTest, test_init) {
-  s.init();
+  solenoids->init();
 }
 
 TEST_F(SolenoidsTest, test_setSolenoid1) {
-  s.setSolenoids(0);
-  ASSERT_EQ(s.solenoidState, 0U);
-  s.setSolenoid(0, true);
-  ASSERT_EQ(s.solenoidState, 1U);
+  solenoids->setSolenoids(0);
+  ASSERT_TRUE(solenoids->solenoidState == 0U);
+  solenoids->setSolenoid(0, true);
+  ASSERT_TRUE(solenoids->solenoidState == 1U);
 }
 
 TEST_F(SolenoidsTest, test_setSolenoid2) {
-  s.setSolenoids(0);
-  ASSERT_EQ(s.solenoidState, 0U);
-  s.setSolenoids(0);
-  ASSERT_EQ(s.solenoidState, 0U);
-  s.setSolenoid(0, false);
-  ASSERT_EQ(s.solenoidState, 0U);
+  solenoids->setSolenoids(0);
+  ASSERT_TRUE(solenoids->solenoidState == 0U);
+  solenoids->setSolenoids(0);
+  ASSERT_TRUE(solenoids->solenoidState == 0U);
+  solenoids->setSolenoid(0, false);
+  ASSERT_TRUE(solenoids->solenoidState == 0U);
 }
 
 TEST_F(SolenoidsTest, test_setSolenoid3) {
-  s.setSolenoids(0x8000);
-  ASSERT_EQ(s.solenoidState, 0x8000U);
-  s.setSolenoid(16, false);
-  ASSERT_EQ(s.solenoidState, 0x8000U);
+  solenoids->setSolenoids(0x8000);
+  ASSERT_TRUE(solenoids->solenoidState == 0x8000U);
+  solenoids->setSolenoid(16, false);
+  ASSERT_TRUE(solenoids->solenoidState == 0x8000U);
 }
