@@ -67,170 +67,176 @@ protected:
   SerialMock *serialMock;
   FsmMock *fsmMock;
   KnitterMock *knitterMock;
+
+  void expect_startTest(unsigned long t) {
+    EXPECT_CALL(*fsmMock, getState).WillOnce(Return(s_ready));
+    EXPECT_CALL(*fsmMock, setState(s_test));
+    EXPECT_CALL(*knitterMock, setMachineType(Kh930));
+    expect_write(false);
+
+    // `setUp()` must have been called to reach `millis()`
+    EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(t));
+
+    ASSERT_TRUE(tester->startTest(Kh930) == 0);
+  }
+
+  void expect_write(bool once) {
+    if (once) {
+      EXPECT_CALL(*serialMock, write(_, _));
+      EXPECT_CALL(*serialMock, write(SLIP::END));
+    } else {
+      EXPECT_CALL(*serialMock, write(_, _)).Times(AtLeast(1));
+      EXPECT_CALL(*serialMock, write(SLIP::END)).Times(AtLeast(1));
+    }
+  }
+
+  void expect_readEOLsensors(bool flag) {
+    uint8_t n = flag ? 1 : 0;
+    EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_L)).Times(n);
+    EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_R)).Times(n);
+  }
+
+  void expect_readEncoders(bool flag) {
+    uint8_t n = flag ? 1 : 0;
+    EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_A)).Times(n);
+    EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_B)).Times(n);
+    EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_C)).Times(n);
+  }
 };
 
-TEST_F(TesterTest, test_setUp) {
-  EXPECT_CALL(*arduinoMock, millis);
-  EXPECT_CALL(*serialMock, write(_, _)).Times(AtLeast(1));
-  EXPECT_CALL(*serialMock, write(SLIP::END)).Times(AtLeast(1));
-  tester->setUp();
-  ASSERT_FALSE(tester->m_autoReadOn);
-  ASSERT_FALSE(tester->m_autoTestOn);
-  ASSERT_FALSE(tester->m_timerEventOdd);
-  ASSERT_FALSE(tester->getQuitFlag());
-}
-
 TEST_F(TesterTest, test_helpCmd) {
-  EXPECT_CALL(*serialMock, write(_, _)).Times(AtLeast(1));
-  EXPECT_CALL(*serialMock, write(SLIP::END)).Times(AtLeast(1));
+  expect_write(false);
   tester->helpCmd();
 }
 
 TEST_F(TesterTest, test_sendCmd) {
-  EXPECT_CALL(*serialMock, write(_, _)).Times(AtLeast(1));
-  EXPECT_CALL(*serialMock, write(SLIP::END)).Times(AtLeast(1));
+  expect_write(false);
   tester->sendCmd();
 }
 
 TEST_F(TesterTest, test_beepCmd) {
-  EXPECT_CALL(*serialMock, write(_, _));
-  EXPECT_CALL(*serialMock, write(SLIP::END));
+  expect_write(true);
   EXPECT_CALL(*arduinoMock, analogWrite(PIEZO_PIN, _)).Times(AtLeast(1));
+  EXPECT_CALL(*arduinoMock, delay(50)).Times(AtLeast(1));
   tester->beepCmd();
 }
 
 TEST_F(TesterTest, test_setSingleCmd_fail1) {
   const uint8_t buf[] = {setSingleCmd_msgid, 0};
-  EXPECT_CALL(*serialMock, write(_, _)).Times(AtLeast(1));
-  EXPECT_CALL(*serialMock, write(SLIP::END)).Times(AtLeast(1));
+  expect_write(false);
   tester->setSingleCmd(buf, 2);
 }
 
 TEST_F(TesterTest, test_setSingleCmd_fail2) {
   const uint8_t buf[] = {setSingleCmd_msgid, 16, 0};
-  EXPECT_CALL(*serialMock, write(_, _)).Times(AtLeast(1));
-  EXPECT_CALL(*serialMock, write(SLIP::END)).Times(AtLeast(1));
+  expect_write(false);
   tester->setSingleCmd(buf, 3);
 }
 
 TEST_F(TesterTest, test_setSingleCmd_fail3) {
   const uint8_t buf[] = {setSingleCmd_msgid, 15, 2};
-  EXPECT_CALL(*serialMock, write(_, _)).Times(AtLeast(1));
-  EXPECT_CALL(*serialMock, write(SLIP::END)).Times(AtLeast(1));
+  expect_write(false);
   tester->setSingleCmd(buf, 3);
 }
 
 TEST_F(TesterTest, test_setSingleCmd_success) {
   const uint8_t buf[] = {setSingleCmd_msgid, 15, 1};
-  EXPECT_CALL(*serialMock, write(_, _));
-  EXPECT_CALL(*serialMock, write(SLIP::END));
+  expect_write(true);
   tester->setSingleCmd(buf, 3);
 }
 
 TEST_F(TesterTest, test_setAllCmd_fail1) {
   const uint8_t buf[] = {setAllCmd_msgid, 0};
-  EXPECT_CALL(*serialMock, write(_, _)).Times(AtLeast(1));
-  EXPECT_CALL(*serialMock, write(SLIP::END)).Times(AtLeast(1));
+  expect_write(false);
   tester->setAllCmd(buf, 2);
 }
 
 TEST_F(TesterTest, test_setAllCmd_success) {
   const uint8_t buf[] = {setAllCmd_msgid, 0xff, 0xff};
-  EXPECT_CALL(*serialMock, write(_, _));
-  EXPECT_CALL(*serialMock, write(SLIP::END));
+  expect_write(true);
   tester->setAllCmd(buf, 3);
 }
 
 TEST_F(TesterTest, test_readEOLsensorsCmd) {
-  EXPECT_CALL(*serialMock, write(_, _)).Times(AtLeast(1));
-  EXPECT_CALL(*serialMock, write(SLIP::END)).Times(AtLeast(1));
-  EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_L));
-  EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_R));
+  expect_write(false);
+  expect_readEOLsensors(true);
   tester->readEOLsensorsCmd();
 }
 
 TEST_F(TesterTest, test_readEncodersCmd_low) {
-  EXPECT_CALL(*serialMock, write(_, _)).Times(AtLeast(1));
-  EXPECT_CALL(*serialMock, write(SLIP::END)).Times(AtLeast(1));
+  expect_write(false);
   EXPECT_CALL(*arduinoMock, digitalRead).WillRepeatedly(Return(LOW));
   tester->readEncodersCmd();
 }
 
 TEST_F(TesterTest, test_readEncodersCmd_high) {
-  EXPECT_CALL(*serialMock, write(_, _)).Times(AtLeast(1));
-  EXPECT_CALL(*serialMock, write(SLIP::END)).Times(AtLeast(1));
+  expect_write(false);
   EXPECT_CALL(*arduinoMock, digitalRead).WillRepeatedly(Return(HIGH));
   tester->readEncodersCmd();
 }
 
 TEST_F(TesterTest, test_autoReadCmd) {
-  EXPECT_CALL(*serialMock, write(_, _));
-  EXPECT_CALL(*serialMock, write(SLIP::END));
+  expect_write(true);
   tester->autoReadCmd();
 }
 
 TEST_F(TesterTest, test_autoTestCmd) {
-  EXPECT_CALL(*serialMock, write(_, _));
-  EXPECT_CALL(*serialMock, write(SLIP::END));
+  expect_write(true);
   tester->autoTestCmd();
-}
-
-TEST_F(TesterTest, test_stopCmd) {
-  tester->m_autoReadOn = true;
-  tester->m_autoTestOn = true;
-  tester->stopCmd();
-  ASSERT_FALSE(tester->m_autoReadOn);
-  ASSERT_FALSE(tester->m_autoTestOn);
 }
 
 TEST_F(TesterTest, test_quitCmd) {
   EXPECT_CALL(*knitterMock, setUpInterrupt);
+  EXPECT_CALL(*fsmMock, setState(s_init));
   tester->quitCmd();
-  ASSERT_TRUE(tester->m_quit);
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(knitterMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(fsmMock));
 }
 
 TEST_F(TesterTest, test_loop_default) {
-  tester->m_lastTime = 0;
+  expect_startTest(0);
   EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(499));
   tester->loop();
 }
 
 TEST_F(TesterTest, test_loop_null) {
-  tester->m_lastTime = 0;
+  expect_startTest(0);
   EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(500));
-  tester->m_autoReadOn = false;
-  tester->m_autoTestOn = false;
   tester->loop();
 }
 
-TEST_F(TesterTest, test_loop_autoTestEven) {
-  tester->m_lastTime = 0;
-  EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(500));
-  tester->m_timerEventOdd = false;
-  tester->m_autoReadOn = true;
-  tester->m_autoTestOn = true;
-  EXPECT_CALL(*serialMock, write(_, _));
-  EXPECT_CALL(*serialMock, write(SLIP::END));
-  EXPECT_CALL(*arduinoMock, digitalRead).Times(0);
-  EXPECT_CALL(*arduinoMock, digitalWrite).Times(2);
-  tester->loop();
-}
+TEST_F(TesterTest, test_loop_autoTest) {
+  expect_startTest(0);
+  tester->autoReadCmd();
+  tester->autoTestCmd();
 
-TEST_F(TesterTest, test_loop_autoTestOdd) {
-  tester->m_lastTime = 0;
+  // m_timerEventOdd = false
   EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(500));
-  tester->m_timerEventOdd = true;
-  tester->m_autoReadOn = true;
-  tester->m_autoTestOn = true;
-  EXPECT_CALL(*serialMock, write(_, _)).Times(AtLeast(1));
-  EXPECT_CALL(*serialMock, write(SLIP::END)).Times(AtLeast(1));
-  EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_L));
-  EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_R));
-  EXPECT_CALL(*arduinoMock, digitalRead).Times(3);
-  EXPECT_CALL(*arduinoMock, digitalWrite).Times(2);
+  expect_write(true);
+  expect_readEOLsensors(false);
+  expect_readEncoders(false);
+  EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, HIGH));
+  EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_B, HIGH));
+  tester->loop();
+
+  // m_timerEventOdd = false
+  EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(1000));
+  expect_write(false);
+  expect_readEOLsensors(true);
+  expect_readEncoders(true);
+  EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, LOW));
+  EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_B, LOW));
+  tester->loop();
+
+  // after `stopCmd()`
+  tester->stopCmd();
+  EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(1500));
+  expect_readEOLsensors(false);
+  expect_readEncoders(false);
+  EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, _)).Times(0);
+  EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_B, _)).Times(0);
   tester->loop();
 }
 
@@ -244,13 +250,7 @@ TEST_F(TesterTest, test_startTest_fail) {
 }
 
 TEST_F(TesterTest, test_startTest_success) {
-  EXPECT_CALL(*fsmMock, getState).WillOnce(Return(s_ready));
-  EXPECT_CALL(*fsmMock, setState(s_test));
-  EXPECT_CALL(*knitterMock, setMachineType(Kh930));
-  EXPECT_CALL(*serialMock, write(_, _)).Times(AtLeast(1));
-  EXPECT_CALL(*serialMock, write(SLIP::END)).Times(AtLeast(1));
-  EXPECT_CALL(*arduinoMock, millis);
-  ASSERT_TRUE(tester->startTest(Kh930) == 0);
+  expect_startTest(0);
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(fsmMock));

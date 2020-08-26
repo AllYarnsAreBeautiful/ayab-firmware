@@ -24,7 +24,9 @@
 #ifndef FSM_H_
 #define FSM_H_
 
-enum OpState { s_init, s_ready, s_knit, s_test };
+#include "com.h"
+
+enum OpState { s_init, s_ready, s_knit, s_test, s_error };
 using OpState_t = enum OpState;
 
 class FsmInterface {
@@ -60,9 +62,6 @@ public:
 };
 
 class Fsm : public FsmInterface {
-#if AYAB_TESTS
-#endif
-
 public:
   void init();
   OpState_t getState();
@@ -74,9 +73,18 @@ private:
   void state_ready();
   void state_knit();
   void state_test();
+  void state_error();
 
   // machine state
-  OpState_t m_opState;
+  OpState_t m_currentState;
+  OpState_t m_nextState;
+
+  // error state
+  Err_t m_error;
+
+  // flashing LEDs in error state
+  bool m_flash;
+  unsigned long m_flashTime;
 };
 
 #endif // FSM_H_

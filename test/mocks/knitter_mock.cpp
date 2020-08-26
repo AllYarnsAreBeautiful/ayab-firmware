@@ -77,6 +77,11 @@ void Knitter::knit() {
   gKnitterMock->knit();
 }
 
+void Knitter::indState(Err_t error) {
+  assert(gKnitterMock != NULL);
+  gKnitterMock->indState(error);
+}
+
 uint8_t Knitter::getStartOffset(const Direction_t direction) {
   assert(gKnitterMock != NULL);
   return gKnitterMock->getStartOffset(direction);

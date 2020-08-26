@@ -71,7 +71,7 @@ void Com::send_reqLine(const uint8_t lineNumber, Err_t error) {
 }
 
 void Com::send_indState(Carriage_t carriage, uint8_t position,
-                        const bool initState) {
+                        const uint8_t initState) {
   assert(gComMock != nullptr);
   gComMock->send_indState(carriage, position, initState);
 }

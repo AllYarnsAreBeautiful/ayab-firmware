@@ -151,7 +151,7 @@ void Tester::stopCmd() {
  * \brief Quit command handler.
  */
 void Tester::quitCmd() {
-  m_quit = true;
+  GlobalFsm::setState(s_init);
   GlobalKnitter::setUpInterrupt();
 }
 
@@ -194,10 +194,6 @@ void Tester::encoderAChange() {
 }
 #endif // AYAB_TESTS
 
-bool Tester::getQuitFlag() {
-  return m_quit;
-}
-
 // Private member functions
 
 /*!
@@ -227,7 +223,6 @@ void Tester::setUp() {
   attachInterrupt(0, GlobalTester::encoderAChange, RISING);
 #endif // AYAB_TESTS
 
-  m_quit = false;
   m_autoReadOn = false;
   m_autoTestOn = false;
   m_lastTime = millis();

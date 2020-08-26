@@ -44,6 +44,7 @@ public:
   virtual void encodePosition() = 0;
   virtual bool isReady() = 0;
   virtual void knit() = 0;
+  virtual void indState(Err_t error = SUCCESS) = 0;
   virtual uint8_t getStartOffset(const Direction_t direction) = 0;
   virtual Machine_t getMachineType() = 0;
   virtual bool setNextLine(uint8_t lineNumber) = 0;
@@ -77,6 +78,7 @@ public:
   static void encodePosition();
   static bool isReady();
   static void knit();
+  static void indState(Err_t error = SUCCESS);
   static uint8_t getStartOffset(const Direction_t direction);
   static Machine_t getMachineType();
   static bool setNextLine(uint8_t lineNumber);
@@ -85,28 +87,6 @@ public:
 };
 
 class Knitter : public KnitterInterface {
-#if AYAB_TESTS
-  FRIEND_TEST(KnitterTest, test_init);
-  FRIEND_TEST(KnitterTest, test_getStartOffset);
-  FRIEND_TEST(KnitterTest, test_knit_lastline);
-  FRIEND_TEST(KnitterTest, test_knit_lastline_and_no_req);
-  FRIEND_TEST(KnitterTest, test_fsm_default_case);
-  FRIEND_TEST(KnitterTest, test_fsm_init_LL);
-  FRIEND_TEST(KnitterTest, test_fsm_init_RR);
-  FRIEND_TEST(KnitterTest, test_fsm_init_RL);
-  FRIEND_TEST(KnitterTest, test_fsm_ready);
-  FRIEND_TEST(KnitterTest, test_fsm_test);
-  FRIEND_TEST(KnitterTest, test_fsm_test_quit);
-  FRIEND_TEST(KnitterTest, test_startKnitting_NoMachine);
-  FRIEND_TEST(KnitterTest, test_startKnitting_notReady);
-  FRIEND_TEST(KnitterTest, test_startTest_in_init);
-  FRIEND_TEST(KnitterTest, test_startTest_in_ready);
-  FRIEND_TEST(KnitterTest, test_startTest_in_knit);
-  FRIEND_TEST(KnitterTest, test_setNextLine);
-  FRIEND_TEST(FsmTest, test_dispatch_init);
-#endif
-  friend class Tester;
-
 public:
   void init();
   void setUpInterrupt();
@@ -117,6 +97,7 @@ public:
   void encodePosition();
   bool isReady();
   void knit();
+  void indState(Err_t error = SUCCESS);
   uint8_t getStartOffset(const Direction_t direction);
   Machine_t getMachineType();
   bool setNextLine(uint8_t lineNumber);
@@ -125,7 +106,6 @@ public:
 
 private:
   void reqLine(uint8_t lineNumber);
-  void indState(const bool initState = true);
   bool calculatePixelAndSolenoid();
   void stopKnitting();
 
@@ -157,6 +137,12 @@ private:
   // resulting needle data
   uint8_t m_solenoidToSet;
   uint8_t m_pixelToSet;
+
+#if AYAB_TESTS
+  // Note: ideally tests would only rely on the public interface.
+  FRIEND_TEST(KnitterTest, test_getStartOffset);
+  FRIEND_TEST(KnitterTest, test_knit_lastLine_and_no_req);
+#endif
 };
 
 #endif // KNITTER_H_
