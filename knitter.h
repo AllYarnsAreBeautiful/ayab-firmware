@@ -26,7 +26,7 @@ This file is part of AYAB.
 #include "./settings.h"
 #include "./debug.h"
 
-#include "./libraries/PacketSerial/src/PacketSerial.h"
+#include "./src/libraries/PacketSerial/src/PacketSerial.h"
 #include "./solenoids.h"
 #include "./encoders.h"
 #include "./beeper.h"

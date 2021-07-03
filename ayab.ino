@@ -24,9 +24,9 @@ This file is part of AYAB.
  * INCLUDES
  */
 #include "Arduino.h"
-#include "SerialCommand.h"
+#include "./src/libraries/SerialCommand/SerialCommand.h"
 
-#include "./libraries/PacketSerial/src/PacketSerial.h"
+#include "./src/libraries/PacketSerial/src/PacketSerial.h"
 #include "./debug.h"
 #include "./settings.h"
 
