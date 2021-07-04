@@ -1,24 +1,9 @@
-name: AYAB Firmware
+name: Build Firmware
 
-on: [push]
+on: [push, pull_request]
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v2
-    - name: Install dependencies
-      run: |
-        MATRIX_EVAL="CC=gcc-9 && CXX=g++-9"
-        eval "${MATRIX_EVAL}"
-        pip install gcovr
-        gcovr --version
-    - name: Run Test
-      run: |
-        ./test/test.sh
-
-  build:
+  build-firmware:
     runs-on: ubuntu-latest
 
     steps:
