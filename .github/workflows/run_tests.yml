@@ -1,0 +1,22 @@
+name: Run Tests
+
+on: [push, pull_request]
+
+jobs:
+  run-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repo and submodules
+      uses: actions/checkout@v2
+      with:
+        submodules: recursive
+    - name: Install dependencies
+      run: |
+        MATRIX_EVAL="CC=gcc-9 && CXX=g++-9"
+        eval "${MATRIX_EVAL}"
+        pip install gcovr
+        gcovr --version
+    - name: Run Test
+      run: |
+        ./test/test.sh
