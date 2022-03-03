@@ -35,6 +35,12 @@ To set up a working development environment follow these steps:
     sudo apt install -y arduino-mk cmake
     export ARDMK_DIR=/usr/share/arduino
     ```
+
+    MacOS:
+    ```bash
+    brew tap sudar/arduino-mk
+    brew install arduino-mk
+    ```
  Running `./build.sh` should work now.
 
 
@@ -45,6 +51,11 @@ To set up a working development environment follow these steps:
     sudo apt install -y clang-format gcovr \
                         gcc-9 g++-9 cpp-9 gcc-9-base gcc-10-base \
                         libgcc-9-dev libstdc++-9-dev
+    ```
+
+    MacOS:
+    ```bash
+    brew install clang-format gcovr gcc
     ```
 
  3. Install [pre-commit](https://pre-commit.com/) via pip and use it to install git hooks.
