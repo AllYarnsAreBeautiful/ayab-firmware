@@ -63,6 +63,8 @@ constexpr uint8_t END_LEFT[NUM_MACHINES] = {0U, 0U, 0U};
 constexpr uint8_t END_RIGHT[NUM_MACHINES] = {255U, 255U, 140U};
 constexpr uint8_t END_OFFSET[NUM_MACHINES] = {28U, 28U, 14U};
 
+constexpr uint8_t GARTER_SLOP = 14;
+
 constexpr uint8_t START_OFFSET[NUM_MACHINES][NUM_DIRECTIONS][NUM_CARRIAGES] = {
     // KH910
     {
