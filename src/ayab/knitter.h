@@ -130,6 +130,7 @@ private:
   uint8_t m_sOldPosition;
   bool m_firstRun;
   bool m_workedOnLine;
+  Direction_t m_lastHall;
 #ifdef DBG_NOMACHINE
   bool m_prevState;
 #endif

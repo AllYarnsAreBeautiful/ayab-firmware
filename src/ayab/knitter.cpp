@@ -77,6 +77,7 @@ void Knitter::init() {
   m_sOldPosition = 0U;
   m_firstRun = true;
   m_workedOnLine = false;
+  m_lastHall = NoDirection;
 #ifdef DBG_NOMACHINE
   m_prevState = false;
 #endif
@@ -184,11 +185,22 @@ bool Knitter::isReady() {
   // TODO(who?): check if debounce is needed
   if (m_prevState && !state) {
 #else
+  // In order to support the garter carriage, we need to wait and see if there
+  // will be a second magnet passing the sensor.
+  // Keep track of the last seen hall sensor because we may be making a decision
+  // after it passes.
+  if (m_hallActive != NoDirection) {
+    m_lastHall = m_hallActive;
+  }
+
+  bool passedLeft = Right == m_direction and Left == m_lastHall and 
+        m_position > (END_LEFT[m_machineType] + END_OFFSET[m_machineType] + GARTER_SLOP);
+  bool passedRight = Left == m_direction and Right == m_lastHall and 
+        m_position < (END_RIGHT[m_machineType] - END_OFFSET[m_machineType] - GARTER_SLOP);
   // Machine is initialized when left Hall sensor is passed in Right direction
   // New feature (August 2020): the machine is also initialized
   // when the right Hall sensor is passed in Left direction.
-  if ((Right == m_direction and Left == m_hallActive) or
-      (Left == m_direction and Right == m_hallActive)) {
+  if (passedLeft or passedRight) {
 
 #endif // DBG_NOMACHINE
     GlobalSolenoids::setSolenoids(SOLENOIDS_BITMASK);
