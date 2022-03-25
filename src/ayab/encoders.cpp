@@ -205,16 +205,16 @@ void Encoders::encA_falling() {
   hallValueSmall = (hallValue < FILTER_R_MIN[m_machineType]);
 
   if (hallValueSmall || hallValue > FILTER_R_MAX[m_machineType]) {
-    //m_hallActive = Right;
+    m_hallActive = Right;
 
     if (hallValueSmall) {
-      //m_carriage = Knit;
+      m_carriage = Knit;
     }
 
     // Belt shift signal only decided in front of hall sensor
     m_beltShift = digitalRead(ENC_PIN_C) != 0 ? Shifted : Regular;
 
     // Known position of the carriage -> overwrite position
-    //m_position = END_RIGHT[m_machineType] - END_OFFSET[m_machineType];
+    m_position = END_RIGHT[m_machineType] - END_OFFSET[m_machineType];
   }
 }
