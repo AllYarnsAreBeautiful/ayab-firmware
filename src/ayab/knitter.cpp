@@ -78,6 +78,9 @@ void Knitter::init() {
   m_firstRun = true;
   m_workedOnLine = false;
   m_lastHall = NoDirection;
+  m_position = 0U;
+  m_hallActive = NoDirection;
+  m_pixelToSet = 0;
 #ifdef DBG_NOMACHINE
   m_prevState = false;
 #endif
@@ -200,7 +203,7 @@ bool Knitter::isReady() {
   // Machine is initialized when left Hall sensor is passed in Right direction
   // New feature (August 2020): the machine is also initialized
   // when the right Hall sensor is passed in Left direction.
-  if (passedLeft or passedRight) {
+  if (passedLeft || passedRight) {
 
 #endif // DBG_NOMACHINE
     GlobalSolenoids::setSolenoids(SOLENOIDS_BITMASK);

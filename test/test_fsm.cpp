@@ -25,6 +25,7 @@
 
 #include <fsm.h>
 #include <knitter.h>
+#include <encoders.h>
 
 #include <beeper_mock.h>
 #include <com_mock.h>
@@ -46,6 +47,10 @@ extern ComMock *com;
 extern EncodersMock *encoders;
 extern SolenoidsMock *solenoids;
 extern TesterMock *tester;
+
+// Defaults for position
+const uint8_t positionPassedLeft = (END_LEFT[Kh910] + END_OFFSET[Kh910] + GARTER_SLOP) + 1;
+const uint8_t positionPassedRight = (END_RIGHT[Kh910] - END_OFFSET[Kh910] - GARTER_SLOP) - 1;
 
 class FsmTest : public ::testing::Test {
 protected:
@@ -80,7 +85,8 @@ protected:
     // ASSERT_TRUE(fsm->getState() == s_init);
     expect_knitter_init();
     knitter->init();
-    expected_isr(NoDirection, NoDirection);
+    knitter->setMachineType(Kh910);
+    expected_isr(NoDirection, NoDirection, 0);
   }
 
   void TearDown() override {
@@ -107,9 +113,9 @@ protected:
     EXPECT_CALL(*solenoidsMock, init);
   }
 
-  void expected_isr(Direction_t dir, Direction_t hall) {
+  void expected_isr(Direction_t dir, Direction_t hall, uint8_t position) {
     EXPECT_CALL(*encodersMock, encA_interrupt);
-    EXPECT_CALL(*encodersMock, getPosition).Times(AtLeast(1));
+    EXPECT_CALL(*encodersMock, getPosition).WillRepeatedly(Return(position));
     EXPECT_CALL(*encodersMock, getDirection).WillRepeatedly(Return(dir));
     EXPECT_CALL(*encodersMock, getHallActive).WillRepeatedly(Return(hall));
     EXPECT_CALL(*encodersMock, getBeltShift).Times(AtLeast(1));
@@ -216,27 +222,27 @@ TEST_F(FsmTest, test_setState) {
 
 TEST_F(FsmTest, test_dispatch_init) {
   // no transition to state `s_ready`
-  expected_isr(Left, Left);
+  expected_isr(Left, Left, 0);
   expected_dispatch_init();
   ASSERT_TRUE(fsm->getState() == s_init);
 
   // no transition to state `s_ready`
-  expected_isr(Right, Right);
+  expected_isr(Right, Right, 0);
   expected_dispatch_init();
   ASSERT_TRUE(fsm->getState() == s_init);
 
   // transition to state `s_ready`
-  expected_isr(Left, Right);
+  expected_isr(Left, Right, positionPassedRight);
   expect_get_ready();
   expected_dispatch();
-  ASSERT_TRUE(fsm->getState() == s_ready);
+  ASSERT_EQ(fsm->getState(), s_ready);
 
   // get to state `s_init`
   fsm->setState(s_init);
   expected_dispatch_ready();
 
   // transition to state `s_ready`
-  expected_isr(Right, Left);
+  expected_isr(Right, Left, positionPassedLeft);
   expect_get_ready();
   expected_dispatch();
   ASSERT_TRUE(fsm->getState() == s_ready);

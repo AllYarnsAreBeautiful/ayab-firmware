@@ -155,8 +155,6 @@ TEST_F(EncodersTest, test_encA_rising_in_front_G_carriage) {
   // In front of Left Hall Sensor
   EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_L))
       .WillOnce(Return(FILTER_L_MIN[encoders->getMachineType()] - 1));
-  // BeltShift is regular
-  EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_C)).WillOnce(Return(true));
 
   encoders->encA_interrupt();
 

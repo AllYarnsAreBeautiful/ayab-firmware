@@ -88,6 +88,16 @@ protected:
   SolenoidsMock *solenoidsMock;
   TesterMock *testerMock;
 
+  uint8_t get_position_past_left() {
+    Machine_t type = knitter->getMachineType();
+    return (END_LEFT[type] + END_OFFSET[type] + GARTER_SLOP) + 1;
+  }
+
+  uint8_t get_position_past_right() {
+    Machine_t type = knitter->getMachineType();
+    return (END_RIGHT[type] - END_OFFSET[type] - GARTER_SLOP) - 1;
+  }
+
   void expect_knitter_init() {
     EXPECT_CALL(*arduinoMock, pinMode(ENC_PIN_A, INPUT));
     EXPECT_CALL(*arduinoMock, pinMode(ENC_PIN_B, INPUT));
@@ -120,6 +130,11 @@ protected:
 
   void expect_isr(Direction_t dir, Direction_t hall) {
     expect_isr(1, dir, hall, Regular, Knit);
+  }
+
+  void expected_isr(uint8_t pos, Direction_t dir, Direction_t hall) {
+    expect_isr(pos, dir, hall, Regular, Knit);
+    knitter->isr();
   }
 
   void expected_isr(Direction_t dir, Direction_t hall) {
@@ -161,24 +176,24 @@ protected:
     expect_indState();
     expected_dispatch_init();
 
-    // ends in state `s_ready`
     ASSERT_EQ(fsm->getState(), s_ready);
   }
 
   void get_to_ready() {
     // Machine is initialized when Left hall sensor
     // is passed in Right direction inside active needles.
-    Machine_t m = knitter->getMachineType();
-    expected_isr(40 + END_OF_LINE_OFFSET_L[m] + 1, Right, Left, Regular, Knit);
+    uint8_t position = get_position_past_left();
+    expected_isr(position, Right, Left);
     expected_get_ready();
   }
 
   void get_to_knit(Machine_t m) {
+    knitter->setMachineType(m);
     get_to_ready();
     uint8_t pattern[] = {1};
     EXPECT_CALL(*beeperMock, ready);
     EXPECT_CALL(*encodersMock, init);
-    knitter->startKnitting(m, 0, NUM_NEEDLES[m] - 1, pattern, false);
+    ASSERT_EQ(knitter->startKnitting(m, 0, NUM_NEEDLES[m] - 1, pattern, false), SUCCESS);
     expected_dispatch_ready();
 
     // ends in state `s_knit`
@@ -351,11 +366,7 @@ TEST_F(KnitterTest, test_setNextLine) {
 }
 
 TEST_F(KnitterTest, test_knit_Kh910) {
-  // `m_pixelToSet` gets set to 0
-  expected_isr(8);
-
-  // initialize
-  expected_get_ready();
+  get_to_ready();
 
   // knit
   uint8_t pattern[] = {1};
@@ -401,11 +412,7 @@ TEST_F(KnitterTest, test_knit_Kh910) {
 }
 
 TEST_F(KnitterTest, test_knit_Kh270) {
-  // `m_pixelToSet` gets set to 0
-  expected_isr(8);
-
-  // initialize
-  expected_get_ready();
+  get_to_ready();
 
   // knit
   uint8_t pattern[] = {1};
@@ -665,8 +672,9 @@ TEST_F(KnitterTest, test_getStartOffset) {
 }
 
 TEST_F(KnitterTest, test_fsm_init_LL) {
+  knitter->setMachineType(Kh910);
   // not ready
-  expected_isr(Left, Left);
+  expected_isr(get_position_past_right(), Left, Left);
   expected_dispatch_init();
   ASSERT_EQ(fsm->getState(), s_init);
 
@@ -677,8 +685,9 @@ TEST_F(KnitterTest, test_fsm_init_LL) {
 }
 
 TEST_F(KnitterTest, test_fsm_init_RR) {
+  knitter->setMachineType(Kh910);
   // still not ready
-  expected_isr(Right, Right);
+  expected_isr(get_position_past_left(), Right, Right);
   expected_dispatch_init();
   ASSERT_EQ(fsm->getState(), s_init);
 
@@ -691,7 +700,7 @@ TEST_F(KnitterTest, test_fsm_init_RR) {
 TEST_F(KnitterTest, test_fsm_init_RL) {
   // Machine is initialized when Left hall sensor
   // is passed in Right direction inside active needles.
-  expected_isr(Right, Left);
+  expected_isr(get_position_past_left(), Right, Left);
   expected_get_ready();
 
   // test expectations without destroying instance
@@ -701,9 +710,10 @@ TEST_F(KnitterTest, test_fsm_init_RL) {
 }
 
 TEST_F(KnitterTest, test_fsm_init_LR) {
+  knitter->setMachineType(Kh910);
   // New feature (August 2020): the machine is also initialized
   // when the right Hall sensor is passed in the Left direction.
-  expected_isr(Left, Right);
+  expected_isr(get_position_past_right(), Left, Right);
   expected_get_ready();
   ASSERT_EQ(fsm->getState(), s_ready);
 
