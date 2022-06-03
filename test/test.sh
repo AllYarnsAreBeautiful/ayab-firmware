@@ -47,7 +47,6 @@ GCOVR_ARGS="--exclude-unreachable-branches --exclude-throw-branches \
 	    -e test_* -e libraries* -e src/ayab/global_knitter.cpp \
 	    -e src/ayab/global_fsm.cpp"
 
-gcovr -k -r . $GCOVR_ARGS  --html-details -o ./test/build/coverage.html
-# gcovr -r . $GCOVR_ARGS  --json-pretty -o ./test/build/coverage-report.json
-gcovr -k -r . $GCOVR_ARGS --branches # --json-pretty -o ./test/build/branch-coverage-report.json
-gcovr -d -j $(nproc) -r . $GCOVR_ARGS --fail-under-line 100 --fail-under-branch 100
+gcovr -r . $GCOVR_ARGS  --html-details -o ./test/build/coverage.html
+gcovr -r . $GCOVR_ARGS --branches
+gcovr -r . $GCOVR_ARGS # --fail-under-line 90 --fail-under-branch 90
