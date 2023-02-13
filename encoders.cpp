@@ -50,7 +50,7 @@ void Encoders::encA_interrupt() {
  * PRIVATE METHODS
  */ 
 void Encoders::encA_rising() {
-  // Direction only decided on rising edge of encoder A
+  // Update direction
   m_direction = digitalRead(ENC_PIN_B) ? Right : Left;
 
   // Update carriage position
@@ -87,6 +87,9 @@ void Encoders::encA_rising() {
 
 
 void Encoders::encA_falling() {
+  // Update direction
+  m_direction = digitalRead(ENC_PIN_B) ? Left : Right;
+
   // Update carriage position
   if (Left == m_direction) {
     if (m_encoderPos > END_LEFT) {
