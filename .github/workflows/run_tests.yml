@@ -2,6 +2,9 @@ name: Run Tests
 
 on: [push, pull_request]
 
+permissions:
+  checks: write
+  pull-requests: write
 jobs:
   run-test:
     runs-on: ubuntu-latest
@@ -20,3 +23,9 @@ jobs:
     - name: Run Test
       run: |
         ./test/test.sh
+    - name: Publish Test Results
+      uses: EnricoMi/publish-unit-test-result-action@v2
+      if: always()
+      with:
+        files: |
+          ./test/build/xml_out/*
