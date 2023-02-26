@@ -3,7 +3,7 @@ project(arduino_mock_builder C CXX)
 include(ExternalProject)
 
 ExternalProject_Add(arduino_mock
-    GIT_REPOSITORY https://github.com/bt-trx/arduino-mock
+    GIT_REPOSITORY https://github.com/X-sam/arduino-mock
     GIT_TAG bt-trx
     PREFIX ${CMAKE_CURRENT_BINARY_DIR}/arduino_mock
     INSTALL_COMMAND ""

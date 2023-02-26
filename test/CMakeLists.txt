@@ -79,10 +79,10 @@ set(COMMON_FLAGS
     -g -Og
     )
 set(COMMON_LINKER_FLAGS
-    ${ARDUINO_MOCK_LIBS_DIR}/lib/gtest/gtest/src/gtest-build/googlemock/gtest/libgtest.a
+    ${ARDUINO_MOCK_LIBS_DIR}/lib/gtest/gtest/src/gtest-build/lib/libgtest.a
     # For some reason the order of libarduinomock and libgmock matter, keep them this way.
     ${ARDUINO_MOCK_LIBS_DIR}/dist/lib/libarduino_mock.a
-    ${ARDUINO_MOCK_LIBS_DIR}/lib/gtest/gtest/src/gtest-build/googlemock/libgmock.a
+    ${ARDUINO_MOCK_LIBS_DIR}/lib/gtest/gtest/src/gtest-build/lib/libgmock.a
     ${CMAKE_THREAD_LIBS_INIT}
     -lgcov
     )
