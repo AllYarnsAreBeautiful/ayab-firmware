@@ -131,7 +131,7 @@ TEST_F(EncodersTest, test_encA_rising_in_front_G_carriage) {
   // Create a rising edge
   EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_A)).WillOnce(Return(true));
   // Enter rising function, direction is right
-  EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_B)).WillOnce(Return(true));
+  EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_B)).WillOnce(Return(true)).WillOnce(Return(false));
   // In front of Left Hall Sensor
   EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_L))
       .WillOnce(Return(FILTER_L_MAX[encoders->getMachineType()] + 1));
@@ -170,7 +170,7 @@ TEST_F(EncodersTest, test_encA_falling_not_in_front) {
   EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_R)).Times(0);
 
   // Enter rising function, direction is right
-  EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_B)).WillOnce(Return(true));
+  EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_B)).WillOnce(Return(true)).WillOnce(Return(false));
   // Not in front of Left Hall Sensor
   EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_L))
       .WillOnce(Return(FILTER_L_MIN[encoders->getMachineType()]));
@@ -193,7 +193,7 @@ TEST_F(EncodersTest, test_encA_falling_in_front) {
   EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_R)).Times(0);
 
   // Enter rising function, direction is left
-  EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_B)).WillOnce(Return(false));
+  EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_B)).WillOnce(Return(false)).WillOnce(Return(false));
   // In front of Left Hall Sensor
   EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_L))
       .WillOnce(Return(FILTER_L_MIN[encoders->getMachineType()]));
@@ -208,7 +208,7 @@ TEST_F(EncodersTest, test_encA_falling_in_front) {
 
   encoders->encA_interrupt();
 
-  ASSERT_EQ(encoders->getDirection(), Left);
+  ASSERT_EQ(encoders->getDirection(), Right);
   ASSERT_EQ(encoders->getHallActive(), Right);
   ASSERT_EQ(encoders->getPosition(), 227);
   ASSERT_EQ(encoders->getCarriage(), NoCarriage);
@@ -220,7 +220,7 @@ TEST_F(EncodersTest, test_encA_falling_at_end) {
   EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_A)).WillOnce(Return(true));
 
   // Enter rising function, direction is left
-  EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_B)).WillOnce(Return(false));
+  EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_B)).WillOnce(Return(false)).WillOnce(Return(true));
   // In front of Left Hall Sensor
   EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_L))
       .WillOnce(Return(FILTER_L_MAX[encoders->getMachineType()]));
@@ -247,6 +247,7 @@ TEST_F(EncodersTest, test_encA_falling_at_end) {
 
     // Falling
     EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_A)).WillOnce(Return(false));
+    EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_B));
     EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_R))
         .WillOnce(Return(FILTER_R_MAX[encoders->getMachineType()]));
     encoders->encA_interrupt();
@@ -276,6 +277,7 @@ TEST_F(EncodersTest, test_encA_falling_set_K_carriage_KH910) {
 
   // falling edge
   EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_A)).WillOnce(Return(false));
+  EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_B));
   EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_R))
       .WillOnce(Return(FILTER_R_MIN[encoders->getMachineType()] - 1));
   EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_C));
@@ -296,10 +298,11 @@ TEST_F(EncodersTest, test_encA_falling_not_at_end) {
 
   // falling, direction is left and pos is > 0
   EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_A)).WillOnce(Return(false));
+  EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_B)).WillOnce(Return(false));
   EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_R))
       .WillOnce(Return(FILTER_R_MAX[encoders->getMachineType()]));
   encoders->encA_interrupt();
-  ASSERT_EQ(encoders->getPosition(), 27);
+  ASSERT_EQ(encoders->getPosition(), 28);
 }
 
 TEST_F(EncodersTest, test_getPosition) {
