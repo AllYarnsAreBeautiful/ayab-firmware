@@ -27,6 +27,8 @@
 #include <Arduino.h>
 
 #include "encoders.h"
+#include "com.h"
+
 
 /*!
  * \brief Service encoder A interrupt routine.
@@ -65,6 +67,10 @@ uint16_t Encoders::getHallValue(Direction_t pSensor) {
  * \brief Initialize machine type.
  */
 void Encoders::init(Machine_t machineType) {
+  /*char buf[32];
+  snprintf(buf, sizeof(buf), "init %d end", machineType);
+  //snprintf(buf, sizeof(buf), "things");
+  GlobalCom::sendMsg(debug_msgid, buf);*/
   m_machineType = machineType;
   m_position = 0U;
   m_direction = NoDirection;

@@ -101,6 +101,10 @@ void Com::send_indState(Carriage_t carriage, uint8_t position,
  */
 void Com::onPacketReceived(const uint8_t *buffer, size_t size) {
   switch (buffer[0]) {
+  case reqInit_msgid:
+    h_reqInit(buffer, size);
+    break;
+
   case reqStart_msgid:
     h_reqStart(buffer, size);
     break;
@@ -169,6 +173,51 @@ void Com::onPacketReceived(const uint8_t *buffer, size_t size) {
 
 // Serial command handling
 
+void Com::h_reqInit(const uint8_t *buffer, size_t size) {
+  char buf[32];
+  snprintf(buf, sizeof(buf), "reqInit end");
+  //snprintf(buf, sizeof(buf), "things");
+  GlobalCom::sendMsg(debug_msgid, buf);
+
+#ifdef AYAB_ENABLE_CRC
+  if (size < 3U) {
+    // Need 6 bytes from buffer below.
+    send_cnfInit(EXPECTED_LONGER_MESSAGE);
+    return;
+  }
+#else
+  if (size < 2U) {
+    // Need 5 bytes from buffer below.
+    send_cnfInit(EXPECTED_LONGER_MESSAGE);
+    return;
+  }
+#endif
+
+  Machine_t machineType = static_cast<Machine_t>(buffer[1]);
+
+#ifdef AYAB_ENABLE_CRC
+  uint8_t crc8 = buffer[2];
+  // Check crc on bytes 0-4 of buffer.
+  if (crc8 != CRC8(buffer, 2)) {
+    send_cnfStart(CHECKSUM_ERROR);
+    return;
+  }
+#endif
+
+  // TODO(who?): verify operation
+  // memset(lineBuffer,0,sizeof(lineBuffer));
+  /*
+  // temporary solution:
+  for (uint8_t i = 0U; i < MAX_LINE_BUFFER_LEN; i++) {
+    lineBuffer[i] = 0xFFU;
+  }
+  */
+  memset(lineBuffer, 0xFF, MAX_LINE_BUFFER_LEN);
+
+  Err_t error = GlobalKnitter::initMachine(machineType);
+  send_cnfInit(error);
+}
+
 /*!
  * \brief Handle `reqStart` (start request) command.
  *
@@ -176,30 +225,33 @@ void Com::onPacketReceived(const uint8_t *buffer, size_t size) {
  * \todo TP: Handle CRC-8 error?
  */
 void Com::h_reqStart(const uint8_t *buffer, size_t size) {
+  char buf[32];
+  snprintf(buf, sizeof(buf), "reqStart end");
+  //snprintf(buf, sizeof(buf), "things");
+  GlobalCom::sendMsg(debug_msgid, buf);
 
 #ifdef AYAB_ENABLE_CRC
-  if (size < 6U) {
+  if (size < 5U) {
     // Need 6 bytes from buffer below.
     send_cnfStart(EXPECTED_LONGER_MESSAGE);
     return;
   }
 #else
-  if (size < 5U) {
+  if (size < 4U) {
     // Need 5 bytes from buffer below.
     send_cnfStart(EXPECTED_LONGER_MESSAGE);
     return;
   }
 #endif
 
-  Machine_t machineType = static_cast<Machine_t>(buffer[1]);
-  uint8_t startNeedle = buffer[2];
-  uint8_t stopNeedle = buffer[3];
-  bool continuousReportingEnabled = static_cast<bool>(buffer[4]);
+  uint8_t startNeedle = buffer[1];
+  uint8_t stopNeedle = buffer[2];
+  bool continuousReportingEnabled = static_cast<bool>(buffer[3]);
 
 #ifdef AYAB_ENABLE_CRC
-  uint8_t crc8 = buffer[5];
+  uint8_t crc8 = buffer[4];
   // Check crc on bytes 0-4 of buffer.
-  if (crc8 != CRC8(buffer, 5)) {
+  if (crc8 != CRC8(buffer, 4)) {
     send_cnfStart(CHECKSUM_ERROR);
     return;
   }
@@ -219,7 +271,7 @@ void Com::h_reqStart(const uint8_t *buffer, size_t size) {
   // Previously, it returned `true` for success and `false` for failure.
   // Now, it returns `0` for success and an informative error code otherwise.
   Err_t error =
-      GlobalKnitter::startKnitting(machineType, startNeedle, stopNeedle,
+      GlobalKnitter::startKnitting(startNeedle, stopNeedle,
                                    lineBuffer, continuousReportingEnabled);
   send_cnfStart(error);
 }
@@ -316,6 +368,17 @@ void Com::send_cnfInfo() {
   payload[3] = FW_VERSION_MIN;
   send(payload, 4);
 }
+
+/*!
+ * \brief Send `cnfStart` message.
+ */
+void Com::send_cnfInit(Err_t error) {
+  uint8_t payload[2];
+  payload[0] = cnfInit_msgid;
+  payload[1] = static_cast<uint8_t>(error);
+  send(payload, 2);
+}
+
 
 /*!
  * \brief Send `cnfStart` message.

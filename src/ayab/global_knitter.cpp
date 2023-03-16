@@ -41,10 +41,14 @@ void GlobalKnitter::isr() {
 }
 #endif
 
-Err_t GlobalKnitter::startKnitting(Machine_t machineType, uint8_t startNeedle,
+Err_t GlobalKnitter::initMachine(Machine_t machine) {
+  return m_instance->initMachine(machine);
+}
+
+Err_t GlobalKnitter::startKnitting(uint8_t startNeedle,
                                    uint8_t stopNeedle, uint8_t *pattern_start,
                                    bool continuousReportingEnabled) {
-  return m_instance->startKnitting(machineType, startNeedle, stopNeedle,
+  return m_instance->startKnitting(startNeedle, stopNeedle,
                                    pattern_start, continuousReportingEnabled);
 }
 

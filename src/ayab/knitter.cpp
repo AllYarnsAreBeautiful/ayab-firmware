@@ -118,17 +118,8 @@ void Knitter::isr() {
   m_carriage = GlobalEncoders::getCarriage();
 }
 
-/*!
- * \brief Enter knit state.
- *
- * Note (August 2020): the return value of this function has changed.
- * Previously, it returned `true` for success and `false` for failure.
- * Now, it returns `0` for success and an informative error code otherwise.
- */
-Err_t Knitter::startKnitting(Machine_t machineType, uint8_t startNeedle,
-                             uint8_t stopNeedle, uint8_t *pattern_start,
-                             bool continuousReportingEnabled) {
-  if (GlobalFsm::getState() != s_ready) {
+Err_t Knitter::initMachine(Machine_t machineType) {
+  if (GlobalFsm::getState() != s_wait_for_machine) {
     return WRONG_MACHINE_STATE;
   }
   if (machineType == NoMachine) {
@@ -137,15 +128,36 @@ Err_t Knitter::startKnitting(Machine_t machineType, uint8_t startNeedle,
   if (machineType >= NUM_MACHINES) {
     return MACHINE_TYPE_INVALID;
   }
+
+  m_machineType = machineType;
+
+  GlobalEncoders::init(machineType);
+  GlobalFsm::setState(s_init);
+
+  return SUCCESS;
+}
+
+/*!
+ * \brief Enter knit state.
+ *
+ * Note (August 2020): the return value of this function has changed.
+ * Previously, it returned `true` for success and `false` for failure.
+ * Now, it returns `0` for success and an informative error code otherwise.
+ */
+Err_t Knitter::startKnitting(uint8_t startNeedle,
+                             uint8_t stopNeedle, uint8_t *pattern_start,
+                             bool continuousReportingEnabled) {
+  if (GlobalFsm::getState() != s_ready) {
+    return WRONG_MACHINE_STATE;
+  }
   if (pattern_start == nullptr) {
     return NULL_POINTER_ARGUMENT;
   }
-  if (startNeedle >= stopNeedle || stopNeedle >= NUM_NEEDLES[machineType]) {
+  if (startNeedle >= stopNeedle || stopNeedle >= NUM_NEEDLES[m_machineType]) {
     return NEEDLE_VALUE_INVALID;
   }
 
   // record argument values
-  m_machineType = machineType;
   m_startNeedle = startNeedle;
   m_stopNeedle = stopNeedle;
   m_lineBuffer = pattern_start;
@@ -156,9 +168,6 @@ Err_t Knitter::startKnitting(Machine_t machineType, uint8_t startNeedle,
                                    // be incremented before request
   m_lineRequested = false;
   m_lastLineFlag = false;
-
-  // initialize encoders
-  GlobalEncoders::init(machineType);
 
   // proceed to next state
   GlobalFsm::setState(s_knit);
@@ -196,6 +205,16 @@ bool Knitter::isReady() {
     m_lastHall = m_hallActive;
   }
 
+  /*char buf[32];
+  snprintf(buf, sizeof(buf), "offset %d end", (END_LEFT[m_machineType] + END_OFFSET[m_machineType]));
+  //snprintf(buf, sizeof(buf), "things");
+  GlobalCom::sendMsg(debug_msgid, buf);
+
+  snprintf(buf, sizeof(buf), "type %d end", m_machineType);
+  //snprintf(buf, sizeof(buf), "things");
+  GlobalCom::sendMsg(debug_msgid, buf);
+  //GlobalCom::sendMsg(debug_msgid, "%d end", END_LEFT[m_machineType] + END_OFFSET[m_machineType]);
+  */
   bool passedLeft = Right == m_direction and Left == m_lastHall and 
         m_position > (END_LEFT[m_machineType] + END_OFFSET[m_machineType] + GARTER_SLOP);
   bool passedRight = Left == m_direction and Right == m_lastHall and 

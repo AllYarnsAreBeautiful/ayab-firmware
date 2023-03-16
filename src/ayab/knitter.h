@@ -38,9 +38,10 @@ public:
   virtual void init() = 0;
   virtual void setUpInterrupt() = 0;
   virtual void isr() = 0;
-  virtual Err_t startKnitting(Machine_t machineType, uint8_t startNeedle,
+  virtual Err_t startKnitting(uint8_t startNeedle,
                               uint8_t stopNeedle, uint8_t *pattern_start,
                               bool continuousReportingEnabled) = 0;
+  virtual Err_t initMachine(Machine_t machine) = 0;
   virtual void encodePosition() = 0;
   virtual bool isReady() = 0;
   virtual void knit() = 0;
@@ -72,9 +73,10 @@ public:
 #ifndef AYAB_TESTS
   static void isr();
 #endif
-  static Err_t startKnitting(Machine_t machineType, uint8_t startNeedle,
+  static Err_t startKnitting(uint8_t startNeedle,
                              uint8_t stopNeedle, uint8_t *pattern_start,
                              bool continuousReportingEnabled);
+  static Err_t initMachine(Machine_t machine);
   static void encodePosition();
   static bool isReady();
   static void knit();
@@ -91,9 +93,10 @@ public:
   void init();
   void setUpInterrupt();
   void isr();
-  Err_t startKnitting(Machine_t machineType, uint8_t startNeedle,
+  Err_t startKnitting(uint8_t startNeedle,
                       uint8_t stopNeedle, uint8_t *pattern_start,
                       bool continuousReportingEnabled);
+  Err_t initMachine(Machine_t machine);
   void encodePosition();
   bool isReady();
   void knit();
