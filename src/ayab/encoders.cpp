@@ -67,10 +67,6 @@ uint16_t Encoders::getHallValue(Direction_t pSensor) {
  * \brief Initialize machine type.
  */
 void Encoders::init(Machine_t machineType) {
-  /*char buf[32];
-  snprintf(buf, sizeof(buf), "init %d end", machineType);
-  //snprintf(buf, sizeof(buf), "things");
-  GlobalCom::sendMsg(debug_msgid, buf);*/
   m_machineType = machineType;
   m_position = 0U;
   m_direction = NoDirection;
@@ -164,14 +160,13 @@ void Encoders::encA_rising() {
       detected_carriage = Lace;
     }
 
-    //snprintf(buf, sizeof(buf), "carriage %d end", (int)detected_carriage);
-    //GlobalCom::sendMsg(debug_msgid, buf);
-
     if (m_machineType == Kh270) {
       m_carriage = Knit;
     } else if (m_carriage == NoCarriage) {
       m_carriage = detected_carriage;
-    } else if (m_carriage != detected_carriage) {
+    } else if (m_carriage != detected_carriage && m_position > start_position) {
+      // If we encounter another magnet and we're beyond where we detected the first one
+      // Must be the garter carriage.
       m_carriage = Garter;
 
       // Belt shift and start position were set when the first magnet passed
@@ -187,21 +182,6 @@ void Encoders::encA_rising() {
     // Known position of the carriage -> overwrite position
     m_position = start_position;
   }
-
-  /*if (index%5 == 0) {
-    snprintf(buf, sizeof(buf), "hall %d end", hallValue);
-    GlobalCom::sendMsg(debug_msgid, buf);
-  }*/
-
-  /*static uint8_t index = 0;
-  index += 1;
-
-  if (index%5 == 0) {
-    char buf[64];
-    snprintf(buf, sizeof(buf), "pos %d end", m_position);
-    GlobalCom::sendMsg(debug_msgid, buf);
-    index = 0;
-  }*/
 }
 
 /*!
@@ -212,13 +192,22 @@ void Encoders::encA_rising() {
  * Bounds on `m_machineType` not checked.
  */
 void Encoders::encA_falling() {
-  m_direction = digitalRead(ENC_PIN_B) != 0 ? Right : Left;
+  //m_direction = digitalRead(ENC_PIN_B) != 0 ? Right : Left;
+  // Update direction
+  m_direction = digitalRead(ENC_PIN_B) ? Left : Right;
 
   // Update carriage position
   if (Left == m_direction) {
     if (m_position > END_LEFT[m_machineType]) {
       m_position--;
     }
+  }
+
+  // The garter carriage has a second set of magnets that are going to 
+  // pass the sensor and will reset state incorrectly if allowed to
+  // continue.
+  if (m_carriage == Garter) {
+    return;
   }
 
   // In front of Right Hall Sensor?

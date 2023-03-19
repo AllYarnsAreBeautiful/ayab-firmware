@@ -174,10 +174,6 @@ void Com::onPacketReceived(const uint8_t *buffer, size_t size) {
 // Serial command handling
 
 void Com::h_reqInit(const uint8_t *buffer, size_t size) {
-  char buf[32];
-  snprintf(buf, sizeof(buf), "reqInit end");
-  GlobalCom::sendMsg(debug_msgid, buf);
-
 #ifdef AYAB_ENABLE_CRC
   if (size < 3U) {
     // Need 6 bytes from buffer below.
@@ -203,14 +199,6 @@ void Com::h_reqInit(const uint8_t *buffer, size_t size) {
   }
 #endif
 
-  // TODO(who?): verify operation
-  // memset(lineBuffer,0,sizeof(lineBuffer));
-  /*
-  // temporary solution:
-  for (uint8_t i = 0U; i < MAX_LINE_BUFFER_LEN; i++) {
-    lineBuffer[i] = 0xFFU;
-  }
-  */
   memset(lineBuffer, 0xFF, MAX_LINE_BUFFER_LEN);
 
   Err_t error = GlobalKnitter::initMachine(machineType);
@@ -224,11 +212,6 @@ void Com::h_reqInit(const uint8_t *buffer, size_t size) {
  * \todo TP: Handle CRC-8 error?
  */
 void Com::h_reqStart(const uint8_t *buffer, size_t size) {
-  char buf[32];
-  snprintf(buf, sizeof(buf), "reqStart end");
-  //snprintf(buf, sizeof(buf), "things");
-  GlobalCom::sendMsg(debug_msgid, buf);
-
 #ifdef AYAB_ENABLE_CRC
   if (size < 5U) {
     // Need 6 bytes from buffer below.
