@@ -176,7 +176,6 @@ void Com::onPacketReceived(const uint8_t *buffer, size_t size) {
 void Com::h_reqInit(const uint8_t *buffer, size_t size) {
   char buf[32];
   snprintf(buf, sizeof(buf), "reqInit end");
-  //snprintf(buf, sizeof(buf), "things");
   GlobalCom::sendMsg(debug_msgid, buf);
 
 #ifdef AYAB_ENABLE_CRC

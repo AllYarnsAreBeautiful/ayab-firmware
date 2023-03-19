@@ -133,6 +133,7 @@ Err_t Knitter::initMachine(Machine_t machineType) {
 
   GlobalEncoders::init(machineType);
   GlobalFsm::setState(s_init);
+  GlobalBeeper::beep(2);
 
   return SUCCESS;
 }
@@ -216,9 +217,9 @@ bool Knitter::isReady() {
   //GlobalCom::sendMsg(debug_msgid, "%d end", END_LEFT[m_machineType] + END_OFFSET[m_machineType]);
   */
   bool passedLeft = Right == m_direction and Left == m_lastHall and 
-        m_position > (END_LEFT[m_machineType] + END_OFFSET[m_machineType] + GARTER_SLOP);
+        m_position > (END_LEFT[m_machineType] + END_OFFSET[m_machineType]/* + GARTER_SLOP*/);
   bool passedRight = Left == m_direction and Right == m_lastHall and 
-        m_position < (END_RIGHT[m_machineType] - END_OFFSET[m_machineType] - GARTER_SLOP);
+        m_position < (END_RIGHT[m_machineType] - END_OFFSET[m_machineType]/* - GARTER_SLOP*/);
   // Machine is initialized when left Hall sensor is passed in Right direction
   // New feature (August 2020): the machine is also initialized
   // when the right Hall sensor is passed in Left direction.

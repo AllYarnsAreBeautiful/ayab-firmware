@@ -38,3 +38,7 @@ void GlobalBeeper::finishedLine() {
 void GlobalBeeper::endWork() {
   m_instance->endWork();
 }
+
+void GlobalBeeper::beep(uint8_t length) {
+  m_instance->beep(length);
+}
