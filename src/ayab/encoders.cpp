@@ -128,7 +128,7 @@ Machine_t Encoders::getMachineType() {
  * Bounds on `m_machineType` not checked.
  */
 void Encoders::encA_rising() {
-  // Direction only decided on rising edge of encoder A
+  // Update direction
   m_direction = digitalRead(ENC_PIN_B) != 0 ? Right : Left;
 
   // Update carriage position
@@ -192,7 +192,6 @@ void Encoders::encA_rising() {
  * Bounds on `m_machineType` not checked.
  */
 void Encoders::encA_falling() {
-  //m_direction = digitalRead(ENC_PIN_B) != 0 ? Right : Left;
   // Update direction
   m_direction = digitalRead(ENC_PIN_B) ? Left : Right;
 

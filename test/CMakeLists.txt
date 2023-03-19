@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.7.2)
+cmake_minimum_required(VERSION 3.18.0)
 project(ayab_test)
 
 set(CMAKE_CXX_STANDARD 11 CACHE STRING "Set the C++ standard to be used for compiling")
@@ -79,10 +79,10 @@ set(COMMON_FLAGS
     -g -Og
     )
 set(COMMON_LINKER_FLAGS
-    ${ARDUINO_MOCK_LIBS_DIR}/lib/gtest/gtest/src/gtest-build/googlemock/gtest/libgtest.a
+    ${ARDUINO_MOCK_LIBS_DIR}/lib/gtest/gtest/src/gtest-build/lib/libgtest.a
     # For some reason the order of libarduinomock and libgmock matter, keep them this way.
     ${ARDUINO_MOCK_LIBS_DIR}/dist/lib/libarduino_mock.a
-    ${ARDUINO_MOCK_LIBS_DIR}/lib/gtest/gtest/src/gtest-build/googlemock/libgmock.a
+    ${ARDUINO_MOCK_LIBS_DIR}/lib/gtest/gtest/src/gtest-build/lib/libgmock.a
     ${CMAKE_THREAD_LIBS_INIT}
     -lgcov
     )
@@ -183,9 +183,9 @@ target_link_libraries(${PROJECT_NAME}_knitter
 )
 add_dependencies(${PROJECT_NAME}_knitter arduino_mock)
 
-# TODO(sl): Use gtest_discover_tests() ?
-# https://cmake.org/cmake/help/git-master/module/GoogleTest.html
 enable_testing()
-add_test(test_Uno ${PROJECT_NAME}_Uno)
-add_test(test_Mega ${PROJECT_NAME}_Mega)
-add_test(test_knitter ${PROJECT_NAME}_knitter)
+include(GoogleTest)
+gtest_discover_tests(${PROJECT_NAME}_Uno TEST_PREFIX Uno_ XML_OUTPUT_DIR ./xml_out)
+gtest_discover_tests(${PROJECT_NAME}_Mega TEST_PREFIX Mega_ XML_OUTPUT_DIR ./xml_out)
+gtest_discover_tests(${PROJECT_NAME}_knitter TEST_PREFIX Knitter_ XML_OUTPUT_DIR ./xml_out)
+
