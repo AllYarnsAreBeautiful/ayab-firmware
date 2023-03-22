@@ -103,11 +103,17 @@ public:
   void indState(Err_t error = SUCCESS);
   uint8_t getStartOffset(const Direction_t direction);
   Machine_t getMachineType();
+  //Visible for testing purposes
+  bool workedOnLine();
+  uint8_t getStartNeedle();
+  uint8_t getStopNeedle();
+  uint8_t getPosition();
+  Direction_t getDirection();
   bool setNextLine(uint8_t lineNumber);
   void setLastLine();
   void setMachineType(Machine_t);
 
-private:
+//private:
   void reqLine(uint8_t lineNumber);
   bool calculatePixelAndSolenoid();
   void stopKnitting();

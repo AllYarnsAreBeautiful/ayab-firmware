@@ -44,7 +44,6 @@ public:
   virtual void ready() = 0;
   virtual void finishedLine() = 0;
   virtual void endWork() = 0;
-  virtual void beep(uint8_t length) = 0;
 };
 
 // Container class for the static methods that control the beeper.
@@ -64,7 +63,6 @@ public:
   static void ready();
   static void finishedLine();
   static void endWork();
-  static void beep(uint8_t length);
 };
 
 /*!
@@ -75,6 +73,8 @@ public:
   void ready();
   void finishedLine();
   void endWork();
+
+private:
   void beep(uint8_t length);
 };
 

@@ -54,12 +54,17 @@ void Knitter::isr() {
   gKnitterMock->isr();
 }
 
-Err_t Knitter::startKnitting(Machine_t machineType, uint8_t startNeedle,
+Err_t Knitter::startKnitting(uint8_t startNeedle,
                              uint8_t stopNeedle, uint8_t *pattern_start,
                              bool continuousReportingEnabled) {
   assert(gKnitterMock != NULL);
-  return gKnitterMock->startKnitting(machineType, startNeedle, stopNeedle,
+  return gKnitterMock->startKnitting(startNeedle, stopNeedle,
                                      pattern_start, continuousReportingEnabled);
+}
+
+Err_t Knitter::initMachine(Machine_t machineType) {
+  assert(gKnitterMock != NULL);
+  return gKnitterMock->initMachine(machineType);
 }
 
 void Knitter::encodePosition() {

@@ -271,7 +271,8 @@ TEST_F(ComTest, test_cnfline_kh910) {
                         0xA7}; // CRC8
 
   // start KH910 job
-  knitterMock->startKnitting(Kh910, 0, 199, pattern, false);
+  knitterMock->initMachine(Kh910);
+  knitterMock->startKnitting(0, 199, pattern, false);
 
   // first call increments line number to zero, not accepted
   EXPECT_CALL(*knitterMock, setNextLine).WillOnce(Return(false));

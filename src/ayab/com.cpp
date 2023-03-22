@@ -176,13 +176,13 @@ void Com::onPacketReceived(const uint8_t *buffer, size_t size) {
 void Com::h_reqInit(const uint8_t *buffer, size_t size) {
 #ifdef AYAB_ENABLE_CRC
   if (size < 3U) {
-    // Need 6 bytes from buffer below.
+    // Need 3 bytes from buffer below.
     send_cnfInit(EXPECTED_LONGER_MESSAGE);
     return;
   }
 #else
   if (size < 2U) {
-    // Need 5 bytes from buffer below.
+    // Need 2 bytes from buffer below.
     send_cnfInit(EXPECTED_LONGER_MESSAGE);
     return;
   }
@@ -214,13 +214,13 @@ void Com::h_reqInit(const uint8_t *buffer, size_t size) {
 void Com::h_reqStart(const uint8_t *buffer, size_t size) {
 #ifdef AYAB_ENABLE_CRC
   if (size < 5U) {
-    // Need 6 bytes from buffer below.
+    // Need 5 bytes from buffer below.
     send_cnfStart(EXPECTED_LONGER_MESSAGE);
     return;
   }
 #else
   if (size < 4U) {
-    // Need 5 bytes from buffer below.
+    // Need 4 bytes from buffer below.
     send_cnfStart(EXPECTED_LONGER_MESSAGE);
     return;
   }
@@ -352,7 +352,7 @@ void Com::send_cnfInfo() {
 }
 
 /*!
- * \brief Send `cnfStart` message.
+ * \brief Send `cnfInit` message.
  */
 void Com::send_cnfInit(Err_t error) {
   uint8_t payload[2];
