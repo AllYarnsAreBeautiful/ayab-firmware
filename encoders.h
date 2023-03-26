@@ -24,6 +24,7 @@ This file is part of AYAB.
 
 #include "Arduino.h"
 #include "./settings.h"
+#include "./hallsensor.h"
 
 class Encoders{
  public:
@@ -41,13 +42,12 @@ class Encoders{
 
  private:
   Direction_t   m_direction;
-  Direction_t   m_hallActive;
   Beltshift_t   m_beltShift;
   Carriage_t    m_carriage;
   byte          m_encoderPos;
 
-  void encA_rising();
-  void encA_falling();
-};
+  HallSensor    *m_leftHallSensor;
+  HallSensor    *m_rightHallSensor;
+  };
 
 #endif  // ENCODERS_H_
