@@ -32,6 +32,7 @@ Knitter::Knitter(SLIPPacketSerial* packetSerial) {
   m_stopNeedle        = 0;
   m_currentLineNumber = 0;
   m_lineRequested     = false;
+  m_carriage          = NoCarriage;
 
   m_solenoids.init();
 }
@@ -41,7 +42,6 @@ void Knitter::isr() {
   m_encoders.encA_interrupt();
   m_position   = m_encoders.getPosition();
   m_direction  = m_encoders.getDirection();
-  m_hallActive = m_encoders.getHallActive();
   m_beltshift  = m_encoders.getBeltshift();
   m_carriage   = m_encoders.getCarriage();
 }
@@ -149,9 +149,8 @@ void Knitter::state_init() {
   }
   _prevState = state;
 #else
-  // Machine is initialized when left hall sensor is passed in Right direction
-  if (Right == m_direction
-      && Left == m_hallActive) {
+  // Machine is initialized when carriage is detected
+  if (m_carriage != NoCarriage) {
     _ready = true;
   }
 #endif  // DBG_NOMACHINE

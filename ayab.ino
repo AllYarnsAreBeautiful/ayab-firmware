@@ -163,6 +163,8 @@ void setup() {
   packetSerial.begin(SERIAL_BAUDRATE);
   packetSerial.setPacketHandler(&onPacketReceived);
 
+  knitter = new Knitter(&packetSerial);
+
   pinMode(ENC_PIN_A, INPUT);
   pinMode(ENC_PIN_B, INPUT);
   pinMode(ENC_PIN_C, INPUT);
@@ -176,8 +178,6 @@ void setup() {
 
   // Attaching ENC_PIN_A(=2), Interrupt No. 0
   attachInterrupt(0, isr_encA, CHANGE);
-
-  knitter = new Knitter(&packetSerial);
 }
 
 

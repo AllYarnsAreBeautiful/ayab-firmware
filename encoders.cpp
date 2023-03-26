@@ -25,94 +25,69 @@ This file is part of AYAB.
 
 Encoders::Encoders() {
   m_direction    = NoDirection;
-  m_hallActive   = NoDirection;
   m_beltShift    = Unknown;
   m_carriage     = NoCarriage;
   m_encoderPos   = 0x00;
-}
 
+  m_leftHallSensor = new HallSensor(EOL_PIN_L);
+  m_leftHallSensor->setThresholds(FILTER_L_MIN, FILTER_L_MAX);
+  m_rightHallSensor = new HallSensor(EOL_PIN_R);
+  m_rightHallSensor->setThresholds(FILTER_R_MIN, FILTER_R_MAX);
+}
 
 void Encoders::encA_interrupt() {
-  m_hallActive = NoDirection;
+  static bool _old_encA = false;
 
-  static bool _oldState = false;
-  bool _curState = digitalRead(ENC_PIN_A);
+  bool encA = digitalRead(ENC_PIN_A);
+  bool encB = digitalRead(ENC_PIN_B);
+  bool encC = digitalRead(ENC_PIN_C);
 
-  if (!_oldState && _curState) {
-    encA_rising();
-  } else if (_oldState && !_curState) {
-    encA_falling();
-  }
-  _oldState = _curState;
-}
+  if (!_old_encA && encA) { // Rising edge
+    // Update direction
+    m_direction = encB ? Right : Left;
 
-/*
- * PRIVATE METHODS
- */ 
-void Encoders::encA_rising() {
-  // Update direction
-  m_direction = digitalRead(ENC_PIN_B) ? Right : Left;
-
-  // Update carriage position
-  if (Right == m_direction) {
-    if (m_encoderPos < END_RIGHT) {
-      m_encoderPos++;
-    }
-  }
-
-  // In front of Left Hall Sensor?
-  uint16 hallValue = analogRead(EOL_PIN_L);
-  if (hallValue < FILTER_L_MIN
-     || hallValue > FILTER_L_MAX) {
-    m_hallActive = Left;
-
-    // TODO(chris): Verify these decisions!
-    if (hallValue < FILTER_L_MIN) {
-      if (m_carriage == K /*&& m_encoderPos == ?? */) {
-        m_carriage = G;
+    // Update carriage position & type
+    if (m_direction == Right) {
+      // Moving to the right, check left sensor
+      if (m_leftHallSensor->isDetected(m_encoderPos, m_direction)) {
+        m_encoderPos = END_LEFT + 28 + (m_encoderPos - m_leftHallSensor->position);
+        m_carriage = m_leftHallSensor->carriage;
+        // Belt phase for left sensor
+        switch (m_carriage) {
+          case L:
+            m_beltShift = encC ? Regular : Shifted;
+            break;
+          default: // K & G
+            m_beltShift = encC ? Shifted : Regular;
+        }
       } else {
-        m_carriage = L;
+        if (m_encoderPos < END_RIGHT) {
+          m_encoderPos++;
+        }
       }
-    } else if (hallValue > FILTER_L_MAX) {
-      m_carriage = K;
     }
-
-    // Belt shift signal only decided in front of hall sensor
-    m_beltShift = digitalRead(ENC_PIN_C) ? Regular : Shifted;
-
-    // Known position of the carriage -> overwrite position
-    m_encoderPos = END_LEFT + 28;
-  }
-}
-
-
-void Encoders::encA_falling() {
-  // Update direction
-  m_direction = digitalRead(ENC_PIN_B) ? Left : Right;
-
-  // Update carriage position
-  if (Left == m_direction) {
-    if (m_encoderPos > END_LEFT) {
-        m_encoderPos--;
+  } else { // Falling edge
+    // Update direction
+    m_direction = encB ? Left : Right;
+    
+    // Update carriage position & type (commented out/HW NOK on KH910)
+    if (m_direction == Left) {
+//      // Moving to the left, check right sensor
+//      if (m_rightHallSensor->isDetected(m_encoderPos, m_direction)) {
+//        m_encoderPos = END_RIGHT - 28 - (m_rightHallSensor->position - m_encoderPos);
+//        m_carriage = m_rightHallSensor->carriage;
+//        // Belt phase for right sensor
+//        m_beltShift = encC ? Regular : Shifted;
+//      } else { 
+        if (m_encoderPos > END_LEFT) {
+          m_encoderPos--;
+        }
+//      }
     }
   }
 
-  // In front of Right Hall Sensor?
-  uint16 hallValue = analogRead(EOL_PIN_R);
-  if (hallValue < FILTER_R_MIN
-      || hallValue > FILTER_R_MAX) {
-    m_hallActive = Right;
+  _old_encA = encA;
 
-    if (hallValue < FILTER_R_MIN) {
-      m_carriage = K;
-    }
-
-    // Belt shift signal only decided in front of hall sensor
-    m_beltShift = digitalRead(ENC_PIN_C) ? Shifted : Regular;
-
-    // Known position of the carriage -> overwrite position
-    m_encoderPos = END_RIGHT - 28;
-  }
 }
 
 byte Encoders::getPosition() {
@@ -128,7 +103,13 @@ Direction_t Encoders::getDirection() {
 }
 
 Direction_t Encoders::getHallActive() {
-  return m_hallActive;
+  if (m_leftHallSensor->isActive()) {
+    return Left;
+  }
+  if (m_rightHallSensor->isActive()) {
+    return Right;
+  }
+  return NoDirection;
 }
 
 Carriage_t Encoders::getCarriage() {
@@ -138,9 +119,9 @@ Carriage_t Encoders::getCarriage() {
 uint16 Encoders::getHallValue(Direction_t pSensor) {
   switch (pSensor) {
     case Left:
-      return analogRead(EOL_PIN_L);
+      return m_leftHallSensor->getValue();
     case Right:
-      return analogRead(EOL_PIN_R);
+      return m_rightHallSensor->getValue();
     default:
       return 0;
   }
