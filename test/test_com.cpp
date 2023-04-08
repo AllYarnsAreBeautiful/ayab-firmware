@@ -120,7 +120,7 @@ TEST_F(ComTest, test_reqtest_success_KH270) {
 
 TEST_F(ComTest, test_reqstart_fail1) {
   // checksum wrong
-  uint8_t buffer[] = {reqStart_msgid, 0, 0, 10, 1, 0x73};
+  uint8_t buffer[] = {reqStart_msgid, 0, 10, 1, 0x73};
   EXPECT_CALL(*knitterMock, startKnitting).Times(0);
   expected_write_onPacketReceived(buffer, sizeof(buffer), true);
 
@@ -130,7 +130,7 @@ TEST_F(ComTest, test_reqstart_fail1) {
 
 TEST_F(ComTest, test_reqstart_fail2) {
   // not enough bytes
-  uint8_t buffer[] = {reqStart_msgid, 0, 0, 10, 1, 0x74};
+  uint8_t buffer[] = {reqStart_msgid, 0, 10, 1, 0x74};
   EXPECT_CALL(*knitterMock, startKnitting).Times(0);
   expected_write_onPacketReceived(buffer, sizeof(buffer) - 1, true);
 
@@ -139,7 +139,7 @@ TEST_F(ComTest, test_reqstart_fail2) {
 }
 
 TEST_F(ComTest, test_reqstart_success_KH910) {
-  uint8_t buffer[] = {reqStart_msgid, 0, 0, 10, 1, 0x74};
+  uint8_t buffer[] = {reqStart_msgid, 0, 10, 1, 0x74};
   EXPECT_CALL(*knitterMock, startKnitting);
   expected_write_onPacketReceived(buffer, sizeof(buffer), false);
 
@@ -148,7 +148,7 @@ TEST_F(ComTest, test_reqstart_success_KH910) {
 }
 
 TEST_F(ComTest, test_reqstart_success_KH270) {
-  uint8_t buffer[] = {reqStart_msgid, 2, 0, 10, 1, 0x73};
+  uint8_t buffer[] = {reqStart_msgid, 0, 10, 1, 0x73};
   EXPECT_CALL(*knitterMock, startKnitting);
   expected_write_onPacketReceived(buffer, sizeof(buffer), false);
 

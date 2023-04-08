@@ -164,7 +164,7 @@ void Tester::quitCmd() {
  */
 Err_t Tester::startTest(Machine_t machineType) {
   OpState_t currentState = GlobalFsm::getState();
-  if (s_init == currentState || s_ready == currentState) {
+  if (s_wait_for_machine == currentState || s_init == currentState || s_ready == currentState) {
     GlobalFsm::setState(s_test);
     GlobalKnitter::setMachineType(machineType);
     setUp();
