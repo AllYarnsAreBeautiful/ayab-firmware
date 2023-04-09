@@ -60,8 +60,6 @@ void Knitter::init() {
   // FIXME(TP): should this go in `main()`?
   GlobalSolenoids::init();
 
-  //setUpInterrupt();
-
   // explicitly initialize members
 
   // job parameters
@@ -318,18 +316,6 @@ Machine_t Knitter::getMachineType() {
   return m_machineType;
 }
 
-bool Knitter::workedOnLine() {
-  return m_workedOnLine;
-}
-
-uint8_t Knitter::getStartNeedle() {
-  return m_startNeedle;
-}
-
-uint8_t Knitter::getStopNeedle() {
-  return m_stopNeedle;
-}
-
 uint8_t Knitter::getStartOffset(const Direction_t direction) {
   if ((direction == NoDirection) || (direction >= NUM_DIRECTIONS) ||
       (m_carriage == NoCarriage) || (m_carriage >= NUM_CARRIAGES) ||
@@ -365,19 +351,11 @@ void Knitter::setMachineType(Machine_t machineType) {
   m_machineType = machineType;
 }
 
-Direction_t Knitter::getDirection() {
-  return m_direction;
-}
-
 // private methods
 
 void Knitter::reqLine(uint8_t lineNumber) {
   GlobalCom::send_reqLine(lineNumber, SUCCESS);
   m_lineRequested = true;
-}
-
-uint8_t Knitter::getPosition() {
-  return m_position;
 }
 
 bool Knitter::calculatePixelAndSolenoid() {

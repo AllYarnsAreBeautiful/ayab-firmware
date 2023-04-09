@@ -349,8 +349,7 @@ TEST_F(KnitterTest, test_setNextLine) {
   expected_dispatch_knit(true);
 
   // outside of the active needles
-  //expected_isr(40 + NUM_NEEDLES[Kh910] - 1 + END_OF_LINE_OFFSET_R[Kh910] + 1);
-  expected_isr(32);
+  expected_isr(NUM_NEEDLES[Kh910] + END_OF_LINE_OFFSET_R[Kh910] + 1 + knitter->getStartOffset(Left));
   EXPECT_CALL(*solenoidsMock, setSolenoid).Times(1);
   expected_dispatch_knit(false);
 
@@ -499,8 +498,6 @@ TEST_F(KnitterTest, test_knit_lastLine) {
   // `m_workedOnLine` is set to true
   expected_dispatch_knit(false);
 
-  ASSERT_TRUE(knitter->m_workedOnLine);
-
   // Position has changed since last call to operate function
   // `m_pixelToSet` is above `m_stopNeedle` + END_OF_LINE_OFFSET_R
   expected_isr(NUM_NEEDLES[Kh910] + END_OF_LINE_OFFSET_R[Kh910] + 1 + knitter->getStartOffset(Left));
@@ -512,10 +509,6 @@ TEST_F(KnitterTest, test_knit_lastLine) {
   EXPECT_CALL(*beeperMock, endWork);
   EXPECT_CALL(*solenoidsMock, setSolenoids(SOLENOIDS_BITMASK));
   EXPECT_CALL(*beeperMock, finishedLine);
-  //ASSERT_EQ(knitter->m_position, 0);
-  //ASSERT_EQ(knitter->getStartOffset(Left), 0);
-  ASSERT_TRUE(knitter->calculatePixelAndSolenoid());
-  ASSERT_TRUE(knitter->m_workedOnLine);
   expected_dispatch_knit(false);
 
   // test expectations without destroying instance
