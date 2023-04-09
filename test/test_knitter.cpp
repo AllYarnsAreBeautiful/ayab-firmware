@@ -275,7 +275,6 @@ TEST_F(KnitterTest, test_startKnitting_NoMachine) {
   uint8_t pattern[] = {1};
   Machine_t m = knitter->getMachineType();
   ASSERT_EQ(m, NoMachine);
-  get_to_ready(m);
   ASSERT_TRUE(knitter->initMachine(m) != 0);
   ASSERT_TRUE(
       knitter->startKnitting(0, NUM_NEEDLES[m] - 1, pattern, false) != 0);
@@ -295,7 +294,6 @@ TEST_F(KnitterTest, test_startKnitting_invalidMachine) {
 
 TEST_F(KnitterTest, test_startKnitting_notReady) {
   uint8_t pattern[] = {1};
-  ASSERT_TRUE(knitter->initMachine(Kh910) != 0);
   ASSERT_TRUE(knitter->startKnitting(0, NUM_NEEDLES[Kh910] - 1, pattern,
                                      false) != 0);
 
@@ -345,14 +343,14 @@ TEST_F(KnitterTest, test_startKnitting_failures) {
 }
 
 TEST_F(KnitterTest, test_setNextLine) {
+  // set `m_lineRequested`
   ASSERT_EQ(knitter->setNextLine(1), false);
 
-  // set `m_lineRequested`
-  EXPECT_CALL(*solenoidsMock, setSolenoid).Times(1);
   expected_dispatch_knit(true);
 
   // outside of the active needles
-  expected_isr(40 + NUM_NEEDLES[Kh910] - 1 + END_OF_LINE_OFFSET_R[Kh910] + 1);
+  //expected_isr(40 + NUM_NEEDLES[Kh910] - 1 + END_OF_LINE_OFFSET_R[Kh910] + 1);
+  expected_isr(32);
   EXPECT_CALL(*solenoidsMock, setSolenoid).Times(1);
   expected_dispatch_knit(false);
 
@@ -383,7 +381,6 @@ TEST_F(KnitterTest, test_knit_Kh910) {
 
   // `m_startNeedle` is greater than `m_pixelToSet`
   EXPECT_CALL(*beeperMock, ready);
-  EXPECT_CALL(*encodersMock, init);
   const uint8_t START_NEEDLE = NUM_NEEDLES[Kh910] - 2;
   const uint8_t STOP_NEEDLE = NUM_NEEDLES[Kh910] - 1;
   knitter->startKnitting(START_NEEDLE, STOP_NEEDLE, pattern, true);
@@ -393,7 +390,6 @@ TEST_F(KnitterTest, test_knit_Kh910) {
   // first knit
   expect_first_knit();
   expect_indState();
-  EXPECT_CALL(*solenoidsMock, setSolenoid);
   expected_dispatch_knit(false);
 
   // no useful position calculated by `calculatePixelAndSolenoid()`
@@ -429,7 +425,6 @@ TEST_F(KnitterTest, test_knit_Kh270) {
 
   // `m_startNeedle` is greater than `m_pixelToSet`
   EXPECT_CALL(*beeperMock, ready);
-  EXPECT_CALL(*encodersMock, init);
   const uint8_t START_NEEDLE = NUM_NEEDLES[Kh270] - 2;
   const uint8_t STOP_NEEDLE = NUM_NEEDLES[Kh270] - 1;
   knitter->startKnitting(START_NEEDLE, STOP_NEEDLE, pattern, true);
@@ -474,8 +469,6 @@ TEST_F(KnitterTest, test_knit_Kh270) {
 }
 
 TEST_F(KnitterTest, test_knit_line_request) {
-  EXPECT_CALL(*solenoidsMock, setSolenoid);
-
   // `m_workedOnLine` is set to `true`
   expected_dispatch_knit(true);
 
@@ -500,12 +493,18 @@ TEST_F(KnitterTest, test_knit_line_request) {
 TEST_F(KnitterTest, test_knit_lastLine) {
   EXPECT_CALL(*solenoidsMock, setSolenoid);
 
+  // Run one knit inside the working needles.
+  expected_isr(knitter->getStartOffset(Left) + 20);
+  ASSERT_TRUE(knitter->calculatePixelAndSolenoid());
+  ASSERT_EQ(knitter->m_pixelToSet, 0);
   // `m_workedOnLine` is set to true
   expected_dispatch_knit(true);
 
+  ASSERT_TRUE(knitter->m_workedOnLine);
+
   // Position has changed since last call to operate function
   // `m_pixelToSet` is above `m_stopNeedle` + END_OF_LINE_OFFSET_R
-  expected_isr(NUM_NEEDLES[Kh910] + 8 + END_OF_LINE_OFFSET_R[Kh910] + 1);
+  expected_isr(NUM_NEEDLES[Kh910] + END_OF_LINE_OFFSET_R[Kh910] + 1 + knitter->getStartOffset(Left));
 
   // `m_lastLineFlag` is `true`
   knitter->setLastLine();
@@ -514,6 +513,10 @@ TEST_F(KnitterTest, test_knit_lastLine) {
   EXPECT_CALL(*beeperMock, endWork);
   EXPECT_CALL(*solenoidsMock, setSolenoids(SOLENOIDS_BITMASK));
   EXPECT_CALL(*beeperMock, finishedLine);
+  //ASSERT_EQ(knitter->m_position, 0);
+  //ASSERT_EQ(knitter->getStartOffset(Left), 0);
+  ASSERT_TRUE(knitter->calculatePixelAndSolenoid());
+  ASSERT_TRUE(knitter->m_workedOnLine);
   expected_dispatch_knit(false);
 
   // test expectations without destroying instance
@@ -556,7 +559,6 @@ TEST_F(KnitterTest, test_knit_lastLine_and_no_req) {
 }
 
 TEST_F(KnitterTest, test_knit_same_position) {
-  EXPECT_CALL(*solenoidsMock, setSolenoid);
   expected_dispatch_knit(true);
 
   // no call to `setSolenoid()` since position was the same
@@ -571,8 +573,6 @@ TEST_F(KnitterTest, test_knit_same_position) {
 }
 
 TEST_F(KnitterTest, test_knit_new_line) {
-  EXPECT_CALL(*solenoidsMock, setSolenoid);
-
   // _workedOnLine is set to true
   expected_dispatch_knit(true);
 

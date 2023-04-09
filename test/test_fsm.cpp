@@ -136,7 +136,7 @@ protected:
 
   void expect_get_ready() {
     // start in state `s_init`
-    ASSERT_TRUE(fsm->getState() == s_init);
+    ASSERT_EQ(fsm->getState(), s_init);
 
     expect_indState();
     EXPECT_CALL(*solenoidsMock, setSolenoids(SOLENOIDS_BITMASK));
@@ -148,7 +148,7 @@ protected:
     expected_state(s_ready);
 
     // ends in state `s_ready`
-    ASSERT_TRUE(fsm->getState() == s_ready);
+    ASSERT_EQ(fsm->getState(), s_ready);
   }
 
   void expected_state(OpState_t state) {
@@ -164,9 +164,15 @@ protected:
     ASSERT_TRUE(Mock::VerifyAndClear(comMock));
   }
 
+  void expected_dispatch_wait_for_machine() {
+    ASSERT_EQ(fsm->getState(), s_wait_for_machine);
+
+    expected_dispatch();
+  }
+
   void expected_dispatch_init() {
     // starts in state `s_init`
-    ASSERT_TRUE(fsm->getState() == s_init);
+    ASSERT_EQ(fsm->getState(), s_init);
 
     EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, LOW));
     expected_dispatch();
@@ -174,7 +180,7 @@ protected:
 
   void expected_dispatch_ready() {
     // starts in state `s_ready`
-    ASSERT_TRUE(fsm->getState() == s_ready);
+    ASSERT_EQ(fsm->getState(), s_ready);
 
     EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, LOW));
     expected_dispatch();
@@ -182,7 +188,7 @@ protected:
 
   void expected_dispatch_knit() {
     // starts in state `s_knit`
-    ASSERT_TRUE(fsm->getState() == s_knit);
+    ASSERT_EQ(fsm->getState(), s_knit);
 
     EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, HIGH)); // green LED on
     expected_dispatch();
@@ -190,7 +196,7 @@ protected:
 
   void expected_dispatch_test() {
     // starts in state `s_test`
-    ASSERT_TRUE(fsm->getState() == s_test);
+    ASSERT_EQ(fsm->getState(), s_test);
 
     EXPECT_CALL(*testerMock, loop);
     expected_dispatch();
@@ -201,7 +207,7 @@ protected:
 
   void expected_dispatch_error(unsigned long t) {
     // starts in state `s_error`
-    ASSERT_TRUE(fsm->getState() == s_error);
+    ASSERT_EQ(fsm->getState(), s_error);
 
     EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(t));
     expected_dispatch();
@@ -216,11 +222,16 @@ protected:
 
 TEST_F(FsmTest, test_setState) {
   fsm->setState(s_ready);
-  expected_dispatch_init();
+  expected_dispatch_wait_for_machine();
   ASSERT_TRUE(fsm->getState() == s_ready);
 }
 
 TEST_F(FsmTest, test_dispatch_init) {
+  // Get to init
+  fsm->setState(s_init);
+  expected_dispatch_wait_for_machine();
+  ASSERT_EQ(fsm->getState(), s_init);
+
   // no transition to state `s_ready`
   expected_isr(Left, Left, 0);
   expected_dispatch_init();
@@ -255,7 +266,7 @@ TEST_F(FsmTest, test_dispatch_init) {
 TEST_F(FsmTest, test_dispatch_test) {
   // get in state `s_test`
   fsm->setState(s_test);
-  expected_dispatch_init();
+  expected_dispatch_wait_for_machine();
 
   // now in state `s_test`
   expected_dispatch_test();
@@ -273,7 +284,7 @@ TEST_F(FsmTest, test_dispatch_test) {
 TEST_F(FsmTest, test_dispatch_knit) {
   // get to state `s_ready`
   fsm->setState(s_ready);
-  expected_dispatch_init();
+  expected_dispatch_wait_for_machine();
 
   // get to state `s_knit`
   fsm->setState(s_knit);
@@ -292,7 +303,7 @@ TEST_F(FsmTest, test_dispatch_knit) {
 TEST_F(FsmTest, test_dispatch_error) {
   // get to state `s_error`
   fsm->setState(s_error);
-  expected_dispatch_init();
+  expected_dispatch_wait_for_machine();
 
   // now in state `s_error`
   expected_dispatch_error(0);
@@ -325,7 +336,7 @@ TEST_F(FsmTest, test_dispatch_error) {
 TEST_F(FsmTest, test_dispatch_default) {
   // get to default state
   fsm->setState(static_cast<OpState_t>(99));
-  expected_dispatch_init();
+  expected_dispatch_wait_for_machine();
   ASSERT_TRUE(static_cast<uint8_t>(fsm->getState()) == 99);
 
   // now in default state

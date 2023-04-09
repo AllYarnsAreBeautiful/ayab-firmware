@@ -60,7 +60,7 @@ void Knitter::init() {
   // FIXME(TP): should this go in `main()`?
   GlobalSolenoids::init();
 
-  setUpInterrupt();
+  //setUpInterrupt();
 
   // explicitly initialize members
 
@@ -130,6 +130,9 @@ Err_t Knitter::initMachine(Machine_t machineType) {
   }
 
   m_machineType = machineType;
+
+  // Now that we have enough start state, we can set up interrupts
+  setUpInterrupt();
 
   GlobalEncoders::init(machineType);
   GlobalFsm::setState(s_init);
