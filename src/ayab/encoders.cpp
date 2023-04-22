@@ -27,7 +27,6 @@
 #include <Arduino.h>
 
 #include "encoders.h"
-#include "com.h"
 
 
 /*!
@@ -165,8 +164,6 @@ void Encoders::encA_rising() {
     } else if (m_carriage == NoCarriage) {
       m_carriage = detected_carriage;
     } else if (m_carriage != detected_carriage && m_position > start_position) {
-      // If we encounter another magnet and we're beyond where we detected the first one
-      // Must be the garter carriage.
       m_carriage = Garter;
 
       // Belt shift and start position were set when the first magnet passed
@@ -200,13 +197,6 @@ void Encoders::encA_falling() {
     if (m_position > END_LEFT[m_machineType]) {
       m_position--;
     }
-  }
-
-  // The garter carriage has a second set of magnets that are going to 
-  // pass the sensor and will reset state incorrectly if allowed to
-  // continue.
-  if (m_carriage == Garter) {
-    return;
   }
 
   // In front of Right Hall Sensor?
