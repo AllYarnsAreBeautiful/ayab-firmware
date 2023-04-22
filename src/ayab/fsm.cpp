@@ -38,8 +38,8 @@
 // Public methods
 
 void Fsm::init() {
-  m_currentState = s_init;
-  m_nextState = s_init;
+  m_currentState = s_wait_for_machine;
+  m_nextState = s_wait_for_machine;
   m_flash = false;
   m_flashTime = millis();
   m_error = SUCCESS;

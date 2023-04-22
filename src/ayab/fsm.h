@@ -26,7 +26,7 @@
 
 #include "com.h"
 
-enum OpState { s_init, s_ready, s_knit, s_test, s_error };
+enum OpState { s_wait_for_machine, s_init, s_ready, s_knit, s_test, s_error };
 using OpState_t = enum OpState;
 
 class FsmInterface {

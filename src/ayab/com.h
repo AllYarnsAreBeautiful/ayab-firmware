@@ -61,6 +61,8 @@ enum AYAB_API {
   autoTestCmd_msgid = 0x2d,
   stopCmd_msgid = 0x2e,
   quitCmd_msgid = 0x2f,
+  reqInit_msgid = 0x30,
+  cnfInit_msgid = 0x31,
   testRes_msgid = 0xe0,
   debug_msgid = 0x99
 };
@@ -176,6 +178,7 @@ private:
   uint8_t lineBuffer[MAX_LINE_BUFFER_LEN] = {0};
   uint8_t msgBuffer[MAX_MSG_BUFFER_LEN] = {0};
 
+  void h_reqInit(const uint8_t *buffer, size_t size);
   void h_reqStart(const uint8_t *buffer, size_t size);
   void h_cnfLine(const uint8_t *buffer, size_t size);
   void h_reqInfo();
@@ -183,6 +186,7 @@ private:
   void h_unrecognized();
 
   void send_cnfInfo();
+  void send_cnfInit(Err_t error);
   void send_cnfStart(Err_t error);
   void send_cnfTest(Err_t error);
 #ifdef AYAB_ENABLE_CRC

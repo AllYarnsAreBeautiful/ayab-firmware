@@ -28,6 +28,7 @@
 
 #include "encoders.h"
 
+
 /*!
  * \brief Service encoder A interrupt routine.
  *

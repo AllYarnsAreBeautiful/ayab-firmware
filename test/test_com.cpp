@@ -88,6 +88,12 @@ protected:
     expect_write(once);
     com->onPacketReceived(buffer, size);
   }
+
+  void reqInit(Machine_t machine) {
+    uint8_t buffer[] = {reqInit_msgid, static_cast<uint8_t>(machine), 0x2D};
+    EXPECT_CALL(*fsmMock, setState(s_init));
+    expected_write_onPacketReceived(buffer, sizeof(buffer), true);
+  }
 };
 
 /*
@@ -120,7 +126,7 @@ TEST_F(ComTest, test_reqtest_success_KH270) {
 
 TEST_F(ComTest, test_reqstart_fail1) {
   // checksum wrong
-  uint8_t buffer[] = {reqStart_msgid, 0, 0, 10, 1, 0x73};
+  uint8_t buffer[] = {reqStart_msgid, 0, 10, 1, 0x73};
   EXPECT_CALL(*knitterMock, startKnitting).Times(0);
   expected_write_onPacketReceived(buffer, sizeof(buffer), true);
 
@@ -130,7 +136,7 @@ TEST_F(ComTest, test_reqstart_fail1) {
 
 TEST_F(ComTest, test_reqstart_fail2) {
   // not enough bytes
-  uint8_t buffer[] = {reqStart_msgid, 0, 0, 10, 1, 0x74};
+  uint8_t buffer[] = {reqStart_msgid, 0, 1, 0x74};
   EXPECT_CALL(*knitterMock, startKnitting).Times(0);
   expected_write_onPacketReceived(buffer, sizeof(buffer) - 1, true);
 
@@ -139,7 +145,8 @@ TEST_F(ComTest, test_reqstart_fail2) {
 }
 
 TEST_F(ComTest, test_reqstart_success_KH910) {
-  uint8_t buffer[] = {reqStart_msgid, 0, 0, 10, 1, 0x74};
+  reqInit(Kh910);
+  uint8_t buffer[] = {reqStart_msgid, 0, 10, 1, 0x36};
   EXPECT_CALL(*knitterMock, startKnitting);
   expected_write_onPacketReceived(buffer, sizeof(buffer), false);
 
@@ -148,7 +155,8 @@ TEST_F(ComTest, test_reqstart_success_KH910) {
 }
 
 TEST_F(ComTest, test_reqstart_success_KH270) {
-  uint8_t buffer[] = {reqStart_msgid, 2, 0, 10, 1, 0x73};
+  reqInit(Kh270);
+  uint8_t buffer[] = {reqStart_msgid, 0, 10, 1, 0x36};
   EXPECT_CALL(*knitterMock, startKnitting);
   expected_write_onPacketReceived(buffer, sizeof(buffer), false);
 
@@ -271,7 +279,8 @@ TEST_F(ComTest, test_cnfline_kh910) {
                         0xA7}; // CRC8
 
   // start KH910 job
-  knitterMock->startKnitting(Kh910, 0, 199, pattern, false);
+  knitterMock->initMachine(Kh910);
+  knitterMock->startKnitting(0, 199, pattern, false);
 
   // first call increments line number to zero, not accepted
   EXPECT_CALL(*knitterMock, setNextLine).WillOnce(Return(false));

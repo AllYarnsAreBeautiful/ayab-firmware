@@ -60,8 +60,6 @@ void Knitter::init() {
   // FIXME(TP): should this go in `main()`?
   GlobalSolenoids::init();
 
-  setUpInterrupt();
-
   // explicitly initialize members
 
   // job parameters
@@ -118,17 +116,8 @@ void Knitter::isr() {
   m_carriage = GlobalEncoders::getCarriage();
 }
 
-/*!
- * \brief Enter knit state.
- *
- * Note (August 2020): the return value of this function has changed.
- * Previously, it returned `true` for success and `false` for failure.
- * Now, it returns `0` for success and an informative error code otherwise.
- */
-Err_t Knitter::startKnitting(Machine_t machineType, uint8_t startNeedle,
-                             uint8_t stopNeedle, uint8_t *pattern_start,
-                             bool continuousReportingEnabled) {
-  if (GlobalFsm::getState() != s_ready) {
+Err_t Knitter::initMachine(Machine_t machineType) {
+  if (GlobalFsm::getState() != s_wait_for_machine) {
     return WRONG_MACHINE_STATE;
   }
   if (machineType == NoMachine) {
@@ -137,15 +126,39 @@ Err_t Knitter::startKnitting(Machine_t machineType, uint8_t startNeedle,
   if (machineType >= NUM_MACHINES) {
     return MACHINE_TYPE_INVALID;
   }
+
+  m_machineType = machineType;
+
+  GlobalEncoders::init(machineType);
+  GlobalFsm::setState(s_init);
+
+  // Now that we have enough start state, we can set up interrupts
+  setUpInterrupt();
+
+  return SUCCESS;
+}
+
+/*!
+ * \brief Enter knit state.
+ *
+ * Note (August 2020): the return value of this function has changed.
+ * Previously, it returned `true` for success and `false` for failure.
+ * Now, it returns `0` for success and an informative error code otherwise.
+ */
+Err_t Knitter::startKnitting(uint8_t startNeedle,
+                             uint8_t stopNeedle, uint8_t *pattern_start,
+                             bool continuousReportingEnabled) {
+  if (GlobalFsm::getState() != s_ready) {
+    return WRONG_MACHINE_STATE;
+  }
   if (pattern_start == nullptr) {
     return NULL_POINTER_ARGUMENT;
   }
-  if (startNeedle >= stopNeedle || stopNeedle >= NUM_NEEDLES[machineType]) {
+  if (startNeedle >= stopNeedle || stopNeedle >= NUM_NEEDLES[m_machineType]) {
     return NEEDLE_VALUE_INVALID;
   }
 
   // record argument values
-  m_machineType = machineType;
   m_startNeedle = startNeedle;
   m_stopNeedle = stopNeedle;
   m_lineBuffer = pattern_start;
@@ -156,9 +169,6 @@ Err_t Knitter::startKnitting(Machine_t machineType, uint8_t startNeedle,
                                    // be incremented before request
   m_lineRequested = false;
   m_lastLineFlag = false;
-
-  // initialize encoders
-  GlobalEncoders::init(machineType);
 
   // proceed to next state
   GlobalFsm::setState(s_knit);

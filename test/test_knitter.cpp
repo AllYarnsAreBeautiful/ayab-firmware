@@ -169,8 +169,8 @@ protected:
   }
 
   void expected_get_ready() {
-    // starts in state `s_init`
-    ASSERT_TRUE(fsm->getState() == s_init);
+    // starts in state `s_wait_for_machine`
+    ASSERT_EQ(fsm->getState(), s_init);
 
     EXPECT_CALL(*solenoidsMock, setSolenoids(SOLENOIDS_BITMASK));
     expect_indState();
@@ -179,7 +179,16 @@ protected:
     ASSERT_EQ(fsm->getState(), s_ready);
   }
 
-  void get_to_ready() {
+  void expected_init_machine(Machine_t m) {
+    // Init the machine
+    ASSERT_EQ(knitter->initMachine(m), SUCCESS);
+    expected_dispatch();
+
+    ASSERT_EQ(fsm->getState(), s_init);
+  }
+
+  void get_to_ready(Machine_t m) {
+    expected_init_machine(m);
     // Machine is initialized when Left hall sensor
     // is passed in Right direction inside active needles.
     uint8_t position = get_position_past_left();
@@ -188,12 +197,11 @@ protected:
   }
 
   void get_to_knit(Machine_t m) {
-    knitter->setMachineType(m);
-    get_to_ready();
+    EXPECT_CALL(*encodersMock, init);
+    get_to_ready(m);
     uint8_t pattern[] = {1};
     EXPECT_CALL(*beeperMock, ready);
-    EXPECT_CALL(*encodersMock, init);
-    ASSERT_EQ(knitter->startKnitting(m, 0, NUM_NEEDLES[m] - 1, pattern, false), SUCCESS);
+    ASSERT_EQ(knitter->startKnitting(0, NUM_NEEDLES[m] - 1, pattern, false), SUCCESS);
     expected_dispatch_ready();
 
     // ends in state `s_knit`
@@ -215,7 +223,7 @@ protected:
 
   void expected_dispatch_init() {
     // starts in state `s_init`
-    ASSERT_TRUE(fsm->getState() == s_init);
+    ASSERT_EQ(fsm->getState(), s_init);
 
     EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, LOW));
     expected_dispatch();
@@ -231,7 +239,7 @@ protected:
 
   void expected_dispatch_test() {
     // starts in state `s_test`
-    ASSERT_TRUE(fsm->getState() == s_test);
+    ASSERT_EQ(fsm->getState(), s_test);
 
     expect_indState();
     EXPECT_CALL(*testerMock, loop);
@@ -267,9 +275,9 @@ TEST_F(KnitterTest, test_startKnitting_NoMachine) {
   uint8_t pattern[] = {1};
   Machine_t m = knitter->getMachineType();
   ASSERT_EQ(m, NoMachine);
-  get_to_ready();
+  ASSERT_TRUE(knitter->initMachine(m) != 0);
   ASSERT_TRUE(
-      knitter->startKnitting(m, 0, NUM_NEEDLES[m] - 1, pattern, false) != 0);
+      knitter->startKnitting(0, NUM_NEEDLES[m] - 1, pattern, false) != 0);
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
@@ -277,8 +285,8 @@ TEST_F(KnitterTest, test_startKnitting_NoMachine) {
 
 TEST_F(KnitterTest, test_startKnitting_invalidMachine) {
   uint8_t pattern[] = {1};
-  get_to_ready();
-  ASSERT_TRUE(knitter->startKnitting(NUM_MACHINES, 0, 1, pattern, false) != 0);
+  ASSERT_TRUE(knitter->initMachine(NUM_MACHINES) != 0);
+  ASSERT_TRUE(knitter->startKnitting(0, 1, pattern, false) != 0);
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
@@ -286,7 +294,7 @@ TEST_F(KnitterTest, test_startKnitting_invalidMachine) {
 
 TEST_F(KnitterTest, test_startKnitting_notReady) {
   uint8_t pattern[] = {1};
-  ASSERT_TRUE(knitter->startKnitting(Kh910, 0, NUM_NEEDLES[Kh910] - 1, pattern,
+  ASSERT_TRUE(knitter->startKnitting(0, NUM_NEEDLES[Kh910] - 1, pattern,
                                      false) != 0);
 
   // test expectations without destroying instance
@@ -315,17 +323,17 @@ TEST_F(KnitterTest, test_startKnitting_Kh270) {
 
 TEST_F(KnitterTest, test_startKnitting_failures) {
   uint8_t pattern[] = {1};
-  get_to_ready();
+  get_to_ready(Kh910);
 
   // `m_stopNeedle` lower than `m_startNeedle`
-  ASSERT_TRUE(knitter->startKnitting(Kh910, 1, 0, pattern, false) != 0);
+  ASSERT_TRUE(knitter->startKnitting(1, 0, pattern, false) != 0);
 
   // `m_stopNeedle` out of range
-  ASSERT_TRUE(knitter->startKnitting(Kh910, 0, NUM_NEEDLES[Kh910], pattern,
+  ASSERT_TRUE(knitter->startKnitting(0, NUM_NEEDLES[Kh910], pattern,
                                      false) != 0);
 
   // null pattern
-  ASSERT_TRUE(knitter->startKnitting(Kh910, 0, NUM_NEEDLES[Kh910] - 1, nullptr,
+  ASSERT_TRUE(knitter->startKnitting(0, NUM_NEEDLES[Kh910] - 1, nullptr,
                                      false) != 0);
 
   // test expectations without destroying instance
@@ -335,14 +343,13 @@ TEST_F(KnitterTest, test_startKnitting_failures) {
 }
 
 TEST_F(KnitterTest, test_setNextLine) {
+  // set `m_lineRequested`
   ASSERT_EQ(knitter->setNextLine(1), false);
 
-  // set `m_lineRequested`
-  EXPECT_CALL(*solenoidsMock, setSolenoid).Times(1);
   expected_dispatch_knit(true);
 
   // outside of the active needles
-  expected_isr(40 + NUM_NEEDLES[Kh910] - 1 + END_OF_LINE_OFFSET_R[Kh910] + 1);
+  expected_isr(NUM_NEEDLES[Kh910] + END_OF_LINE_OFFSET_R[Kh910] + 1 + knitter->getStartOffset(Left));
   EXPECT_CALL(*solenoidsMock, setSolenoid).Times(1);
   expected_dispatch_knit(false);
 
@@ -366,24 +373,22 @@ TEST_F(KnitterTest, test_setNextLine) {
 }
 
 TEST_F(KnitterTest, test_knit_Kh910) {
-  get_to_ready();
+  get_to_ready(Kh910);
 
   // knit
   uint8_t pattern[] = {1};
 
   // `m_startNeedle` is greater than `m_pixelToSet`
   EXPECT_CALL(*beeperMock, ready);
-  EXPECT_CALL(*encodersMock, init);
   const uint8_t START_NEEDLE = NUM_NEEDLES[Kh910] - 2;
   const uint8_t STOP_NEEDLE = NUM_NEEDLES[Kh910] - 1;
-  knitter->startKnitting(Kh910, START_NEEDLE, STOP_NEEDLE, pattern, true);
+  knitter->startKnitting(START_NEEDLE, STOP_NEEDLE, pattern, true);
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, LOW)); // green LED off
   expected_dispatch();
 
   // first knit
   expect_first_knit();
   expect_indState();
-  EXPECT_CALL(*solenoidsMock, setSolenoid);
   expected_dispatch_knit(false);
 
   // no useful position calculated by `calculatePixelAndSolenoid()`
@@ -412,17 +417,16 @@ TEST_F(KnitterTest, test_knit_Kh910) {
 }
 
 TEST_F(KnitterTest, test_knit_Kh270) {
-  get_to_ready();
+  get_to_ready(Kh270);
 
   // knit
   uint8_t pattern[] = {1};
 
   // `m_startNeedle` is greater than `m_pixelToSet`
   EXPECT_CALL(*beeperMock, ready);
-  EXPECT_CALL(*encodersMock, init);
   const uint8_t START_NEEDLE = NUM_NEEDLES[Kh270] - 2;
   const uint8_t STOP_NEEDLE = NUM_NEEDLES[Kh270] - 1;
-  knitter->startKnitting(Kh270, START_NEEDLE, STOP_NEEDLE, pattern, true);
+  knitter->startKnitting(START_NEEDLE, STOP_NEEDLE, pattern, true);
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, LOW));
   expected_dispatch();
 
@@ -464,8 +468,6 @@ TEST_F(KnitterTest, test_knit_Kh270) {
 }
 
 TEST_F(KnitterTest, test_knit_line_request) {
-  EXPECT_CALL(*solenoidsMock, setSolenoid);
-
   // `m_workedOnLine` is set to `true`
   expected_dispatch_knit(true);
 
@@ -487,15 +489,18 @@ TEST_F(KnitterTest, test_knit_line_request) {
   ASSERT_TRUE(Mock::VerifyAndClear(comMock));
 }
 
-TEST_F(KnitterTest, test_knit_lastLine) {
-  EXPECT_CALL(*solenoidsMock, setSolenoid);
-
-  // `m_workedOnLine` is set to true
+TEST_F(KnitterTest, test_knit_lastLine) {  
   expected_dispatch_knit(true);
+
+  // Run one knit inside the working needles.
+  EXPECT_CALL(*solenoidsMock, setSolenoid);
+  expected_isr(knitter->getStartOffset(Left) + 20);
+  // `m_workedOnLine` is set to true
+  expected_dispatch_knit(false);
 
   // Position has changed since last call to operate function
   // `m_pixelToSet` is above `m_stopNeedle` + END_OF_LINE_OFFSET_R
-  expected_isr(NUM_NEEDLES[Kh910] + 8 + END_OF_LINE_OFFSET_R[Kh910] + 1);
+  expected_isr(NUM_NEEDLES[Kh910] + END_OF_LINE_OFFSET_R[Kh910] + 1 + knitter->getStartOffset(Left));
 
   // `m_lastLineFlag` is `true`
   knitter->setLastLine();
@@ -546,7 +551,6 @@ TEST_F(KnitterTest, test_knit_lastLine_and_no_req) {
 }
 
 TEST_F(KnitterTest, test_knit_same_position) {
-  EXPECT_CALL(*solenoidsMock, setSolenoid);
   expected_dispatch_knit(true);
 
   // no call to `setSolenoid()` since position was the same
@@ -561,14 +565,18 @@ TEST_F(KnitterTest, test_knit_same_position) {
 }
 
 TEST_F(KnitterTest, test_knit_new_line) {
-  EXPECT_CALL(*solenoidsMock, setSolenoid);
-
   // _workedOnLine is set to true
   expected_dispatch_knit(true);
 
+  // Run one knit inside the working needles.
+  EXPECT_CALL(*solenoidsMock, setSolenoid);
+  expected_isr(knitter->getStartOffset(Left) + 20);
+  // `m_workedOnLine` is set to true
+  expected_dispatch_knit(false);
+
   // Position has changed since last call to operate function
   // `m_pixelToSet` is above `m_stopNeedle` + END_OF_LINE_OFFSET_R
-  expected_isr(NUM_NEEDLES[Kh910] + 8 + END_OF_LINE_OFFSET_R[Kh910] + 1);
+  expected_isr(NUM_NEEDLES[Kh910] + END_OF_LINE_OFFSET_R[Kh910] + 1 + knitter->getStartOffset(Left));
 
   // set `m_lineRequested` to `false`
   EXPECT_CALL(*beeperMock, finishedLine);
@@ -589,7 +597,7 @@ TEST_F(KnitterTest, test_knit_new_line) {
 
 TEST_F(KnitterTest, test_calculatePixelAndSolenoid) {
   // initialize
-  knitter->setMachineType(Kh910);
+  expected_init_machine(Kh910);
   fsm->setState(s_test);
   expected_dispatch_init();
 
@@ -672,7 +680,8 @@ TEST_F(KnitterTest, test_getStartOffset) {
 }
 
 TEST_F(KnitterTest, test_fsm_init_LL) {
-  knitter->setMachineType(Kh910);
+  expected_init_machine(Kh910);
+
   // not ready
   expected_isr(get_position_past_right(), Left, Left);
   expected_dispatch_init();
@@ -685,7 +694,8 @@ TEST_F(KnitterTest, test_fsm_init_LL) {
 }
 
 TEST_F(KnitterTest, test_fsm_init_RR) {
-  knitter->setMachineType(Kh910);
+  expected_init_machine(Kh910);
+
   // still not ready
   expected_isr(get_position_past_left(), Right, Right);
   expected_dispatch_init();
@@ -698,6 +708,8 @@ TEST_F(KnitterTest, test_fsm_init_RR) {
 }
 
 TEST_F(KnitterTest, test_fsm_init_RL) {
+  expected_init_machine(Kh910);
+
   // Machine is initialized when Left hall sensor
   // is passed in Right direction inside active needles.
   expected_isr(get_position_past_left(), Right, Left);
@@ -710,7 +722,8 @@ TEST_F(KnitterTest, test_fsm_init_RL) {
 }
 
 TEST_F(KnitterTest, test_fsm_init_LR) {
-  knitter->setMachineType(Kh910);
+  expected_init_machine(Kh910);
+
   // New feature (August 2020): the machine is also initialized
   // when the right Hall sensor is passed in the Left direction.
   expected_isr(get_position_past_right(), Left, Right);
