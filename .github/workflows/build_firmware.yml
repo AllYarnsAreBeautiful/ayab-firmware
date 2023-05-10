@@ -18,6 +18,11 @@ jobs:
       run: |
         ./build.sh
         ls build
+    - name: Cache build asset
+      uses: actions/cache/save@v3
+      with:
+        path: build/*.hex
+        key: build-${{ hashFiles('build/*.hex') }}
     - name: Archive Build
       uses: actions/upload-artifact@v3
       with:
@@ -39,6 +44,13 @@ jobs:
         echo "sha-short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
         echo "tag=$(git describe --tags)" >> $GITHUB_OUTPUT
         echo "draft=$(git describe --tags | sed -e 's/^test.*/true/;s/^v.*/false/')" >> $GITHUB_OUTPUT
+    - name: Restore cached asset
+      id:   restore-cache
+      uses: actions/cache@v3
+      with:
+        path: build/*.hex
+        key:  build-${{ hashFiles('build/*.hex') }}
+        fail-on-cache-miss: true
     - name: Create release
       uses: ncipollo/release-action@v1
       with:
