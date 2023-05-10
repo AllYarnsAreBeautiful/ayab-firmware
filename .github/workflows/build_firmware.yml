@@ -25,7 +25,7 @@ jobs:
         path: build/*.hex
 
   build-release:
-    if:  ${{ (github.event_name == 'push') && (github.ref_type == 'tag') && (startsWith(github.ref_name, 'v') || startsWith(github.ref_name == 'test')) }}
+    if:  ${{ (github.event_name == 'push') && (github.ref_type == 'tag') && (startsWith(github.ref_name, 'v') || startsWith(github.ref_name, 'test')) }}
     needs: build-firmware
     runs-on: ubuntu-latest
     steps:
