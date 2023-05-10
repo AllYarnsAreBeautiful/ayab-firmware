@@ -29,7 +29,7 @@ jobs:
         name: ${{format('{0}-{1}',github.sha,github.run_number)}}
         path: build/*.hex
 
-  build-release:
+  release-firmware:
     if:  ${{ (github.event_name == 'push') && (github.ref_type == 'tag') && (startsWith(github.ref_name, 'v') || startsWith(github.ref_name, 'test')) }}
     needs: build-firmware
     runs-on: ubuntu-latest
@@ -63,7 +63,8 @@ jobs:
         draft: ${{ steps.vars.outputs.draft }}
         prerelease: false
         allowUpdates: true
-        replacesArtifacts: false
+        artifacts: AYAB-firmware-${{ steps.vars.outputs.tag }}
+        replacesArtifacts: true
     - name: Upload asset
       uses: actions/upload-artifact@v3
       with:
