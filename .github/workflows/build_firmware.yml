@@ -63,10 +63,5 @@ jobs:
         draft: ${{ steps.vars.outputs.draft }}
         prerelease: false
         allowUpdates: true
-        artifacts: AYAB-firmware-${{ steps.vars.outputs.tag }}
+        artifacts: build/*.hex
         replacesArtifacts: true
-    - name: Upload asset
-      uses: actions/upload-artifact@v3
-      with:
-        name: AYAB-firmware-${{ steps.vars.outputs.tag }}
-        path: build/*.hex
