@@ -99,7 +99,7 @@ void Fsm::state_init() {
   digitalWrite(LED_PIN_A, LOW); // green LED off
   if (GlobalKnitter::isReady()) {
     setState(s_ready);
-  }
+  } 
 }
 
 void Fsm::state_ready() {
