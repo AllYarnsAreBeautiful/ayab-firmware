@@ -55,7 +55,7 @@ void Tester::helpCmd() {
  */
 void Tester::sendCmd() {
   GlobalCom::sendMsg(testRes_msgid, "Called send\n");
-  uint8_t p[] = {1, 2, 3};
+  uint8_t p[] = {0x31, 0x32, 0x33};
   GlobalCom::send(p, 3);
   GlobalCom::sendMsg(testRes_msgid, "\n");
 }
