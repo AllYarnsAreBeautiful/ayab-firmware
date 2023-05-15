@@ -60,7 +60,7 @@ void Knitter::init() {
   // FIXME(TP): should this go in `main()`?
   GlobalSolenoids::init();
 
-  setUpInterrupt();
+  //setUpInterrupt();
 
   // explicitly initialize members
 
@@ -117,9 +117,6 @@ void Knitter::isr() {
   m_beltShift = GlobalEncoders::getBeltShift();
   m_carriage = GlobalEncoders::getCarriage();
 
-  char buff[256];
-    sprintf(buff, "isr %x ", m_position);
-  GlobalCom::sendMsg(debug_msgid, buff);
 }
 
 Err_t Knitter::initMachine(Machine_t machineType) {
@@ -139,7 +136,7 @@ Err_t Knitter::initMachine(Machine_t machineType) {
   GlobalFsm::setState(s_init);
 
   // Now that we have enough start state, we can set up interrupts
-  //setUpInterrupt();
+  setUpInterrupt();
 
   return SUCCESS;
 }
@@ -154,6 +151,7 @@ Err_t Knitter::initMachine(Machine_t machineType) {
 Err_t Knitter::startKnitting(uint8_t startNeedle,
                              uint8_t stopNeedle, uint8_t *pattern_start,
                              bool continuousReportingEnabled) {
+  GlobalBeeper::ready();
   if (GlobalFsm::getState() != s_ready) {
     return WRONG_MACHINE_STATE;
   }
@@ -198,11 +196,7 @@ void Knitter::encodePosition() {
 // if this function returns true then
 // the FSM will move from state `s_init` to `s_ready`
 bool Knitter::isReady() {
-  
 #ifdef DBG_NOMACHINE
-  //char buff[256];
-  //sprintf(buff, "noMachine %d %d end", m_lastHall, m_position);
-  //GlobalCom::sendMsg(debug_msgid, buff);
   bool state = digitalRead(DBG_BTN_PIN);
 
   // TODO(who?): check if debounce is needed
@@ -225,22 +219,12 @@ bool Knitter::isReady() {
   // New feature (August 2020): the machine is also initialized
   // when the right Hall sensor is passed in Left direction.
   if (passedLeft || passedRight) {
-    //sprintf(buff, "isReady has passed %d %d end", m_lastHall, m_position);
-    //GlobalCom::sendMsg(debug_msgid, buff);
 #endif // DBG_NOMACHINE
 
     GlobalSolenoids::setSolenoids(SOLENOIDS_BITMASK);
     indState(SUCCESS);
     return true; // move to `s_ready`
-  } else {
-    /*char buff[256];
-    if (m_lastHall != NoDirection) {
-      sprintf(buff, "hall set");
-    } else {
-      sprintf(buff, "hall not set %x ", m_position);
-    }
-    GlobalCom::sendMsg(debug_msgid, buff);*/
-  }
+  } 
 
 #ifdef DBG_NOMACHINE
   m_prevState = state;

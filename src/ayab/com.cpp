@@ -25,6 +25,8 @@
 #include "com.h"
 #include "knitter.h"
 #include "tester.h"
+#include "beeper.h"
+
 
 void Com::init() {
   m_packetSerial.begin(SERIAL_BAUDRATE);

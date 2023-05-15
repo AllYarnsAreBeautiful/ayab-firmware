@@ -190,7 +190,7 @@ void Encoders::encA_rising() {
  */
 void Encoders::encA_falling() {
   // Update direction
-  m_direction = digitalRead(ENC_PIN_B) != 0 ? Right : Left;
+  m_direction = digitalRead(ENC_PIN_B) ? Left : Right;
 
   // Update carriage position
   if (Left == m_direction) {
