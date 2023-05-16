@@ -62,8 +62,7 @@ To set up a working development environment follow these steps:
  
     Ubuntu:
     ```bash
-    sudo apt install -y python3-pip
-    pip install --user pre-commit
+    sudo apt install -y pre-commit
     pre-commit install
     ```
 
