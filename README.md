@@ -72,12 +72,14 @@ To set up a working development environment follow these steps:
     pre-commit install
     ```
 
- 5. Optionally create a pre-push hook.
-
- Add the following snippet in a file called `.git/hooks/pre-push`:
-    ```
+ 5. Optionally create a pre-push hook:
+ 
+    ```bash
+    cat << SNIPPET >> .git/hooks/pre-push
     #!/bin/bash
     set -e
     ./build.sh
     ./test/test.sh -c
+    SNIPPET
+    chmod +x .git/hooks/pre-push
     ```
