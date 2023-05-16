@@ -58,7 +58,7 @@ To set up a working development environment follow these steps:
     brew install clang-format gcovr gcc
     ```
 
- 4. Install [pre-commit](https://pre-commit.com/) via pip and use it to install git hooks.
+ 4. Install [pre-commit](https://pre-commit.com/) and use it to install git hooks.
  
     Ubuntu:
     ```bash
