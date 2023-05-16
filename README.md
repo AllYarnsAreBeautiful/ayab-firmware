@@ -22,7 +22,7 @@ To set up a working development environment follow these steps:
 
  1. Clone the repository and update all submodules.
 
-    Ubuntu (>= 22.04)
+    Ubuntu (>= 22.04):
     ```bash
     sudo apt install -y git
     git clone --recurse-submodules https://github.com/AllYarnsAreBeautiful/ayab-firmware.git ayab
