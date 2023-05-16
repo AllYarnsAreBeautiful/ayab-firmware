@@ -48,7 +48,7 @@ To set up a working development environment follow these steps:
 
     Ubuntu:
     ```bash
-    sudo apt install -y python3-pip clang-format gcovr \
+    sudo apt install -y clang-format gcovr \
                         gcc-9 g++-9 cpp-9 gcc-9-base gcc-10-base \
                         libgcc-9-dev libstdc++-9-dev
     ```
