@@ -17,14 +17,14 @@
  *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
  *
  *    Original Work Copyright 2013 Christian Obersteiner, Andreas Müller
- *    Modified Work Copyright 2020 Sturla Lange, Tom Price
+ *    Modified Work Copyright 2020-3 Sturla Lange, Tom Price
  *    http://ayab-knitting.com
  */
 
 #include <fsm.h>
 #include <fsm_mock.h>
 
-static FsmMock *gFsmMock = NULL;
+static FsmMock *gFsmMock = nullptr;
 
 FsmMock *fsmMockInstance() {
   if (!gFsmMock) {
@@ -36,26 +36,26 @@ FsmMock *fsmMockInstance() {
 void releaseFsmMock() {
   if (gFsmMock) {
     delete gFsmMock;
-    gFsmMock = NULL;
+    gFsmMock = nullptr;
   }
 }
 
 void Fsm::init() {
-  assert(gFsmMock != NULL);
+  assert(gFsmMock != nullptr);
   gFsmMock->init();
 }
 
 OpState_t Fsm::getState() {
-  assert(gFsmMock != NULL);
+  assert(gFsmMock != nullptr);
   return gFsmMock->getState();
 }
 
 void Fsm::setState(OpState_t state) {
-  assert(gFsmMock != NULL);
+  assert(gFsmMock != nullptr);
   gFsmMock->setState(state);
 }
 
 void Fsm::dispatch() {
-  assert(gFsmMock != NULL);
+  assert(gFsmMock != nullptr);
   gFsmMock->dispatch();
 }

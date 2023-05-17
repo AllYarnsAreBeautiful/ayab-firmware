@@ -17,14 +17,14 @@
  *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
  *
  *    Original Work Copyright 2013 Christian Obersteiner, Andreas Müller
- *    Modified Work Copyright 2020 Sturla Lange, Tom Price
+ *    Modified Work Copyright 2020-3 Sturla Lange, Tom Price
  *    http://ayab-knitting.com
  */
 
 #include <com.h>
 #include <com_mock.h>
 
-static ComMock *gComMock = NULL;
+static ComMock *gComMock = nullptr;
 
 ComMock *comMockInstance() {
   if (!gComMock) {
@@ -36,7 +36,7 @@ ComMock *comMockInstance() {
 void releaseComMock() {
   if (gComMock) {
     delete gComMock;
-    gComMock = NULL;
+    gComMock = nullptr;
   }
 }
 

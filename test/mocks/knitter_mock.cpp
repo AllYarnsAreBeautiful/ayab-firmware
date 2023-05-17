@@ -17,14 +17,14 @@
  *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
  *
  *    Original Work Copyright 2013 Christian Obersteiner, Andreas Müller
- *    Modified Work Copyright 2020 Sturla Lange, Tom Price
+ *    Modified Work Copyright 2020-3 Sturla Lange, Tom Price
  *    http://ayab-knitting.com
  */
 
 #include <knitter.h>
 #include <knitter_mock.h>
 
-static KnitterMock *gKnitterMock = NULL;
+static KnitterMock *gKnitterMock = nullptr;
 KnitterMock *knitterMockInstance() {
   if (!gKnitterMock) {
     gKnitterMock = new KnitterMock();
@@ -35,79 +35,79 @@ KnitterMock *knitterMockInstance() {
 void releaseKnitterMock() {
   if (gKnitterMock) {
     delete gKnitterMock;
-    gKnitterMock = NULL;
+    gKnitterMock = nullptr;
   }
 }
 
 void Knitter::init() {
-  assert(gKnitterMock != NULL);
+  assert(gKnitterMock != nullptr);
   gKnitterMock->init();
 }
 
 void Knitter::setUpInterrupt() {
-  assert(gKnitterMock != NULL);
+  assert(gKnitterMock != nullptr);
   gKnitterMock->setUpInterrupt();
 }
 
 void Knitter::isr() {
-  assert(gKnitterMock != NULL);
+  assert(gKnitterMock != nullptr);
   gKnitterMock->isr();
 }
 
 Err_t Knitter::startKnitting(uint8_t startNeedle,
                              uint8_t stopNeedle, uint8_t *pattern_start,
                              bool continuousReportingEnabled) {
-  assert(gKnitterMock != NULL);
+  assert(gKnitterMock != nullptr);
   return gKnitterMock->startKnitting(startNeedle, stopNeedle,
                                      pattern_start, continuousReportingEnabled);
 }
 
 Err_t Knitter::initMachine(Machine_t machineType) {
-  assert(gKnitterMock != NULL);
+  assert(gKnitterMock != nullptr);
   return gKnitterMock->initMachine(machineType);
 }
 
 void Knitter::encodePosition() {
-  assert(gKnitterMock != NULL);
+  assert(gKnitterMock != nullptr);
   gKnitterMock->encodePosition();
 }
 
 bool Knitter::isReady() {
-  assert(gKnitterMock != NULL);
+  assert(gKnitterMock != nullptr);
   return gKnitterMock->isReady();
 }
 
 void Knitter::knit() {
-  assert(gKnitterMock != NULL);
+  assert(gKnitterMock != nullptr);
   gKnitterMock->knit();
 }
 
 void Knitter::indState(Err_t error) {
-  assert(gKnitterMock != NULL);
+  assert(gKnitterMock != nullptr);
   gKnitterMock->indState(error);
 }
 
 uint8_t Knitter::getStartOffset(const Direction_t direction) {
-  assert(gKnitterMock != NULL);
+  assert(gKnitterMock != nullptr);
   return gKnitterMock->getStartOffset(direction);
 }
 
 Machine_t Knitter::getMachineType() {
-  assert(gKnitterMock != NULL);
+  assert(gKnitterMock != nullptr);
   return gKnitterMock->getMachineType();
 }
 
 bool Knitter::setNextLine(uint8_t lineNumber) {
-  assert(gKnitterMock != NULL);
+  assert(gKnitterMock != nullptr);
   return gKnitterMock->setNextLine(lineNumber);
 }
 
 void Knitter::setLastLine() {
-  assert(gKnitterMock != NULL);
+  assert(gKnitterMock != nullptr);
   gKnitterMock->setLastLine();
 }
 
 void Knitter::setMachineType(Machine_t machineType) {
-  assert(gKnitterMock != NULL);
+  assert(gKnitterMock != nullptr);
   return gKnitterMock->setMachineType(machineType);
 }

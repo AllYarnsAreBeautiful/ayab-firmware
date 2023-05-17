@@ -17,13 +17,13 @@
  *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
  *
  *    Original Work Copyright 2013 Christian Obersteiner, Andreas Müller
- *    Modified Work Copyright 2020 Sturla Lange, Tom Price
+ *    Modified Work Copyright 2020-3 Sturla Lange, Tom Price
  *    http://ayab-knitting.com
  */
 
 #include <tester_mock.h>
 
-static TesterMock *gTesterMock = NULL;
+static TesterMock *gTesterMock = nullptr;
 
 TesterMock *testerMockInstance() {
   if (!gTesterMock) {
@@ -35,71 +35,71 @@ TesterMock *testerMockInstance() {
 void releaseTesterMock() {
   if (gTesterMock) {
     delete gTesterMock;
-    gTesterMock = NULL;
+    gTesterMock = nullptr;
   }
 }
 
 Err_t Tester::startTest(Machine_t machineType) {
-  assert(gTesterMock != NULL);
+  assert(gTesterMock != nullptr);
   return gTesterMock->startTest(machineType);
 }
 
 void Tester::loop() {
-  assert(gTesterMock != NULL);
+  assert(gTesterMock != nullptr);
   gTesterMock->loop();
 }
 
 void Tester::helpCmd() {
-  assert(gTesterMock != NULL);
+  assert(gTesterMock != nullptr);
   gTesterMock->helpCmd();
 }
 
 void Tester::sendCmd() {
-  assert(gTesterMock != NULL);
+  assert(gTesterMock != nullptr);
   gTesterMock->sendCmd();
 }
 
 void Tester::beepCmd() {
-  assert(gTesterMock != NULL);
+  assert(gTesterMock != nullptr);
   gTesterMock->beepCmd();
 }
 
 void Tester::setSingleCmd(const uint8_t *buffer, size_t size) {
-  assert(gTesterMock != NULL);
+  assert(gTesterMock != nullptr);
   gTesterMock->setSingleCmd(buffer, size);
 }
 
 void Tester::setAllCmd(const uint8_t *buffer, size_t size) {
-  assert(gTesterMock != NULL);
+  assert(gTesterMock != nullptr);
   gTesterMock->setAllCmd(buffer, size);
 }
 
 void Tester::readEOLsensorsCmd() {
-  assert(gTesterMock != NULL);
+  assert(gTesterMock != nullptr);
   gTesterMock->readEOLsensorsCmd();
 }
 
 void Tester::readEncodersCmd() {
-  assert(gTesterMock != NULL);
+  assert(gTesterMock != nullptr);
   gTesterMock->readEncodersCmd();
 }
 
 void Tester::autoReadCmd() {
-  assert(gTesterMock != NULL);
+  assert(gTesterMock != nullptr);
   gTesterMock->autoReadCmd();
 }
 
 void Tester::autoTestCmd() {
-  assert(gTesterMock != NULL);
+  assert(gTesterMock != nullptr);
   gTesterMock->autoTestCmd();
 }
 
 void Tester::stopCmd() {
-  assert(gTesterMock != NULL);
+  assert(gTesterMock != nullptr);
   gTesterMock->stopCmd();
 }
 
 void Tester::quitCmd() {
-  assert(gTesterMock != NULL);
+  assert(gTesterMock != nullptr);
   gTesterMock->quitCmd();
 }
