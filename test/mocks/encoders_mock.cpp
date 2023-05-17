@@ -17,14 +17,14 @@
  *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
  *
  *    Original Work Copyright 2013 Christian Obersteiner, Andreas Müller
- *    Modified Work Copyright 2020 Sturla Lange, Tom Price
+ *    Modified Work Copyright 2020-3 Sturla Lange, Tom Price
  *    http://ayab-knitting.com
  */
 
 #include <encoders.h>
 #include <encoders_mock.h>
 
-static EncodersMock *gEncodersMock = NULL;
+static EncodersMock *gEncodersMock = nullptr;
 EncodersMock *encodersMockInstance() {
   if (!gEncodersMock) {
     gEncodersMock = new EncodersMock();
@@ -35,51 +35,51 @@ EncodersMock *encodersMockInstance() {
 void releaseEncodersMock() {
   if (gEncodersMock) {
     delete gEncodersMock;
-    gEncodersMock = NULL;
+    gEncodersMock = nullptr;
   }
 }
 
 void Encoders::init(Machine_t machineType) {
-  assert(gEncodersMock != NULL);
+  assert(gEncodersMock != nullptr);
   return gEncodersMock->init(machineType);
 }
 
 void Encoders::encA_interrupt() {
-  assert(gEncodersMock != NULL);
+  assert(gEncodersMock != nullptr);
   gEncodersMock->encA_interrupt();
 }
 
 uint8_t Encoders::getPosition() {
-  assert(gEncodersMock != NULL);
+  assert(gEncodersMock != nullptr);
   return gEncodersMock->getPosition();
 }
 
 BeltShift_t Encoders::getBeltShift() {
-  assert(gEncodersMock != NULL);
+  assert(gEncodersMock != nullptr);
   return gEncodersMock->getBeltShift();
 }
 
 Direction_t Encoders::getDirection() {
-  assert(gEncodersMock != NULL);
+  assert(gEncodersMock != nullptr);
   return gEncodersMock->getDirection();
 }
 
 Direction_t Encoders::getHallActive() {
-  assert(gEncodersMock != NULL);
+  assert(gEncodersMock != nullptr);
   return gEncodersMock->getHallActive();
 }
 
 Carriage_t Encoders::getCarriage() {
-  assert(gEncodersMock != NULL);
+  assert(gEncodersMock != nullptr);
   return gEncodersMock->getCarriage();
 }
 
 Machine_t Encoders::getMachineType() {
-  assert(gEncodersMock != NULL);
+  assert(gEncodersMock != nullptr);
   return gEncodersMock->getMachineType();
 }
 
 uint16_t Encoders::getHallValue(Direction_t dir) {
-  assert(gEncodersMock != NULL);
+  assert(gEncodersMock != nullptr);
   return gEncodersMock->getHallValue(dir);
 }

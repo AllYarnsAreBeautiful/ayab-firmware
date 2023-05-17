@@ -17,13 +17,13 @@
  *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
  *
  *    Original Work Copyright 2013 Christian Obersteiner, Andreas Müller
- *    Modified Work Copyright 2020 Sturla Lange, Tom Price
+ *    Modified Work Copyright 2020-3 Sturla Lange, Tom Price
  *    http://ayab-knitting.com
  */
 
 #include <solenoids_mock.h>
 
-static SolenoidsMock *gSolenoidsMock = NULL;
+static SolenoidsMock *gSolenoidsMock = nullptr;
 SolenoidsMock *solenoidsMockInstance() {
   if (!gSolenoidsMock) {
     gSolenoidsMock = new SolenoidsMock();
@@ -34,19 +34,19 @@ SolenoidsMock *solenoidsMockInstance() {
 void releaseSolenoidsMock() {
   if (gSolenoidsMock) {
     delete gSolenoidsMock;
-    gSolenoidsMock = NULL;
+    gSolenoidsMock = nullptr;
   }
 }
 
 void Solenoids::init(void) {
-  assert(gSolenoidsMock != NULL);
+  assert(gSolenoidsMock != nullptr);
   gSolenoidsMock->init();
 }
 void Solenoids::setSolenoid(uint8_t solenoid, bool state) {
-  assert(gSolenoidsMock != NULL);
+  assert(gSolenoidsMock != nullptr);
   gSolenoidsMock->setSolenoid(solenoid, state);
 }
 void Solenoids::setSolenoids(uint16_t state) {
-  assert(gSolenoidsMock != NULL);
+  assert(gSolenoidsMock != nullptr);
   gSolenoidsMock->setSolenoids(state);
 }

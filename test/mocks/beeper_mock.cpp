@@ -17,13 +17,13 @@
  *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
  *
  *    Original Work Copyright 2013 Christian Obersteiner, Andreas Müller
- *    Modified Work Copyright 2020 Sturla Lange, Tom Price
+ *    Modified Work Copyright 2020-3 Sturla Lange, Tom Price
  *    http://ayab-knitting.com
  */
 
 #include <beeper_mock.h>
 
-static BeeperMock *gBeeperMock = NULL;
+static BeeperMock *gBeeperMock = nullptr;
 BeeperMock *beeperMockInstance() {
   if (!gBeeperMock) {
     gBeeperMock = new BeeperMock();
@@ -34,21 +34,21 @@ BeeperMock *beeperMockInstance() {
 void releaseBeeperMock() {
   if (gBeeperMock) {
     delete gBeeperMock;
-    gBeeperMock = NULL;
+    gBeeperMock = nullptr;
   }
 }
 
 void Beeper::ready() {
-  assert(gBeeperMock != NULL);
+  assert(gBeeperMock != nullptr);
   gBeeperMock->ready();
 }
 
 void Beeper::finishedLine() {
-  assert(gBeeperMock != NULL);
+  assert(gBeeperMock != nullptr);
   gBeeperMock->finishedLine();
 }
 
 void Beeper::endWork() {
-  assert(gBeeperMock != NULL);
+  assert(gBeeperMock != nullptr);
   gBeeperMock->endWork();
 }
