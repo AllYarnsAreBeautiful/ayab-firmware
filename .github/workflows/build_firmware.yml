@@ -13,6 +13,7 @@ jobs:
         submodules: recursive
     - name: Install dependencies
       run: |
+        sudo apt update
         sudo apt-get install arduino-mk
     - name: Build
       run: |
