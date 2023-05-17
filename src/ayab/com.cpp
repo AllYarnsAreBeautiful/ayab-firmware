@@ -93,7 +93,7 @@ void Com::send_indState(Carriage_t carriage, uint8_t position,
       static_cast<uint8_t>(position),
       static_cast<uint8_t>(GlobalEncoders::getDirection()),
   };
-  GlobalCom::send(static_cast<uint8_t *>(payload), INDSTATE_LEN);
+  send(static_cast<uint8_t *>(payload), INDSTATE_LEN);
 }
 
 /*!
