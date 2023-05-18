@@ -3,13 +3,12 @@ project(ayab_test)
 
 set(CMAKE_CXX_STANDARD 11 CACHE STRING "Set the C++ standard to be used for compiling")
 
-# TODO(sl): Create a clang-tidy option, this is really slow!
 if(false)
-set(CMAKE_CXX_CLANG_TIDY
-  clang-tidy
-  -header-filter=.
-  -checks=modernize-*,bugprone-*,cppcoreguidelines-*
-  )
+    set(CMAKE_CXX_CLANG_TIDY
+        clang-tidy
+        -header-filter=.
+        -checks=modernize-*,bugprone-*,cppcoreguidelines-*
+    )
 endif()
 
 find_package(Threads REQUIRED)
@@ -34,7 +33,6 @@ set(COMMON_INCLUDES
     )
 set(EXTERNAL_LIB_INCLUDES
     ${LIBRARY_DIRECTORY}/Adafruit_MCP23008
-    ${LIBRARY_DIRECTORY}/SoftI2CMaster
     )
 set(COMMON_SOURCES
     ${PROJECT_SOURCE_DIR}/test_boards.cpp
@@ -89,26 +87,13 @@ set(COMMON_LINKER_FLAGS
 set(HARD_I2C_LIB
     ${LIBRARY_DIRECTORY}/Adafruit_MCP23008/Adafruit_MCP23008.cpp
     )
-set(SOFT_I2C_LIB
-    ${LIBRARY_DIRECTORY}/SoftI2CMaster/SoftI2CMaster.cpp
-    )
 function(add_board board)
-    if(${board}=="Uno")
-        set(processor
-            # FIXME(TP): should this be ATmega328?
-            __AVR_ATmega168__
-            )
-        set(I2C_LIB
-            ${HARD_I2C_LIB}
-            )
-    else()
-        set(processor
-            __AVR_ATmega2560__
-            )
-        set(I2C_LIB
-            ${SOFT_I2C_LIB}
-            )
-    endif()
+    set(processor # uno
+        __AVR_ATmega168__
+        )
+    set(I2C_LIB
+        ${HARD_I2C_LIB}
+        )
     add_executable(${PROJECT_NAME}_${board}
         ${COMMON_SOURCES}
         # External libraries
@@ -124,7 +109,8 @@ function(add_board board)
         ${COMMON_DEFINES}
         ${processor}
         )
-    target_compile_options(${PROJECT_NAME}_${board} PRIVATE
+    target_compile_options(${PROJECT_NAME}_${board}
+        PRIVATE
         ${COMMON_FLAGS}
         )
     target_link_libraries(${PROJECT_NAME}_${board}
@@ -133,10 +119,8 @@ function(add_board board)
     add_dependencies(${PROJECT_NAME}_${board} arduino_mock)
 endfunction()
 
-add_board(Uno)
-add_board(Mega)
+add_board(uno)
 
-# Knitter (device independent)
 add_executable(${PROJECT_NAME}_knitter
     ${PROJECT_SOURCE_DIR}/test_all.cpp
 
@@ -162,8 +146,6 @@ add_executable(${PROJECT_NAME}_knitter
     ${SOURCE_DIRECTORY}/knitter.cpp
     ${SOURCE_DIRECTORY}/global_knitter.cpp
     ${PROJECT_SOURCE_DIR}/test_knitter.cpp
-
-    ${SOFT_I2C_LIB}
 )
 target_include_directories(${PROJECT_NAME}_knitter
     PRIVATE
@@ -173,7 +155,7 @@ target_include_directories(${PROJECT_NAME}_knitter
 target_compile_definitions(${PROJECT_NAME}_knitter
     PRIVATE
     ${COMMON_DEFINES}
-    __AVR_ATmega1280__ # should not matter which one is chosen for knitter
+    __AVR_ATmega168__
 )
 target_compile_options(${PROJECT_NAME}_knitter PRIVATE
     ${COMMON_FLAGS}
@@ -185,7 +167,5 @@ add_dependencies(${PROJECT_NAME}_knitter arduino_mock)
 
 enable_testing()
 include(GoogleTest)
-gtest_discover_tests(${PROJECT_NAME}_Uno TEST_PREFIX Uno_ XML_OUTPUT_DIR ./xml_out)
-gtest_discover_tests(${PROJECT_NAME}_Mega TEST_PREFIX Mega_ XML_OUTPUT_DIR ./xml_out)
-gtest_discover_tests(${PROJECT_NAME}_knitter TEST_PREFIX Knitter_ XML_OUTPUT_DIR ./xml_out)
-
+gtest_discover_tests(${PROJECT_NAME}_uno TEST_PREFIX uno_ XML_OUTPUT_DIR ./xml_out)
+gtest_discover_tests(${PROJECT_NAME}_knitter TEST_PREFIX knitter_ XML_OUTPUT_DIR ./xml_out)

@@ -17,7 +17,7 @@
  *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
  *
  *    Original Work Copyright 2013-2015 Christian Obersteiner, Andreas Müller
- *    Modified Work Copyright 2020 Sturla Lange, Tom Price
+ *    Modified Work Copyright 2020-3 Sturla Lange, Tom Price
  *    http://ayab-knitting.com
  */
 
@@ -53,14 +53,8 @@ constexpr uint16_t START_KNITTING_DELAY = 2000U;
 // Determine board type
 #if defined(__AVR_ATmega168__) || defined(__AVR_ATmega328P__)
 // Arduino Uno
-#define HARD_I2C
-
-#elif defined(__AVR_ATmega2560__) || defined(__AVR_ATmega1280__)
-// Arduino Mega
-#define SOFT_I2C
-
 #else
-#error "untested board - please check your I2C ports"
+#error "untested board"
 #endif
 
 #endif // BOARD_H_

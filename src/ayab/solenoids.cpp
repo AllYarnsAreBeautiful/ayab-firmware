@@ -19,7 +19,7 @@
  *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
  *
  *    Original Work Copyright 2013 Christian Obersteiner, Andreas Müller
- *    Modified Work Copyright 2020 Sturla Lange, Tom Price
+ *    Modified Work Copyright 2020-3 Sturla Lange, Tom Price
  *    http://ayab-knitting.com
  */
 
@@ -27,6 +27,9 @@
 
 /*!
  * Initialize I2C connection for solenoids.
+ *
+ * TP 2023/05/18: the preprocessor instructions seem redundant,
+ * but uno_SolenoidsTest.test_init segfaults if it is removed
  */
 void Solenoids::init() {
 #ifdef HARD_I2C
@@ -98,16 +101,7 @@ void Solenoids::setSolenoids(uint16_t state) {
 // GCOVR_EXCL_START
 void Solenoids::write(uint16_t newState) {
   (void)newState;
-#ifdef HARD_I2C
   mcp_0.writeGPIO(lowByte(newState));
   mcp_1.writeGPIO(highByte(newState));
-#elif defined SOFT_I2C
-  SoftI2C.beginTransmission(I2Caddr_sol1_8 | SOLENOIDS_I2C_ADDRESS_MASK);
-  SoftI2C.write(lowByte(newState));
-  SoftI2C.endTransmission();
-  SoftI2C.beginTransmission(I2Caddr_sol9_16 | SOLENOIDS_I2C_ADDRESS_MASK);
-  SoftI2C.write(highByte(newState));
-  SoftI2C.endTransmission();
-#endif
 }
 // GCOVR_EXCL_STOP
