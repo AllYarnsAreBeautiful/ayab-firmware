@@ -66,7 +66,7 @@ set(COMMON_SOURCES
     ${PROJECT_SOURCE_DIR}/mocks/fsm_mock.cpp
     )
 set(COMMON_DEFINES
-    ARDUINO=105
+    ARDUINO=1.8.19
     AYAB_QUIET
     AYAB_TESTS
     AYAB_ENABLE_CRC
