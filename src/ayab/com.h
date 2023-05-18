@@ -61,10 +61,10 @@ enum AYAB_API {
   autoTestCmd_msgid = 0x2d,
   stopCmd_msgid = 0x2e,
   quitCmd_msgid = 0x2f,
-  reqInit_msgid = 0x30,
-  cnfInit_msgid = 0x31,
-  testRes_msgid = 0xe0,
-  debug_msgid = 0x99
+  reqInit_msgid = 0x05,
+  cnfInit_msgid = 0xC5,
+  testRes_msgid = 0xEE,
+  debug_msgid = 0x9F
 };
 using AYAB_API_t = enum AYAB_API;
 
