@@ -116,7 +116,6 @@ void Knitter::isr() {
   m_hallActive = GlobalEncoders::getHallActive();
   m_beltShift = GlobalEncoders::getBeltShift();
   m_carriage = GlobalEncoders::getCarriage();
-
 }
 
 Err_t Knitter::initMachine(Machine_t machineType) {
@@ -151,7 +150,7 @@ Err_t Knitter::initMachine(Machine_t machineType) {
 Err_t Knitter::startKnitting(uint8_t startNeedle,
                              uint8_t stopNeedle, uint8_t *pattern_start,
                              bool continuousReportingEnabled) {
-  GlobalBeeper::ready();
+
   if (GlobalFsm::getState() != s_ready) {
     return WRONG_MACHINE_STATE;
   }
@@ -210,7 +209,6 @@ bool Knitter::isReady() {
     m_lastHall = m_hallActive;
   }
 
-
   bool passedLeft = Right == m_direction and Left == m_lastHall and 
         m_position > (END_LEFT[m_machineType] + END_OFFSET[m_machineType] + GARTER_SLOP);
   bool passedRight = Left == m_direction and Right == m_lastHall and 
@@ -260,15 +258,17 @@ void Knitter::knit() {
   // store current carriage position for next call of this function
   m_sOldPosition = m_position;
 
-  if (m_continuousReportingEnabled) {
-    // send current position to GUI
-    indState(SUCCESS);
-  }
+  
 
   if (!calculatePixelAndSolenoid()) {
     // no valid/useful position calculated
     return;
   }
+
+  /*if (m_continuousReportingEnabled) {
+    // send current position to GUI
+    indState(SUCCESS);
+  }*/
 
   // `m_machineType` has been validated - no need to check
   if ((m_pixelToSet >= m_startNeedle - END_OF_LINE_OFFSET_L[m_machineType]) &&

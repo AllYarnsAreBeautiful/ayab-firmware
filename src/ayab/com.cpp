@@ -27,6 +27,8 @@
 #include "tester.h"
 #include "beeper.h"
 
+static uint8_t numInit = 0;
+
 
 void Com::init() {
   m_packetSerial.begin(SERIAL_BAUDRATE);
@@ -84,6 +86,8 @@ void Com::send_indState(Carriage_t carriage, uint8_t position,
                         const uint8_t initState) {
   uint16_t leftHallValue = GlobalEncoders::getHallValue(Left);
   uint16_t rightHallValue = GlobalEncoders::getHallValue(Right);
+  numInit += 1;
+  position += 1;
   uint8_t payload[INDSTATE_LEN] = {
       indState_msgid,
       static_cast<uint8_t>(initState),
@@ -92,7 +96,7 @@ void Com::send_indState(Carriage_t carriage, uint8_t position,
       highByte(rightHallValue),
       lowByte(rightHallValue),
       static_cast<uint8_t>(carriage),
-      static_cast<uint8_t>(position),
+      static_cast<uint8_t>(numInit),
       static_cast<uint8_t>(GlobalEncoders::getDirection()),
   };
   GlobalCom::send(static_cast<uint8_t *>(payload), INDSTATE_LEN);

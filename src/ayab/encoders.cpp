@@ -140,7 +140,7 @@ void Encoders::encA_rising() {
   // The garter carriage has a second set of magnets that are going to 
   // pass the sensor and will reset state incorrectly if allowed to
   // continue.
-  if (m_carriage == Garter) {
+  if (Garter == m_carriage) {
     return;
   }
 
@@ -177,7 +177,7 @@ void Encoders::encA_rising() {
     m_beltShift = digitalRead(ENC_PIN_C) != 0 ? Regular : Shifted;
 
     // Known position of the carriage -> overwrite position
-    m_position = start_position;
+    //m_position = start_position;
   }
 }
 
