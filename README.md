@@ -83,3 +83,16 @@ To set up a working development environment follow these steps:
     SNIPPET
     chmod +x .git/hooks/pre-push
     ```
+## CI/CD on GitHub
+
+### Triggering a new build
+
+A new build is triggered when a new tag is created, either starting with
+
+* v (i.e. v1.0.0), or
+* test (i.e. test230517)
+
+Convention for the test-tag is to suffix the current date in the YYMMdd format. If there is already an existing test build for a single day, attach a letter.
+The test tags and releases will be manually removed from time for a better overview.
+
+The tag can be pushed from your local environment, or via the ["Draft a new Release"](https://github.com/AllYarnsAreBeautiful/ayab-desktop/releases/new) button on the GitHub website.
