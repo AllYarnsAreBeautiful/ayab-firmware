@@ -27,12 +27,8 @@
 
 /*!
  * Initialize I2C connection for solenoids.
- *
- * TP 2023/05/18: the preprocessor instructions seem redundant,
- * but uno_SolenoidsTest.test_init segfaults if it is removed
  */
 void Solenoids::init() {
-#ifdef HARD_I2C
   mcp_0.begin(I2Caddr_sol1_8);
   mcp_1.begin(I2Caddr_sol9_16);
 
@@ -40,8 +36,6 @@ void Solenoids::init() {
     mcp_0.pinMode(i, OUTPUT);
     mcp_1.pinMode(i, OUTPUT);
   }
-#endif
-  // No Action needed for SOFT_I2C
   solenoidState = 0x0000U;
 }
 
