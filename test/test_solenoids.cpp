@@ -24,9 +24,7 @@
 #include <gtest/gtest.h>
 
 #include <solenoids.h>
-#ifdef HARD_I2C
 #include <Wire.h>
-#endif
 
 using ::testing::Return;
 
@@ -36,9 +34,7 @@ class SolenoidsTest : public ::testing::Test {
 protected:
   void SetUp() override {
     arduinoMock = arduinoMockInstance();
-#ifdef HARD_I2C
     wireMock = WireMockInstance();
-#endif
   }
 
   void TearDown() override {
@@ -46,9 +42,7 @@ protected:
   }
 
   ArduinoMock *arduinoMock;
-#ifdef HARD_I2C
   WireMock *wireMock;
-#endif
 };
 
 TEST_F(SolenoidsTest, test_construct) {
