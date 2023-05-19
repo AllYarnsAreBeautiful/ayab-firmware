@@ -17,7 +17,7 @@
  *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
  *
  *    Original Work Copyright 2013 Christian Obersteiner, Andreas Müller
- *    Modified Work Copyright 2020 Sturla Lange, Tom Price
+ *    Modified Work Copyright 2020-3 Sturla Lange, Tom Price
  *    http://ayab-knitting.com
  */
 
@@ -26,13 +26,8 @@
 
 #include "board.h"
 #include <Arduino.h>
-
-#if defined(HARD_I2C)
 #include <Adafruit_MCP23008.h>
 #include <Wire.h>
-#elif defined(SOFT_I2C)
-#include <SoftI2CMaster.h>
-#endif
 
 constexpr uint8_t SOLENOIDS_NUM = 16U;
 constexpr uint8_t HALF_SOLENOIDS_NUM = 8U;
@@ -75,11 +70,7 @@ class Solenoids : public SolenoidsInterface {
 #endif
 public:
   Solenoids()
-#if defined(HARD_I2C)
       : mcp_0(), mcp_1()
-#elif defined(SOFT_I2C)
-      : SoftI2C(A4, A5)
-#endif
   {
   }
 
@@ -91,12 +82,9 @@ private:
   uint16_t solenoidState = 0x0000U;
   void write(uint16_t state);
 
-#if defined(HARD_I2C)
   Adafruit_MCP23008 mcp_0;
   Adafruit_MCP23008 mcp_1;
-#elif defined(SOFT_I2C)
-  SoftI2CMaster SoftI2C;
-#endif
 };
+
 
 #endif // SOLENOIDS_H_

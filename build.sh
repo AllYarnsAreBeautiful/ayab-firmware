@@ -44,20 +44,14 @@ fi
 
 function make_hw_test() {
   subboard=""
-  if [[ $1 == "mega" ]]; then
-    subboard="BOARD_SUB=atmega2560"
-  fi
   make BOARD_TAG=$1 $subboard MACHINETYPE=HW_TEST -j $numproc
   mv $parent_path/build/raw/$1/HW_TEST/ayab.hex $parent_path/build/ayab_HW_TEST_$1.hex
 }
 
 function make_variant() {
   subboard=""
-  if [[ $1 == "mega" ]]; then
-    subboard="BOARD_SUB=atmega2560"
-  fi
-    make BOARD_TAG=$1 $subboard MACHINETYPE=$2 -j $numproc
-    mv $parent_path/build/raw/$1/$2/ayab.hex $parent_path/build/ayab_$2_$1.hex
+  make BOARD_TAG=$1 $subboard MACHINETYPE=$2 -j $numproc
+  mv $parent_path/build/raw/$1/$2/ayab.hex $parent_path/build/ayab_$2_$1.hex
 }
 
 function make_board() {
@@ -69,7 +63,6 @@ fi
 }
 
 make_board uno
-make_board mega
 
 cd $parent_path
 rm -rf build/raw
