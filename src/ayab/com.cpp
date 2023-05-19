@@ -194,7 +194,7 @@ void Com::h_reqInit(const uint8_t *buffer, size_t size) {
   uint8_t crc8 = buffer[2];
   // Check crc on bytes 0-4 of buffer.
   if (crc8 != CRC8(buffer, 2)) {
-    send_cnfStart(CHECKSUM_ERROR);
+    send_cnfInit(CHECKSUM_ERROR);
     return;
   }
 #endif
