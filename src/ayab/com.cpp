@@ -84,7 +84,6 @@ void Com::send_indState(Carriage_t carriage, uint8_t position,
   uint16_t rightHallValue = GlobalEncoders::getHallValue(Right);
   uint8_t payload[INDSTATE_LEN] = {
       indState_msgid,
-      static_cast<uint8_t>(GlobalFsm::getState()),
       static_cast<uint8_t>(initState),
       highByte(leftHallValue),
       lowByte(leftHallValue),
