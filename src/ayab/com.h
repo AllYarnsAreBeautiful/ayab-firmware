@@ -28,6 +28,7 @@
 #include <PacketSerial.h>
 
 #include "encoders.h"
+#include "fsm.h"
 
 constexpr uint8_t FW_VERSION_MAJ = 1U;
 constexpr uint8_t FW_VERSION_MIN = 0U;
@@ -42,25 +43,25 @@ constexpr uint8_t MAX_MSG_BUFFER_LEN = 255U;
 
 enum AYAB_API {
   reqStart_msgid = 0x01,
-  cnfStart_msgid = 0xc1,
+  cnfStart_msgid = 0xC1,
   reqLine_msgid = 0x82,
   cnfLine_msgid = 0x42,
   reqInfo_msgid = 0x03,
-  cnfInfo_msgid = 0xc3,
+  cnfInfo_msgid = 0xC3,
   reqTest_msgid = 0x04,
-  cnfTest_msgid = 0xc4,
+  cnfTest_msgid = 0xC4,
   indState_msgid = 0x84,
   helpCmd_msgid = 0x25,
   sendCmd_msgid = 0x26,
   beepCmd_msgid = 0x27,
   setSingleCmd_msgid = 0x28,
   setAllCmd_msgid = 0x29,
-  readEOLsensorsCmd_msgid = 0x2a,
-  readEncodersCmd_msgid = 0x2b,
-  autoReadCmd_msgid = 0x2c,
-  autoTestCmd_msgid = 0x2d,
-  stopCmd_msgid = 0x2e,
-  quitCmd_msgid = 0x2f,
+  readEOLsensorsCmd_msgid = 0x2A,
+  readEncodersCmd_msgid = 0x2B,
+  autoReadCmd_msgid = 0x2C,
+  autoTestCmd_msgid = 0x2D,
+  stopCmd_msgid = 0x2E,
+  quitCmd_msgid = 0x2F,
   reqInit_msgid = 0x05,
   cnfInit_msgid = 0xC5,
   testRes_msgid = 0xEE,
@@ -68,52 +69,8 @@ enum AYAB_API {
 };
 using AYAB_API_t = enum AYAB_API;
 
-// As of APIv6, the only important distinction
-// is between `SUCCESS` (0) and any other value.
-// Informative error codes are provided for
-// diagnostic purposes (that is, for debugging).
-// Non-zero error codes are subject to change.
-// Such changes will be considered non-breaking.
-enum ErrorCode {
-  SUCCESS = 0x00,
-
-  // message not understood
-  EXPECTED_LONGER_MESSAGE = 0x01,
-  UNRECOGNIZED_MSGID = 0x02,
-  UNEXPECTED_MSGID = 0x03,
-  CHECKSUM_ERROR = 0x04,
-
-  // invalid arguments
-  MACHINE_TYPE_INVALID = 0x10,
-  NEEDLE_VALUE_INVALID = 0x11,
-  NULL_POINTER_ARGUMENT = 0x12,
-  ARGUMENT_INVALID = 0x13,
-  ARGUMENTS_INCOMPATIBLE = 0x13,
-
-  // device not initialized
-  NO_MACHINE_TYPE = 0x20,
-  NO_CARRIAGE = 0x21,
-  NO_DIRECTION = 0x22,
-  NO_BELTSHIFT = 0x23,
-
-  // machine in wrong FSM state
-  MACHINE_STATE_INIT = 0xE0,
-  MACHINE_STATE_READY = 0xE1,
-  MACHINE_STATE_KNIT = 0xE2,
-  MACHINE_STATE_TEST = 0xE3,
-  WRONG_MACHINE_STATE = 0xEF,
-
-  // generic error codes
-  WARNING = 0xF0, // ignorable error
-  RECOVERABLE_ERROR = 0xF1,
-  CRITICAL_ERROR = 0xF2,
-  FATAL_ERROR = 0xF3,
-  UNSPECIFIED_FAILURE = 0xFF
-};
-using Err_t = enum ErrorCode;
-
 // API constants
-constexpr uint8_t INDSTATE_LEN = 9U;
+constexpr uint8_t INDSTATE_LEN = 10U;
 constexpr uint8_t REQLINE_LEN = 3U;
 
 class ComInterface {
