@@ -18,7 +18,7 @@
  *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
  *
  *    Original Work Copyright 2013 Christian Obersteiner, Andreas Müller
- *    Modified Work Copyright 2020 Sturla Lange, Tom Price
+ *    Modified Work Copyright 2020-3 Sturla Lange, Tom Price
  *    http://ayab-knitting.com
  */
 
@@ -26,6 +26,9 @@
 #include "knitter.h"
 #include "tester.h"
 
+/*!
+ * \brief Initialize serial communication.
+ */
 void Com::init() {
   m_packetSerial.begin(SERIAL_BAUDRATE);
 #ifndef AYAB_TESTS
@@ -33,10 +36,18 @@ void Com::init() {
 #endif // AYAB_TESTS
 }
 
+/*!
+ * \brief Service the serial connection.
+ */
 void Com::update() {
   m_packetSerial.update();
 }
 
+/*!
+ * \brief Send a packet of data.
+ * \param payload A pointer to a data buffer.
+ * \param length The number of bytes in the data buffer.
+ */
 void Com::send(uint8_t *payload, size_t length) {
   // TODO(TP): insert a workaround for hardware test code
   /*
@@ -51,7 +62,11 @@ void Com::send(uint8_t *payload, size_t length) {
   m_packetSerial.send(payload, length);
 }
 
-// send initial msgid followed by null-terminated string
+/*!
+ * \brief send initial msgid followed by null-terminated string
+ * \param id The msgid to be sent.
+ * \param msg Pointer to a data buffer containing a null-terminated string.
+ */
 void Com::sendMsg(AYAB_API_t id, const char *msg) {
   uint8_t length = 0;
   msgBuffer[length++] = static_cast<uint8_t>(id);
@@ -66,8 +81,8 @@ void Com::sendMsg(AYAB_API_t id, char *msg) {
 
 /*!
  * \brief Send `reqLine` message.
- *
- * the second argument is the line number requested (0-indexed and modulo 256)
+ * \param lineNumber The line number requested (0-indexed and modulo 256).
+ * \param error Error code (0 = success).
  */
 void Com::send_reqLine(const uint8_t lineNumber, Err_t error) {
   uint8_t payload[REQLINE_LEN] = {reqLine_msgid, lineNumber, error};
@@ -76,6 +91,9 @@ void Com::send_reqLine(const uint8_t lineNumber, Err_t error) {
 
 /*!
  * \brief Send `indState` message.
+ * \param carriage Type of knitting carriage in use.
+ * \param position Position of knitting carriage in needles from left hand side.
+ * \param initState State of readiness (0 = ready, other values = not ready).
  */
 void Com::send_indState(Carriage_t carriage, uint8_t position,
                         const uint8_t initState) {
@@ -83,8 +101,8 @@ void Com::send_indState(Carriage_t carriage, uint8_t position,
   uint16_t rightHallValue = GlobalEncoders::getHallValue(Right);
   uint8_t payload[INDSTATE_LEN] = {
       indState_msgid,
-      static_cast<uint8_t>(GlobalFsm::getState()),
       static_cast<uint8_t>(initState),
+      static_cast<uint8_t>(GlobalFsm::getState()),
       highByte(leftHallValue),
       lowByte(leftHallValue),
       highByte(rightHallValue),
@@ -98,6 +116,8 @@ void Com::send_indState(Carriage_t carriage, uint8_t position,
 
 /*!
  * \brief Callback for PacketSerial.
+ * \param buffer A pointer to a data buffer.
+ * \param size The number of bytes in the data buffer.
  */
 void Com::onPacketReceived(const uint8_t *buffer, size_t size) {
   switch (buffer[0]) {
@@ -173,6 +193,11 @@ void Com::onPacketReceived(const uint8_t *buffer, size_t size) {
 
 // Serial command handling
 
+/*!
+ * \brief Handle `reqInit` (request initialization) command.
+ * \param buffer A pointer to a data buffer.
+ * \param size The number of bytes in the data buffer.
+ */
 void Com::h_reqInit(const uint8_t *buffer, size_t size) {
 #ifdef AYAB_ENABLE_CRC
   if (size < 3U) {
@@ -207,6 +232,8 @@ void Com::h_reqInit(const uint8_t *buffer, size_t size) {
 
 /*!
  * \brief Handle `reqStart` (start request) command.
+ * \param buffer A pointer to a data buffer.
+ * \param size The number of bytes in the data buffer.
  */
 void Com::h_reqStart(const uint8_t *buffer, size_t size) {
 #ifdef AYAB_ENABLE_CRC
@@ -257,6 +284,8 @@ void Com::h_reqStart(const uint8_t *buffer, size_t size) {
 
 /*!
  * \brief Handle `cnfLine` (configure line) command.
+ * \param buffer A pointer to a data buffer.
+ * \param size The number of bytes in the data buffer.
  *
  * \todo sl: Handle CRC-8 error?
  * \todo sl: Assert size? Handle error?
@@ -301,6 +330,8 @@ void Com::h_cnfLine(const uint8_t *buffer, size_t size) {
 
 /*!
  * \brief Handle `reqInfo` (request information) command.
+ * \param buffer A pointer to a data buffer.
+ * \param size The number of bytes in the data buffer.
  */
 void Com::h_reqInfo() {
   send_cnfInfo();
@@ -308,6 +339,8 @@ void Com::h_reqInfo() {
 
 /*!
  * \brief Handle `reqTest` (request hardware test) command.
+ * \param buffer A pointer to a data buffer.
+ * \param size The number of bytes in the data buffer.
  */
 void Com::h_reqTest(const uint8_t *buffer, size_t size) {
   if (size < 2U) {
@@ -348,6 +381,7 @@ void Com::send_cnfInfo() {
 
 /*!
  * \brief Send `cnfInit` message.
+ * \param error Error code (0 = success, other values = error).
  */
 void Com::send_cnfInit(Err_t error) {
   uint8_t payload[2];
@@ -359,6 +393,7 @@ void Com::send_cnfInit(Err_t error) {
 
 /*!
  * \brief Send `cnfStart` message.
+ * \param error Error code (0 = success, other values = error).
  */
 void Com::send_cnfStart(Err_t error) {
   uint8_t payload[2];
@@ -369,6 +404,7 @@ void Com::send_cnfStart(Err_t error) {
 
 /*!
  * \brief Send `cnfTest` message.
+ * \param error Error code (0 = success, other values = error).
  */
 void Com::send_cnfTest(Err_t error) {
   uint8_t payload[2];
@@ -379,7 +415,9 @@ void Com::send_cnfTest(Err_t error) {
 
 #ifdef AYAB_ENABLE_CRC
 /*!
- * \brief Calculate CRC8 of a buffer
+ * \brief Calculate CRC8 of a buffer.
+ * \param buffer A pointer to a data buffer.
+ * \param len The number of bytes of data in the data buffer.
  *
  * Based on
  * https://www.leonardomiliani.com/en/2013/un-semplice-crc8-per-arduino/
