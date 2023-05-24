@@ -80,8 +80,8 @@ jobs:
         sudo apt-get install doxygen graphviz -y
     - name: Create .nojekyll so that filenames with underscores work on Github Pages
       run: |
-        mkdir -p docs/html
-        touch docs/html/.nojekyll
+        mkdir -p doc
+        touch doc/.nojekyll
     - name: Deploy to pages
       uses: DenverCoder1/doxygen-github-pages-action@v1.3.0
       with:
