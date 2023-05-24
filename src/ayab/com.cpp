@@ -207,9 +207,6 @@ void Com::h_reqInit(const uint8_t *buffer, size_t size) {
 
 /*!
  * \brief Handle `reqStart` (start request) command.
- *
- * \todo sl: Assert size? Handle error?
- * \todo TP: Handle CRC-8 error?
  */
 void Com::h_reqStart(const uint8_t *buffer, size_t size) {
 #ifdef AYAB_ENABLE_CRC
@@ -311,8 +308,6 @@ void Com::h_reqInfo() {
 
 /*!
  * \brief Handle `reqTest` (request hardware test) command.
- *
- * \todo TP: Assert size? Handle error?
  */
 void Com::h_reqTest(const uint8_t *buffer, size_t size) {
   if (size < 2U) {
@@ -391,6 +386,8 @@ void Com::send_cnfTest(Err_t error) {
  *
  * CRC-8 - based on the CRC8 formulas by Dallas/Maxim
  * code released under the therms of the GNU GPL 3.0 license
+ *
+ * Faster code using a lookup table is available, if needed.
  */
 uint8_t Com::CRC8(const uint8_t *buffer, size_t len) {
   uint8_t crc = 0x00U;
