@@ -19,7 +19,7 @@
  *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
  *
  *    Original Work Copyright 2013-2015 Christian Obersteiner, Andreas Müller
- *    Modified Work Copyright 2020 Sturla Lange, Tom Price
+ *    Modified Work Copyright 2020-3 Sturla Lange, Tom Price
  *    http://ayab-knitting.com
  */
 
@@ -37,6 +37,9 @@
 
 // Public methods
 
+/*!
+ * \brief Initialize Finite State Machine.
+ */
 void Fsm::init() {
   m_currentState = s_wait_for_machine;
   m_nextState = s_wait_for_machine;
@@ -45,12 +48,17 @@ void Fsm::init() {
   m_error = SUCCESS;
 }
 
+/*!
+ * \brief Get machine state.
+ * \return Current state of Finite State Machine.
+ */
 OpState_t Fsm::getState() {
   return m_currentState;
 }
 
 /*!
  * \brief Set machine state.
+ * \param state State.
  *
  * Does not take effect until next `dispatch()`
  */
@@ -95,6 +103,9 @@ void Fsm::dispatch() {
 
 // Private methods
 
+/*!
+ * \brief Action of machine in state `init`.
+ */
 void Fsm::state_init() {
   digitalWrite(LED_PIN_A, LOW); // green LED off
   if (GlobalKnitter::isReady()) {
@@ -102,15 +113,24 @@ void Fsm::state_init() {
   }
 }
 
+/*!
+ * \brief Action of machine in state `ready`.
+ */
 void Fsm::state_ready() {
   digitalWrite(LED_PIN_A, LOW); // green LED off
 }
 
+/*!
+ * \brief Action of machine in state `knit`.
+ */
 void Fsm::state_knit() {
   digitalWrite(LED_PIN_A, HIGH); // green LED on
   GlobalKnitter::knit();
 }
 
+/*!
+ * \brief Action of machine in state `test`.
+ */
 void Fsm::state_test() {
   GlobalKnitter::encodePosition();
   GlobalTester::loop();
@@ -120,6 +140,9 @@ void Fsm::state_test() {
   }
 }
 
+/*!
+ * \brief Action of machine in state `error`.
+ */
 void Fsm::state_error() {
   if (m_nextState == s_init) {
     // exit error state
