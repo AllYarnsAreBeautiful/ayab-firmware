@@ -67,8 +67,7 @@ void Com::sendMsg(AYAB_API_t id, char *msg) {
 /*!
  * \brief Send `reqLine` message.
  *
- * if the second argument takes any value other than `0`
- * this is a request for information to be re-sent
+ * the second argument is the line number requested (0-indexed and modulo 256)
  */
 void Com::send_reqLine(const uint8_t lineNumber, Err_t error) {
   uint8_t payload[REQLINE_LEN] = {reqLine_msgid, lineNumber, error};
