@@ -102,7 +102,7 @@ void Fsm::dispatch() {
 // Private methods
 
 /*!
- * \brief Action of machine in state `init`.
+ * \brief Action of machine in state `s_init`.
  */
 void Fsm::state_init() {
   digitalWrite(LED_PIN_A, LOW); // green LED off
@@ -112,14 +112,14 @@ void Fsm::state_init() {
 }
 
 /*!
- * \brief Action of machine in state `ready`.
+ * \brief Action of machine in state `s_ready`.
  */
 void Fsm::state_ready() {
   digitalWrite(LED_PIN_A, LOW); // green LED off
 }
 
 /*!
- * \brief Action of machine in state `knit`.
+ * \brief Action of machine in state `s_knit`.
  */
 void Fsm::state_knit() {
   digitalWrite(LED_PIN_A, HIGH); // green LED on
@@ -127,7 +127,7 @@ void Fsm::state_knit() {
 }
 
 /*!
- * \brief Action of machine in state `test`.
+ * \brief Action of machine in state `s_test`.
  */
 void Fsm::state_test() {
   GlobalKnitter::encodePosition();
@@ -139,7 +139,7 @@ void Fsm::state_test() {
 }
 
 /*!
- * \brief Action of machine in state `error`.
+ * \brief Action of machine in state `s_error`.
  */
 void Fsm::state_error() {
   if (m_nextState == s_init) {
