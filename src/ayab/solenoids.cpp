@@ -26,7 +26,7 @@
 #include "solenoids.h"
 
 /*!
- * Initialize I2C connection for solenoids.
+ * \brief Initialize I2C connection for solenoids.
  */
 void Solenoids::init() {
   mcp_0.begin(I2Caddr_sol1_8);
@@ -40,9 +40,9 @@ void Solenoids::init() {
 }
 
 /*!
- * Set the state of a solenoid.
+ * \brief Set the state of a solenoid.
  *
- * \param solenoid The solenoid nr. to set. 0 to 15.
+ * \param solenoid The solenoid number to set (0 to 15).
  * \param state The state to set the solenoid to.
  */
 void Solenoids::setSolenoid(uint8_t solenoid, bool state) {
@@ -65,7 +65,7 @@ void Solenoids::setSolenoid(uint8_t solenoid, bool state) {
 }
 
 /*!
- * Set the state of all the solenoids.
+ * \brief Set the state of all the solenoids.
  *
  * \param state Two bytes describing the state of the solenoids,
  * one bit per solenoid.
