@@ -41,26 +41,26 @@ protected:
   }
 
   void checkBeepTime(uint8_t length) {
-    EXPECT_CALL(*arduinoMock, analogWrite(PIEZO_PIN, 0)).Times(length);
-    EXPECT_CALL(*arduinoMock, analogWrite(PIEZO_PIN, 20)).Times(length);
+    EXPECT_CALL(*arduinoMock, analogWrite(PIEZO_PIN, BEEP_ON_DUTY)).Times(length);
+    EXPECT_CALL(*arduinoMock, analogWrite(PIEZO_PIN, BEEP_OFF_DUTY)).Times(length);
     EXPECT_CALL(*arduinoMock, delay(BEEP_DELAY)).Times(length * 2);
-    EXPECT_CALL(*arduinoMock, analogWrite(PIEZO_PIN, 255)).Times(1);
+    EXPECT_CALL(*arduinoMock, analogWrite(PIEZO_PIN, BEEP_NO_DUTY)).Times(1);
   }
 
   ArduinoMock *arduinoMock;
 };
 
 TEST_F(BeeperTest, test_ready) {
-  checkBeepTime(5);
+  checkBeepTime(BEEP_NUM_READY);
   beeper->ready();
 }
 
 TEST_F(BeeperTest, test_finishedLine) {
-  checkBeepTime(3);
+  checkBeepTime(BEEP_NUM_FINISHEDLINE);
   beeper->finishedLine();
 }
 
 TEST_F(BeeperTest, test_endWork) {
-  checkBeepTime(10);
+  checkBeepTime(BEEP_NUM_ENDWORK);
   beeper->endWork();
 }

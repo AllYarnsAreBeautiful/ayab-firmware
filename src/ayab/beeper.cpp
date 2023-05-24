@@ -54,7 +54,7 @@ void Beeper::endWork() {
 /*!
  * Generic beep function.
  *
- * @param length number of beeps
+ * /param length number of beeps
  */
 void Beeper::beep(uint8_t length) {
 

@@ -50,6 +50,7 @@ TEST_F(SolenoidsTest, test_construct) {
 
 TEST_F(SolenoidsTest, test_init) {
   solenoids->init();
+  ASSERT_TRUE(solenoids->solenoidState == 0U);
 }
 
 TEST_F(SolenoidsTest, test_setSolenoid1) {

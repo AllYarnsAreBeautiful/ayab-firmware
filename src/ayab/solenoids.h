@@ -64,6 +64,7 @@ public:
 
 class Solenoids : public SolenoidsInterface {
 #ifdef AYAB_TESTS
+  FRIEND_TEST(SolenoidsTest, test_init);
   FRIEND_TEST(SolenoidsTest, test_setSolenoid1);
   FRIEND_TEST(SolenoidsTest, test_setSolenoid2);
   FRIEND_TEST(SolenoidsTest, test_setSolenoid3);
