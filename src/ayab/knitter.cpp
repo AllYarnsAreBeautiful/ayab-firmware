@@ -19,7 +19,7 @@
  *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
  *
  *    Original Work Copyright 2013-2015 Christian Obersteiner, Andreas Müller
- *    Modified Work Copyright 2020 Sturla Lange, Tom Price
+ *    Modified Work Copyright 2020-3 Sturla Lange, Tom Price
  *    http://ayab-knitting.com
  */
 
@@ -84,6 +84,9 @@ void Knitter::init() {
 #endif
 }
 
+/*!
+ * \brief Initialize interrupt service routine for Knitter object.
+ */
 void Knitter::setUpInterrupt() {
   // (re-)attach ENC_PIN_A(=2), interrupt #0
   detachInterrupt(0);
@@ -116,6 +119,11 @@ void Knitter::isr() {
   m_carriage = GlobalEncoders::getCarriage();
 }
 
+/*!
+ * \brief Initialize machine type.
+ * \param machineType Machine type.
+ * \return Error code (0 = success, other values = error).
+ */
 Err_t Knitter::initMachine(Machine_t machineType) {
   if (GlobalFsm::getState() != s_wait_for_machine) {
     return WRONG_MACHINE_STATE;
@@ -139,11 +147,12 @@ Err_t Knitter::initMachine(Machine_t machineType) {
 }
 
 /*!
- * \brief Enter knit state.
- *
- * Note (August 2020): the return value of this function has changed.
- * Previously, it returned `true` for success and `false` for failure.
- * Now, it returns `0` for success and an informative error code otherwise.
+ * \brief Enter `knit` machine state.
+ * \param startNeedle Position of first needle in the pattern.
+ * \param stopNeedle Position of last needle in the pattern.
+ * \param patternStart Pointer to buffer containing pattern data.
+ * \param continuousReportingEnabled Flag variable indicating whether the device continuously reports its status to the host.
+ * \return Error code (0 = success, other values = error).
  */
 Err_t Knitter::startKnitting(uint8_t startNeedle,
                              uint8_t stopNeedle, uint8_t *pattern_start,
@@ -178,7 +187,11 @@ Err_t Knitter::startKnitting(uint8_t startNeedle,
   return SUCCESS;
 }
 
-// used in hardware test loop
+/*!
+ * \brief Record current encoder position.
+ *
+ * Used in hardware test procedure.
+ */
 void Knitter::encodePosition() {
   if (m_sOldPosition != m_position) {
     // only act if there is an actual change of position
@@ -189,8 +202,10 @@ void Knitter::encodePosition() {
   }
 }
 
-// if this function returns true then
-// the FSM will move from state `s_init` to `s_ready`
+/*!
+ * \brief Assess whether the Finite State Machine is ready to move from state `s_init` to `s_ready`.
+ * \return `true` if ready to move from state `s_init` to `s_ready`, false otherwise.
+ */
 bool Knitter::isReady() {
 #ifdef DBG_NOMACHINE
   bool state = digitalRead(DBG_BTN_PIN);
@@ -227,6 +242,9 @@ bool Knitter::isReady() {
   return false; // stay in `s_init`
 }
 
+/*!
+ * \brief Knit one line of the pattern.
+ */
 void Knitter::knit() {
   if (m_firstRun) {
     m_firstRun = false;
@@ -308,14 +326,26 @@ void Knitter::knit() {
 #endif // DBG_NOMACHINE
 }
 
+/*!
+ * \brief Send `indState` message.
+ * \param error Error state (0 = success, other values = error).
+ */
 void Knitter::indState(Err_t error) {
   GlobalCom::send_indState(m_carriage, m_position, error);
 }
 
+/*!
+ * \brief Get knitting machine type.
+ * \return Machine type.
+ */
 Machine_t Knitter::getMachineType() {
   return m_machineType;
 }
 
+/*!
+ * \brief Get start offset.
+ * \return Start offset, or 0 if unobtainable.
+ */
 uint8_t Knitter::getStartOffset(const Direction_t direction) {
   if ((direction == NoDirection) || (direction >= NUM_DIRECTIONS) ||
       (m_carriage == NoCarriage) || (m_carriage >= NUM_CARRIAGES) ||
@@ -326,6 +356,10 @@ uint8_t Knitter::getStartOffset(const Direction_t direction) {
   return START_OFFSET[m_machineType][direction][m_carriage];
 }
 
+/*!
+ * \brief Set line number of next row to be knitted.
+ * \param lineNumber Line number (0-indexed and modulo 256).
+ */
 bool Knitter::setNextLine(uint8_t lineNumber) {
   bool success = false;
   if (m_lineRequested) {
@@ -342,22 +376,38 @@ bool Knitter::setNextLine(uint8_t lineNumber) {
   return success;
 }
 
+/*!
+ * \brief Get value of last line flag.
+ * \param `true` if current line is the last line in the pattern, `false` otherwise.
+ */
 void Knitter::setLastLine() {
   // lastLineFlag is evaluated in s_operate
   m_lastLineFlag = true;
 }
 
+/*!
+ * \brief Set machine type.
+ * \param Machine type.
+ */
 void Knitter::setMachineType(Machine_t machineType) {
   m_machineType = machineType;
 }
 
 // private methods
 
+/*!
+ * \brief Send `reqLine` message.
+ * \param lineNumber Line number requested.
+ */
 void Knitter::reqLine(uint8_t lineNumber) {
   GlobalCom::send_reqLine(lineNumber, SUCCESS);
   m_lineRequested = true;
 }
 
+/*!
+ * \brief Calculate the solenoid and pixel to be set.
+ * \param `true` if successful, `false` otherwise.
+ */
 bool Knitter::calculatePixelAndSolenoid() {
   uint8_t startOffset = 0;
   bool success = true;
@@ -419,6 +469,9 @@ bool Knitter::calculatePixelAndSolenoid() {
   return success;
 }
 
+/*!
+ * \brief Finish knitting procedure.
+ */
 void Knitter::stopKnitting() {
   GlobalBeeper::endWork();
   GlobalFsm::setState(s_ready);
