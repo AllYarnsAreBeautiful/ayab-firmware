@@ -18,7 +18,7 @@
  *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
  *
  *    Original Work Copyright 2013 Christian Obersteiner, Andreas Müller
- *    Modified Work Copyright 2020 Sturla Lange, Tom Price
+ *    Modified Work Copyright 2020-3 Sturla Lange, Tom Price
  *    http://ayab-knitting.com
  */
 
@@ -70,6 +70,8 @@ void Tester::beepCmd() {
 
 /*!
  * \brief Set single solenoid command handler.
+ * \param buffer Pointer to a data buffer.
+ * \param size Number of bytes of data in the buffer.
  */
 void Tester::setSingleCmd(const uint8_t *buffer, size_t size) {
   GlobalCom::sendMsg(testRes_msgid, "Called setSingle\n");
@@ -94,6 +96,8 @@ void Tester::setSingleCmd(const uint8_t *buffer, size_t size) {
 
 /*!
  * \brief Set all solenoids command handler.
+ * \param buffer Pointer to a data buffer.
+ * \param size Number of bytes of data in the buffer.
  */
 void Tester::setAllCmd(const uint8_t *buffer, size_t size) {
   GlobalCom::sendMsg(testRes_msgid, "Called setAll\n");
@@ -157,10 +161,8 @@ void Tester::quitCmd() {
 
 /*!
  * \brief Start hardware test.
- *
- * Note (August 2020): the return value of this function has changed.
- * Previously, it returned `true` for success and `false` for failure.
- * Now, it returns `0` for success and an informative error code otherwise.
+ * \param machineType Machine type.
+ * \return Error code (0 = success, other values = error).
  */
 Err_t Tester::startTest(Machine_t machineType) {
   OpState_t currentState = GlobalFsm::getState();
@@ -170,7 +172,6 @@ Err_t Tester::startTest(Machine_t machineType) {
     setUp();
     return SUCCESS;
   }
-  // TODO(TP): return informative error code.
   return WRONG_MACHINE_STATE;
 }
 
@@ -229,10 +230,16 @@ void Tester::setUp() {
   m_timerEventOdd = false;
 }
 
+/*!
+ * \brief Make a beep.
+ */
 void Tester::beep() {
   GlobalBeeper::ready();
 }
 
+/*!
+ * \brief Read the Hall sensors that determine which carriage is in use.
+ */
 void Tester::readEncoders() {
   GlobalCom::sendMsg(testRes_msgid, "  ENC_A: ");
   bool state = digitalRead(ENC_PIN_A);
@@ -245,6 +252,9 @@ void Tester::readEncoders() {
   GlobalCom::sendMsg(testRes_msgid, state ? "HIGH" : "LOW");
 }
 
+/*!
+ * \brief Read the End of Line sensors.
+ */
 void Tester::readEOLsensors() {
   uint16_t hallSensor = static_cast<uint16_t>(analogRead(EOL_PIN_L));
   sprintf(buf, "  EOL_L: %hu", hallSensor);
@@ -254,6 +264,9 @@ void Tester::readEOLsensors() {
   GlobalCom::sendMsg(testRes_msgid, buf);
 }
 
+/*!
+ * \brief Read both carriage sensors and End of Line sensors.
+ */
 void Tester::autoRead() {
   GlobalCom::sendMsg(testRes_msgid, "\n");
   readEOLsensors();
@@ -261,6 +274,9 @@ void Tester::autoRead() {
   GlobalCom::sendMsg(testRes_msgid, "\n");
 }
 
+/*!
+ * \brief Set even-numbered solenoids.
+ */
 void Tester::autoTestEven() {
   GlobalCom::sendMsg(testRes_msgid, "Set even solenoids\n");
   digitalWrite(LED_PIN_A, HIGH);
@@ -268,6 +284,9 @@ void Tester::autoTestEven() {
   GlobalSolenoids::setSolenoids(0xAAAA);
 }
 
+/*!
+ * \brief Set odd-numbered solenoids.
+ */
 void Tester::autoTestOdd() {
   GlobalCom::sendMsg(testRes_msgid, "Set odd solenoids\n");
   digitalWrite(LED_PIN_A, LOW);
