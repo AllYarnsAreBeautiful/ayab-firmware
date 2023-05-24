@@ -68,8 +68,6 @@ void Fsm::setState(OpState_t state) {
 
 /*!
  * \brief Dispatch on machine state
- *
- * \todo TP: add error state(s)
  */
 void Fsm::dispatch() {
   switch (m_currentState) {
