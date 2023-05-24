@@ -1,0 +1,4 @@
+<map id="Beeper" name="Beeper">
+<area shape="rect" id="node1" title="Class to actuate a beeper connected to PIEZO_PIN." alt="" coords="24,175,149,296"/>
+<area shape="rect" id="node2" href="$class_beeper_interface.html" title=" " alt="" coords="5,5,168,127"/>
+</map>

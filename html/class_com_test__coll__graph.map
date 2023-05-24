@@ -1,0 +1,8 @@
+<map id="ComTest" name="ComTest">
+<area shape="rect" id="node1" title=" " alt="" coords="75,668,347,833"/>
+<area shape="rect" id="node2" title=" " alt="" coords="5,433,107,510"/>
+<area shape="rect" id="node3" href="$class_fsm_mock.html" title=" " alt="" coords="131,411,291,532"/>
+<area shape="rect" id="node4" href="$class_fsm_interface.html" title=" " alt="" coords="139,79,283,215"/>
+<area shape="rect" id="node5" href="$class_knitter_mock.html" title=" " alt="" coords="315,337,475,605"/>
+<area shape="rect" id="node6" href="$class_knitter_interface.html" title=" " alt="" coords="315,5,475,288"/>
+</map>

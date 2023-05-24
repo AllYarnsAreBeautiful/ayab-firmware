@@ -1,0 +1,11 @@
+<map id="test/mocks/com_mock.h" name="test/mocks/com_mock.h">
+<area shape="rect" id="node1" title=" " alt="" coords="89,5,271,32"/>
+<area shape="rect" id="node2" title=" " alt="" coords="58,80,185,107"/>
+<area shape="rect" id="node3" href="$com_8h.html" title=" " alt="" coords="209,80,271,107"/>
+<area shape="rect" id="node4" href="$_arduino_8h.html" title=" " alt="" coords="150,229,234,256"/>
+<area shape="rect" id="node7" title=" " alt="" coords="119,155,233,181"/>
+<area shape="rect" id="node8" href="$encoders_8h.html" title=" " alt="" coords="257,155,351,181"/>
+<area shape="rect" id="node9" href="$fsm_8h.html" title=" " alt="" coords="375,155,433,181"/>
+<area shape="rect" id="node5" title=" " alt="" coords="5,304,184,331"/>
+<area shape="rect" id="node6" title=" " alt="" coords="208,304,373,331"/>
+</map>

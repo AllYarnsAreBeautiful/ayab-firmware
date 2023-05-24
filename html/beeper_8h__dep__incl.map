@@ -1,0 +1,25 @@
+<map id="src/ayab/beeper.h" name="src/ayab/beeper.h">
+<area shape="rect" id="node1" title=" " alt="" coords="590,5,727,32"/>
+<area shape="rect" id="node2" href="$beeper_8cpp.html" title="Class containing methods to actuate a beeper connected to PIEZO_PIN." alt="" coords="5,80,157,107"/>
+<area shape="rect" id="node3" href="$global__beeper_8cpp.html" title="Singleton class containing methods to actuate a beeper connected to PIEZO_PIN." alt="" coords="182,80,381,107"/>
+<area shape="rect" id="node4" href="$knitter_8cpp.html" title="Class containing methods for the finite state machine that co&#45;ordinates the AYAB firmware." alt="" coords="513,237,663,263"/>
+<area shape="rect" id="node5" href="$knitter_8h.html" title=" " alt="" coords="1065,155,1199,181"/>
+<area shape="rect" id="node9" href="$main_8cpp.html" title="Main entry point for AYAB firmware." alt="" coords="347,237,488,263"/>
+<area shape="rect" id="node10" href="$tester_8cpp.html" title="Class containing methods for hardware testing." alt="" coords="687,237,833,263"/>
+<area shape="rect" id="node17" href="$tester_8h.html" title=" " alt="" coords="696,80,827,107"/>
+<area shape="rect" id="node21" href="$beeper__mock_8h.html" title=" " alt="" coords="1986,155,2185,181"/>
+<area shape="rect" id="node23" href="$test__beeper_8cpp.html" title=" " alt="" coords="952,80,1107,107"/>
+<area shape="rect" id="node6" href="$com_8cpp.html" title="Class containing methods for serial communication." alt="" coords="857,237,993,263"/>
+<area shape="rect" id="node7" href="$fsm_8cpp.html" title="Singleton class containing methods for the finite state machine that co&#45;ordinates the AYAB firmware." alt="" coords="1233,237,1367,263"/>
+<area shape="rect" id="node8" href="$global__knitter_8cpp.html" title="Singleton class containing methods for the finite state machine that co&#45;ordinates the AYAB firmware." alt="" coords="1391,237,1588,263"/>
+<area shape="rect" id="node11" href="$knitter__mock_8cpp.html" title=" " alt="" coords="1071,319,1212,360"/>
+<area shape="rect" id="node12" href="$knitter__mock_8h.html" title=" " alt="" coords="1017,229,1159,271"/>
+<area shape="rect" id="node14" href="$test__all_8cpp.html" title=" " alt="" coords="2179,237,2306,263"/>
+<area shape="rect" id="node15" href="$test__fsm_8cpp.html" title=" " alt="" coords="1613,237,1747,263"/>
+<area shape="rect" id="node16" href="$test__knitter_8cpp.html" title=" " alt="" coords="2003,237,2155,263"/>
+<area shape="rect" id="node13" href="$test__tester_8cpp.html" title=" " alt="" coords="595,326,741,353"/>
+<area shape="rect" id="node18" href="$global__tester_8cpp.html" title="Singleton class containing methods for hardware testing." alt="" coords="848,155,1040,181"/>
+<area shape="rect" id="node19" href="$tester__mock_8h.html" title=" " alt="" coords="1771,155,1962,181"/>
+<area shape="rect" id="node20" href="$tester__mock_8cpp.html" title=" " alt="" coords="1771,237,1978,263"/>
+<area shape="rect" id="node22" href="$beeper__mock_8cpp.html" title=" " alt="" coords="2331,237,2544,263"/>
+</map>

@@ -1,0 +1,14 @@
+<map id="KnitterTest" name="KnitterTest">
+<area shape="rect" id="node1" title=" " alt="" coords="386,653,585,877"/>
+<area shape="rect" id="node2" title=" " alt="" coords="5,425,107,503"/>
+<area shape="rect" id="node3" href="$class_solenoids_mock.html" title=" " alt="" coords="131,411,291,517"/>
+<area shape="rect" id="node4" href="$class_solenoids_interface.html" title=" " alt="" coords="93,86,272,207"/>
+<area shape="rect" id="node5" href="$class_encoders_mock.html" title=" " alt="" coords="315,367,475,561"/>
+<area shape="rect" id="node6" href="$class_encoders_interface.html" title="Encoder interface." alt="" coords="297,42,471,251"/>
+<area shape="rect" id="node7" href="$class_com_mock.html" title=" " alt="" coords="499,374,659,554"/>
+<area shape="rect" id="node8" href="$class_com_interface.html" title=" " alt="" coords="496,49,661,244"/>
+<area shape="rect" id="node9" href="$class_beeper_mock.html" title=" " alt="" coords="685,411,845,517"/>
+<area shape="rect" id="node10" href="$class_beeper_interface.html" title=" " alt="" coords="685,86,848,207"/>
+<area shape="rect" id="node11" href="$class_tester_mock.html" title=" " alt="" coords="876,337,1036,591"/>
+<area shape="rect" id="node12" href="$class_tester_interface.html" title=" " alt="" coords="872,5,1053,288"/>
+</map>
