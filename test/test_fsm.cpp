@@ -167,6 +167,7 @@ protected:
   void expected_dispatch_wait_for_machine() {
     ASSERT_EQ(fsm->getState(), s_wait_for_machine);
 
+    EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, LOW));
     expected_dispatch();
   }
 
