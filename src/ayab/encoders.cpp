@@ -50,6 +50,7 @@ void Encoders::encA_interrupt() {
 
 /*!
  * \brief Read hall sensor on left and right.
+ * \param pSensor Which sensor to read (left or right).
  */
 uint16_t Encoders::getHallValue(Direction_t pSensor) {
   switch (pSensor) {
@@ -64,6 +65,7 @@ uint16_t Encoders::getHallValue(Direction_t pSensor) {
 
 /*!
  * \brief Initialize machine type.
+ * \param machineType Machine type.
  */
 void Encoders::init(Machine_t machineType) {
   m_machineType = machineType;
