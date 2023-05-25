@@ -182,7 +182,7 @@ protected:
   void expected_init_machine(Machine_t m) {
     // Init the machine
     ASSERT_EQ(knitter->initMachine(m), SUCCESS);
-    expected_dispatch();
+    expected_dispatch_wait_for_machine();
 
     ASSERT_EQ(fsm->getState(), s_init);
   }
@@ -218,6 +218,14 @@ protected:
     }
     ASSERT_TRUE(fsm->getState() == s_knit);
     EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, HIGH)); // green LED on
+    expected_dispatch();
+  }
+
+  void expected_dispatch_wait_for_machine() {
+    // starts in state `s_init`
+    ASSERT_EQ(fsm->getState(), s_wait_for_machine);
+
+    EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, LOW));
     expected_dispatch();
   }
 

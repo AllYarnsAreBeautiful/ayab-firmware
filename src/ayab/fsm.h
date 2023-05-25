@@ -111,6 +111,7 @@ public:
   void dispatch();
 
 private:
+  void state_wait_for_machine();
   void state_init();
   void state_ready();
   void state_knit();

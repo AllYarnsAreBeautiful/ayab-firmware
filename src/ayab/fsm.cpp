@@ -71,6 +71,10 @@ void Fsm::setState(OpState_t state) {
  */
 void Fsm::dispatch() {
   switch (m_currentState) {
+  case s_wait_for_machine:
+    state_wait_for_machine();
+    break;
+
   case s_init:
     state_init();
     break;
@@ -100,6 +104,13 @@ void Fsm::dispatch() {
 // GCOVR_EXCL_STOP
 
 // Private methods
+
+/*!
+ * \brief Action of machine in state `wait_for_machine`.
+ */
+void Fsm::state_wait_for_machine() {
+  digitalWrite(LED_PIN_A, LOW); // green LED off
+}
 
 /*!
  * \brief Action of machine in state `s_init`.
