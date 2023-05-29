@@ -9,6 +9,7 @@ var class_fsm =
     [ "state_knit", "class_fsm.html#aadd326efe5dce853f54c52215c6fa400", null ],
     [ "state_ready", "class_fsm.html#ad70fa5988ff59dbbc709c72ad55bb3e9", null ],
     [ "state_test", "class_fsm.html#a8231cb415a1bc455b3542d487e0babcf", null ],
+    [ "state_wait_for_machine", "class_fsm.html#af3eb63b1f2163459bb105f20850bff38", null ],
     [ "m_currentState", "class_fsm.html#a42ea48bac4d5f8eb029132bab0df4e43", null ],
     [ "m_error", "class_fsm.html#ae61ebfd83e2fdaf26f7cac66db0e8044", null ],
     [ "m_flash", "class_fsm.html#a46d872fbf30d76f6025375679c58e6b6", null ],

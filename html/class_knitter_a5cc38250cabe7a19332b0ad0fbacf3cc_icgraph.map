@@ -1,0 +1,4 @@
+<map id="Knitter::calculatePixelAndSolenoid" name="Knitter::calculatePixelAndSolenoid">
+<area shape="rect" id="node1" title="Calculate the solenoid and pixel to be set." alt="" coords="227,5,416,47"/>
+<area shape="rect" id="node2" href="$class_knitter.html#af590c582a2952d793a09bb5c423fae88" title="Record current encoder position." alt="" coords="5,13,179,39"/>
+</map>

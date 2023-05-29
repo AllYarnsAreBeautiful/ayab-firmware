@@ -1,0 +1,4 @@
+<map id="Com::h_reqStart" name="Com::h_reqStart">
+<area shape="rect" id="node1" title="Handle reqStart (start request) command." alt="" coords="5,5,132,32"/>
+<area shape="rect" id="node2" href="$class_com.html#ab5aa10be14b31ff95a00de00074b248b" title="Send cnfStart message." alt="" coords="180,5,329,32"/>
+</map>

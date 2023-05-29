@@ -1,0 +1,4 @@
+<map id="Com::h_reqInfo" name="Com::h_reqInfo">
+<area shape="rect" id="node1" title="Handle reqInfo (request information) command." alt="" coords="5,5,127,32"/>
+<area shape="rect" id="node2" href="$class_com.html#ad433f541beb54a9281662a63cf74f5e9" title="Send cnfInfo message." alt="" coords="175,5,317,32"/>
+</map>

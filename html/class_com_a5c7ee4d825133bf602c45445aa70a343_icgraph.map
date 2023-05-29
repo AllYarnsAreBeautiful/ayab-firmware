@@ -1,0 +1,4 @@
+<map id="Com::send_cnfTest" name="Com::send_cnfTest">
+<area shape="rect" id="node1" title="Send cnfTest message." alt="" coords="176,5,320,32"/>
+<area shape="rect" id="node2" href="$class_com.html#a6e5935bd586065e9e662f4f166a69be1" title="Handle reqTest (request hardware test) command." alt="" coords="5,5,128,32"/>
+</map>

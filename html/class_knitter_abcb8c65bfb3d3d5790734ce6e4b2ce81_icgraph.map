@@ -1,0 +1,4 @@
+<map id="Knitter::indState" name="Knitter::indState">
+<area shape="rect" id="node1" title="Send indState message." alt="" coords="227,5,355,32"/>
+<area shape="rect" id="node2" href="$class_knitter.html#af590c582a2952d793a09bb5c423fae88" title="Record current encoder position." alt="" coords="5,5,179,32"/>
+</map>

@@ -1,0 +1,4 @@
+<map id="Com::h_reqTest" name="Com::h_reqTest">
+<area shape="rect" id="node1" title="Handle reqTest (request hardware test) command." alt="" coords="5,5,128,32"/>
+<area shape="rect" id="node2" href="$class_com.html#a5c7ee4d825133bf602c45445aa70a343" title="Send cnfTest message." alt="" coords="176,5,320,32"/>
+</map>

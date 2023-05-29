@@ -12,6 +12,7 @@ var class_knitter_test =
     [ "expected_dispatch_knit", "class_knitter_test.html#a4248082a12516bd08680b5a22f17c064", null ],
     [ "expected_dispatch_ready", "class_knitter_test.html#aec53dfa34979f1329f3b91cf0c91418a", null ],
     [ "expected_dispatch_test", "class_knitter_test.html#aff5e4f5027e0115e95cce3fabcd64e96", null ],
+    [ "expected_dispatch_wait_for_machine", "class_knitter_test.html#a5bca22f9400ea9cc9482a745920b4b92", null ],
     [ "expected_get_ready", "class_knitter_test.html#a1d824b90911de0b52915d500633a3285", null ],
     [ "expected_init_machine", "class_knitter_test.html#a5cf83237cc2cb74eb735290d1b138ce8", null ],
     [ "expected_isr", "class_knitter_test.html#a5b0f495622320f7ca0fd36ef9f4e1564", null ],

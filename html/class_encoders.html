@@ -94,13 +94,11 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a6cedba1ef4083e0c1282de411a2c2f4c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_encoders.html#a6cedba1ef4083e0c1282de411a2c2f4c">encA_interrupt</a> ()</td></tr>
 <tr class="memdesc:a6cedba1ef4083e0c1282de411a2c2f4c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Service encoder A interrupt routine.  <a href="class_encoders.html#a6cedba1ef4083e0c1282de411a2c2f4c">More...</a><br /></td></tr>
 <tr class="separator:a6cedba1ef4083e0c1282de411a2c2f4c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adac2be67056425efaa9743b283671d15"><td class="memItemLeft" align="right" valign="top"><a id="adac2be67056425efaa9743b283671d15"></a>
-uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_encoders.html#adac2be67056425efaa9743b283671d15">getHallValue</a> (Direction_t pSensor)</td></tr>
-<tr class="memdesc:adac2be67056425efaa9743b283671d15"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read hall sensor on left and right. <br /></td></tr>
+<tr class="memitem:adac2be67056425efaa9743b283671d15"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_encoders.html#adac2be67056425efaa9743b283671d15">getHallValue</a> (Direction_t pSensor)</td></tr>
+<tr class="memdesc:adac2be67056425efaa9743b283671d15"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read hall sensor on left and right.  <a href="class_encoders.html#adac2be67056425efaa9743b283671d15">More...</a><br /></td></tr>
 <tr class="separator:adac2be67056425efaa9743b283671d15"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4c9f99a66fa877645a3d8602a216bc58"><td class="memItemLeft" align="right" valign="top"><a id="a4c9f99a66fa877645a3d8602a216bc58"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_encoders.html#a4c9f99a66fa877645a3d8602a216bc58">init</a> (Machine_t machineType)</td></tr>
-<tr class="memdesc:a4c9f99a66fa877645a3d8602a216bc58"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize machine type. <br /></td></tr>
+<tr class="memitem:a4c9f99a66fa877645a3d8602a216bc58"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_encoders.html#a4c9f99a66fa877645a3d8602a216bc58">init</a> (Machine_t machineType)</td></tr>
+<tr class="memdesc:a4c9f99a66fa877645a3d8602a216bc58"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize machine type.  <a href="class_encoders.html#a4c9f99a66fa877645a3d8602a216bc58">More...</a><br /></td></tr>
 <tr class="separator:a4c9f99a66fa877645a3d8602a216bc58"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab62ec9b72752762f822944cb8c284b7d"><td class="memItemLeft" align="right" valign="top"><a id="ab62ec9b72752762f822944cb8c284b7d"></a>
 Machine_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_encoders.html#ab62ec9b72752762f822944cb8c284b7d">getMachineType</a> ()</td></tr>
@@ -247,6 +245,78 @@ volatile bool&#160;</td><td class="memItemRight" valign="bottom"><b>m_oldState</
 
 </div>
 </div>
+<a id="adac2be67056425efaa9743b283671d15"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adac2be67056425efaa9743b283671d15">&#9670;&nbsp;</a></span>getHallValue()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint16_t Encoders::getHallValue </td>
+          <td>(</td>
+          <td class="paramtype">Direction_t&#160;</td>
+          <td class="paramname"><em>pSensor</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Read hall sensor on left and right. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">pSensor</td><td>Which sensor to read (left or right). </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Implements <a class="el" href="class_encoders_interface.html">EncodersInterface</a>.</p>
+
+</div>
+</div>
+<a id="a4c9f99a66fa877645a3d8602a216bc58"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4c9f99a66fa877645a3d8602a216bc58">&#9670;&nbsp;</a></span>init()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Encoders::init </td>
+          <td>(</td>
+          <td class="paramtype">Machine_t&#160;</td>
+          <td class="paramname"><em>machineType</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Initialize machine type. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">machineType</td><td>Machine type. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Implements <a class="el" href="class_encoders_interface.html">EncodersInterface</a>.</p>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li>src/ayab/<a class="el" href="encoders_8h_source.html">encoders.h</a></li>
 <li>src/ayab/<a class="el" href="encoders_8cpp.html">encoders.cpp</a></li>
@@ -258,7 +328,7 @@ volatile bool&#160;</td><td class="memItemRight" valign="bottom"><b>m_oldState</
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_encoders.html">Encoders</a></li>
-    <li class="footer">Generated on Wed May 24 2023 21:08:13 for AYAB Arduino Firmware by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Mon May 29 2023 18:12:18 for AYAB Arduino Firmware by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

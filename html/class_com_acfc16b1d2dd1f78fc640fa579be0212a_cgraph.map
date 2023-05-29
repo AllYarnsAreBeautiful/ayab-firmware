@@ -1,0 +1,4 @@
+<map id="Com::h_reqInit" name="Com::h_reqInit">
+<area shape="rect" id="node1" title="Handle reqInit (request initialization) command." alt="" coords="5,5,123,32"/>
+<area shape="rect" id="node2" href="$class_com.html#a639ec60fc61e072eef9354e353929608" title="Send cnfInit message." alt="" coords="171,5,309,32"/>
+</map>

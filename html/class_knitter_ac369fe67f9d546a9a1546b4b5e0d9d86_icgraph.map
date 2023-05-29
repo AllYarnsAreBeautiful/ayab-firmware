@@ -1,0 +1,4 @@
+<map id="Knitter::reqLine" name="Knitter::reqLine">
+<area shape="rect" id="node1" title="Send reqLine message." alt="" coords="205,5,328,32"/>
+<area shape="rect" id="node2" href="$class_knitter.html#aa04ec362c19acade77328ee2da8a4730" title="Set line number of next row to be knitted." alt="" coords="5,5,157,32"/>
+</map>

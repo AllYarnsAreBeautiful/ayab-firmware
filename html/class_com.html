@@ -92,16 +92,18 @@ Collaboration diagram for Com:</div>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a1fdbb052f376bac842eba1562f821ca7"><td class="memItemLeft" align="right" valign="top"><a id="a1fdbb052f376bac842eba1562f821ca7"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>init</b> ()</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_com.html#a1fdbb052f376bac842eba1562f821ca7">init</a> ()</td></tr>
+<tr class="memdesc:a1fdbb052f376bac842eba1562f821ca7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize serial communication. <br /></td></tr>
 <tr class="separator:a1fdbb052f376bac842eba1562f821ca7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0ef54d19f416109bda31e8bff9ca61a8"><td class="memItemLeft" align="right" valign="top"><a id="a0ef54d19f416109bda31e8bff9ca61a8"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>update</b> ()</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_com.html#a0ef54d19f416109bda31e8bff9ca61a8">update</a> ()</td></tr>
+<tr class="memdesc:a0ef54d19f416109bda31e8bff9ca61a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Service the serial connection. <br /></td></tr>
 <tr class="separator:a0ef54d19f416109bda31e8bff9ca61a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae580810353eb9cada6848e0b0f90b3e7"><td class="memItemLeft" align="right" valign="top"><a id="ae580810353eb9cada6848e0b0f90b3e7"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>send</b> (uint8_t *payload, size_t length)</td></tr>
+<tr class="memitem:ae580810353eb9cada6848e0b0f90b3e7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_com.html#ae580810353eb9cada6848e0b0f90b3e7">send</a> (uint8_t *payload, size_t length)</td></tr>
+<tr class="memdesc:ae580810353eb9cada6848e0b0f90b3e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send a packet of data.  <a href="class_com.html#ae580810353eb9cada6848e0b0f90b3e7">More...</a><br /></td></tr>
 <tr class="separator:ae580810353eb9cada6848e0b0f90b3e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1b3c9f493e2252f3b1adb067c93d8dc2"><td class="memItemLeft" align="right" valign="top"><a id="a1b3c9f493e2252f3b1adb067c93d8dc2"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>sendMsg</b> (AYAB_API_t id, const char *msg)</td></tr>
+<tr class="memitem:a1b3c9f493e2252f3b1adb067c93d8dc2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_com.html#a1b3c9f493e2252f3b1adb067c93d8dc2">sendMsg</a> (AYAB_API_t id, const char *msg)</td></tr>
+<tr class="memdesc:a1b3c9f493e2252f3b1adb067c93d8dc2"><td class="mdescLeft">&#160;</td><td class="mdescRight">send initial msgid followed by null-terminated string  <a href="class_com.html#a1b3c9f493e2252f3b1adb067c93d8dc2">More...</a><br /></td></tr>
 <tr class="separator:a1b3c9f493e2252f3b1adb067c93d8dc2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae786ae598b5b14ebd29c2dd2ed635f0a"><td class="memItemLeft" align="right" valign="top"><a id="ae786ae598b5b14ebd29c2dd2ed635f0a"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>sendMsg</b> (AYAB_API_t id, char *msg)</td></tr>
@@ -109,34 +111,29 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>sendMsg</b> (AYAB_API
 <tr class="memitem:a8921ddcfa2fefed99ca722618c23ab47"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_com.html#a8921ddcfa2fefed99ca722618c23ab47">send_reqLine</a> (const uint8_t lineNumber, Err_t error=SUCCESS)</td></tr>
 <tr class="memdesc:a8921ddcfa2fefed99ca722618c23ab47"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send <code>reqLine</code> message.  <a href="class_com.html#a8921ddcfa2fefed99ca722618c23ab47">More...</a><br /></td></tr>
 <tr class="separator:a8921ddcfa2fefed99ca722618c23ab47"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a34e63fa0a24cabc6ac0221bd7605213f"><td class="memItemLeft" align="right" valign="top"><a id="a34e63fa0a24cabc6ac0221bd7605213f"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_com.html#a34e63fa0a24cabc6ac0221bd7605213f">send_indState</a> (Carriage_t carriage, uint8_t position, const uint8_t initState=SUCCESS)</td></tr>
-<tr class="memdesc:a34e63fa0a24cabc6ac0221bd7605213f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send <code>indState</code> message. <br /></td></tr>
+<tr class="memitem:a34e63fa0a24cabc6ac0221bd7605213f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_com.html#a34e63fa0a24cabc6ac0221bd7605213f">send_indState</a> (Carriage_t carriage, uint8_t position, const uint8_t initState=SUCCESS)</td></tr>
+<tr class="memdesc:a34e63fa0a24cabc6ac0221bd7605213f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send <code>indState</code> message.  <a href="class_com.html#a34e63fa0a24cabc6ac0221bd7605213f">More...</a><br /></td></tr>
 <tr class="separator:a34e63fa0a24cabc6ac0221bd7605213f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6d5338f8e1145f276b20872283046d76"><td class="memItemLeft" align="right" valign="top"><a id="a6d5338f8e1145f276b20872283046d76"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_com.html#a6d5338f8e1145f276b20872283046d76">onPacketReceived</a> (const uint8_t *buffer, size_t size)</td></tr>
-<tr class="memdesc:a6d5338f8e1145f276b20872283046d76"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback for PacketSerial. <br /></td></tr>
+<tr class="memitem:a6d5338f8e1145f276b20872283046d76"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_com.html#a6d5338f8e1145f276b20872283046d76">onPacketReceived</a> (const uint8_t *buffer, size_t size)</td></tr>
+<tr class="memdesc:a6d5338f8e1145f276b20872283046d76"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback for PacketSerial.  <a href="class_com.html#a6d5338f8e1145f276b20872283046d76">More...</a><br /></td></tr>
 <tr class="separator:a6d5338f8e1145f276b20872283046d76"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-methods"></a>
 Private Member Functions</h2></td></tr>
-<tr class="memitem:acfc16b1d2dd1f78fc640fa579be0212a"><td class="memItemLeft" align="right" valign="top"><a id="acfc16b1d2dd1f78fc640fa579be0212a"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>h_reqInit</b> (const uint8_t *buffer, size_t size)</td></tr>
+<tr class="memitem:acfc16b1d2dd1f78fc640fa579be0212a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_com.html#acfc16b1d2dd1f78fc640fa579be0212a">h_reqInit</a> (const uint8_t *buffer, size_t size)</td></tr>
+<tr class="memdesc:acfc16b1d2dd1f78fc640fa579be0212a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handle <code>reqInit</code> (request initialization) command.  <a href="class_com.html#acfc16b1d2dd1f78fc640fa579be0212a">More...</a><br /></td></tr>
 <tr class="separator:acfc16b1d2dd1f78fc640fa579be0212a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa83ebbfb8cb446069c39af4fada13f57"><td class="memItemLeft" align="right" valign="top"><a id="aa83ebbfb8cb446069c39af4fada13f57"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_com.html#aa83ebbfb8cb446069c39af4fada13f57">h_reqStart</a> (const uint8_t *buffer, size_t size)</td></tr>
-<tr class="memdesc:aa83ebbfb8cb446069c39af4fada13f57"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handle <code>reqStart</code> (start request) command. <br /></td></tr>
+<tr class="memitem:aa83ebbfb8cb446069c39af4fada13f57"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_com.html#aa83ebbfb8cb446069c39af4fada13f57">h_reqStart</a> (const uint8_t *buffer, size_t size)</td></tr>
+<tr class="memdesc:aa83ebbfb8cb446069c39af4fada13f57"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handle <code>reqStart</code> (start request) command.  <a href="class_com.html#aa83ebbfb8cb446069c39af4fada13f57">More...</a><br /></td></tr>
 <tr class="separator:aa83ebbfb8cb446069c39af4fada13f57"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac1d4bba86838d956e175b0ad7928eadb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_com.html#ac1d4bba86838d956e175b0ad7928eadb">h_cnfLine</a> (const uint8_t *buffer, size_t size)</td></tr>
 <tr class="memdesc:ac1d4bba86838d956e175b0ad7928eadb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handle <code>cnfLine</code> (configure line) command.  <a href="class_com.html#ac1d4bba86838d956e175b0ad7928eadb">More...</a><br /></td></tr>
 <tr class="separator:ac1d4bba86838d956e175b0ad7928eadb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa522d81f9e43c6986d295add8e30807b"><td class="memItemLeft" align="right" valign="top"><a id="aa522d81f9e43c6986d295add8e30807b"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_com.html#aa522d81f9e43c6986d295add8e30807b">h_reqInfo</a> ()</td></tr>
-<tr class="memdesc:aa522d81f9e43c6986d295add8e30807b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handle <code>reqInfo</code> (request information) command. <br /></td></tr>
+<tr class="memitem:aa522d81f9e43c6986d295add8e30807b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_com.html#aa522d81f9e43c6986d295add8e30807b">h_reqInfo</a> ()</td></tr>
+<tr class="memdesc:aa522d81f9e43c6986d295add8e30807b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handle <code>reqInfo</code> (request information) command.  <a href="class_com.html#aa522d81f9e43c6986d295add8e30807b">More...</a><br /></td></tr>
 <tr class="separator:aa522d81f9e43c6986d295add8e30807b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6e5935bd586065e9e662f4f166a69be1"><td class="memItemLeft" align="right" valign="top"><a id="a6e5935bd586065e9e662f4f166a69be1"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_com.html#a6e5935bd586065e9e662f4f166a69be1">h_reqTest</a> (const uint8_t *buffer, size_t size)</td></tr>
-<tr class="memdesc:a6e5935bd586065e9e662f4f166a69be1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handle <code>reqTest</code> (request hardware test) command. <br /></td></tr>
+<tr class="memitem:a6e5935bd586065e9e662f4f166a69be1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_com.html#a6e5935bd586065e9e662f4f166a69be1">h_reqTest</a> (const uint8_t *buffer, size_t size)</td></tr>
+<tr class="memdesc:a6e5935bd586065e9e662f4f166a69be1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handle <code>reqTest</code> (request hardware test) command.  <a href="class_com.html#a6e5935bd586065e9e662f4f166a69be1">More...</a><br /></td></tr>
 <tr class="separator:a6e5935bd586065e9e662f4f166a69be1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a33faccedc80ac6e49d0297e38afdbe0a"><td class="memItemLeft" align="right" valign="top"><a id="a33faccedc80ac6e49d0297e38afdbe0a"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_com.html#a33faccedc80ac6e49d0297e38afdbe0a">h_unrecognized</a> ()</td></tr>
@@ -146,17 +143,14 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_com.html#ad433f541beb54a9281662a63cf74f5e9">send_cnfInfo</a> ()</td></tr>
 <tr class="memdesc:ad433f541beb54a9281662a63cf74f5e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send <code>cnfInfo</code> message. <br /></td></tr>
 <tr class="separator:ad433f541beb54a9281662a63cf74f5e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a639ec60fc61e072eef9354e353929608"><td class="memItemLeft" align="right" valign="top"><a id="a639ec60fc61e072eef9354e353929608"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_com.html#a639ec60fc61e072eef9354e353929608">send_cnfInit</a> (Err_t error)</td></tr>
-<tr class="memdesc:a639ec60fc61e072eef9354e353929608"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send <code>cnfInit</code> message. <br /></td></tr>
+<tr class="memitem:a639ec60fc61e072eef9354e353929608"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_com.html#a639ec60fc61e072eef9354e353929608">send_cnfInit</a> (Err_t error)</td></tr>
+<tr class="memdesc:a639ec60fc61e072eef9354e353929608"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send <code>cnfInit</code> message.  <a href="class_com.html#a639ec60fc61e072eef9354e353929608">More...</a><br /></td></tr>
 <tr class="separator:a639ec60fc61e072eef9354e353929608"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab5aa10be14b31ff95a00de00074b248b"><td class="memItemLeft" align="right" valign="top"><a id="ab5aa10be14b31ff95a00de00074b248b"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_com.html#ab5aa10be14b31ff95a00de00074b248b">send_cnfStart</a> (Err_t error)</td></tr>
-<tr class="memdesc:ab5aa10be14b31ff95a00de00074b248b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send <code>cnfStart</code> message. <br /></td></tr>
+<tr class="memitem:ab5aa10be14b31ff95a00de00074b248b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_com.html#ab5aa10be14b31ff95a00de00074b248b">send_cnfStart</a> (Err_t error)</td></tr>
+<tr class="memdesc:ab5aa10be14b31ff95a00de00074b248b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send <code>cnfStart</code> message.  <a href="class_com.html#ab5aa10be14b31ff95a00de00074b248b">More...</a><br /></td></tr>
 <tr class="separator:ab5aa10be14b31ff95a00de00074b248b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5c7ee4d825133bf602c45445aa70a343"><td class="memItemLeft" align="right" valign="top"><a id="a5c7ee4d825133bf602c45445aa70a343"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_com.html#a5c7ee4d825133bf602c45445aa70a343">send_cnfTest</a> (Err_t error)</td></tr>
-<tr class="memdesc:a5c7ee4d825133bf602c45445aa70a343"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send <code>cnfTest</code> message. <br /></td></tr>
+<tr class="memitem:a5c7ee4d825133bf602c45445aa70a343"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_com.html#a5c7ee4d825133bf602c45445aa70a343">send_cnfTest</a> (Err_t error)</td></tr>
+<tr class="memdesc:a5c7ee4d825133bf602c45445aa70a343"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send <code>cnfTest</code> message.  <a href="class_com.html#a5c7ee4d825133bf602c45445aa70a343">More...</a><br /></td></tr>
 <tr class="separator:a5c7ee4d825133bf602c45445aa70a343"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
@@ -207,9 +201,506 @@ uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>msgBuffer</b> [MAX
 </div><div class="memdoc">
 
 <p>Handle <code>cnfLine</code> (configure line) command. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">buffer</td><td>A pointer to a data buffer. </td></tr>
+    <tr><td class="paramname">size</td><td>The number of bytes in the data buffer.</td></tr>
+  </table>
+  </dd>
+</dl>
 <dl class="todo"><dt><b><a class="el" href="todo.html#_todo000001">Todo:</a></b></dt><dd><p class="startdd">sl: Handle CRC-8 error? </p>
 <p class="enddd">sl: Assert size? Handle error? </p>
 </dd></dl>
+
+</div>
+</div>
+<a id="aa522d81f9e43c6986d295add8e30807b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa522d81f9e43c6986d295add8e30807b">&#9670;&nbsp;</a></span>h_reqInfo()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Com::h_reqInfo </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Handle <code>reqInfo</code> (request information) command. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">buffer</td><td>A pointer to a data buffer. </td></tr>
+    <tr><td class="paramname">size</td><td>The number of bytes in the data buffer. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="reference">References <a class="el" href="class_com.html#ad433f541beb54a9281662a63cf74f5e9">send_cnfInfo()</a>.</p>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="class_com_aa522d81f9e43c6986d295add8e30807b_cgraph.png" border="0" usemap="#aclass_com_aa522d81f9e43c6986d295add8e30807b_cgraph" alt=""/></div>
+<map name="aclass_com_aa522d81f9e43c6986d295add8e30807b_cgraph" id="aclass_com_aa522d81f9e43c6986d295add8e30807b_cgraph">
+<area shape="rect" title="Handle reqInfo (request information) command." alt="" coords="5,5,127,32"/>
+<area shape="rect" href="class_com.html#ad433f541beb54a9281662a63cf74f5e9" title="Send cnfInfo message." alt="" coords="175,5,317,32"/>
+</map>
+</div>
+
+</div>
+</div>
+<a id="acfc16b1d2dd1f78fc640fa579be0212a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acfc16b1d2dd1f78fc640fa579be0212a">&#9670;&nbsp;</a></span>h_reqInit()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Com::h_reqInit </td>
+          <td>(</td>
+          <td class="paramtype">const uint8_t *&#160;</td>
+          <td class="paramname"><em>buffer</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>size</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Handle <code>reqInit</code> (request initialization) command. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">buffer</td><td>A pointer to a data buffer. </td></tr>
+    <tr><td class="paramname">size</td><td>The number of bytes in the data buffer. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="reference">References <a class="el" href="class_com.html#a639ec60fc61e072eef9354e353929608">send_cnfInit()</a>.</p>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="class_com_acfc16b1d2dd1f78fc640fa579be0212a_cgraph.png" border="0" usemap="#aclass_com_acfc16b1d2dd1f78fc640fa579be0212a_cgraph" alt=""/></div>
+<map name="aclass_com_acfc16b1d2dd1f78fc640fa579be0212a_cgraph" id="aclass_com_acfc16b1d2dd1f78fc640fa579be0212a_cgraph">
+<area shape="rect" title="Handle reqInit (request initialization) command." alt="" coords="5,5,123,32"/>
+<area shape="rect" href="class_com.html#a639ec60fc61e072eef9354e353929608" title="Send cnfInit message." alt="" coords="171,5,309,32"/>
+</map>
+</div>
+
+</div>
+</div>
+<a id="aa83ebbfb8cb446069c39af4fada13f57"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa83ebbfb8cb446069c39af4fada13f57">&#9670;&nbsp;</a></span>h_reqStart()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Com::h_reqStart </td>
+          <td>(</td>
+          <td class="paramtype">const uint8_t *&#160;</td>
+          <td class="paramname"><em>buffer</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>size</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Handle <code>reqStart</code> (start request) command. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">buffer</td><td>A pointer to a data buffer. </td></tr>
+    <tr><td class="paramname">size</td><td>The number of bytes in the data buffer. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="reference">References <a class="el" href="class_com.html#ab5aa10be14b31ff95a00de00074b248b">send_cnfStart()</a>.</p>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="class_com_aa83ebbfb8cb446069c39af4fada13f57_cgraph.png" border="0" usemap="#aclass_com_aa83ebbfb8cb446069c39af4fada13f57_cgraph" alt=""/></div>
+<map name="aclass_com_aa83ebbfb8cb446069c39af4fada13f57_cgraph" id="aclass_com_aa83ebbfb8cb446069c39af4fada13f57_cgraph">
+<area shape="rect" title="Handle reqStart (start request) command." alt="" coords="5,5,132,32"/>
+<area shape="rect" href="class_com.html#ab5aa10be14b31ff95a00de00074b248b" title="Send cnfStart message." alt="" coords="180,5,329,32"/>
+</map>
+</div>
+
+</div>
+</div>
+<a id="a6e5935bd586065e9e662f4f166a69be1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6e5935bd586065e9e662f4f166a69be1">&#9670;&nbsp;</a></span>h_reqTest()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Com::h_reqTest </td>
+          <td>(</td>
+          <td class="paramtype">const uint8_t *&#160;</td>
+          <td class="paramname"><em>buffer</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>size</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Handle <code>reqTest</code> (request hardware test) command. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">buffer</td><td>A pointer to a data buffer. </td></tr>
+    <tr><td class="paramname">size</td><td>The number of bytes in the data buffer. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="reference">References <a class="el" href="class_com.html#a5c7ee4d825133bf602c45445aa70a343">send_cnfTest()</a>.</p>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="class_com_a6e5935bd586065e9e662f4f166a69be1_cgraph.png" border="0" usemap="#aclass_com_a6e5935bd586065e9e662f4f166a69be1_cgraph" alt=""/></div>
+<map name="aclass_com_a6e5935bd586065e9e662f4f166a69be1_cgraph" id="aclass_com_a6e5935bd586065e9e662f4f166a69be1_cgraph">
+<area shape="rect" title="Handle reqTest (request hardware test) command." alt="" coords="5,5,128,32"/>
+<area shape="rect" href="class_com.html#a5c7ee4d825133bf602c45445aa70a343" title="Send cnfTest message." alt="" coords="176,5,320,32"/>
+</map>
+</div>
+
+</div>
+</div>
+<a id="a6d5338f8e1145f276b20872283046d76"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6d5338f8e1145f276b20872283046d76">&#9670;&nbsp;</a></span>onPacketReceived()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Com::onPacketReceived </td>
+          <td>(</td>
+          <td class="paramtype">const uint8_t *&#160;</td>
+          <td class="paramname"><em>buffer</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>size</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Callback for PacketSerial. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">buffer</td><td>A pointer to a data buffer. </td></tr>
+    <tr><td class="paramname">size</td><td>The number of bytes in the data buffer. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Implements <a class="el" href="class_com_interface.html">ComInterface</a>.</p>
+
+</div>
+</div>
+<a id="ae580810353eb9cada6848e0b0f90b3e7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae580810353eb9cada6848e0b0f90b3e7">&#9670;&nbsp;</a></span>send()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Com::send </td>
+          <td>(</td>
+          <td class="paramtype">uint8_t *&#160;</td>
+          <td class="paramname"><em>payload</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>length</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Send a packet of data. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">payload</td><td>A pointer to a data buffer. </td></tr>
+    <tr><td class="paramname">length</td><td>The number of bytes in the data buffer. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Implements <a class="el" href="class_com_interface.html">ComInterface</a>.</p>
+
+</div>
+</div>
+<a id="a639ec60fc61e072eef9354e353929608"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a639ec60fc61e072eef9354e353929608">&#9670;&nbsp;</a></span>send_cnfInit()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Com::send_cnfInit </td>
+          <td>(</td>
+          <td class="paramtype">Err_t&#160;</td>
+          <td class="paramname"><em>error</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Send <code>cnfInit</code> message. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">error</td><td>Error code (0 = success, other values = error). </td></tr>
+  </table>
+  </dd>
+</dl>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="class_com_a639ec60fc61e072eef9354e353929608_icgraph.png" border="0" usemap="#aclass_com_a639ec60fc61e072eef9354e353929608_icgraph" alt=""/></div>
+<map name="aclass_com_a639ec60fc61e072eef9354e353929608_icgraph" id="aclass_com_a639ec60fc61e072eef9354e353929608_icgraph">
+<area shape="rect" title="Send cnfInit message." alt="" coords="171,5,309,32"/>
+<area shape="rect" href="class_com.html#acfc16b1d2dd1f78fc640fa579be0212a" title="Handle reqInit (request initialization) command." alt="" coords="5,5,123,32"/>
+</map>
+</div>
+
+</div>
+</div>
+<a id="ab5aa10be14b31ff95a00de00074b248b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab5aa10be14b31ff95a00de00074b248b">&#9670;&nbsp;</a></span>send_cnfStart()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Com::send_cnfStart </td>
+          <td>(</td>
+          <td class="paramtype">Err_t&#160;</td>
+          <td class="paramname"><em>error</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Send <code>cnfStart</code> message. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">error</td><td>Error code (0 = success, other values = error). </td></tr>
+  </table>
+  </dd>
+</dl>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="class_com_ab5aa10be14b31ff95a00de00074b248b_icgraph.png" border="0" usemap="#aclass_com_ab5aa10be14b31ff95a00de00074b248b_icgraph" alt=""/></div>
+<map name="aclass_com_ab5aa10be14b31ff95a00de00074b248b_icgraph" id="aclass_com_ab5aa10be14b31ff95a00de00074b248b_icgraph">
+<area shape="rect" title="Send cnfStart message." alt="" coords="180,5,329,32"/>
+<area shape="rect" href="class_com.html#aa83ebbfb8cb446069c39af4fada13f57" title="Handle reqStart (start request) command." alt="" coords="5,5,132,32"/>
+</map>
+</div>
+
+</div>
+</div>
+<a id="a5c7ee4d825133bf602c45445aa70a343"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5c7ee4d825133bf602c45445aa70a343">&#9670;&nbsp;</a></span>send_cnfTest()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Com::send_cnfTest </td>
+          <td>(</td>
+          <td class="paramtype">Err_t&#160;</td>
+          <td class="paramname"><em>error</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Send <code>cnfTest</code> message. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">error</td><td>Error code (0 = success, other values = error). </td></tr>
+  </table>
+  </dd>
+</dl>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="class_com_a5c7ee4d825133bf602c45445aa70a343_icgraph.png" border="0" usemap="#aclass_com_a5c7ee4d825133bf602c45445aa70a343_icgraph" alt=""/></div>
+<map name="aclass_com_a5c7ee4d825133bf602c45445aa70a343_icgraph" id="aclass_com_a5c7ee4d825133bf602c45445aa70a343_icgraph">
+<area shape="rect" title="Send cnfTest message." alt="" coords="176,5,320,32"/>
+<area shape="rect" href="class_com.html#a6e5935bd586065e9e662f4f166a69be1" title="Handle reqTest (request hardware test) command." alt="" coords="5,5,128,32"/>
+</map>
+</div>
+
+</div>
+</div>
+<a id="a34e63fa0a24cabc6ac0221bd7605213f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a34e63fa0a24cabc6ac0221bd7605213f">&#9670;&nbsp;</a></span>send_indState()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Com::send_indState </td>
+          <td>(</td>
+          <td class="paramtype">Carriage_t&#160;</td>
+          <td class="paramname"><em>carriage</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t&#160;</td>
+          <td class="paramname"><em>position</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const uint8_t&#160;</td>
+          <td class="paramname"><em>initState</em> = <code>SUCCESS</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Send <code>indState</code> message. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">carriage</td><td>Type of knitting carriage in use. </td></tr>
+    <tr><td class="paramname">position</td><td>Position of knitting carriage in needles from left hand side. </td></tr>
+    <tr><td class="paramname">initState</td><td>State of readiness (0 = ready, other values = not ready). </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Implements <a class="el" href="class_com_interface.html">ComInterface</a>.</p>
 
 </div>
 </div>
@@ -248,7 +739,60 @@ uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>msgBuffer</b> [MAX
 </div><div class="memdoc">
 
 <p>Send <code>reqLine</code> message. </p>
-<p>the second argument is the line number requested (0-indexed and modulo 256) </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">lineNumber</td><td>The line number requested (0-indexed and modulo 256). </td></tr>
+    <tr><td class="paramname">error</td><td>Error code (0 = success). </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Implements <a class="el" href="class_com_interface.html">ComInterface</a>.</p>
+
+</div>
+</div>
+<a id="a1b3c9f493e2252f3b1adb067c93d8dc2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1b3c9f493e2252f3b1adb067c93d8dc2">&#9670;&nbsp;</a></span>sendMsg()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Com::sendMsg </td>
+          <td>(</td>
+          <td class="paramtype">AYAB_API_t&#160;</td>
+          <td class="paramname"><em>id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>msg</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>send initial msgid followed by null-terminated string </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">id</td><td>The msgid to be sent. </td></tr>
+    <tr><td class="paramname">msg</td><td>Pointer to a data buffer containing a null-terminated string. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 <p>Implements <a class="el" href="class_com_interface.html">ComInterface</a>.</p>
 
@@ -265,7 +809,7 @@ uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>msgBuffer</b> [MAX
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_com.html">Com</a></li>
-    <li class="footer">Generated on Wed May 24 2023 21:08:13 for AYAB Arduino Firmware by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Mon May 29 2023 18:12:18 for AYAB Arduino Firmware by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

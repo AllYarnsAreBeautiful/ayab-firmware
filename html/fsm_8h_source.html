@@ -150,34 +150,43 @@ $(document).ready(function(){initNavTree('fsm_8h_source.html',''); initResizable
 <div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160; </div>
 <div class="line"><a name="l00106"></a><span class="lineno"><a class="line" href="class_fsm.html">  106</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_fsm.html">Fsm</a> : <span class="keyword">public</span> <a class="code" href="class_fsm_interface.html">FsmInterface</a> {</div>
 <div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;  <span class="keywordtype">void</span> init();</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;  OpState_t getState();</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_fsm.html#aa434fab3cb519bde2756b06ec126ed1d">init</a>();</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;  OpState_t <a class="code" href="class_fsm.html#ad516b658704e56f949f9f2f7c123b768">getState</a>();</div>
 <div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_fsm.html#ad36c81d0779a55afd491fbfb34e64fa7">setState</a>(OpState_t state);</div>
 <div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_fsm.html#a8b180185aaa23b4b9a22ffbe52fd6150">dispatch</a>();</div>
 <div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160; </div>
 <div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;  <span class="keywordtype">void</span> state_init();</div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;  <span class="keywordtype">void</span> state_ready();</div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;  <span class="keywordtype">void</span> state_knit();</div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;  <span class="keywordtype">void</span> state_test();</div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;  <span class="keywordtype">void</span> state_error();</div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160; </div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;  <span class="comment">// machine state</span></div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;  OpState_t m_currentState;</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;  OpState_t m_nextState;</div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160; </div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;  <span class="comment">// error state</span></div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;  Err_t m_error;</div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160; </div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;  <span class="comment">// flashing LEDs in error state</span></div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;  <span class="keywordtype">bool</span> m_flash;</div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;  <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> m_flashTime;</div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;};</div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160; </div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// FSM_H_</span></div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_fsm.html#af3eb63b1f2163459bb105f20850bff38">state_wait_for_machine</a>();</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_fsm.html#a4b259eca0e7ffbad352a00c4b8b4c11a">state_init</a>();</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_fsm.html#ad70fa5988ff59dbbc709c72ad55bb3e9">state_ready</a>();</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_fsm.html#aadd326efe5dce853f54c52215c6fa400">state_knit</a>();</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_fsm.html#a8231cb415a1bc455b3542d487e0babcf">state_test</a>();</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_fsm.html#a9b7d32779885e32cb1a2123356ecd7bb">state_error</a>();</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160; </div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;  <span class="comment">// machine state</span></div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;  OpState_t m_currentState;</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;  OpState_t m_nextState;</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160; </div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;  <span class="comment">// error state</span></div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;  Err_t m_error;</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160; </div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;  <span class="comment">// flashing LEDs in error state</span></div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;  <span class="keywordtype">bool</span> m_flash;</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;  <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> m_flashTime;</div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;};</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160; </div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// FSM_H_</span></div>
 <div class="ttc" id="aclass_fsm_html"><div class="ttname"><a href="class_fsm.html">Fsm</a></div><div class="ttdef"><b>Definition:</b> fsm.h:106</div></div>
-<div class="ttc" id="aclass_fsm_html_a8b180185aaa23b4b9a22ffbe52fd6150"><div class="ttname"><a href="class_fsm.html#a8b180185aaa23b4b9a22ffbe52fd6150">Fsm::dispatch</a></div><div class="ttdeci">void dispatch()</div><div class="ttdoc">Dispatch on machine state.</div><div class="ttdef"><b>Definition:</b> fsm.cpp:66</div></div>
-<div class="ttc" id="aclass_fsm_html_ad36c81d0779a55afd491fbfb34e64fa7"><div class="ttname"><a href="class_fsm.html#ad36c81d0779a55afd491fbfb34e64fa7">Fsm::setState</a></div><div class="ttdeci">void setState(OpState_t state)</div><div class="ttdoc">Set machine state.</div><div class="ttdef"><b>Definition:</b> fsm.cpp:57</div></div>
+<div class="ttc" id="aclass_fsm_html_a4b259eca0e7ffbad352a00c4b8b4c11a"><div class="ttname"><a href="class_fsm.html#a4b259eca0e7ffbad352a00c4b8b4c11a">Fsm::state_init</a></div><div class="ttdeci">void state_init()</div><div class="ttdoc">Action of machine in state s_init.</div><div class="ttdef"><b>Definition:</b> fsm.cpp:118</div></div>
+<div class="ttc" id="aclass_fsm_html_a8231cb415a1bc455b3542d487e0babcf"><div class="ttname"><a href="class_fsm.html#a8231cb415a1bc455b3542d487e0babcf">Fsm::state_test</a></div><div class="ttdeci">void state_test()</div><div class="ttdoc">Action of machine in state s_test.</div><div class="ttdef"><b>Definition:</b> fsm.cpp:143</div></div>
+<div class="ttc" id="aclass_fsm_html_a8b180185aaa23b4b9a22ffbe52fd6150"><div class="ttname"><a href="class_fsm.html#a8b180185aaa23b4b9a22ffbe52fd6150">Fsm::dispatch</a></div><div class="ttdeci">void dispatch()</div><div class="ttdoc">Dispatch on machine state.</div><div class="ttdef"><b>Definition:</b> fsm.cpp:72</div></div>
+<div class="ttc" id="aclass_fsm_html_a9b7d32779885e32cb1a2123356ecd7bb"><div class="ttname"><a href="class_fsm.html#a9b7d32779885e32cb1a2123356ecd7bb">Fsm::state_error</a></div><div class="ttdeci">void state_error()</div><div class="ttdoc">Action of machine in state s_error.</div><div class="ttdef"><b>Definition:</b> fsm.cpp:155</div></div>
+<div class="ttc" id="aclass_fsm_html_aa434fab3cb519bde2756b06ec126ed1d"><div class="ttname"><a href="class_fsm.html#aa434fab3cb519bde2756b06ec126ed1d">Fsm::init</a></div><div class="ttdeci">void init()</div><div class="ttdoc">Initialize Finite State Machine.</div><div class="ttdef"><b>Definition:</b> fsm.cpp:43</div></div>
+<div class="ttc" id="aclass_fsm_html_aadd326efe5dce853f54c52215c6fa400"><div class="ttname"><a href="class_fsm.html#aadd326efe5dce853f54c52215c6fa400">Fsm::state_knit</a></div><div class="ttdeci">void state_knit()</div><div class="ttdoc">Action of machine in state s_knit.</div><div class="ttdef"><b>Definition:</b> fsm.cpp:135</div></div>
+<div class="ttc" id="aclass_fsm_html_ad36c81d0779a55afd491fbfb34e64fa7"><div class="ttname"><a href="class_fsm.html#ad36c81d0779a55afd491fbfb34e64fa7">Fsm::setState</a></div><div class="ttdeci">void setState(OpState_t state)</div><div class="ttdoc">Set machine state.</div><div class="ttdef"><b>Definition:</b> fsm.cpp:65</div></div>
+<div class="ttc" id="aclass_fsm_html_ad516b658704e56f949f9f2f7c123b768"><div class="ttname"><a href="class_fsm.html#ad516b658704e56f949f9f2f7c123b768">Fsm::getState</a></div><div class="ttdeci">OpState_t getState()</div><div class="ttdoc">Get machine state.</div><div class="ttdef"><b>Definition:</b> fsm.cpp:55</div></div>
+<div class="ttc" id="aclass_fsm_html_ad70fa5988ff59dbbc709c72ad55bb3e9"><div class="ttname"><a href="class_fsm.html#ad70fa5988ff59dbbc709c72ad55bb3e9">Fsm::state_ready</a></div><div class="ttdeci">void state_ready()</div><div class="ttdoc">Action of machine in state s_ready.</div><div class="ttdef"><b>Definition:</b> fsm.cpp:128</div></div>
+<div class="ttc" id="aclass_fsm_html_af3eb63b1f2163459bb105f20850bff38"><div class="ttname"><a href="class_fsm.html#af3eb63b1f2163459bb105f20850bff38">Fsm::state_wait_for_machine</a></div><div class="ttdeci">void state_wait_for_machine()</div><div class="ttdoc">Action of machine in state wait_for_machine.</div><div class="ttdef"><b>Definition:</b> fsm.cpp:111</div></div>
 <div class="ttc" id="aclass_fsm_interface_html"><div class="ttname"><a href="class_fsm_interface.html">FsmInterface</a></div><div class="ttdef"><b>Definition:</b> fsm.h:74</div></div>
 <div class="ttc" id="aclass_global_fsm_html"><div class="ttname"><a href="class_global_fsm.html">GlobalFsm</a></div><div class="ttdef"><b>Definition:</b> fsm.h:91</div></div>
 </div><!-- fragment --></div><!-- contents -->
@@ -186,7 +195,7 @@ $(document).ready(function(){initNavTree('fsm_8h_source.html',''); initResizable
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_438f4a02a1d99eec8e3376e0c84be64f.html">ayab</a></li><li class="navelem"><a class="el" href="fsm_8h.html">fsm.h</a></li>
-    <li class="footer">Generated on Wed May 24 2023 21:08:13 for AYAB Arduino Firmware by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Mon May 29 2023 18:12:18 for AYAB Arduino Firmware by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

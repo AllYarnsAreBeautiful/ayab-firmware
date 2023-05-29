@@ -91,11 +91,15 @@ Collaboration diagram for Solenoids:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a0a33b71158b4b81cd94c5924c7f8d9f7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_solenoids.html#a0a33b71158b4b81cd94c5924c7f8d9f7">init</a> ()</td></tr>
+<tr class="memitem:a0a33b71158b4b81cd94c5924c7f8d9f7"><td class="memItemLeft" align="right" valign="top"><a id="a0a33b71158b4b81cd94c5924c7f8d9f7"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_solenoids.html#a0a33b71158b4b81cd94c5924c7f8d9f7">init</a> ()</td></tr>
+<tr class="memdesc:a0a33b71158b4b81cd94c5924c7f8d9f7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize I2C connection for solenoids. <br /></td></tr>
 <tr class="separator:a0a33b71158b4b81cd94c5924c7f8d9f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aae6ff71b1ef20950e84cbe1b339562e6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_solenoids.html#aae6ff71b1ef20950e84cbe1b339562e6">setSolenoid</a> (uint8_t solenoid, bool state)</td></tr>
+<tr class="memdesc:aae6ff71b1ef20950e84cbe1b339562e6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the state of a solenoid.  <a href="class_solenoids.html#aae6ff71b1ef20950e84cbe1b339562e6">More...</a><br /></td></tr>
 <tr class="separator:aae6ff71b1ef20950e84cbe1b339562e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae025f3326d3572902172c867f4a7595d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_solenoids.html#ae025f3326d3572902172c867f4a7595d">setSolenoids</a> (uint16_t state)</td></tr>
+<tr class="memdesc:ae025f3326d3572902172c867f4a7595d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the state of all the solenoids.  <a href="class_solenoids.html#ae025f3326d3572902172c867f4a7595d">More...</a><br /></td></tr>
 <tr class="separator:ae025f3326d3572902172c867f4a7595d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-methods"></a>
@@ -116,37 +120,6 @@ Adafruit_MCP23008&#160;</td><td class="memItemRight" valign="bottom"><b>mcp_1</b
 <tr class="separator:a79ff2470f8cf7aadaca2d65f323e8135"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a0a33b71158b4b81cd94c5924c7f8d9f7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0a33b71158b4b81cd94c5924c7f8d9f7">&#9670;&nbsp;</a></span>init()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Solenoids::init </td>
-          <td>(</td>
-          <td class="paramtype">void&#160;</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Initialize I2C connection for solenoids. </p>
-
-<p>Implements <a class="el" href="class_solenoids_interface.html">SolenoidsInterface</a>.</p>
-
-<p class="reference">References <a class="el" href="board_8h.html#adcffbb74c2e8e5e2884117e9b0b788b0">I2Caddr_sol1_8</a>, and <a class="el" href="board_8h.html#ad994c28236a04e4b1a1f2fb01e36f38a">I2Caddr_sol9_16</a>.</p>
-
-</div>
-</div>
 <a id="aae6ff71b1ef20950e84cbe1b339562e6"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aae6ff71b1ef20950e84cbe1b339562e6">&#9670;&nbsp;</a></span>setSolenoid()</h2>
 
@@ -180,10 +153,11 @@ Adafruit_MCP23008&#160;</td><td class="memItemRight" valign="bottom"><b>mcp_1</b
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Set the state of a solenoid.</p>
+
+<p>Set the state of a solenoid. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">solenoid</td><td>The solenoid nr. to set. 0 to 15. </td></tr>
+    <tr><td class="paramname">solenoid</td><td>The solenoid number to set (0 to 15). </td></tr>
     <tr><td class="paramname">state</td><td>The state to set the solenoid to. </td></tr>
   </table>
   </dd>
@@ -216,7 +190,8 @@ Adafruit_MCP23008&#160;</td><td class="memItemRight" valign="bottom"><b>mcp_1</b
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Set the state of all the solenoids.</p>
+
+<p>Set the state of all the solenoids. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">state</td><td>Two bytes describing the state of the solenoids, one bit per solenoid. </td></tr>
@@ -232,7 +207,7 @@ Here is the call graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="class_solenoids_ae025f3326d3572902172c867f4a7595d_cgraph.png" border="0" usemap="#aclass_solenoids_ae025f3326d3572902172c867f4a7595d_cgraph" alt=""/></div>
 <map name="aclass_solenoids_ae025f3326d3572902172c867f4a7595d_cgraph" id="aclass_solenoids_ae025f3326d3572902172c867f4a7595d_cgraph">
-<area shape="rect" title=" " alt="" coords="5,5,181,32"/>
+<area shape="rect" title="Set the state of all the solenoids." alt="" coords="5,5,181,32"/>
 <area shape="rect" href="class_solenoids.html#a95e5368821444a4340ba2652d6bcf66c" title=" " alt="" coords="229,5,356,32"/>
 </map>
 </div>
@@ -276,7 +251,7 @@ Here is the caller graph for this function:</div>
 <div class="center"><img src="class_solenoids_a95e5368821444a4340ba2652d6bcf66c_icgraph.png" border="0" usemap="#aclass_solenoids_a95e5368821444a4340ba2652d6bcf66c_icgraph" alt=""/></div>
 <map name="aclass_solenoids_a95e5368821444a4340ba2652d6bcf66c_icgraph" id="aclass_solenoids_a95e5368821444a4340ba2652d6bcf66c_icgraph">
 <area shape="rect" title=" " alt="" coords="229,5,356,32"/>
-<area shape="rect" href="class_solenoids.html#ae025f3326d3572902172c867f4a7595d" title=" " alt="" coords="5,5,181,32"/>
+<area shape="rect" href="class_solenoids.html#ae025f3326d3572902172c867f4a7595d" title="Set the state of all the solenoids." alt="" coords="5,5,181,32"/>
 </map>
 </div>
 
@@ -293,7 +268,7 @@ Here is the caller graph for this function:</div>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_solenoids.html">Solenoids</a></li>
-    <li class="footer">Generated on Wed May 24 2023 21:08:13 for AYAB Arduino Firmware by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Mon May 29 2023 18:12:18 for AYAB Arduino Firmware by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>
