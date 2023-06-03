@@ -82,6 +82,8 @@ void Knitter::init() {
 #ifdef DBG_NOMACHINE
   m_prevState = false;
 #endif
+
+  //setUpInterrupt();
 }
 
 /*!
@@ -111,6 +113,8 @@ void Knitter::setUpInterrupt() {
  */
 void Knitter::isr() {
   // update machine state data
+      GlobalBeeper::endWork();
+
   GlobalEncoders::encA_interrupt();
   m_position = GlobalEncoders::getPosition();
   m_direction = GlobalEncoders::getDirection();
@@ -213,13 +217,19 @@ bool Knitter::isReady() {
   // TODO(who?): check if debounce is needed
   if (m_prevState && !state) {
 #else
+
   // In order to support the garter carriage, we need to wait and see if there
   // will be a second magnet passing the sensor.
   // Keep track of the last seen hall sensor because we may be making a decision
   // after it passes.
   if (m_hallActive != NoDirection) {
     m_lastHall = m_hallActive;
-  }
+  } 
+    GlobalBeeper::endWork();
+
+  /*if (m_lastHall == Right) {
+    GlobalBeeper::ready();
+  }*/
 
   bool passedLeft = Right == m_direction and Left == m_lastHall and 
         m_position > (END_LEFT[m_machineType] + END_OFFSET[m_machineType] + GARTER_SLOP);
@@ -228,7 +238,7 @@ bool Knitter::isReady() {
   // Machine is initialized when left Hall sensor is passed in Right direction
   // New feature (August 2020): the machine is also initialized
   // when the right Hall sensor is passed in Left direction.
-  if (passedLeft || passedRight) {
+  if (passedLeft || passedRight || true) {
 
 #endif // DBG_NOMACHINE
     GlobalSolenoids::setSolenoids(SOLENOIDS_BITMASK);
@@ -265,18 +275,21 @@ void Knitter::knit() {
   }
   m_prevState = state;
 #else
+  if (m_continuousReportingEnabled || true) {
+    // send current position to GUI
+    indState(SUCCESS);
+  }
   // only act if there is an actual change of position
   if (m_sOldPosition == m_position) {
+      //GlobalBeeper::ready();
+
     return;
   }
 
   // store current carriage position for next call of this function
   m_sOldPosition = m_position;
 
-  if (m_continuousReportingEnabled) {
-    // send current position to GUI
-    indState(SUCCESS);
-  }
+  
 
   if (!calculatePixelAndSolenoid()) {
     // no valid/useful position calculated
