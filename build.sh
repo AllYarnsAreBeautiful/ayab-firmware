@@ -5,15 +5,8 @@ set -e
 OPTIND=1
 
 verbose=0
-hw_tests=0
 
 # parse arguments
-while getopts "w" opt; do
-    case $opt in
-        w)   hw_tests=1
-             ;;
-    esac
-done
 shift $((OPTIND-1))
 [ "${1:-}" = "--" ] && shift
 
@@ -42,12 +35,6 @@ if [ -z ${ARDMK_DIR+x} ]; then
   export ARDMK_DIR=$(dirname $(find /usr -name Arduino.mk))
 fi
 
-function make_hw_test() {
-  subboard=""
-  make BOARD_TAG=$1 $subboard MACHINETYPE=HW_TEST -j $numproc
-  mv $parent_path/build/raw/$1/HW_TEST/ayab.hex $parent_path/build/ayab_HW_TEST_$1.hex
-}
-
 function make_variant() {
   subboard=""
   make BOARD_TAG=$1 $subboard MACHINETYPE=$2 -j $numproc
@@ -56,10 +43,6 @@ function make_variant() {
 
 function make_board() {
   make_variant $1 monolithic
-if [[ $hw_tests -eq 1 ]]; then
-  echo "Making HW Test $1"
-  make_hw_test $1
-fi
 }
 
 make_board uno
