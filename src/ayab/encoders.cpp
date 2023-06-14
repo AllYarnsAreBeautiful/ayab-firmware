@@ -213,7 +213,11 @@ void Encoders::encA_falling() {
   if (hallValueSmall || hallValue > FILTER_R_MAX[m_machineType]) {
     m_hallActive = Right;
 
-    if (hallValueSmall) {
+
+    // The garter carriage has a second set of magnets that are going to 
+    // pass the sensor and will reset state incorrectly if allowed to
+    // continue.
+    if (hallValueSmall && m_carriage != Garter) {
       m_carriage = Knit;
     }
 
