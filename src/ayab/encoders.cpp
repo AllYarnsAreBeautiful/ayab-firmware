@@ -139,7 +139,7 @@ void Encoders::encA_rising() {
     }
   }
 
-  // The garter carriage has a second set of magnets that are going to 
+  // The garter carriage has a second set of magnets that are going to
   // pass the sensor and will reset state incorrectly if allowed to
   // continue.
   if (m_carriage == Garter) {
@@ -213,8 +213,7 @@ void Encoders::encA_falling() {
   if (hallValueSmall || hallValue > FILTER_R_MAX[m_machineType]) {
     m_hallActive = Right;
 
-
-    // The garter carriage has a second set of magnets that are going to 
+    // The garter carriage has a second set of magnets that are going to
     // pass the sensor and will reset state incorrectly if allowed to
     // continue.
     if (hallValueSmall && m_carriage != Garter) {

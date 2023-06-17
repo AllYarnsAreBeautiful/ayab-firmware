@@ -126,13 +126,13 @@ void Knitter::isr() {
  */
 Err_t Knitter::initMachine(Machine_t machineType) {
   if (GlobalFsm::getState() != s_wait_for_machine) {
-    return WRONG_MACHINE_STATE;
+    return ERR_WRONG_MACHINE_STATE;
   }
   if (machineType == NoMachine) {
-    return NO_MACHINE_TYPE;
+    return ERR_NO_MACHINE_TYPE;
   }
   if (machineType >= NUM_MACHINES) {
-    return MACHINE_TYPE_INVALID;
+    return ERR_MACHINE_TYPE_INVALID;
   }
 
   m_machineType = machineType;
@@ -158,13 +158,13 @@ Err_t Knitter::startKnitting(uint8_t startNeedle,
                              uint8_t stopNeedle, uint8_t *pattern_start,
                              bool continuousReportingEnabled) {
   if (GlobalFsm::getState() != s_ready) {
-    return WRONG_MACHINE_STATE;
+    return ERR_WRONG_MACHINE_STATE;
   }
   if (pattern_start == nullptr) {
-    return NULL_POINTER_ARGUMENT;
+    return ERR_NULL_POINTER_ARGUMENT;
   }
   if (startNeedle >= stopNeedle || stopNeedle >= NUM_NEEDLES[m_machineType]) {
-    return NEEDLE_VALUE_INVALID;
+    return ERR_NEEDLE_VALUE_INVALID;
   }
 
   // record argument values
@@ -208,9 +208,9 @@ void Knitter::encodePosition() {
  */
 bool Knitter::isReady() {
 #ifdef DBG_NOMACHINE
+  // TODO(who?): check if debounce is needed
   bool state = digitalRead(DBG_BTN_PIN);
 
-  // TODO(who?): check if debounce is needed
   if (m_prevState && !state) {
 #else
   // In order to support the garter carriage, we need to wait and see if there
@@ -221,9 +221,9 @@ bool Knitter::isReady() {
     m_lastHall = m_hallActive;
   }
 
-  bool passedLeft = Right == m_direction and Left == m_lastHall and 
+  bool passedLeft = Right == m_direction and Left == m_lastHall and
         m_position > (END_LEFT[m_machineType] + END_OFFSET[m_machineType] + GARTER_SLOP);
-  bool passedRight = Left == m_direction and Right == m_lastHall and 
+  bool passedRight = Left == m_direction and Right == m_lastHall and
         m_position < (END_RIGHT[m_machineType] - END_OFFSET[m_machineType] - GARTER_SLOP);
   // Machine is initialized when left Hall sensor is passed in Right direction
   // New feature (August 2020): the machine is also initialized
@@ -255,9 +255,9 @@ void Knitter::knit() {
   }
 
 #ifdef DBG_NOMACHINE
+  // TODO(who?): check if debounce is needed
   bool state = digitalRead(DBG_BTN_PIN);
 
-  // TODO(who?): check if debounce is needed
   if (m_prevState && !state) {
     if (!m_lineRequested) {
       reqLine(++m_currentLineNumber);

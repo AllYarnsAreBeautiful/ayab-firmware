@@ -54,44 +54,44 @@ using Machine_t = enum MachineType;
 
 // Machine constants
 
-constexpr uint8_t NUM_NEEDLES[NUM_MACHINES] = {200, 200, 114};
-constexpr uint8_t LINE_BUFFER_LEN[NUM_MACHINES] = {25, 25, 15};
-constexpr uint8_t END_OF_LINE_OFFSET_L[NUM_MACHINES] = {12, 12, 6};
-constexpr uint8_t END_OF_LINE_OFFSET_R[NUM_MACHINES] = {12, 12, 6};
+constexpr uint8_t NUM_NEEDLES[NUM_MACHINES] = {200U, 200U, 114U};
+constexpr uint8_t LINE_BUFFER_LEN[NUM_MACHINES] = {25U, 25U, 15U};
+constexpr uint8_t END_OF_LINE_OFFSET_L[NUM_MACHINES] = {12U, 12U, 6U};
+constexpr uint8_t END_OF_LINE_OFFSET_R[NUM_MACHINES] = {12U, 12U, 6U};
 
 constexpr uint8_t END_LEFT[NUM_MACHINES] = {0U, 0U, 0U};
 constexpr uint8_t END_RIGHT[NUM_MACHINES] = {255U, 255U, 140U};
 constexpr uint8_t END_OFFSET[NUM_MACHINES] = {28U, 28U, 14U};
 
-constexpr uint8_t GARTER_SLOP = 2;
+constexpr uint8_t GARTER_SLOP = 2U;
 
 constexpr uint8_t START_OFFSET[NUM_MACHINES][NUM_DIRECTIONS][NUM_CARRIAGES] = {
     // KH910
     {
-        //   K,  L,  G
-        {40, 40, 32}, // Left
-        {16, 16, 56} // Right
+        // K,   L,   G
+        {40U, 40U, 32U}, // Left
+        {16U, 16U, 56U} // Right
     },
     // KH930
     {
-        //   K,  L,  G
-        {40, 40, 8}, // Left
-        {16, 16, 32} // Right
+        // K,   L,   G
+        {40U, 40U,  8U}, // Left
+        {16U, 16U, 32U} // Right
     },
     // KH270
     {
-        //   K
-        {14, 0, 0}, // Left
-        {2, 0, 0}   // Right
+        // K
+        {14U, 0U, 0U}, // Left
+        { 2U, 0U, 0U}   // Right
     }};
 
 // Should be calibrated to each device
 // Below filter minimum -> Lace carriage
 // Above filter maximum -> Knit carriage
 //                                               KH910 KH930 KH270
-constexpr uint16_t FILTER_L_MIN[NUM_MACHINES] = {200U, 200U, 200U};
-constexpr uint16_t FILTER_L_MAX[NUM_MACHINES] = {600U, 600U, 600U};
-constexpr uint16_t FILTER_R_MIN[NUM_MACHINES] = {200U, 0U, 0U};
+constexpr uint16_t FILTER_L_MIN[NUM_MACHINES] = { 200U, 200U, 200U};
+constexpr uint16_t FILTER_L_MAX[NUM_MACHINES] = { 600U, 600U, 600U};
+constexpr uint16_t FILTER_R_MIN[NUM_MACHINES] = { 200U,   0U,   0U};
 constexpr uint16_t FILTER_R_MAX[NUM_MACHINES] = {1023U, 600U, 600U};
 
 constexpr uint16_t SOLENOIDS_BITMASK = 0xFFFFU;

@@ -87,5 +87,4 @@ private:
   Adafruit_MCP23008 mcp_1;
 };
 
-
 #endif // SOLENOIDS_H_
