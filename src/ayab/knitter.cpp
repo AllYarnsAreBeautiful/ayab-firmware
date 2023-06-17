@@ -125,7 +125,7 @@ void Knitter::isr() {
  * \return Error code (0 = success, other values = error).
  */
 Err_t Knitter::initMachine(Machine_t machineType) {
-  if (GlobalFsm::getState() != s_wait_for_machine) {
+  if (GlobalFsm::getState() != OpState::wait_for_machine) {
     return ERR_WRONG_MACHINE_STATE;
   }
   if (machineType == NoMachine) {
@@ -138,7 +138,7 @@ Err_t Knitter::initMachine(Machine_t machineType) {
   m_machineType = machineType;
 
   GlobalEncoders::init(machineType);
-  GlobalFsm::setState(s_init);
+  GlobalFsm::setState(OpState::init);
 
   // Now that we have enough start state, we can set up interrupts
   setUpInterrupt();
@@ -157,7 +157,7 @@ Err_t Knitter::initMachine(Machine_t machineType) {
 Err_t Knitter::startKnitting(uint8_t startNeedle,
                              uint8_t stopNeedle, uint8_t *pattern_start,
                              bool continuousReportingEnabled) {
-  if (GlobalFsm::getState() != s_ready) {
+  if (GlobalFsm::getState() != OpState::ready) {
     return ERR_WRONG_MACHINE_STATE;
   }
   if (pattern_start == nullptr) {
@@ -180,7 +180,7 @@ Err_t Knitter::startKnitting(uint8_t startNeedle,
   m_lastLineFlag = false;
 
   // proceed to next state
-  GlobalFsm::setState(s_knit);
+  GlobalFsm::setState(OpState::knit);
   GlobalBeeper::ready();
 
   // success
@@ -203,8 +203,8 @@ void Knitter::encodePosition() {
 }
 
 /*!
- * \brief Assess whether the Finite State Machine is ready to move from state `s_init` to `s_ready`.
- * \return `true` if ready to move from state `s_init` to `s_ready`, false otherwise.
+ * \brief Assess whether the Finite State Machine is ready to move from state `OpState::init` to `OpState::ready`.
+ * \return `true` if ready to move from state `OpState::init` to `OpState::ready`, false otherwise.
  */
 bool Knitter::isReady() {
 #ifdef DBG_NOMACHINE
@@ -233,13 +233,13 @@ bool Knitter::isReady() {
 #endif // DBG_NOMACHINE
     GlobalSolenoids::setSolenoids(SOLENOIDS_BITMASK);
     indState(SUCCESS);
-    return true; // move to `s_ready`
+    return true; // move to `OpState::ready`
   }
 
 #ifdef DBG_NOMACHINE
   m_prevState = state;
 #endif
-  return false; // stay in `s_init`
+  return false; // stay in `OpState::init`
 }
 
 /*!
@@ -381,7 +381,6 @@ bool Knitter::setNextLine(uint8_t lineNumber) {
  * \param `true` if current line is the last line in the pattern, `false` otherwise.
  */
 void Knitter::setLastLine() {
-  // lastLineFlag is evaluated in s_operate
   m_lastLineFlag = true;
 }
 
@@ -474,7 +473,7 @@ bool Knitter::calculatePixelAndSolenoid() {
  */
 void Knitter::stopKnitting() {
   GlobalBeeper::endWork();
-  GlobalFsm::setState(s_ready);
+  GlobalFsm::setState(OpState::ready);
 
   GlobalSolenoids::setSolenoids(SOLENOIDS_BITMASK);
   GlobalBeeper::finishedLine();

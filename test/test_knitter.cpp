@@ -69,7 +69,7 @@ protected:
     Mock::AllowLeak(solenoidsMock);
     Mock::AllowLeak(testerMock);
 
-    // start in state `s_init`
+    // start in state `OpState::init`
     expected_isr(NoDirection, NoDirection);
     EXPECT_CALL(*arduinoMock, millis);
     fsm->init();
@@ -169,14 +169,14 @@ protected:
   }
 
   void expected_get_ready() {
-    // starts in state `s_wait_for_machine`
-    ASSERT_EQ(fsm->getState(), s_init);
+    // starts in state `OpState::wait_for_machine`
+    ASSERT_EQ(fsm->getState(), OpState::init);
 
     EXPECT_CALL(*solenoidsMock, setSolenoids(SOLENOIDS_BITMASK));
     expect_indState();
     expected_dispatch_init();
 
-    ASSERT_EQ(fsm->getState(), s_ready);
+    ASSERT_EQ(fsm->getState(), OpState::ready);
   }
 
   void expected_init_machine(Machine_t m) {
@@ -184,7 +184,7 @@ protected:
     ASSERT_EQ(knitter->initMachine(m), SUCCESS);
     expected_dispatch_wait_for_machine();
 
-    ASSERT_EQ(fsm->getState(), s_init);
+    ASSERT_EQ(fsm->getState(), OpState::init);
   }
 
   void get_to_ready(Machine_t m) {
@@ -204,8 +204,8 @@ protected:
     ASSERT_EQ(knitter->startKnitting(0, NUM_NEEDLES[m] - 1, pattern, false), SUCCESS);
     expected_dispatch_ready();
 
-    // ends in state `s_knit`
-    ASSERT_TRUE(fsm->getState() == s_knit);
+    // ends in state `OpState::knit`
+    ASSERT_TRUE(fsm->getState() == OpState::knit);
   }
 
   void expected_dispatch_knit(bool first) {
@@ -216,38 +216,38 @@ protected:
       expected_dispatch();
       return;
     }
-    ASSERT_TRUE(fsm->getState() == s_knit);
+    ASSERT_TRUE(fsm->getState() == OpState::knit);
     EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, HIGH)); // green LED on
     expected_dispatch();
   }
 
   void expected_dispatch_wait_for_machine() {
-    // starts in state `s_init`
-    ASSERT_EQ(fsm->getState(), s_wait_for_machine);
+    // starts in state `OpState::init`
+    ASSERT_EQ(fsm->getState(), OpState::wait_for_machine);
 
     EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, LOW));
     expected_dispatch();
   }
 
   void expected_dispatch_init() {
-    // starts in state `s_init`
-    ASSERT_EQ(fsm->getState(), s_init);
+    // starts in state `OpState::init`
+    ASSERT_EQ(fsm->getState(), OpState::init);
 
     EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, LOW));
     expected_dispatch();
   }
 
   void expected_dispatch_ready() {
-    // starts in state `s_ready`
-    ASSERT_TRUE(fsm->getState() == s_ready);
+    // starts in state `OpState::ready`
+    ASSERT_TRUE(fsm->getState() == OpState::ready);
 
     EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, LOW));
     expected_dispatch();
   }
 
   void expected_dispatch_test() {
-    // starts in state `s_test`
-    ASSERT_EQ(fsm->getState(), s_test);
+    // starts in state `OpState::test`
+    ASSERT_EQ(fsm->getState(), OpState::test);
 
     expect_indState();
     EXPECT_CALL(*testerMock, loop);
@@ -606,7 +606,7 @@ TEST_F(KnitterTest, test_knit_new_line) {
 TEST_F(KnitterTest, test_calculatePixelAndSolenoid) {
   // initialize
   expected_init_machine(Kh910);
-  fsm->setState(s_test);
+  fsm->setState(OpState::test);
   expected_dispatch_init();
 
   // new position, different beltShift and active hall
@@ -693,7 +693,7 @@ TEST_F(KnitterTest, test_fsm_init_LL) {
   // not ready
   expected_isr(get_position_past_right(), Left, Left);
   expected_dispatch_init();
-  ASSERT_EQ(fsm->getState(), s_init);
+  ASSERT_EQ(fsm->getState(), OpState::init);
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
@@ -707,7 +707,7 @@ TEST_F(KnitterTest, test_fsm_init_RR) {
   // still not ready
   expected_isr(get_position_past_left(), Right, Right);
   expected_dispatch_init();
-  ASSERT_EQ(fsm->getState(), s_init);
+  ASSERT_EQ(fsm->getState(), OpState::init);
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
@@ -736,7 +736,7 @@ TEST_F(KnitterTest, test_fsm_init_LR) {
   // when the right Hall sensor is passed in the Left direction.
   expected_isr(get_position_past_right(), Left, Right);
   expected_get_ready();
-  ASSERT_EQ(fsm->getState(), s_ready);
+  ASSERT_EQ(fsm->getState(), OpState::ready);
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));

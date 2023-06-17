@@ -69,8 +69,8 @@ protected:
   KnitterMock *knitterMock;
 
   void expect_startTest(unsigned long t) {
-    EXPECT_CALL(*fsmMock, getState).WillOnce(Return(s_ready));
-    EXPECT_CALL(*fsmMock, setState(s_test));
+    EXPECT_CALL(*fsmMock, getState).WillOnce(Return(OpState::ready));
+    EXPECT_CALL(*fsmMock, setState(OpState::test));
     EXPECT_CALL(*knitterMock, setMachineType(Kh930));
     expect_write(false);
 
@@ -189,7 +189,7 @@ TEST_F(TesterTest, test_autoTestCmd) {
 
 TEST_F(TesterTest, test_quitCmd) {
   EXPECT_CALL(*knitterMock, setUpInterrupt);
-  EXPECT_CALL(*fsmMock, setState(s_init));
+  EXPECT_CALL(*fsmMock, setState(OpState::init));
   tester->quitCmd();
 
   // test expectations without destroying instance
@@ -243,8 +243,8 @@ TEST_F(TesterTest, test_loop_autoTest) {
 }
 
 TEST_F(TesterTest, test_startTest_fail) {
-  // can't start test from state `s_knit`
-  EXPECT_CALL(*fsmMock, getState).WillOnce(Return(s_knit));
+  // can't start test from state `OpState::knit`
+  EXPECT_CALL(*fsmMock, getState).WillOnce(Return(OpState::knit));
   ASSERT_TRUE(tester->startTest(Kh910) != 0);
 
   // test expectations without destroying instance

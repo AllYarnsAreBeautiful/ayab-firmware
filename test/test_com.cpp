@@ -92,7 +92,7 @@ protected:
 
   void reqInit(Machine_t machine) {
     uint8_t buffer[] = {reqInit_msgid, static_cast<uint8_t>(machine)};
-    EXPECT_CALL(*fsmMock, setState(s_init));
+    EXPECT_CALL(*fsmMock, setState(OpState::init));
     expected_write_onPacketReceived(buffer, sizeof(buffer), true);
   }
 };
@@ -108,7 +108,7 @@ TEST_F(ComTest, test_reqInit_too_short_error) {
   //EXPECT_CALL(*serialMock, write(cnfInit_msgid));
   //EXPECT_CALL(*serialMock, write(EXPECTED_LONGER_MESSAGE));
   //EXPECT_CALL(*serialMock, write(SLIP::END));
-  EXPECT_CALL(*fsmMock, setState(s_init)).Times(0);
+  EXPECT_CALL(*fsmMock, setState(OpState::init)).Times(0);
   com->onPacketReceived(buffer, sizeof(buffer));
 
   // test expectations without destroying instance
@@ -120,7 +120,7 @@ TEST_F(ComTest, test_reqInit_checksum_error) {
   //EXPECT_CALL(*serialMock, write(cnfInit_msgid));
   //EXPECT_CALL(*serialMock, write(CHECKSUM_ERROR));
   //EXPECT_CALL(*serialMock, write(SLIP::END));
-  EXPECT_CALL(*fsmMock, setState(s_init)).Times(0);
+  EXPECT_CALL(*fsmMock, setState(OpState::init)).Times(0);
   com->onPacketReceived(buffer, sizeof(buffer));
 
   // test expectations without destroying instance
@@ -130,7 +130,7 @@ TEST_F(ComTest, test_reqInit_checksum_error) {
 TEST_F(ComTest, test_reqtest_fail) {
   // no machineType
   uint8_t buffer[] = {reqTest_msgid};
-  EXPECT_CALL(*fsmMock, setState(s_test)).Times(0);
+  EXPECT_CALL(*fsmMock, setState(OpState::test)).Times(0);
   expected_write_onPacketReceived(buffer, sizeof(buffer), true);
 
   // test expectations without destroying instance
@@ -139,7 +139,7 @@ TEST_F(ComTest, test_reqtest_fail) {
 
 TEST_F(ComTest, test_reqtest_success_KH270) {
   uint8_t buffer[] = {reqTest_msgid, Kh270};
-  EXPECT_CALL(*fsmMock, setState(s_test));
+  EXPECT_CALL(*fsmMock, setState(OpState::test));
   EXPECT_CALL(*knitterMock, setMachineType(Kh270));
   EXPECT_CALL(*arduinoMock, millis);
   expected_write_onPacketReceived(buffer, sizeof(buffer), false);
@@ -254,7 +254,7 @@ TEST_F(ComTest, test_stopCmd) {
 TEST_F(ComTest, test_quitCmd) {
   uint8_t buffer[] = {quitCmd_msgid};
   EXPECT_CALL(*knitterMock, setUpInterrupt);
-  EXPECT_CALL(*fsmMock, setState(s_init));
+  EXPECT_CALL(*fsmMock, setState(OpState::init));
   com->onPacketReceived(buffer, sizeof(buffer));
 
   // test expectations without destroying instance

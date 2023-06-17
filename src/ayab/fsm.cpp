@@ -41,8 +41,8 @@
  * \brief Initialize Finite State Machine.
  */
 void Fsm::init() {
-  m_currentState = s_wait_for_machine;
-  m_nextState = s_wait_for_machine;
+  m_currentState = OpState::wait_for_machine;
+  m_nextState = OpState::wait_for_machine;
   m_flash = false;
   m_flashTime = millis();
   m_error = SUCCESS;
@@ -71,27 +71,27 @@ void Fsm::setState(OpState_t state) {
  */
 void Fsm::dispatch() {
   switch (m_currentState) {
-  case s_wait_for_machine:
+  case OpState::wait_for_machine:
     state_wait_for_machine();
     break;
 
-  case s_init:
+  case OpState::init:
     state_init();
     break;
 
-  case s_ready:
+  case OpState::ready:
     state_ready();
     break;
 
-  case s_knit:
+  case OpState::knit:
     state_knit();
     break;
 
-  case s_test:
+  case OpState::test:
     state_test();
     break;
 
-  case s_error:
+  case OpState::error:
     state_error();
     break;
 
@@ -113,24 +113,24 @@ void Fsm::state_wait_for_machine() {
 }
 
 /*!
- * \brief Action of machine in state `s_init`.
+ * \brief Action of machine in state `OpState::init`.
  */
 void Fsm::state_init() {
   digitalWrite(LED_PIN_A, LOW); // green LED off
   if (GlobalKnitter::isReady()) {
-    setState(s_ready);
+    setState(OpState::ready);
   }
 }
 
 /*!
- * \brief Action of machine in state `s_ready`.
+ * \brief Action of machine in state `OpState::ready`.
  */
 void Fsm::state_ready() {
   digitalWrite(LED_PIN_A, LOW); // green LED off
 }
 
 /*!
- * \brief Action of machine in state `s_knit`.
+ * \brief Action of machine in state `OpState::knit`.
  */
 void Fsm::state_knit() {
   digitalWrite(LED_PIN_A, HIGH); // green LED on
@@ -138,22 +138,22 @@ void Fsm::state_knit() {
 }
 
 /*!
- * \brief Action of machine in state `s_test`.
+ * \brief Action of machine in state `OpState::test`.
  */
 void Fsm::state_test() {
   GlobalKnitter::encodePosition();
   GlobalTester::loop();
-  if (m_nextState == s_init) {
+  if (m_nextState == OpState::init) {
     // quit test
     GlobalKnitter::init();
   }
 }
 
 /*!
- * \brief Action of machine in state `s_error`.
+ * \brief Action of machine in state `OpState::error`.
  */
 void Fsm::state_error() {
-  if (m_nextState == s_init) {
+  if (m_nextState == OpState::init) {
     // exit error state
     digitalWrite(LED_PIN_B, LOW); // yellow LED off
     GlobalKnitter::init();
