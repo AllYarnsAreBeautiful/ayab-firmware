@@ -8,11 +8,11 @@ var encoders_8h =
     [ "Direction_t", "encoders_8h.html#aeaca76471dd4735db936087e2f29e053", null ],
     [ "Machine_t", "encoders_8h.html#ade5e1a2e9db6c01a3f012ddcebba5266", null ],
     [ "BeltShift", "encoders_8h.html#a8f92ab669c48f51b4db8f08e7f2a6415", [
-      [ "Unknown", "encoders_8h.html#a8f92ab669c48f51b4db8f08e7f2a6415a4e81c184ac3ad48a389cd4454c4a05bb", null ],
-      [ "Regular", "encoders_8h.html#a8f92ab669c48f51b4db8f08e7f2a6415a66dfad2fc66aab9e6bb47cfad78b4b6b", null ],
-      [ "Shifted", "encoders_8h.html#a8f92ab669c48f51b4db8f08e7f2a6415a4e9c69d31d6583616a29e80fdd29b8e4", null ],
-      [ "Lace_Regular", "encoders_8h.html#a8f92ab669c48f51b4db8f08e7f2a6415a2b624a6759eba07e984c44b4870f4a44", null ],
-      [ "Lace_Shifted", "encoders_8h.html#a8f92ab669c48f51b4db8f08e7f2a6415a12298be832f6eed6c2f08b3f8f37240e", null ]
+      [ "Unknown", "encoders_8h.html#a8f92ab669c48f51b4db8f08e7f2a6415a88183b946cc5f0e8c96b2e66e1c74a7e", null ],
+      [ "Regular", "encoders_8h.html#a8f92ab669c48f51b4db8f08e7f2a6415ad2203cb1237cb6460cbad94564e39345", null ],
+      [ "Shifted", "encoders_8h.html#a8f92ab669c48f51b4db8f08e7f2a6415ae76f16dd70859caa45f7535971422b41", null ],
+      [ "Lace_Regular", "encoders_8h.html#a8f92ab669c48f51b4db8f08e7f2a6415aa399746eb293685fec29b6668e915160", null ],
+      [ "Lace_Shifted", "encoders_8h.html#a8f92ab669c48f51b4db8f08e7f2a6415aa3f283732a92ecc77659af9f2a9bc998", null ]
     ] ],
     [ "Carriage", "encoders_8h.html#a05de3953cf187bb4032a43b046ca8203", [
       [ "NoCarriage", "encoders_8h.html#a05de3953cf187bb4032a43b046ca8203a84901272d82249ff93db1b48afe2e4f4", null ],
