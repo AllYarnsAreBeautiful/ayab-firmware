@@ -172,7 +172,7 @@ Err_t Tester::startTest(Machine_t machineType) {
     setUp();
     return SUCCESS;
   }
-  return WRONG_MACHINE_STATE;
+  return ERR_WRONG_MACHINE_STATE;
 }
 
 /*!
