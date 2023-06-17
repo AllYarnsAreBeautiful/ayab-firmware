@@ -199,30 +199,20 @@ void Com::onPacketReceived(const uint8_t *buffer, size_t size) {
  * \param size The number of bytes in the data buffer.
  */
 void Com::h_reqInit(const uint8_t *buffer, size_t size) {
-#ifdef AYAB_ENABLE_CRC
   if (size < 3U) {
     // Need 3 bytes from buffer below.
     send_cnfInit(EXPECTED_LONGER_MESSAGE);
     return;
   }
-#else
-  if (size < 2U) {
-    // Need 2 bytes from buffer below.
-    send_cnfInit(EXPECTED_LONGER_MESSAGE);
-    return;
-  }
-#endif
 
   Machine_t machineType = static_cast<Machine_t>(buffer[1]);
 
-#ifdef AYAB_ENABLE_CRC
   uint8_t crc8 = buffer[2];
   // Check crc on bytes 0-4 of buffer.
   if (crc8 != CRC8(buffer, 2)) {
     send_cnfInit(CHECKSUM_ERROR);
     return;
   }
-#endif
 
   memset(lineBuffer, 0xFF, MAX_LINE_BUFFER_LEN);
 
@@ -236,32 +226,22 @@ void Com::h_reqInit(const uint8_t *buffer, size_t size) {
  * \param size The number of bytes in the data buffer.
  */
 void Com::h_reqStart(const uint8_t *buffer, size_t size) {
-#ifdef AYAB_ENABLE_CRC
   if (size < 5U) {
     // Need 5 bytes from buffer below.
     send_cnfStart(EXPECTED_LONGER_MESSAGE);
     return;
   }
-#else
-  if (size < 4U) {
-    // Need 4 bytes from buffer below.
-    send_cnfStart(EXPECTED_LONGER_MESSAGE);
-    return;
-  }
-#endif
 
   uint8_t startNeedle = buffer[1];
   uint8_t stopNeedle = buffer[2];
   bool continuousReportingEnabled = static_cast<bool>(buffer[3]);
 
-#ifdef AYAB_ENABLE_CRC
   uint8_t crc8 = buffer[4];
   // Check crc on bytes 0-4 of buffer.
   if (crc8 != CRC8(buffer, 4)) {
     send_cnfStart(CHECKSUM_ERROR);
     return;
   }
-#endif
 
   // TODO(who?): verify operation
   // memset(lineBuffer,0,sizeof(lineBuffer));
@@ -309,7 +289,6 @@ void Com::h_cnfLine(const uint8_t *buffer, size_t size) {
     lineBuffer[i] = ~buffer[i + 4];
   }
 
-#ifdef AYAB_ENABLE_CRC
   uint8_t crc8 = buffer[lenLineBuffer + 4];
   // Calculate checksum of buffer contents
   if (crc8 != CRC8(buffer, lenLineBuffer + 4)) {
@@ -317,7 +296,6 @@ void Com::h_cnfLine(const uint8_t *buffer, size_t size) {
     // TODO(TP): send repeat request with error code?
     return;
   }
-#endif
 
   if (GlobalKnitter::setNextLine(lineNumber)) {
     // Line was accepted
@@ -413,7 +391,6 @@ void Com::send_cnfTest(Err_t error) {
   send(payload, 2);
 }
 
-#ifdef AYAB_ENABLE_CRC
 /*!
  * \brief Calculate CRC8 of a buffer.
  * \param buffer A pointer to a data buffer.
@@ -446,4 +423,4 @@ uint8_t Com::CRC8(const uint8_t *buffer, size_t len) {
   }
   return crc;
 }
-#endif
+
