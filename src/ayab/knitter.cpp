@@ -243,7 +243,7 @@ bool Knitter::isReady() {
 }
 
 /*!
- * \brief Knit one line of the pattern.
+ * \brief Function that is repeatedly called during state `s_knit`
  */
 void Knitter::knit() {
   if (m_firstRun) {
@@ -297,9 +297,9 @@ void Knitter::knit() {
 
     // find the right byte from the currentLine array,
     // then read the appropriate Pixel(/Bit) for the current needle to set
-    uint8_t currentByte = m_pixelToSet / 8U;
+    uint8_t currentByte = m_pixelToSet >> 3;
     bool pixelValue =
-        bitRead(m_lineBuffer[currentByte], m_pixelToSet - (8U * currentByte));
+        bitRead(m_lineBuffer[currentByte], m_pixelToSet & 0x07);
     // write Pixel state to the appropriate needle
     GlobalSolenoids::setSolenoid(m_solenoidToSet, pixelValue);
   } else {
