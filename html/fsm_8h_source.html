@@ -82,30 +82,30 @@ $(document).ready(function(){initNavTree('fsm_8h_source.html',''); initResizable
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;  SUCCESS = 0x00,</div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160; </div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;  <span class="comment">// message not understood</span></div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;  EXPECTED_LONGER_MESSAGE = 0x01,</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;  UNRECOGNIZED_MSGID = 0x02,</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;  UNEXPECTED_MSGID = 0x03,</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;  CHECKSUM_ERROR = 0x04,</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;  ERR_EXPECTED_LONGER_MESSAGE = 0x01,</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;  ERR_UNRECOGNIZED_MSGID = 0x02,</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;  ERR_UNEXPECTED_MSGID = 0x03,</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;  ERR_CHECKSUM_ERROR = 0x04,</div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160; </div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;  <span class="comment">// invalid arguments</span></div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;  MACHINE_TYPE_INVALID = 0x10,</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;  NEEDLE_VALUE_INVALID = 0x11,</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;  NULL_POINTER_ARGUMENT = 0x12,</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;  ARGUMENT_INVALID = 0x13,</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;  ARGUMENTS_INCOMPATIBLE = 0x13,</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;  ERR_MACHINE_TYPE_INVALID = 0x10,</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;  ERR_NEEDLE_VALUE_INVALID = 0x11,</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;  ERR_NULL_POINTER_ARGUMENT = 0x12,</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;  ERR_ARGUMENT_INVALID = 0x13,</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;  ERR_ARGUMENTS_INCOMPATIBLE = 0x13,</div>
 <div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160; </div>
 <div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;  <span class="comment">// device not initialized</span></div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;  NO_MACHINE_TYPE = 0x20,</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;  NO_CARRIAGE = 0x21,</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;  NO_DIRECTION = 0x22,</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;  NO_BELTSHIFT = 0x23,</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;  ERR_NO_MACHINE_TYPE = 0x20,</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;  ERR_NO_CARRIAGE = 0x21,</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;  ERR_NO_DIRECTION = 0x22,</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;  ERR_NO_BELTSHIFT = 0x23,</div>
 <div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160; </div>
 <div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;  <span class="comment">// machine in wrong FSM state</span></div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;  MACHINE_STATE_INIT = 0xE0,</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;  MACHINE_STATE_READY = 0xE1,</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;  MACHINE_STATE_KNIT = 0xE2,</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;  MACHINE_STATE_TEST = 0xE3,</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;  WRONG_MACHINE_STATE = 0xEF,</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;  ERR_MACHINE_STATE_INIT = 0xE0,</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;  ERR_MACHINE_STATE_READY = 0xE1,</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;  ERR_MACHINE_STATE_KNIT = 0xE2,</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;  ERR_MACHINE_STATE_TEST = 0xE3,</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;  ERR_WRONG_MACHINE_STATE = 0xEF,</div>
 <div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160; </div>
 <div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;  <span class="comment">// generic error codes</span></div>
 <div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;  WARNING = 0xF0, <span class="comment">// ignorable error</span></div>
@@ -195,7 +195,7 @@ $(document).ready(function(){initNavTree('fsm_8h_source.html',''); initResizable
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_438f4a02a1d99eec8e3376e0c84be64f.html">ayab</a></li><li class="navelem"><a class="el" href="fsm_8h.html">fsm.h</a></li>
-    <li class="footer">Generated on Sat Jun 17 2023 01:56:27 for AYAB Arduino Firmware by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Sat Jun 17 2023 06:20:28 for AYAB Arduino Firmware by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

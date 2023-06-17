@@ -99,44 +99,44 @@ $(document).ready(function(){initNavTree('encoders_8h_source.html',''); initResi
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160; </div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="comment">// Machine constants</span></div>
 <div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160; </div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;constexpr uint8_t NUM_NEEDLES[NUM_MACHINES] = {200, 200, 114};</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;constexpr uint8_t LINE_BUFFER_LEN[NUM_MACHINES] = {25, 25, 15};</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;constexpr uint8_t END_OF_LINE_OFFSET_L[NUM_MACHINES] = {12, 12, 6};</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;constexpr uint8_t END_OF_LINE_OFFSET_R[NUM_MACHINES] = {12, 12, 6};</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;constexpr uint8_t NUM_NEEDLES[NUM_MACHINES] = {200U, 200U, 114U};</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;constexpr uint8_t LINE_BUFFER_LEN[NUM_MACHINES] = {25U, 25U, 15U};</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;constexpr uint8_t END_OF_LINE_OFFSET_L[NUM_MACHINES] = {12U, 12U, 6U};</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;constexpr uint8_t END_OF_LINE_OFFSET_R[NUM_MACHINES] = {12U, 12U, 6U};</div>
 <div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160; </div>
 <div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;constexpr uint8_t END_LEFT[NUM_MACHINES] = {0U, 0U, 0U};</div>
 <div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;constexpr uint8_t END_RIGHT[NUM_MACHINES] = {255U, 255U, 140U};</div>
 <div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;constexpr uint8_t END_OFFSET[NUM_MACHINES] = {28U, 28U, 14U};</div>
 <div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160; </div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;constexpr uint8_t GARTER_SLOP = 2;</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;constexpr uint8_t GARTER_SLOP = 2U;</div>
 <div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160; </div>
 <div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;constexpr uint8_t START_OFFSET[NUM_MACHINES][NUM_DIRECTIONS][NUM_CARRIAGES] = {</div>
 <div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    <span class="comment">// KH910</span></div>
 <div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    {</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;        <span class="comment">//   K,  L,  G</span></div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;        {40, 40, 32}, <span class="comment">// Left</span></div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;        {16, 16, 56} <span class="comment">// Right</span></div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;        <span class="comment">// K,   L,   G</span></div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;        {40U, 40U, 32U}, <span class="comment">// Left</span></div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;        {16U, 16U, 56U} <span class="comment">// Right</span></div>
 <div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    },</div>
 <div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    <span class="comment">// KH930</span></div>
 <div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    {</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;        <span class="comment">//   K,  L,  G</span></div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;        {40, 40, 8}, <span class="comment">// Left</span></div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;        {16, 16, 32} <span class="comment">// Right</span></div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;        <span class="comment">// K,   L,   G</span></div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;        {40U, 40U,  8U}, <span class="comment">// Left</span></div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;        {16U, 16U, 32U} <span class="comment">// Right</span></div>
 <div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    },</div>
 <div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    <span class="comment">// KH270</span></div>
 <div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    {</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;        <span class="comment">//   K</span></div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;        {14, 0, 0}, <span class="comment">// Left</span></div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;        {2, 0, 0}   <span class="comment">// Right</span></div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;        <span class="comment">// K</span></div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;        {14U, 0U, 0U}, <span class="comment">// Left</span></div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;        { 2U, 0U, 0U}   <span class="comment">// Right</span></div>
 <div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    }};</div>
 <div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160; </div>
 <div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;<span class="comment">// Should be calibrated to each device</span></div>
 <div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;<span class="comment">// Below filter minimum -&gt; Lace carriage</span></div>
 <div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;<span class="comment">// Above filter maximum -&gt; Knit carriage</span></div>
 <div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;<span class="comment">//                                               KH910 KH930 KH270</span></div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;constexpr uint16_t FILTER_L_MIN[NUM_MACHINES] = {200U, 200U, 200U};</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;constexpr uint16_t FILTER_L_MAX[NUM_MACHINES] = {600U, 600U, 600U};</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;constexpr uint16_t FILTER_R_MIN[NUM_MACHINES] = {200U, 0U, 0U};</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;constexpr uint16_t FILTER_L_MIN[NUM_MACHINES] = { 200U, 200U, 200U};</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;constexpr uint16_t FILTER_L_MAX[NUM_MACHINES] = { 600U, 600U, 600U};</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;constexpr uint16_t FILTER_R_MIN[NUM_MACHINES] = { 200U,   0U,   0U};</div>
 <div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;constexpr uint16_t FILTER_R_MAX[NUM_MACHINES] = {1023U, 600U, 600U};</div>
 <div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160; </div>
 <div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;constexpr uint16_t SOLENOIDS_BITMASK = 0xFFFFU;</div>
@@ -265,7 +265,7 @@ $(document).ready(function(){initNavTree('encoders_8h_source.html',''); initResi
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_438f4a02a1d99eec8e3376e0c84be64f.html">ayab</a></li><li class="navelem"><a class="el" href="encoders_8h.html">encoders.h</a></li>
-    <li class="footer">Generated on Sat Jun 17 2023 01:56:27 for AYAB Arduino Firmware by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Sat Jun 17 2023 06:20:28 for AYAB Arduino Firmware by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>
