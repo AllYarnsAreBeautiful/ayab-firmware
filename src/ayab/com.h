@@ -146,9 +146,7 @@ private:
   void send_cnfInit(Err_t error);
   void send_cnfStart(Err_t error);
   void send_cnfTest(Err_t error);
-#ifdef AYAB_ENABLE_CRC
   uint8_t CRC8(const uint8_t *buffer, size_t len);
-#endif
 };
 
 #endif // COM_H_
