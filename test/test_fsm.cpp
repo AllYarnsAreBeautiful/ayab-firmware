@@ -49,8 +49,8 @@ extern SolenoidsMock *solenoids;
 extern TesterMock *tester;
 
 // Defaults for position
-const uint8_t positionPassedLeft = (END_LEFT[Kh910] + END_OFFSET[Kh910] + GARTER_SLOP) + 1;
-const uint8_t positionPassedRight = (END_RIGHT[Kh910] - END_OFFSET[Kh910] - GARTER_SLOP) - 1;
+const uint8_t positionPassedLeft = (END_LEFT[static_cast<int>(Machine::Kh910)] + END_OFFSET[static_cast<int>(Machine::Kh910)] + GARTER_SLOP) + 1;
+const uint8_t positionPassedRight = (END_RIGHT[static_cast<int>(Machine::Kh910)] - END_OFFSET[static_cast<int>(Machine::Kh910)] - GARTER_SLOP) - 1;
 
 class FsmTest : public ::testing::Test {
 protected:
@@ -77,7 +77,7 @@ protected:
     // start in state `OpState::init`
     EXPECT_CALL(*arduinoMock, millis);
     fsm->init();
-    // expected_isr(NoDirection, NoDirection);
+    // expected_isr(Direction::None, Direction::None);
     // EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, LOW));
     // fsm->setState(OpState::init);
     // EXPECT_CALL(*comMock, update);
@@ -85,8 +85,8 @@ protected:
     // ASSERT_TRUE(fsm->getState() == OpState::init);
     expect_knitter_init();
     knitter->init();
-    knitter->setMachineType(Kh910);
-    expected_isr(NoDirection, NoDirection, 0);
+    knitter->setMachineType(Machine::Kh910);
+    expected_isr(Direction::None, Direction::None, 0);
   }
 
   void TearDown() override {
@@ -234,17 +234,17 @@ TEST_F(FsmTest, test_dispatch_init) {
   ASSERT_EQ(fsm->getState(), OpState::init);
 
   // no transition to state `OpState::ready`
-  expected_isr(Left, Left, 0);
+  expected_isr(Direction::Left, Direction::Left, 0);
   expected_dispatch_init();
   ASSERT_TRUE(fsm->getState() == OpState::init);
 
   // no transition to state `OpState::ready`
-  expected_isr(Right, Right, 0);
+  expected_isr(Direction::Right, Direction::Right, 0);
   expected_dispatch_init();
   ASSERT_TRUE(fsm->getState() == OpState::init);
 
   // transition to state `OpState::ready`
-  expected_isr(Left, Right, positionPassedRight);
+  expected_isr(Direction::Left, Direction::Right, positionPassedRight);
   expect_get_ready();
   expected_dispatch();
   ASSERT_EQ(fsm->getState(), OpState::ready);
@@ -254,7 +254,7 @@ TEST_F(FsmTest, test_dispatch_init) {
   expected_dispatch_ready();
 
   // transition to state `OpState::ready`
-  expected_isr(Right, Left, positionPassedLeft);
+  expected_isr(Direction::Right, Direction::Left, positionPassedLeft);
   expect_get_ready();
   expected_dispatch();
   ASSERT_TRUE(fsm->getState() == OpState::ready);

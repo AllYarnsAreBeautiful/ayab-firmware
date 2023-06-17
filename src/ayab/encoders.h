@@ -28,29 +28,31 @@
 
 // Enumerated constants
 
-enum Direction { NoDirection = -1, Left = 0, Right = 1, NUM_DIRECTIONS = 2 };
+enum class Direction {
+  None = -1,
+  Left = 0,
+  Right = 1};
+constexpr int NUM_DIRECTIONS = 2;
 using Direction_t = enum Direction;
 
-enum Carriage {
-  NoCarriage = -1,
+enum class Carriage {
+  None = -1,
   Knit = 0,
   Lace = 1,
-  Garter = 2,
-  NUM_CARRIAGES = 3
-};
+  Garter = 2};
+constexpr int NUM_CARRIAGES = 3;
 using Carriage_t = enum Carriage;
 
-enum BeltShift { Unknown, Regular, Shifted, Lace_Regular, Lace_Shifted };
+enum class BeltShift { Unknown, Regular, Shifted, Lace_Regular, Lace_Shifted };
 using BeltShift_t = enum BeltShift;
 
-enum MachineType {
-  NoMachine = -1,
+enum class Machine {
+  None = -1,
   Kh910 = 0,
   Kh930 = 1,
-  Kh270 = 2,
-  NUM_MACHINES = 3
-};
-using Machine_t = enum MachineType;
+  Kh270 = 2};
+constexpr int NUM_MACHINES = 3;
+using Machine_t = enum Machine;
 
 // Machine constants
 

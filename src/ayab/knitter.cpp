@@ -63,7 +63,7 @@ void Knitter::init() {
   // explicitly initialize members
 
   // job parameters
-  m_machineType = NoMachine;
+  m_machineType = Machine::None;
   m_startNeedle = 0U;
   m_stopNeedle = 0U;
   m_lineBuffer = nullptr;
@@ -75,9 +75,9 @@ void Knitter::init() {
   m_sOldPosition = 0U;
   m_firstRun = true;
   m_workedOnLine = false;
-  m_lastHall = NoDirection;
+  m_lastHall = Direction::None;
   m_position = 0U;
-  m_hallActive = NoDirection;
+  m_hallActive = Direction::None;
   m_pixelToSet = 0;
 #ifdef DBG_NOMACHINE
   m_prevState = false;
@@ -128,10 +128,10 @@ Err_t Knitter::initMachine(Machine_t machineType) {
   if (GlobalFsm::getState() != OpState::wait_for_machine) {
     return ERR_WRONG_MACHINE_STATE;
   }
-  if (machineType == NoMachine) {
+  if (machineType == Machine::None) {
     return ERR_NO_MACHINE_TYPE;
   }
-  if (machineType >= NUM_MACHINES) {
+  if (static_cast<int>(machineType) >= NUM_MACHINES) {
     return ERR_MACHINE_TYPE_INVALID;
   }
 
@@ -163,7 +163,7 @@ Err_t Knitter::startKnitting(uint8_t startNeedle,
   if (pattern_start == nullptr) {
     return ERR_NULL_POINTER_ARGUMENT;
   }
-  if (startNeedle >= stopNeedle || stopNeedle >= NUM_NEEDLES[m_machineType]) {
+  if (startNeedle >= stopNeedle || stopNeedle >= NUM_NEEDLES[static_cast<int>(m_machineType)]) {
     return ERR_NEEDLE_VALUE_INVALID;
   }
 
@@ -217,14 +217,14 @@ bool Knitter::isReady() {
   // will be a second magnet passing the sensor.
   // Keep track of the last seen hall sensor because we may be making a decision
   // after it passes.
-  if (m_hallActive != NoDirection) {
+  if (m_hallActive != Direction::None) {
     m_lastHall = m_hallActive;
   }
 
-  bool passedLeft = Right == m_direction and Left == m_lastHall and
-        m_position > (END_LEFT[m_machineType] + END_OFFSET[m_machineType] + GARTER_SLOP);
-  bool passedRight = Left == m_direction and Right == m_lastHall and
-        m_position < (END_RIGHT[m_machineType] - END_OFFSET[m_machineType] - GARTER_SLOP);
+  bool passedLeft = Direction::Right == m_direction and Direction::Left == m_lastHall and
+        m_position > (END_LEFT[static_cast<int>(m_machineType)] + END_OFFSET[static_cast<int>(m_machineType)] + GARTER_SLOP);
+  bool passedRight = Direction::Left == m_direction and Right == m_lastHall and
+        m_position < (END_RIGHT[static_cast<int>(m_machineType)] - END_OFFSET[static_cast<int>(m_machineType)] - GARTER_SLOP);
   // Machine is initialized when left Hall sensor is passed in Right direction
   // New feature (August 2020): the machine is also initialized
   // when the right Hall sensor is passed in Left direction.
@@ -284,12 +284,12 @@ void Knitter::knit() {
   }
 
   // `m_machineType` has been validated - no need to check
-  if ((m_pixelToSet >= m_startNeedle - END_OF_LINE_OFFSET_L[m_machineType]) &&
-      (m_pixelToSet <= m_stopNeedle + END_OF_LINE_OFFSET_R[m_machineType])) {
+  if ((m_pixelToSet >= m_startNeedle - END_OF_LINE_OFFSET_L[static_cast<int>(m_machineType)]) &&
+      (m_pixelToSet <= m_stopNeedle + END_OF_LINE_OFFSET_R[static_cast<int>(m_machineType)])) {
 
     if ((m_pixelToSet >= m_startNeedle) && (m_pixelToSet <= m_stopNeedle)) {
       // when inside the active needles
-      if (m_machineType == Kh270) {
+      if (m_machineType == Machine::Kh270) {
         digitalWrite(LED_PIN_B, 1); // yellow LED on
       }
       m_workedOnLine = true;
@@ -304,7 +304,7 @@ void Knitter::knit() {
     GlobalSolenoids::setSolenoid(m_solenoidToSet, pixelValue);
   } else {
     // outside of the active needles
-    if (m_machineType == Kh270) {
+    if (m_machineType == Machine::Kh270) {
       digitalWrite(LED_PIN_B, 0); // yellow LED off
     }
 
@@ -347,13 +347,13 @@ Machine_t Knitter::getMachineType() {
  * \return Start offset, or 0 if unobtainable.
  */
 uint8_t Knitter::getStartOffset(const Direction_t direction) {
-  if ((direction == NoDirection) || (direction >= NUM_DIRECTIONS) ||
-      (m_carriage == NoCarriage) || (m_carriage >= NUM_CARRIAGES) ||
-      (m_machineType == NoMachine) || (m_machineType >= NUM_MACHINES)) {
+  if ((direction == Direction::None) || (static_cast<int>(direction) >= NUM_DIRECTIONS) ||
+      (m_carriage == Carriage::None) || (static_cast<int>(m_carriage) >= NUM_CARRIAGES) ||
+      (m_machineType == Machine::None) || (static_cast<int>(m_machineType) >= NUM_MACHINES)) {
     // TODO(TP): return error state?
     return 0U;
   }
-  return START_OFFSET[m_machineType][direction][m_carriage];
+  return START_OFFSET[static_cast<int>(m_machineType)][static_cast<int>(direction)][static_cast<int>(m_carriage)];
 }
 
 /*!
@@ -415,21 +415,21 @@ bool Knitter::calculatePixelAndSolenoid() {
   // calculate the solenoid and pixel to be set
   // implemented according to machine manual
   // magic numbers from machine manual
-  case Right:
-    startOffset = getStartOffset(Left);
+  case Direction::Right:
+    startOffset = getStartOffset(Direction::Left);
     if (m_position >= startOffset) {
       m_pixelToSet = m_position - startOffset;
 
-      if (m_machineType == Kh270) {
+      if (m_machineType == Machine::Kh270) {
         // TODO(who?): check
         m_solenoidToSet = (m_position % 12) + 3;
       } else {
-        if (Regular == m_beltShift) {
+        if (BeltShift::Regular == m_beltShift) {
           m_solenoidToSet = m_position % SOLENOIDS_NUM;
-        } else if (Shifted == m_beltShift) {
+        } else if (BeltShift::Shifted == m_beltShift) {
           m_solenoidToSet = (m_position - HALF_SOLENOIDS_NUM) % SOLENOIDS_NUM;
         }
-        if (Lace == m_carriage) {
+        if (Carriage::Lace == m_carriage) {
           m_pixelToSet = m_pixelToSet + HALF_SOLENOIDS_NUM;
         }
       }
@@ -438,21 +438,21 @@ bool Knitter::calculatePixelAndSolenoid() {
     }
     break;
 
-  case Left:
-    startOffset = getStartOffset(Right);
-    if (m_position <= (END_RIGHT[m_machineType] - startOffset)) {
+  case Direction::Left:
+    startOffset = getStartOffset(Direction::Right);
+    if (m_position <= (END_RIGHT[static_cast<int>(m_machineType)] - startOffset)) {
       m_pixelToSet = m_position - startOffset;
 
-      if (m_machineType == Kh270) {
+      if (m_machineType == Machine::Kh270) {
         // TODO(who?): check
         m_solenoidToSet = ((m_position + 6) % 12) + 3;
       } else {
-        if (Regular == m_beltShift) {
+        if (BeltShift::Regular == m_beltShift) {
           m_solenoidToSet = (m_position + HALF_SOLENOIDS_NUM) % SOLENOIDS_NUM;
-        } else if (Shifted == m_beltShift) {
+        } else if (BeltShift::Shifted == m_beltShift) {
           m_solenoidToSet = m_position % SOLENOIDS_NUM;
         }
-        if (Lace == m_carriage) {
+        if (Carriage::Lace == m_carriage) {
           m_pixelToSet = m_pixelToSet - SOLENOIDS_NUM;
         }
       }
