@@ -1,5 +1,6 @@
 var class_com =
 [
+    [ "CRC8", "class_com.html#a59d3692dd5de07bb73222f46388de89f", null ],
     [ "h_cnfLine", "class_com.html#ac1d4bba86838d956e175b0ad7928eadb", null ],
     [ "h_reqInfo", "class_com.html#aa522d81f9e43c6986d295add8e30807b", null ],
     [ "h_reqInit", "class_com.html#acfc16b1d2dd1f78fc640fa579be0212a", null ],

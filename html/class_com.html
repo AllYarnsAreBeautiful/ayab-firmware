@@ -75,7 +75,7 @@ Inheritance diagram for Com:</div>
 <div class="dyncontent">
 <div class="center"><img src="class_com__inherit__graph.png" border="0" usemap="#a_com_inherit__map" alt="Inheritance graph"/></div>
 <map name="a_com_inherit__map" id="a_com_inherit__map">
-<area shape="rect" title=" " alt="" coords="5,248,171,604"/>
+<area shape="rect" title=" " alt="" coords="5,248,171,619"/>
 <area shape="rect" href="class_com_interface.html" title=" " alt="" coords="5,5,171,200"/>
 </map>
 </div>
@@ -84,7 +84,7 @@ Collaboration diagram for Com:</div>
 <div class="dyncontent">
 <div class="center"><img src="class_com__coll__graph.png" border="0" usemap="#a_com_coll__map" alt="Collaboration graph"/></div>
 <map name="a_com_coll__map" id="a_com_coll__map">
-<area shape="rect" title=" " alt="" coords="5,248,171,604"/>
+<area shape="rect" title=" " alt="" coords="5,248,171,619"/>
 <area shape="rect" href="class_com_interface.html" title=" " alt="" coords="5,5,171,200"/>
 </map>
 </div>
@@ -152,6 +152,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memitem:a5c7ee4d825133bf602c45445aa70a343"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_com.html#a5c7ee4d825133bf602c45445aa70a343">send_cnfTest</a> (Err_t error)</td></tr>
 <tr class="memdesc:a5c7ee4d825133bf602c45445aa70a343"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send <code>cnfTest</code> message.  <a href="class_com.html#a5c7ee4d825133bf602c45445aa70a343">More...</a><br /></td></tr>
 <tr class="separator:a5c7ee4d825133bf602c45445aa70a343"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a59d3692dd5de07bb73222f46388de89f"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_com.html#a59d3692dd5de07bb73222f46388de89f">CRC8</a> (const uint8_t *buffer, size_t len)</td></tr>
+<tr class="memdesc:a59d3692dd5de07bb73222f46388de89f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate CRC8 of a buffer.  <a href="class_com.html#a59d3692dd5de07bb73222f46388de89f">More...</a><br /></td></tr>
+<tr class="separator:a59d3692dd5de07bb73222f46388de89f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
@@ -166,6 +169,54 @@ uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>msgBuffer</b> [MAX
 <tr class="separator:ac5295a7c24653ce3812426c079a71c3a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="a59d3692dd5de07bb73222f46388de89f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a59d3692dd5de07bb73222f46388de89f">&#9670;&nbsp;</a></span>CRC8()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t Com::CRC8 </td>
+          <td>(</td>
+          <td class="paramtype">const uint8_t *&#160;</td>
+          <td class="paramname"><em>buffer</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>len</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Calculate CRC8 of a buffer. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">buffer</td><td>A pointer to a data buffer. </td></tr>
+    <tr><td class="paramname">len</td><td>The number of bytes of data in the data buffer.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Based on <a href="https://www.leonardomiliani.com/en/2013/un-semplice-crc8-per-arduino/">https://www.leonardomiliani.com/en/2013/un-semplice-crc8-per-arduino/</a></p>
+<p>CRC-8 - based on the CRC8 formulas by Dallas/Maxim code released under the therms of the GNU GPL 3.0 license</p>
+<p>Faster code using a lookup table is available, if needed. </p>
+
+</div>
+</div>
 <a id="ac1d4bba86838d956e175b0ad7928eadb"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ac1d4bba86838d956e175b0ad7928eadb">&#9670;&nbsp;</a></span>h_cnfLine()</h2>
 
@@ -809,7 +860,7 @@ Here is the caller graph for this function:</div>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_com.html">Com</a></li>
-    <li class="footer">Generated on Thu Jun 15 2023 20:29:25 for AYAB Arduino Firmware by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Sat Jun 17 2023 01:56:27 for AYAB Arduino Firmware by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

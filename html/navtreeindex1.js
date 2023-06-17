@@ -1,5 +1,6 @@
 var NAVTREEINDEX1 =
 {
+"class_global_encoders.html#aa96ba6370361f55d6dcf3589e8bd7601":[6,0,18,2],
 "class_global_encoders.html#ae2f890e0704e5cccdf4ab9c2b85a94a7":[6,0,18,10],
 "class_global_encoders.html#ae41a94f2464a0f511b662c2b743b2c4d":[6,0,18,1],
 "class_global_encoders.html#ae8ec0115a98b9bfd97296334545698e2":[6,0,18,3],
@@ -248,6 +249,5 @@ var NAVTREEINDEX1 =
 "com_8cpp.html":[7,0,0,0,3],
 "com_8h.html":[7,0,0,0,4],
 "com_8h.html#a39440954ade86462660dbb9a5b3865c3":[7,0,0,0,4,3],
-"com_8h.html#a6b1bc2fadafb27fc5904a32a41b19291":[7,0,0,0,4,9],
-"com_8h.html#a87173d872a679cb4d8388c77aa72a3bc":[7,0,0,0,4,13]
+"com_8h.html#a6b1bc2fadafb27fc5904a32a41b19291":[7,0,0,0,4,9]
 };
