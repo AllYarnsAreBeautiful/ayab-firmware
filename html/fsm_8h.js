@@ -32,11 +32,11 @@ var fsm_8h =
       [ "UNSPECIFIED_FAILURE", "fsm_8h.html#a59e56af19e754a6aa26a612ebf91d05fa8f68b6f36347cd7f3657d7906f9cdc37", null ]
     ] ],
     [ "OpState", "fsm_8h.html#ab7a8fa622e66ef612393d9758a57e7f6", [
-      [ "s_wait_for_machine", "fsm_8h.html#ab7a8fa622e66ef612393d9758a57e7f6aed75e34aa2d5e29afcdba3d53cb8a88f", null ],
-      [ "s_init", "fsm_8h.html#ab7a8fa622e66ef612393d9758a57e7f6ad807d351196b981725d089e64e49471e", null ],
-      [ "s_ready", "fsm_8h.html#ab7a8fa622e66ef612393d9758a57e7f6a19633251e2c893dd998899913a1491a4", null ],
-      [ "s_knit", "fsm_8h.html#ab7a8fa622e66ef612393d9758a57e7f6aa7e6a22d35a4a95c7c6aed0d1c3265c1", null ],
-      [ "s_test", "fsm_8h.html#ab7a8fa622e66ef612393d9758a57e7f6a16813d3bf733c5a7b0cd6f56d7f7701e", null ],
-      [ "s_error", "fsm_8h.html#ab7a8fa622e66ef612393d9758a57e7f6a3d4280a5ddbacf2ffea875548d1dbd8f", null ]
+      [ "wait_for_machine", "fsm_8h.html#ab7a8fa622e66ef612393d9758a57e7f6a1c0ef25c2efd4c7fae6d3a855726ddac", null ],
+      [ "init", "fsm_8h.html#ab7a8fa622e66ef612393d9758a57e7f6ae37f0136aa3ffaf149b351f6a4c948e9", null ],
+      [ "ready", "fsm_8h.html#ab7a8fa622e66ef612393d9758a57e7f6ab2fdab230a2c39f3595a947861863cb7", null ],
+      [ "knit", "fsm_8h.html#ab7a8fa622e66ef612393d9758a57e7f6a8f340de394fab9a94485829f53646a8e", null ],
+      [ "test", "fsm_8h.html#ab7a8fa622e66ef612393d9758a57e7f6a098f6bcd4621d373cade4e832627b4f6", null ],
+      [ "error", "fsm_8h.html#ab7a8fa622e66ef612393d9758a57e7f6acb5e100e5a9a3e7f6d1fd97512215282", null ]
     ] ]
 ];
