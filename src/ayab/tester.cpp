@@ -155,7 +155,7 @@ void Tester::stopCmd() {
  * \brief Quit command handler.
  */
 void Tester::quitCmd() {
-  GlobalFsm::setState(s_init);
+  GlobalFsm::setState(OpState::init);
   GlobalKnitter::setUpInterrupt();
 }
 
@@ -166,8 +166,8 @@ void Tester::quitCmd() {
  */
 Err_t Tester::startTest(Machine_t machineType) {
   OpState_t currentState = GlobalFsm::getState();
-  if (s_wait_for_machine == currentState || s_init == currentState || s_ready == currentState) {
-    GlobalFsm::setState(s_test);
+  if (OpState::wait_for_machine == currentState || OpState::init == currentState || OpState::ready == currentState) {
+    GlobalFsm::setState(OpState::test);
     GlobalKnitter::setMachineType(machineType);
     setUp();
     return SUCCESS;
