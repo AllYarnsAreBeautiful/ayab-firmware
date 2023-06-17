@@ -93,7 +93,7 @@ TEST_F(EncodersTest, test_encA_rising_in_front_notKH270) {
   ASSERT_EQ(encoders->getHallActive(), Left);
   ASSERT_EQ(encoders->getPosition(), END_OFFSET[encoders->getMachineType()]);
   ASSERT_EQ(encoders->getCarriage(), Lace);
-  ASSERT_EQ(encoders->getBeltShift(), Regular);
+  ASSERT_EQ(encoders->getBeltShift(), BeltShift::Regular);
 }
 
 TEST_F(EncodersTest, test_encA_rising_in_front_KH270) {
@@ -124,7 +124,7 @@ TEST_F(EncodersTest, test_encA_rising_in_front_KH270) {
   ASSERT_EQ(encoders->getHallActive(), Left);
   ASSERT_EQ(encoders->getPosition(), END_OFFSET[encoders->getMachineType()]);
   ASSERT_EQ(encoders->getCarriage(), Knit);
-  ASSERT_EQ(encoders->getBeltShift(), Regular);
+  ASSERT_EQ(encoders->getBeltShift(), BeltShift::Regular);
 }
 
 TEST_F(EncodersTest, test_encA_rising_in_front_G_carriage) {
@@ -212,7 +212,7 @@ TEST_F(EncodersTest, test_encA_falling_in_front) {
   ASSERT_EQ(encoders->getHallActive(), Right);
   ASSERT_EQ(encoders->getPosition(), 227);
   ASSERT_EQ(encoders->getCarriage(), NoCarriage);
-  ASSERT_EQ(encoders->getBeltShift(), Shifted);
+  ASSERT_EQ(encoders->getBeltShift(), BeltShift::Shifted);
 }
 
 TEST_F(EncodersTest, test_encA_falling_at_end) {
@@ -312,7 +312,7 @@ TEST_F(EncodersTest, test_getPosition) {
 
 TEST_F(EncodersTest, test_getBeltShift) {
   BeltShift_t b = encoders->getBeltShift();
-  ASSERT_EQ(b, Unknown);
+  ASSERT_EQ(b, BeltShift::Unknown);
 }
 
 TEST_F(EncodersTest, test_getDirection) {

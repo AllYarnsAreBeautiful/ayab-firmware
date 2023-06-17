@@ -40,9 +40,6 @@ enum Carriage {
 };
 using Carriage_t = enum Carriage;
 
-enum BeltShift { Unknown, Regular, Shifted, Lace_Regular, Lace_Shifted };
-using BeltShift_t = enum BeltShift;
-
 enum MachineType {
   NoMachine = -1,
   Kh910 = 0,
@@ -51,6 +48,9 @@ enum MachineType {
   NUM_MACHINES = 3
 };
 using Machine_t = enum MachineType;
+
+enum class BeltShift { Unknown, Regular, Shifted, Lace_Regular, Lace_Shifted };
+using BeltShift_t = enum BeltShift;
 
 // Machine constants
 

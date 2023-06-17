@@ -424,9 +424,9 @@ bool Knitter::calculatePixelAndSolenoid() {
         // TODO(who?): check
         m_solenoidToSet = (m_position % 12) + 3;
       } else {
-        if (Regular == m_beltShift) {
+        if (BeltShift::Regular == m_beltShift) {
           m_solenoidToSet = m_position % SOLENOIDS_NUM;
-        } else if (Shifted == m_beltShift) {
+        } else if (BeltShift::Shifted == m_beltShift) {
           m_solenoidToSet = (m_position - HALF_SOLENOIDS_NUM) % SOLENOIDS_NUM;
         }
         if (Lace == m_carriage) {
@@ -447,9 +447,9 @@ bool Knitter::calculatePixelAndSolenoid() {
         // TODO(who?): check
         m_solenoidToSet = ((m_position + 6) % 12) + 3;
       } else {
-        if (Regular == m_beltShift) {
+        if (BeltShift::Regular == m_beltShift) {
           m_solenoidToSet = (m_position + HALF_SOLENOIDS_NUM) % SOLENOIDS_NUM;
-        } else if (Shifted == m_beltShift) {
+        } else if (BeltShift::Shifted == m_beltShift) {
           m_solenoidToSet = m_position % SOLENOIDS_NUM;
         }
         if (Lace == m_carriage) {
