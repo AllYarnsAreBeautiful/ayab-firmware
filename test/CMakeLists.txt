@@ -19,7 +19,7 @@ set(SOURCE_DIRECTORY
     ${PROJECT_SOURCE_DIR}/../src/ayab
     )
 set(LIBRARY_DIRECTORY
-    ${PROJECT_SOURCE_DIR}/../libraries
+    ${PROJECT_SOURCE_DIR}/../lib
     )
 
 # Includes arduino-mock files directly inplace of original Arduino headers.
