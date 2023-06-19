@@ -69,6 +69,7 @@ jobs:
         
   deploy:
     name: Create and deploy source code documentation
+    needs: release-firmware
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
