@@ -18,6 +18,8 @@ In [ayab-desktop](https://github.com/AllYarnsAreBeautiful/ayab-desktop): go to T
 
 ## Development Environment
 
+### Compiling the firmware
+
 To set up a working development environment follow these steps:
 
  1. Clone the repository and update all submodules.
@@ -28,7 +30,14 @@ To set up a working development environment follow these steps:
     git clone --recurse-submodules https://github.com/AllYarnsAreBeautiful/ayab-firmware.git ayab
     ```
 
- 2. Install the [Arduino.mk](https://github.com/sudar/Arduino-Makefile) package and setup environment variables.
+ 2. The AYAB firmware uses [PlatformIO](https://platform.io/) to build the binaries.
+    Please [download the PlatformIO plugin](https://platformio.org/install/integration) for your favorite IDE, i.e. VSCode.
+    Then, open the ayab-firmware project and hit Build and/or Upload to compile and upload to hardware.
+
+### Unit tests and code analysis
+
+ 1. Install the [Arduino.mk](https://github.com/sudar/Arduino-Makefile) package and setup environment variables.
+    This is required to run the unit tests.
 
     Ubuntu:
     ```bash
@@ -41,10 +50,10 @@ To set up a working development environment follow these steps:
     brew tap sudar/arduino-mk
     brew install arduino-mk
     ```
- Running `./build.sh` should work now.
+ Running `./test/test.sh` should work now.
 
 
- 3. Install `clang-format`, `gcovr`, and update `gcc` to version 9.
+ 2. Install `clang-format`, `gcovr`, and update `gcc` to version 9.
 
     Ubuntu:
     ```bash
@@ -58,8 +67,8 @@ To set up a working development environment follow these steps:
     brew install clang-format gcovr gcc
     ```
 
- 4. Install [pre-commit](https://pre-commit.com/) and use it to install git hooks.
- 
+ 3. Install [pre-commit](https://pre-commit.com/) and use it to install git hooks.
+
     Ubuntu:
     ```bash
     sudo apt install -y pre-commit
@@ -72,13 +81,13 @@ To set up a working development environment follow these steps:
     pre-commit install
     ```
 
- 5. Optionally create a pre-push hook:
- 
+ 4. Optionally create a pre-push hook:
+
     ```bash
     cat << SNIPPET >> .git/hooks/pre-push
     #!/bin/bash
     set -e
-    ./build.sh
+    pio run
     ./test/test.sh -c
     SNIPPET
     chmod +x .git/hooks/pre-push
