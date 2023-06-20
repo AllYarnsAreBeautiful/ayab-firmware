@@ -243,7 +243,7 @@ bool Knitter::isReady() {
 }
 
 /*!
- * \brief Function that is repeatedly called during state `s_knit`
+ * \brief Function that is repeatedly called during state `OpState::knit`
  */
 void Knitter::knit() {
   if (m_firstRun) {
