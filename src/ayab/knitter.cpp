@@ -147,7 +147,7 @@ Err_t Knitter::initMachine(Machine_t machineType) {
 }
 
 /*!
- * \brief Enter `knit` machine state.
+ * \brief Enter `OpState::knit` machine state.
  * \param startNeedle Position of first needle in the pattern.
  * \param stopNeedle Position of last needle in the pattern.
  * \param patternStart Pointer to buffer containing pattern data.
