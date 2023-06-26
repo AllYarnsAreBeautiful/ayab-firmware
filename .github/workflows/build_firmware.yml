@@ -12,11 +12,11 @@ jobs:
       with:
         submodules: recursive
     - uses: actions/cache@v3
-        with:
-          path: |
-            ~/.cache/pip
-            ~/.platformio/.cache
-          key: ${{ runner.os }}-pio
+      with:
+        path: |
+          ~/.cache/pip
+          ~/.platformio/.cache
+        key: ${{ runner.os }}-pio
     - name: Install PlatformIO Core
       run: |
         pip install --upgrade platformio
