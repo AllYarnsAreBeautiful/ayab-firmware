@@ -23,7 +23,7 @@ jobs:
     - name: Build for Arduino UNO
       run: |
         platformio run --environment uno
-        mkdir build
+        mkdir -p build
         mv .pio/build/uno/firmware.hex build/ayab_monolithic_uno.hex
     - name: Cache build asset
       uses: actions/cache/save@v3
