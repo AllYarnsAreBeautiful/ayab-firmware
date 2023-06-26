@@ -1,9 +1,11 @@
 var hierarchy =
 [
+    [ "Adafruit_MCP23008", "class_adafruit___m_c_p23008.html", null ],
     [ "BeeperInterface", "class_beeper_interface.html", [
       [ "Beeper", "class_beeper.html", null ],
       [ "BeeperMock", "class_beeper_mock.html", null ]
     ] ],
+    [ "COBS", "class_c_o_b_s.html", null ],
     [ "ComInterface", "class_com_interface.html", [
       [ "Com", "class_com.html", null ],
       [ "ComMock", "class_com_mock.html", null ]
@@ -27,6 +29,9 @@ var hierarchy =
       [ "Knitter", "class_knitter.html", null ],
       [ "KnitterMock", "class_knitter_mock.html", null ]
     ] ],
+    [ "PacketSerial_< EncoderType, PacketMarker, BufferSize >", "class_packet_serial__.html", null ],
+    [ "PacketSerial_< SLIP, SLIP::END >", "class_packet_serial__.html", null ],
+    [ "SLIP", "class_s_l_i_p.html", null ],
     [ "SolenoidsInterface", "class_solenoids_interface.html", [
       [ "Solenoids", "class_solenoids.html", null ],
       [ "SolenoidsMock", "class_solenoids_mock.html", null ]

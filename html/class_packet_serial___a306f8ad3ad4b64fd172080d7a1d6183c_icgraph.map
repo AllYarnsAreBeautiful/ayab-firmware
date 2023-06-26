@@ -1,0 +1,5 @@
+<map id="PacketSerial_::begin" name="PacketSerial_::begin">
+<area shape="rect" id="node1" title="Begin a default serial connection with the given speed." alt="" coords="205,31,357,57"/>
+<area shape="rect" id="node2" href="$class_packet_serial__.html#a5ce0f36dd94b8ab87ae6319e9ab75a69" title="Deprecated. Use setStream() to configure a non&#45;default port." alt="" coords="5,5,157,32"/>
+<area shape="rect" id="node3" href="$class_com.html#a1fdbb052f376bac842eba1562f821ca7" title="Initialize serial communication." alt="" coords="41,56,122,83"/>
+</map>

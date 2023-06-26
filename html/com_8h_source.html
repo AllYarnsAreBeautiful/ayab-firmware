@@ -160,7 +160,7 @@ $(document).ready(function(){initNavTree('com_8h_source.html',''); initResizable
 <div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;  <span class="keyword">static</span> <span class="keywordtype">void</span> onPacketReceived(<span class="keyword">const</span> uint8_t *buffer, <span class="keywordtype">size_t</span> size);</div>
 <div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160; </div>
 <div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;  <span class="keyword">static</span> SLIPPacketSerial m_packetSerial;</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;  <span class="keyword">static</span> <a class="code" href="class_packet_serial__.html">SLIPPacketSerial</a> m_packetSerial;</div>
 <div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;};</div>
 <div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160; </div>
 <div class="line"><a name="l00121"></a><span class="lineno"><a class="line" href="class_com.html">  121</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_com.html">Com</a> : <span class="keyword">public</span> <a class="code" href="class_com_interface.html">ComInterface</a> {</div>
@@ -176,7 +176,7 @@ $(document).ready(function(){initNavTree('com_8h_source.html',''); initResizable
 <div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_com.html#a6d5338f8e1145f276b20872283046d76">onPacketReceived</a>(<span class="keyword">const</span> uint8_t *buffer, <span class="keywordtype">size_t</span> size);</div>
 <div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160; </div>
 <div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;  SLIPPacketSerial m_packetSerial;</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;  <a class="code" href="class_packet_serial__.html">SLIPPacketSerial</a> m_packetSerial;</div>
 <div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;  uint8_t lineBuffer[MAX_LINE_BUFFER_LEN] = {0};</div>
 <div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;  uint8_t msgBuffer[MAX_MSG_BUFFER_LEN] = {0};</div>
 <div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160; </div>
@@ -217,6 +217,7 @@ $(document).ready(function(){initNavTree('com_8h_source.html',''); initResizable
 <div class="ttc" id="aclass_com_html_ae580810353eb9cada6848e0b0f90b3e7"><div class="ttname"><a href="class_com.html#ae580810353eb9cada6848e0b0f90b3e7">Com::send</a></div><div class="ttdeci">void send(uint8_t *payload, size_t length)</div><div class="ttdoc">Send a packet of data.</div><div class="ttdef"><b>Definition:</b> com.cpp:51</div></div>
 <div class="ttc" id="aclass_com_interface_html"><div class="ttname"><a href="class_com_interface.html">ComInterface</a></div><div class="ttdef"><b>Definition:</b> com.h:76</div></div>
 <div class="ttc" id="aclass_global_com_html"><div class="ttname"><a href="class_global_com.html">GlobalCom</a></div><div class="ttdef"><b>Definition:</b> com.h:98</div></div>
+<div class="ttc" id="aclass_packet_serial___html"><div class="ttname"><a href="class_packet_serial__.html">PacketSerial_&lt; SLIP, SLIP::END &gt;</a></div></div>
 <div class="ttc" id="aencoders_8h_html"><div class="ttname"><a href="encoders_8h.html">encoders.h</a></div></div>
 <div class="ttc" id="afsm_8h_html"><div class="ttname"><a href="fsm_8h.html">fsm.h</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
@@ -225,7 +226,7 @@ $(document).ready(function(){initNavTree('com_8h_source.html',''); initResizable
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_438f4a02a1d99eec8e3376e0c84be64f.html">ayab</a></li><li class="navelem"><a class="el" href="com_8h.html">com.h</a></li>
-    <li class="footer">Generated on Sun Jun 18 2023 20:11:43 for AYAB Arduino Firmware by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Mon Jun 26 2023 20:34:00 for AYAB Arduino Firmware by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

@@ -1,0 +1,4 @@
+<map id="PacketSerial_::begin" name="PacketSerial_::begin">
+<area shape="rect" id="node1" title="Begin a default serial connection with the given speed." alt="" coords="5,5,157,32"/>
+<area shape="rect" id="node2" href="$class_packet_serial__.html#abacc92df1cb6dc433d861caba6d097f9" title="Attach PacketSerial to an existing Arduino Stream." alt="" coords="205,5,388,32"/>
+</map>

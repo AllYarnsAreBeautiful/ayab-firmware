@@ -1,0 +1,5 @@
+<map id="PacketSerial_::send" name="PacketSerial_::send">
+<area shape="rect" id="node1" title="Set a packet of data." alt="" coords="172,31,319,57"/>
+<area shape="rect" id="node2" href="$class_com.html#ae580810353eb9cada6848e0b0f90b3e7" title="Send a packet of data." alt="" coords="19,5,110,32"/>
+<area shape="rect" id="node3" href="$class_com.html#a1b3c9f493e2252f3b1adb067c93d8dc2" title="send initial msgid followed by null&#45;terminated string" alt="" coords="5,56,124,83"/>
+</map>

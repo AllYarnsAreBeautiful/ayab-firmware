@@ -1,9 +1,11 @@
 var annotated_dup =
 [
+    [ "Adafruit_MCP23008", "class_adafruit___m_c_p23008.html", "class_adafruit___m_c_p23008" ],
     [ "Beeper", "class_beeper.html", "class_beeper" ],
     [ "BeeperInterface", "class_beeper_interface.html", "class_beeper_interface" ],
     [ "BeeperMock", "class_beeper_mock.html", "class_beeper_mock" ],
     [ "BeeperTest", "class_beeper_test.html", "class_beeper_test" ],
+    [ "COBS", "class_c_o_b_s.html", "class_c_o_b_s" ],
     [ "Com", "class_com.html", "class_com" ],
     [ "ComInterface", "class_com_interface.html", "class_com_interface" ],
     [ "ComMock", "class_com_mock.html", "class_com_mock" ],
@@ -27,6 +29,8 @@ var annotated_dup =
     [ "KnitterInterface", "class_knitter_interface.html", "class_knitter_interface" ],
     [ "KnitterMock", "class_knitter_mock.html", "class_knitter_mock" ],
     [ "KnitterTest", "class_knitter_test.html", "class_knitter_test" ],
+    [ "PacketSerial_", "class_packet_serial__.html", "class_packet_serial__" ],
+    [ "SLIP", "class_s_l_i_p.html", "class_s_l_i_p" ],
     [ "Solenoids", "class_solenoids.html", "class_solenoids" ],
     [ "SolenoidsInterface", "class_solenoids_interface.html", "class_solenoids_interface" ],
     [ "SolenoidsMock", "class_solenoids_mock.html", "class_solenoids_mock" ],

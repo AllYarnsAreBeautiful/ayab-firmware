@@ -1,0 +1,4 @@
+<map id="Com::send" name="Com::send">
+<area shape="rect" id="node1" title="Send a packet of data." alt="" coords="5,5,96,32"/>
+<area shape="rect" id="node2" href="$class_packet_serial__.html#aa3386c597cbf0a0a287e5a084c85f399" title="Set a packet of data." alt="" coords="144,5,291,32"/>
+</map>

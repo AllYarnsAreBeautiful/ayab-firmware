@@ -25,14 +25,29 @@
 var NAVTREE =
 [
   [ "AYAB Arduino Firmware", "index.html", [
-    [ "AYAB - All Yarns Are Beautiful", "index.html", [
-      [ "AYAB Firmware", "index.html#autotoc_md12", [
-        [ "Updating your AYAB firmware", "index.html#autotoc_md13", null ],
-        [ "Development Environment", "index.html#autotoc_md14", null ],
-        [ "CI/CD on GitHub", "index.html#autotoc_md15", [
-          [ "Triggering a new build", "index.html#autotoc_md16", null ]
-        ] ]
-      ] ]
+    [ "PacketSerial", "index.html", [
+      [ "Description", "index.html#autotoc_md23", null ],
+      [ "Features", "index.html#autotoc_md24", null ],
+      [ "Background", "index.html#autotoc_md25", null ],
+      [ "Use", "index.html#autotoc_md26", [
+        [ "PacketSerial", "index.html#autotoc_md27", null ],
+        [ "Setup", "index.html#autotoc_md28", [
+          [ "Basic", "index.html#autotoc_md29", null ]
+        ] ],
+        [ "Advanced", "index.html#autotoc_md30", [
+          [ "Using A Non-Standard Serial Configuration", "index.html#autotoc_md31", null ],
+          [ "Using Secondary Serial Ports (e.g. Serial1, Serial2, etc)", "index.html#autotoc_md32", null ],
+          [ "Using SoftwareSerial", "index.html#autotoc_md33", null ],
+          [ "Other Streams", "index.html#autotoc_md34", null ]
+        ] ],
+        [ "Loop", "index.html#autotoc_md35", null ],
+        [ "Receiving Packets", "index.html#autotoc_md36", null ],
+        [ "Sending Packets", "index.html#autotoc_md37", null ]
+      ] ],
+      [ "Examples", "index.html#autotoc_md38", null ],
+      [ "Compatible Libraries", "index.html#autotoc_md39", null ],
+      [ "Changelog", "index.html#autotoc_md40", null ],
+      [ "License", "index.html#autotoc_md41", null ]
     ] ],
     [ "Changelog", "md__c_h_a_n_g_e_l_o_g.html", [
       [ "1.0.0 / Unreleased", "md__c_h_a_n_g_e_l_o_g.html#autotoc_md1", null ],
@@ -46,6 +61,25 @@ var NAVTREE =
       [ "KH930", "md_doc_carriage_hallvalues.html#autotoc_md8", null ]
     ] ],
     [ "Finite State Machine", "md_doc_finite_state_machine.html", null ],
+    [ "Changelog", "md_lib__packet_serial__c_h_a_n_g_e_l_o_g.html", [
+      [ "[Unreleased]", "md_lib__packet_serial__c_h_a_n_g_e_l_o_g.html#autotoc_md11", [
+        [ "Removed", "md_lib__packet_serial__c_h_a_n_g_e_l_o_g.html#autotoc_md12", null ]
+      ] ],
+      [ "[1.2.0] 2017-11-09", "md_lib__packet_serial__c_h_a_n_g_e_l_o_g.html#autotoc_md13", [
+        [ "Added", "md_lib__packet_serial__c_h_a_n_g_e_l_o_g.html#autotoc_md14", null ],
+        [ "Removed", "md_lib__packet_serial__c_h_a_n_g_e_l_o_g.html#autotoc_md15", null ],
+        [ "Changed", "md_lib__packet_serial__c_h_a_n_g_e_l_o_g.html#autotoc_md16", null ]
+      ] ],
+      [ "[1.1.0] 2017-11-09", "md_lib__packet_serial__c_h_a_n_g_e_l_o_g.html#autotoc_md17", [
+        [ "Added", "md_lib__packet_serial__c_h_a_n_g_e_l_o_g.html#autotoc_md18", null ],
+        [ "Changed", "md_lib__packet_serial__c_h_a_n_g_e_l_o_g.html#autotoc_md19", null ],
+        [ "Removed", "md_lib__packet_serial__c_h_a_n_g_e_l_o_g.html#autotoc_md20", null ],
+        [ "Fixed", "md_lib__packet_serial__c_h_a_n_g_e_l_o_g.html#autotoc_md21", null ],
+        [ "Security", "md_lib__packet_serial__c_h_a_n_g_e_l_o_g.html#autotoc_md22", null ]
+      ] ]
+    ] ],
+    [ "LICENSE", "md_lib__packet_serial__l_i_c_e_n_s_e.html", null ],
+    [ "Deprecated List", "deprecated.html", null ],
     [ "Todo List", "todo.html", null ],
     [ "Classes", "annotated.html", [
       [ "Class List", "annotated.html", "annotated_dup" ],
@@ -53,7 +87,8 @@ var NAVTREE =
       [ "Class Hierarchy", "hierarchy.html", "hierarchy" ],
       [ "Class Members", "functions.html", [
         [ "All", "functions.html", null ],
-        [ "Functions", "functions_func.html", null ]
+        [ "Functions", "functions_func.html", null ],
+        [ "Typedefs", "functions_type.html", null ]
       ] ]
     ] ],
     [ "Files", "files.html", [
@@ -69,10 +104,10 @@ var NAVTREE =
 
 var NAVTREEINDEX =
 [
-"_arduino_8h.html",
-"class_global_encoders.html#aa96ba6370361f55d6dcf3589e8bd7601",
-"com_8h.html#a87173d872a679cb4d8388c77aa72a3bc",
-"test__fsm_8cpp.html#a14087b85c64661ac2effa837c776578a"
+"_adafruit___m_c_p23008_8h_source.html",
+"class_global_beeper.html#ab223b18df5a495327acb5840986b4b19",
+"class_tester_interface.html#a0e694eb1787cfe6ef5722508adfa27e8",
+"main_8cpp.html#aa1f0bf08eaabb1443b8534ba5219cec2"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
