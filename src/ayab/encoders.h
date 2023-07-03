@@ -63,6 +63,9 @@ constexpr uint8_t END_LEFT[NUM_MACHINES] = {0U, 0U, 0U};
 constexpr uint8_t END_RIGHT[NUM_MACHINES] = {255U, 255U, 140U};
 constexpr uint8_t END_OFFSET[NUM_MACHINES] = {28U, 28U, 14U};
 
+// The garter slop is needed to determine whether or not we have a garter carriage.
+// If we didn't have it, we'd decide which carriage we had when the first magnet passed the sensor.
+// For the garter carriage we need to see both magnets.
 constexpr uint8_t GARTER_SLOP = 2U;
 
 constexpr uint8_t START_OFFSET[NUM_MACHINES][NUM_DIRECTIONS][NUM_CARRIAGES] = {
