@@ -349,12 +349,14 @@ void Com::h_unrecognized() {
  * \brief Send `cnfInfo` message.
  */
 void Com::send_cnfInfo() {
-  uint8_t payload[4];
+  uint8_t payload[6];
   payload[0] = cnfInfo_msgid;
   payload[1] = API_VERSION;
   payload[2] = FW_VERSION_MAJ;
   payload[3] = FW_VERSION_MIN;
-  send(payload, 4);
+  payload[4] = FW_VERSION_PATCH;
+  payload[5] = FW_VERSION_DIRTY;
+  send(payload, 6);
 }
 
 /*!

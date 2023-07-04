@@ -30,9 +30,7 @@
 #include "encoders.h"
 #include "fsm.h"
 
-constexpr uint8_t FW_VERSION_MAJ = 1U;
-constexpr uint8_t FW_VERSION_MIN = 0U;
-constexpr uint8_t FW_VERSION_PATCH = 0U;
+#include "version.h"
 
 constexpr uint8_t API_VERSION = 6U;
 

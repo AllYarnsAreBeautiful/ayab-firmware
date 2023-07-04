@@ -7,3 +7,5 @@ build*
 *.pu
 html
 *.swp
+
+src/ayab/version.h
