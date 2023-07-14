@@ -27,7 +27,7 @@ def git_version():
     fw_maj = "0"
     fw_min = "0"
     fw_patch = "0"
-    fw_dirty = "0"
+    fw_suffix = ""
 
     try:
         out = _minimal_ext_cmd("git describe --tags")
@@ -42,20 +42,21 @@ def git_version():
 
         if match:
             fw_maj, fw_min, tail = version_string.split('.')
-            tail = tail.split('-')
+            tail = tail.split('-', 1)
             fw_patch = tail[0]
             if len(tail) > 1:
-                fw_dirty = "1"
+                # Maximum length of suffix: 16 characters
+                fw_suffix = tail[1][:16]
     except OSError:
         pass
 
-    return fw_maj, fw_min, fw_patch, fw_dirty
+    return fw_maj, fw_min, fw_patch, fw_suffix
 
-fw_maj, fw_min, fw_patch, fw_dirty = git_version()
-print("GIT Version: " + fw_maj + "." + fw_min + "." + fw_patch + " dirty:" + fw_dirty)
+fw_maj, fw_min, fw_patch, fw_suffix = git_version()
+print("GIT Version: " + fw_maj + "." + fw_min + "." + fw_patch + "-" + fw_suffix)
 
 with open("src/ayab/version.h", "w") as text_file:
     text_file.write("constexpr uint8_t FW_VERSION_MAJ = {0}U;\n".format(fw_maj))
     text_file.write("constexpr uint8_t FW_VERSION_MIN = {0}U;\n".format(fw_min))
     text_file.write("constexpr uint8_t FW_VERSION_PATCH = {0}U;\n".format(fw_patch))
-    text_file.write("constexpr uint8_t FW_VERSION_DIRTY = {0}U;\n".format(fw_dirty))
+    text_file.write("constexpr char  FW_VERSION_SUFFIX[] = \"{0}\";\n".format(fw_suffix))
