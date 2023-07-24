@@ -349,12 +349,15 @@ void Com::h_unrecognized() {
  * \brief Send `cnfInfo` message.
  */
 void Com::send_cnfInfo() {
-  uint8_t payload[4];
+  // Max. length of suffix string: 16 bytes + \0
+  uint8_t payload[22];
   payload[0] = cnfInfo_msgid;
   payload[1] = API_VERSION;
   payload[2] = FW_VERSION_MAJ;
   payload[3] = FW_VERSION_MIN;
-  send(payload, 4);
+  payload[4] = FW_VERSION_PATCH;
+  strncpy((char*)payload + 5, FW_VERSION_SUFFIX, 16);
+  send(payload, 22);
 }
 
 /*!

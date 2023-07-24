@@ -30,9 +30,14 @@
 #include "encoders.h"
 #include "fsm.h"
 
-constexpr uint8_t FW_VERSION_MAJ = 1U;
-constexpr uint8_t FW_VERSION_MIN = 0U;
-constexpr uint8_t FW_VERSION_PATCH = 0U;
+#ifndef AYAB_TESTS
+  #include "version.h"
+#else
+  constexpr uint8_t FW_VERSION_MAJ = 0U;
+  constexpr uint8_t FW_VERSION_MIN = 0U;
+  constexpr uint8_t FW_VERSION_PATCH = 0U;
+  constexpr char FW_VERSION_SUFFIX[] = "";
+#endif // AYAB_TESTS
 
 constexpr uint8_t API_VERSION = 6U;
 
