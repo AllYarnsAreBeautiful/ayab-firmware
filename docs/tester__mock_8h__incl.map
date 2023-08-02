@@ -1,0 +1,16 @@
+<map id="test/mocks/tester_mock.h" name="test/mocks/tester_mock.h">
+<area shape="rect" id="node1" title=" " alt="" coords="81,5,271,32"/>
+<area shape="rect" id="node2" title=" " alt="" coords="51,80,178,107"/>
+<area shape="rect" id="node3" href="$tester_8h.html" title=" " alt="" coords="202,80,273,107"/>
+<area shape="rect" id="node4" href="$_arduino_8h.html" title=" " alt="" coords="150,379,234,405"/>
+<area shape="rect" id="node7" href="$beeper_8h.html" title=" " alt="" coords="145,155,223,181"/>
+<area shape="rect" id="node8" href="$com_8h.html" title=" " alt="" coords="259,155,322,181"/>
+<area shape="rect" id="node12" href="$encoders_8h.html" title=" " alt="" coords="507,229,600,256"/>
+<area shape="rect" id="node5" title=" " alt="" coords="5,453,184,480"/>
+<area shape="rect" id="node6" title=" " alt="" coords="208,453,373,480"/>
+<area shape="rect" id="node9" href="$_packet_serial_8h_source.html" title=" " alt="" coords="179,229,293,256"/>
+<area shape="rect" id="node13" href="$fsm_8h.html" title=" " alt="" coords="317,229,376,256"/>
+<area shape="rect" id="node14" title=" " alt="" coords="400,229,483,256"/>
+<area shape="rect" id="node10" href="$_c_o_b_s_8h_source.html" title=" " alt="" coords="229,304,363,331"/>
+<area shape="rect" id="node11" href="$_s_l_i_p_8h_source.html" title=" " alt="" coords="387,304,509,331"/>
+</map>
