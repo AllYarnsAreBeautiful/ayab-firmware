@@ -5,41 +5,6 @@ on: [push, pull_request]
 jobs:
   build-firmware:
     runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout repo and submodules
-      uses: actions/checkout@v3
-      with:
-        submodules: recursive
-    - uses: actions/cache@v3
-      with:
-        path: |
-          ~/.cache/pip
-          ~/.platformio/.cache
-        key: ${{ runner.os }}-pio
-    - name: Install PlatformIO Core
-      run: |
-        pip install --upgrade platformio
-    - name: Build for Arduino UNO
-      run: |
-        platformio run --environment uno
-        mkdir -p build
-        mv .pio/build/uno/firmware.hex build/ayab_monolithic_uno.hex
-    - name: Cache build asset
-      uses: actions/cache/save@v3
-      with:
-        path: build/*.hex
-        key: build-${{ hashFiles('build/*.hex') }}
-    - name: Archive Build
-      uses: actions/upload-artifact@v3
-      with:
-        name: ${{format('{0}-{1}',github.sha,github.run_number)}}
-        path: build/*.hex
-
-  release-firmware:
-    if:  ${{ (github.event_name == 'push') && (github.ref_type == 'tag') && (startsWith(github.ref_name, 'v') || startsWith(github.ref_name, 'test')) }}
-    needs: build-firmware
-    runs-on: ubuntu-latest
     steps:
     - name: Checkout repo and submodules
       uses: actions/checkout@v3
@@ -48,17 +13,34 @@ jobs:
     - name: Set variables
       id: vars
       run: |
+        echo "flag=$(if [[ ${{github.event_name}} == push ]] && [[ ${{github.ref_type}} == tag ]] && ( [[ ${{ github.ref_name }} =~ ^v?[0-9]+\.[0-9]+\.[0-9]+-?[a-zA-Z0-9]+$ ]] || [[ ${{ github.ref_name }} =~ ^v?[0-9]+\.[0-9]+\.[0-9]+$ ]] ); then x=1; else x=0; fi; echo $x)" >> $GITHUB_OUTPUT
         echo "sha-short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
         echo "tag=$(git describe --tags)" >> $GITHUB_OUTPUT
         echo "draft=$(git describe --tags | sed -e 's/^test.*/true/;s/^v.*/false/')" >> $GITHUB_OUTPUT
-    - name: Restore cached asset
-      id:   restore-cache
+    - name: Cache pip & platformio
       uses: actions/cache@v3
       with:
+        path: |
+          ~/.cache/pip
+          ~/.platformio/.cache
+        key: ${{ runner.os }}-pio-${{ hashFiles('**/platformio.ini') }}
+    - name: Install PlatformIO Core
+      run: |
+        pip install --upgrade platformio
+    - name: Build for Arduino UNO
+      run: |
+        platformio run --environment uno
+        mkdir -p build
+        mv .pio/build/uno/firmware.hex build/ayab_monolithic_uno.hex
+        echo ${{ steps.vars.outputs.tag }}
+        echo ${{ steps.vars.outputs.flag }}
+    - name: Archive build
+      uses: actions/upload-artifact@v3
+      with:
+        name: ${{format('{0}-{1}',github.sha,github.run_number)}}
         path: build/*.hex
-        key:  build-${{ hashFiles('build/*.hex') }}
-        fail-on-cache-miss: true
     - name: Create release
+      if: steps.vars.outputs.flag == 1
       uses: ncipollo/release-action@v1
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
@@ -72,24 +54,8 @@ jobs:
         allowUpdates: true
         artifacts: build/*.hex
         replacesArtifacts: true
-
-  deploy:
-    name: Create and deploy source code documentation
-    needs: release-firmware
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-      with:
-        submodules: recursive
-    - name: Install dependencies for doxygen
-      run: |
-        sudo apt-get install doxygen graphviz -y
-    - name: Create .nojekyll so that filenames with underscores work on Github Pages
-      run: |
-        mkdir -p doc
-        touch doc/.nojekyll
-    - name: Deploy to pages
+    - name: Deploy source code documentation to pages
+      if: steps.vars.outputs.flag == 1
       uses: DenverCoder1/doxygen-github-pages-action@v1.3.0
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
