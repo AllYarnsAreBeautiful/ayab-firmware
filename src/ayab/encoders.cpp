@@ -163,6 +163,12 @@ void Encoders::encA_rising() {
 
     if (m_machineType == Kh270) {
       m_carriage = Knit;
+
+      // The 270 carriage has two magnets. If we're past the start_position then we've 
+      // already seen the first one and don't need to do the rest of setup.
+      if (m_position > start_position) {
+        return;
+      }
     } else if (m_carriage == NoCarriage) {
       m_carriage = detected_carriage;
     } else if (m_carriage != detected_carriage && m_position > start_position) {
