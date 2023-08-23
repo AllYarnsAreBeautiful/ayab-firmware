@@ -85,9 +85,9 @@ constexpr uint8_t START_OFFSET[NUM_MACHINES][NUM_DIRECTIONS][NUM_CARRIAGES] = {
     {
         // K
         {27U, 0U, 0U}, // Left
-        { 15U, 0U, 0U}   // Right
+        {15U, 0U, 0U}   // Right
     }};
-    
+
 // Should be calibrated to each device
 // Below filter minimum -> Lace carriage
 // Above filter maximum -> Knit carriage
