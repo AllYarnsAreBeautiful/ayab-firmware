@@ -192,9 +192,6 @@ protected:
     // Machine is initialized when Left hall sensor
     // is passed in Right direction inside active needles.
     uint8_t position = get_position_past_left();
-    if (m == Kh270) {
-      position += 0;
-    }
     expected_isr(position, Right, Left);
     expected_get_ready();
   }
