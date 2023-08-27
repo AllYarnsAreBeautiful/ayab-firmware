@@ -439,13 +439,18 @@ TEST_F(KnitterTest, test_knit_Kh270) {
   expected_dispatch();
 
   // first knit
+  expect_first_knit();
+  expect_indState();
+  expected_dispatch_knit(false);
+
+  // second knit
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_B, 0))
       .Times(AtLeast(0)); // yellow LED off
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_B, 1))
       .Times(AtLeast(1)); // yellow LED on
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_B, 0))
       .Times(AtLeast(0)); // yellow LED off
-  expect_first_knit();
+  expected_isr(START_NEEDLE);
   expect_indState();
   EXPECT_CALL(*solenoidsMock, setSolenoid);
   expected_dispatch_knit(false);
