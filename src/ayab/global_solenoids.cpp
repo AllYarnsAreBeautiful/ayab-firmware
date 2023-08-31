@@ -27,8 +27,8 @@
 
 // static member functions
 
-void GlobalSolenoids::init() {
-  m_instance->init();
+void GlobalSolenoids::init(Machine_t machineType) {
+  m_instance->init(machineType);
 }
 
 void GlobalSolenoids::setSolenoid(uint8_t solenoid, bool state) {
@@ -37,4 +37,8 @@ void GlobalSolenoids::setSolenoid(uint8_t solenoid, bool state) {
 
 void GlobalSolenoids::setSolenoids(uint16_t state) {
   m_instance->setSolenoids(state);
+}
+
+uint16_t GlobalSolenoids::getSolenoidState() {
+  return m_instance->getSolenoidState();
 }

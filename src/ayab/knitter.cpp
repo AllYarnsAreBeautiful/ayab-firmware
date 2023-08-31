@@ -57,9 +57,6 @@ void Knitter::init() {
   pinMode(DBG_BTN_PIN, INPUT);
 #endif
 
-  // FIXME(TP): should this go in `main()`?
-  GlobalSolenoids::init();
-
   // explicitly initialize members
 
   // job parameters
@@ -73,6 +70,7 @@ void Knitter::init() {
   m_currentLineNumber = 0U;
   m_lastLineFlag = false;
   m_sOldPosition = 0U;
+  m_sOldDirection = NoDirection;
   m_firstRun = true;
   m_workedOnLine = false;
   m_lastHall = NoDirection;
@@ -137,7 +135,8 @@ Err_t Knitter::initMachine(Machine_t machineType) {
 
   m_machineType = machineType;
 
-  GlobalEncoders::init(machineType);
+  GlobalSolenoids::init(m_machineType);
+  GlobalEncoders::init(m_machineType);
   GlobalFsm::setState(OpState::init);
 
   // Now that we have enough start state, we can set up interrupts
@@ -283,6 +282,16 @@ void Knitter::knit() {
     return;
   }
 
+  // The desktop software is now setting values for flanking needles so we need to check and set solenoids
+  // outside of the working area.
+
+  if (m_direction != m_sOldDirection) {
+    setSolenoids(true);
+    m_sOldDirection = m_direction;
+  } else {
+    setSolenoids(false);
+  }
+  
   // `m_machineType` has been validated - no need to check
   if ((m_pixelToSet >= m_startNeedle - END_OF_LINE_OFFSET_L[m_machineType]) &&
       (m_pixelToSet <= m_stopNeedle + END_OF_LINE_OFFSET_R[m_machineType])) {
@@ -295,21 +304,11 @@ void Knitter::knit() {
       m_workedOnLine = true;
     }
 
-    // find the right byte from the currentLine array,
-    // then read the appropriate Pixel(/Bit) for the current needle to set
-    uint8_t currentByte = m_pixelToSet >> 3;
-    bool pixelValue =
-        bitRead(m_lineBuffer[currentByte], m_pixelToSet & 0x07);
-    // write Pixel state to the appropriate needle
-    GlobalSolenoids::setSolenoid(m_solenoidToSet, pixelValue);
   } else {
     // outside of the active needles
     if (m_machineType == Kh270) {
       digitalWrite(LED_PIN_B, 0); // yellow LED off
     }
-
-    // reset solenoids when out of range
-    GlobalSolenoids::setSolenoid(m_solenoidToSet, true);
 
     if (m_workedOnLine) {
       // already worked on the current line -> finished the line
@@ -324,6 +323,89 @@ void Knitter::knit() {
     }
   }
 #endif // DBG_NOMACHINE
+}
+
+/**
+ * This is an attempt to set the solenoids in batches.
+ * We'll split the solenoids in half and when you reach the start of one half, we'll set the next half.
+ */
+void Knitter::setSolenoids(bool firstRun) {
+  uint8_t halfSolenoids = HALF_SOLENOIDS_NUM[m_machineType];
+  uint8_t solenoidsNum = SOLENOIDS_NUM[m_machineType];
+  // We always set solenoids on the first run.
+  if (!firstRun) {
+    // Only set solenoids on the leading edge of a batch
+    if (m_direction == Right && !(m_solenoidToSet == 0 || m_solenoidToSet == halfSolenoids)) {
+      return;
+    }
+    if (m_direction == Left && !(m_solenoidToSet == (solenoidsNum - 1) || m_solenoidToSet == (halfSolenoids - 1))) {
+      return;
+    }
+  }
+
+  // Get the current state of the solenoids, we may only be overwriting a small portion of it.
+  uint16_t solenoidState = GlobalSolenoids::getSolenoidState();
+
+  uint8_t currentSolenoid = m_solenoidToSet;
+  uint8_t currentPixel = m_pixelToSet;
+
+  // On the first run, we have to set the current chunk of solenoids.
+  if (firstRun) {
+    // Find the beginning of the chunk that we need to write.
+    currentSolenoid = 0;
+    currentPixel = m_pixelToSet - m_solenoidToSet;
+    if (m_solenoidToSet >= halfSolenoids) {
+      currentSolenoid = halfSolenoids;
+      currentPixel = m_pixelToSet - (m_solenoidToSet - halfSolenoids);
+    }
+
+    setPixelValues(currentPixel, currentSolenoid, solenoidState);
+
+    if (Left == m_direction) {
+      uint8_t leftDiff = halfSolenoids - 1;
+      currentSolenoid += leftDiff;
+      currentPixel += leftDiff;
+    }
+  }
+  
+  if (Right == m_direction) {
+    // Left -> Right
+    // Get the next chunk of solenoids
+    // setPixelValues will handle bounds checking
+    uint8_t firstSolenoid = (currentSolenoid + halfSolenoids) % solenoidsNum;
+    setPixelValues(currentPixel + halfSolenoids, firstSolenoid, solenoidState);
+  } else {
+    // Right -> Left
+    // Get the previous chunk of solenoids
+    if (currentPixel >= halfSolenoids) {
+      // From the left, the current solenoids are going to be halfSolenoids - 1  and solenoidsNum - 1
+      // We want the first element of the pevious chunk
+      uint8_t firstSolenoid = (currentSolenoid + 1) % solenoidsNum;
+      setPixelValues(currentPixel - solenoidsNum + 1, firstSolenoid, solenoidState);
+    }
+  }
+
+  // Write all of the solenoids at once
+  // The solenoid code will deduplicate writes.
+  GlobalSolenoids::setSolenoids(solenoidState);
+}
+
+void Knitter::setPixelValues(uint8_t firstPixel, uint8_t firstSolenoid, uint16_t &solenoidState) {
+  for (uint8_t i = 0; i < HALF_SOLENOIDS_NUM[m_machineType]; i++) {
+    uint8_t currentPixel = firstPixel + i;
+    uint8_t currentSolenoid = firstSolenoid + i;
+    // Check bounds.
+    /*if (currentPixel >= NUM_NEEDLES[m_machineType]) {
+      break;
+    }*/
+    uint8_t currentByte = currentPixel >> 3;
+    bool pixelValue = bitRead(m_lineBuffer[currentByte], currentSolenoid & 0x07);
+    if (pixelValue) {
+      bitSet(solenoidState, currentSolenoid);
+    } else {
+      bitClear(solenoidState, currentSolenoid);
+    }
+  }
 }
 
 /*!
@@ -420,18 +502,13 @@ bool Knitter::calculatePixelAndSolenoid() {
     if (m_position >= startOffset) {
       m_pixelToSet = m_position - startOffset;
 
-      if (m_machineType == Kh270) {
-        // TODO(who?): check
-        m_solenoidToSet = (m_position % 12) + 3;
-      } else {
-        if (BeltShift::Regular == m_beltShift) {
-          m_solenoidToSet = m_position % SOLENOIDS_NUM;
-        } else if (BeltShift::Shifted == m_beltShift) {
-          m_solenoidToSet = (m_position - HALF_SOLENOIDS_NUM) % SOLENOIDS_NUM;
-        }
-        if (Lace == m_carriage) {
-          m_pixelToSet = m_pixelToSet + HALF_SOLENOIDS_NUM;
-        }
+      if (BeltShift::Regular == m_beltShift) {
+        m_solenoidToSet = m_position % SOLENOIDS_NUM[m_machineType];
+      } else if (BeltShift::Shifted == m_beltShift) {
+        m_solenoidToSet = (m_position - HALF_SOLENOIDS_NUM[m_machineType]) % SOLENOIDS_NUM[m_machineType];
+      }
+      if (Lace == m_carriage) {
+        m_pixelToSet = m_pixelToSet + HALF_SOLENOIDS_NUM[m_machineType];
       }
     } else {
       success = false;
@@ -443,19 +520,15 @@ bool Knitter::calculatePixelAndSolenoid() {
     if (m_position <= (END_RIGHT[m_machineType] - startOffset)) {
       m_pixelToSet = m_position - startOffset;
 
-      if (m_machineType == Kh270) {
-        // TODO(who?): check
-        m_solenoidToSet = ((m_position + 6) % 12) + 3;
-      } else {
-        if (BeltShift::Regular == m_beltShift) {
-          m_solenoidToSet = (m_position + HALF_SOLENOIDS_NUM) % SOLENOIDS_NUM;
-        } else if (BeltShift::Shifted == m_beltShift) {
-          m_solenoidToSet = m_position % SOLENOIDS_NUM;
-        }
-        if (Lace == m_carriage) {
-          m_pixelToSet = m_pixelToSet - SOLENOIDS_NUM;
-        }
+      if (BeltShift::Regular == m_beltShift) {
+        m_solenoidToSet = (m_position + HALF_SOLENOIDS_NUM[m_machineType]) % SOLENOIDS_NUM[m_machineType];
+      } else if (BeltShift::Shifted == m_beltShift) {
+        m_solenoidToSet = m_position % SOLENOIDS_NUM[m_machineType];
       }
+      if (Lace == m_carriage) {
+        m_pixelToSet = m_pixelToSet - SOLENOIDS_NUM[m_machineType];
+      }
+
     } else {
       success = false;
     }

@@ -62,7 +62,6 @@ void setup() {
   GlobalCom::init();
   GlobalFsm::init();
   GlobalKnitter::init();
-  GlobalSolenoids::init();
 }
 
 /*!

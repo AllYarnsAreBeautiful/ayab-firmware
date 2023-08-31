@@ -29,9 +29,10 @@
 
 class SolenoidsMock : public SolenoidsInterface {
 public:
-  MOCK_METHOD0(init, void());
+  MOCK_METHOD1(init, void(Machine_t machineType));
   MOCK_METHOD2(setSolenoid, void(uint8_t, bool));
   MOCK_METHOD1(setSolenoids, void(uint16_t state));
+  MOCK_METHOD0(getSolenoidState, uint16_t(void));
 };
 
 SolenoidsMock *solenoidsMockInstance();

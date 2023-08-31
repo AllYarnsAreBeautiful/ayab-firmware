@@ -84,15 +84,15 @@ constexpr uint8_t START_OFFSET[NUM_MACHINES][NUM_DIRECTIONS][NUM_CARRIAGES] = {
     // KH270
     {
         // K
-        {27U, 0U, 0U}, // Left
-        {15U, 0U, 0U}   // Right
+        {30U, 0U, 0U}, // Left
+        {18U, 0U, 0U}   // Right
     }};
 
 // Should be calibrated to each device
 // Below filter minimum -> Lace carriage
 // Above filter maximum -> Knit carriage
 //                                               KH910 KH930 KH270
-constexpr uint16_t FILTER_L_MIN[NUM_MACHINES] = { 200U, 200U, 400U};
+constexpr uint16_t FILTER_L_MIN[NUM_MACHINES] = { 200U, 200U, 325U};
 constexpr uint16_t FILTER_L_MAX[NUM_MACHINES] = { 600U, 600U, 600U};
 constexpr uint16_t FILTER_R_MIN[NUM_MACHINES] = { 200U,   0U,   0U};
 constexpr uint16_t FILTER_R_MAX[NUM_MACHINES] = {1023U, 600U, 600U};

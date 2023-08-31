@@ -107,10 +107,12 @@ public:
   void setLastLine();
   void setMachineType(Machine_t);
 
-private:
+//private:
   void reqLine(uint8_t lineNumber);
   bool calculatePixelAndSolenoid();
   void stopKnitting();
+  void setSolenoids(bool firstRun);
+  void setPixelValues(uint8_t firstPixel, uint8_t firstSolenoid, uint16_t &solenoidState);
 
   // job parameters
   Machine_t m_machineType;
@@ -131,6 +133,7 @@ private:
   bool m_lastLineFlag;
 
   uint8_t m_sOldPosition;
+  Direction_t m_sOldDirection;
   bool m_firstRun;
   bool m_workedOnLine;
   Direction_t m_lastHall;

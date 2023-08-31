@@ -38,9 +38,9 @@ void releaseSolenoidsMock() {
   }
 }
 
-void Solenoids::init(void) {
+void Solenoids::init(Machine_t machine) {
   assert(gSolenoidsMock != nullptr);
-  gSolenoidsMock->init();
+  gSolenoidsMock->init(machine);
 }
 void Solenoids::setSolenoid(uint8_t solenoid, bool state) {
   assert(gSolenoidsMock != nullptr);
@@ -49,4 +49,8 @@ void Solenoids::setSolenoid(uint8_t solenoid, bool state) {
 void Solenoids::setSolenoids(uint16_t state) {
   assert(gSolenoidsMock != nullptr);
   gSolenoidsMock->setSolenoids(state);
+}
+uint16_t Solenoids::getSolenoidState(void) {
+  assert(gSolenoidsMock != nullptr);
+  return gSolenoidsMock->getSolenoidState();
 }

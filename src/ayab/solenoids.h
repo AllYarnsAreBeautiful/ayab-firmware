@@ -25,12 +25,15 @@
 #define SOLENOIDS_H_
 
 #include "board.h"
+#include "encoders.h"
 #include <Arduino.h>
 #include <Adafruit_MCP23008.h>
 #include <Wire.h>
 
-constexpr uint8_t SOLENOIDS_NUM = 16U;
-constexpr uint8_t HALF_SOLENOIDS_NUM = 8U;
+// Different machines have a different number of solenoids.
+//                                              {910, 930, 270}
+constexpr uint8_t SOLENOIDS_NUM[NUM_MACHINES] = {16U, 16U, 12U};
+constexpr uint8_t HALF_SOLENOIDS_NUM[NUM_MACHINES] = {8U, 8U, 6U};
 constexpr uint8_t SOLENOIDS_I2C_ADDRESS_MASK = 0x20U;
 
 class SolenoidsInterface {
@@ -38,9 +41,10 @@ public:
   virtual ~SolenoidsInterface(){};
 
   // any methods that need to be mocked should go here
-  virtual void init() = 0;
+  virtual void init(Machine_t machineType) = 0;
   virtual void setSolenoid(uint8_t solenoid, bool state) = 0;
   virtual void setSolenoids(uint16_t state) = 0;
+  virtual uint16_t getSolenoidState() = 0;
 };
 
 // Container class for the static methods that control the solenoids.
@@ -57,9 +61,10 @@ public:
   // pointer to global instance whose methods are implemented
   static SolenoidsInterface *m_instance;
 
-  static void init();
+  static void init(Machine_t machineType);
   static void setSolenoid(uint8_t solenoid, bool state);
   static void setSolenoids(uint16_t state);
+  static uint16_t getSolenoidState();
 };
 
 class Solenoids : public SolenoidsInterface {
@@ -75,12 +80,14 @@ public:
   {
   }
 
-  void init();
+  void init(Machine_t machineType);
   void setSolenoid(uint8_t solenoid, bool state);
   void setSolenoids(uint16_t state);
+  uint16_t getSolenoidState();
 
 private:
   uint16_t solenoidState = 0x0000U;
+  Machine_t m_machineType = NoMachine;
   void write(uint16_t state);
 
   Adafruit_MCP23008 mcp_0;

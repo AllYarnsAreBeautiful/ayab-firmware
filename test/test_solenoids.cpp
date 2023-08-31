@@ -49,7 +49,7 @@ TEST_F(SolenoidsTest, test_construct) {
 }
 
 TEST_F(SolenoidsTest, test_init) {
-  solenoids->init();
+  solenoids->init(Kh910);
   ASSERT_TRUE(solenoids->solenoidState == 0U);
 }
 

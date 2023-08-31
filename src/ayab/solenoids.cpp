@@ -28,11 +28,13 @@
 /*!
  * \brief Initialize I2C connection for solenoids.
  */
-void Solenoids::init() {
+void Solenoids::init(Machine_t machineType) {
+  m_machineType = machineType;
+
   mcp_0.begin(I2Caddr_sol1_8);
   mcp_1.begin(I2Caddr_sol9_16);
 
-  for (int i = 0; i < HALF_SOLENOIDS_NUM; i++) {
+  for (int i = 0; i < HALF_SOLENOIDS_NUM[m_machineType]; i++) {
     mcp_0.pinMode(i, OUTPUT);
     mcp_1.pinMode(i, OUTPUT);
   }
@@ -46,8 +48,7 @@ void Solenoids::init() {
  * \param state The state to set the solenoid to.
  */
 void Solenoids::setSolenoid(uint8_t solenoid, bool state) {
-  if (solenoid > (SOLENOIDS_NUM - 1)) {
-    // Only 16 solenoids (zero-indexed).
+  if (solenoid > (SOLENOIDS_NUM[m_machineType] - 1)) {
     return;
   }
 
@@ -77,6 +78,14 @@ void Solenoids::setSolenoids(uint16_t state) {
     write(state);
 #endif
   }
+}
+
+/**
+ * \brief Get the last state written to the solenoids.
+ * \return The last state written to the solenoids.
+ */
+uint16_t Solenoids::getSolenoidState() {
+  return solenoidState;
 }
 
 /*

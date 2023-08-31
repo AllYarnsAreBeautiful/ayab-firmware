@@ -108,8 +108,6 @@ protected:
 
     EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, HIGH)); // green LED on
     EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_B, HIGH)); // yellow LED on
-
-    EXPECT_CALL(*solenoidsMock, init);
   }
 
   void expect_isr(uint16_t pos, Direction_t dir, Direction_t hall,
@@ -143,7 +141,7 @@ protected:
   }
 
   void expect_isr(uint16_t pos) {
-    expect_isr(pos, Right, Left, BeltShift::Regular, Garter);
+    expect_isr(pos, Right, Left, BeltShift::Regular, Knit);
   }
 
   void expected_isr(uint16_t pos) {
@@ -180,8 +178,10 @@ protected:
   }
 
   void expected_init_machine(Machine_t m) {
+    EXPECT_CALL(*solenoidsMock, init(m));
     // Init the machine
     ASSERT_EQ(knitter->initMachine(m), SUCCESS);
+    
     expected_dispatch_wait_for_machine();
 
     ASSERT_EQ(fsm->getState(), OpState::init);
@@ -747,4 +747,328 @@ TEST_F(KnitterTest, test_fsm_init_LR) {
   ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
   ASSERT_TRUE(Mock::VerifyAndClear(comMock));
   ASSERT_TRUE(Mock::VerifyAndClear(encodersMock));
+}
+
+TEST_F(KnitterTest, test_set_pixel_values_910) {
+  get_to_ready(Kh910);
+
+  uint8_t pattern[] = {0x11U, 0x22U, 0x33U, 0x44U};
+  ASSERT_EQ(
+      knitter->startKnitting(0, NUM_NEEDLES[Kh910] - 1, pattern, false), 0);
+  
+  uint16_t solenoidState = 0x0000U;
+
+  knitter->setPixelValues(0, 0, solenoidState);
+  ASSERT_EQ(solenoidState, 0x0011U);
+
+  knitter->setPixelValues(8, 8, solenoidState);
+  ASSERT_EQ(solenoidState, 0x2211U);
+
+  knitter->setPixelValues(16, 0, solenoidState);
+  ASSERT_EQ(solenoidState, 0x2233U);
+
+  knitter->setPixelValues(24, 8, solenoidState);
+  ASSERT_EQ(solenoidState, 0x4433U);
+}
+
+TEST_F(KnitterTest, test_set_pixel_values_270) {
+  // The 270 only has 12 solenoids
+  get_to_ready(Kh270);
+
+  uint8_t pattern[] = {0xFFU, 0x22U};
+  ASSERT_EQ(
+      knitter->startKnitting(0, NUM_NEEDLES[Kh270] - 1, pattern, false), 0);
+  
+  uint16_t solenoidState = 0x0000U;
+
+  knitter->setPixelValues(0, 0, solenoidState);
+  // Only writes the last 6 bits.
+  ASSERT_EQ(solenoidState, 0x003FU);
+
+  knitter->setPixelValues(6, 6, solenoidState);
+  ASSERT_EQ(solenoidState, 0x02FFU);
+
+}
+
+TEST_F(KnitterTest, test_set_solenoids_910_right) {
+  // Defaults to direction = Right
+  get_to_ready(Kh910);
+
+  uint8_t pattern[] = {0x11U, 0x22U, 0x33U, 0x44U};
+  ASSERT_EQ(
+      knitter->startKnitting(0, NUM_NEEDLES[Kh910] - 1, pattern, false), 0);
+
+  // Start in the middle of a chunk.
+  // This is startOffset + 2.
+  expected_isr(42);
+
+  // Make sure pixel and solenoid are set.
+  // pixelToSet = 2
+  // solenoidToSet = 10 // This is in the second half of the solenoids
+  knitter->calculatePixelAndSolenoid();
+
+  EXPECT_CALL(*solenoidsMock, getSolenoidState);
+  // Both halves of the solenoid buffer should be set.
+  EXPECT_CALL(*solenoidsMock, setSolenoids(0x1122));
+
+  // First run should set both halves of the buffer.
+  knitter->setSolenoids(true);
+
+  // Set position to something that put solenoid and pixel in a useful place
+  // Solenoid: position % SOLENOIDS_NUM == 0 || 8;
+  // Pixel: position - startOffset
+  // 910 startOffset == 40
+  expected_isr(40);
+
+  // Make sure pixel and solenoid are set.
+  knitter->calculatePixelAndSolenoid();
+
+  EXPECT_CALL(*solenoidsMock, getSolenoidState);
+  EXPECT_CALL(*solenoidsMock, setSolenoids(0x0022));
+
+  knitter->setSolenoids(false);
+
+  // startOffset + 8
+  expected_isr(48);
+
+  knitter->calculatePixelAndSolenoid();
+
+  EXPECT_CALL(*solenoidsMock, getSolenoidState);
+  EXPECT_CALL(*solenoidsMock, setSolenoids(0x3300));
+
+  knitter->setSolenoids(false);
+  
+  // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(encodersMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(beeperMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(comMock));
+}
+
+TEST_F(KnitterTest, test_set_solenoids_910_left) {
+  // Defaults to direction = Right
+  get_to_ready(Kh910);
+
+  uint8_t pattern[] = {0x11U, 0x22U, 0x33U, 0x44U};
+  ASSERT_EQ(
+      knitter->startKnitting(0, NUM_NEEDLES[Kh910] - 1, pattern, false), 0);
+
+  // Start in the middle of a chunk.
+  // This is startOffset + 2.
+  expected_isr(18, Left, Left);
+
+  // Make sure pixel and solenoid are set.
+  // pixelToSet = 2
+  // solenoidToSet = 10 // This is in the second half of the solenoids
+  knitter->calculatePixelAndSolenoid();
+
+  EXPECT_CALL(*solenoidsMock, getSolenoidState);
+  // The current chunk (second half) gets set but not the next chunk because it's less than 0
+  EXPECT_CALL(*solenoidsMock, setSolenoids(0x1100));
+
+  // First run should set both halves of the buffer.
+  knitter->setSolenoids(true);
+
+  // Start in the middle of a chunk.
+  // This is startOffset + 10.
+  expected_isr(26, Left, Left);
+
+  // Make sure pixel and solenoid are set.
+  // pixelToSet = 10
+  // solenoidToSet = 2 // This is in the second half of the solenoids
+  knitter->calculatePixelAndSolenoid();
+
+  EXPECT_CALL(*solenoidsMock, getSolenoidState);
+  // Both halves get set.
+  EXPECT_CALL(*solenoidsMock, setSolenoids(0x1122));
+
+  // First run should set both halves of the buffer.
+  knitter->setSolenoids(true);
+
+  // Set position to something that put solenoid and pixel in a useful place
+  // Solenoid: position % SOLENOIDS_NUM == 0 || 8;
+  // Pixel: position - startOffset
+  // 910 startOffset Left == 16
+  // Inside the first chunk of solenoids
+  expected_isr(23, Left, Left);
+
+  // Make sure pixel and solenoid are set.
+  knitter->calculatePixelAndSolenoid();
+
+  EXPECT_CALL(*solenoidsMock, getSolenoidState);
+  EXPECT_CALL(*solenoidsMock, setSolenoids(0x0000));
+
+  knitter->setSolenoids(false);
+
+  // startOffset + 16 - 1
+  expected_isr(31, Left, Left);
+
+  // Make sure pixel and solenoid are set.
+  knitter->calculatePixelAndSolenoid();
+
+  EXPECT_CALL(*solenoidsMock, getSolenoidState);
+  EXPECT_CALL(*solenoidsMock, setSolenoids(0x1100));
+
+  knitter->setSolenoids(false);
+
+  // startOffset + 24 - 1
+  expected_isr(39, Left, Left);
+
+  knitter->calculatePixelAndSolenoid();
+
+  EXPECT_CALL(*solenoidsMock, getSolenoidState);
+  EXPECT_CALL(*solenoidsMock, setSolenoids(0x0022));
+
+  knitter->setSolenoids(false);
+  
+  // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(encodersMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(beeperMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(comMock));
+}
+
+TEST_F(KnitterTest, test_set_solenoids_270_right) {
+  // Defaults to direction = Right
+  get_to_ready(Kh270);
+
+  uint8_t pattern[] = {0x11U, 0x22U, 0x33U, 0x44U};
+  ASSERT_EQ(
+      knitter->startKnitting(0, NUM_NEEDLES[Kh270] - 1, pattern, false), 0);
+
+  // Start in the middle of a chunk.
+  // This is startOffset + 2.
+  expected_isr(32);
+
+  // Make sure pixel and solenoid are set.
+  // pixelToSet = 2
+  // solenoidToSet = 10 // This is in the second half of the solenoids
+  knitter->calculatePixelAndSolenoid();
+
+  ASSERT_EQ(knitter->m_carriage, Knit);
+  ASSERT_EQ(knitter->m_pixelToSet, 2);
+  ASSERT_EQ(knitter->m_solenoidToSet, 8);
+
+  EXPECT_CALL(*solenoidsMock, getSolenoidState);
+  // Both halves of the solenoid buffer should be set.
+  EXPECT_CALL(*solenoidsMock, setSolenoids(0x0121));
+
+  // First run should set both halves of the buffer.
+  knitter->setSolenoids(true);
+
+  // Set position to something that put solenoid and pixel in a useful place
+  // Solenoid: position % SOLENOIDS_NUM == 0 || 8;
+  // Pixel: position - startOffset
+  // 270 startOffset == 30
+  expected_isr(30);
+
+  // Make sure pixel and solenoid are set.
+  knitter->calculatePixelAndSolenoid();
+
+  EXPECT_CALL(*solenoidsMock, getSolenoidState);
+  EXPECT_CALL(*solenoidsMock, setSolenoids(0x0021));
+
+  knitter->setSolenoids(false);
+
+  // startOffset + 6
+  expected_isr(36);
+
+  knitter->calculatePixelAndSolenoid();
+
+  EXPECT_CALL(*solenoidsMock, getSolenoidState);
+  EXPECT_CALL(*solenoidsMock, setSolenoids(0x0200));
+
+  knitter->setSolenoids(false);
+  
+  // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(encodersMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(beeperMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(comMock));
+}
+
+TEST_F(KnitterTest, test_set_solenoids_270_left) {
+  // Defaults to direction = Right
+  get_to_ready(Kh270);
+
+  uint8_t pattern[] = {0x11U, 0x22U, 0x33U, 0x44U};
+  ASSERT_EQ(
+      knitter->startKnitting(0, NUM_NEEDLES[Kh270] - 1, pattern, false), 0);
+
+  // Start in the middle of a chunk.
+  // This is startOffset + 2.
+  expected_isr(20, Left, Left);
+
+  // Make sure pixel and solenoid are set.
+  // pixelToSet = 2
+  // solenoidToSet = 10 // This is in the second half of the solenoids
+  knitter->calculatePixelAndSolenoid();
+
+  ASSERT_EQ(knitter->m_solenoidToSet, 2);
+  ASSERT_EQ(knitter->m_pixelToSet, 2);
+
+  EXPECT_CALL(*solenoidsMock, getSolenoidState);
+  // The current chunk (first half) gets set but not the next chunk because it's less than 0
+  EXPECT_CALL(*solenoidsMock, setSolenoids(0x0011));
+
+  // First run should set both halves of the buffer.
+  knitter->setSolenoids(true);
+
+  // Start in the middle of a chunk.
+  // This is startOffset + 10.
+  expected_isr(28, Left, Left);
+
+  // Make sure pixel and solenoid are set.
+  // pixelToSet = 10
+  // solenoidToSet = 2 // This is in the second half of the solenoids
+  knitter->calculatePixelAndSolenoid();
+
+  EXPECT_CALL(*solenoidsMock, getSolenoidState);
+  // Both halves get set.
+  EXPECT_CALL(*solenoidsMock, setSolenoids(0x0211));
+
+  // First run should set both halves of the buffer.
+  knitter->setSolenoids(true);
+
+  // Set position to something that put solenoid and pixel in a useful place
+  // Solenoid: position % SOLENOIDS_NUM == 0 || 8;
+  // Pixel: position - startOffset
+  // 270 startOffset Left == 18
+  // Inside the first chunk of solenoids
+  expected_isr(23, Left, Left);
+
+  // Make sure pixel and solenoid are set.
+  knitter->calculatePixelAndSolenoid();
+
+  EXPECT_CALL(*solenoidsMock, getSolenoidState);
+  EXPECT_CALL(*solenoidsMock, setSolenoids(0x0000));
+
+  knitter->setSolenoids(false);
+
+  // startOffset + 12 - 1
+  expected_isr(29, Left, Left);
+
+  // Make sure pixel and solenoid are set.
+  knitter->calculatePixelAndSolenoid();
+
+  EXPECT_CALL(*solenoidsMock, getSolenoidState);
+  EXPECT_CALL(*solenoidsMock, setSolenoids(0x0011));
+
+  knitter->setSolenoids(false);
+
+  // startOffset + 18 - 1
+  expected_isr(35, Left, Left);
+
+  knitter->calculatePixelAndSolenoid();
+
+  EXPECT_CALL(*solenoidsMock, getSolenoidState);
+  EXPECT_CALL(*solenoidsMock, setSolenoids(0x0200));
+
+  knitter->setSolenoids(false);
+  
+  // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(encodersMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(beeperMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(comMock));
 }
