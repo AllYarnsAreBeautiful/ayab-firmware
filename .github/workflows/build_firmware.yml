@@ -64,13 +64,12 @@ jobs:
       uses: DenverCoder1/doxygen-github-pages-action@v1.3.0
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: gh-pages
+        folder: doc
+        config_file: Doxyfile
     - name: Analyze with SonarCloud
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         sonar-scanner --define sonar.cfamily.build-wrapper-output="${{ env.BUILD_WRAPPER_OUT_DIR }}"
-      
-        branch: gh-pages
-        folder: doc
-        config_file: Doxyfile
