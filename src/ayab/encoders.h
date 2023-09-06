@@ -54,14 +54,14 @@ using BeltShift_t = enum BeltShift;
 
 // Machine constants
 
-constexpr uint8_t NUM_NEEDLES[NUM_MACHINES] = {200U, 200U, 114U};
-constexpr uint8_t LINE_BUFFER_LEN[NUM_MACHINES] = {25U, 25U, 15U};
+constexpr uint8_t NUM_NEEDLES[NUM_MACHINES] = {200U, 200U, 112U};
+constexpr uint8_t LINE_BUFFER_LEN[NUM_MACHINES] = {25U, 25U, 14U};
 constexpr uint8_t END_OF_LINE_OFFSET_L[NUM_MACHINES] = {12U, 12U, 6U};
 constexpr uint8_t END_OF_LINE_OFFSET_R[NUM_MACHINES] = {12U, 12U, 6U};
 
 constexpr uint8_t END_LEFT[NUM_MACHINES] = {0U, 0U, 0U};
 constexpr uint8_t END_RIGHT[NUM_MACHINES] = {255U, 255U, 140U};
-constexpr uint8_t END_OFFSET[NUM_MACHINES] = {28U, 28U, 14U};
+constexpr uint8_t END_OFFSET[NUM_MACHINES] = {28U, 28U, 5U};
 
 // The garter slop is needed to determine whether or not we have a garter carriage.
 // If we didn't have it, we'd decide which carriage we had when the first magnet passed the sensor.
@@ -84,20 +84,22 @@ constexpr uint8_t START_OFFSET[NUM_MACHINES][NUM_DIRECTIONS][NUM_CARRIAGES] = {
     // KH270
     {
         // K
-        {27U, 0U, 0U}, // Left
-        {15U, 0U, 0U}   // Right
+        {28U, 0U, 0U}, // Left: x % 12 == 4
+        {16U, 0U, 0U}   // Right: (x + 6) % 12 == 10
     }};
 
 // Should be calibrated to each device
 // Below filter minimum -> Lace carriage
 // Above filter maximum -> Knit carriage
 //                                               KH910 KH930 KH270
-constexpr uint16_t FILTER_L_MIN[NUM_MACHINES] = { 200U, 200U, 400U};
+constexpr uint16_t FILTER_L_MIN[NUM_MACHINES] = { 200U, 200U, 200U};
 constexpr uint16_t FILTER_L_MAX[NUM_MACHINES] = { 600U, 600U, 600U};
 constexpr uint16_t FILTER_R_MIN[NUM_MACHINES] = { 200U,   0U,   0U};
 constexpr uint16_t FILTER_R_MAX[NUM_MACHINES] = {1023U, 600U, 600U};
 
 constexpr uint16_t SOLENOIDS_BITMASK = 0xFFFFU;
+
+constexpr uint8_t MAGNET_DISTANCE_270 = 12U;
 
 /*!
  * \brief Encoder interface.
