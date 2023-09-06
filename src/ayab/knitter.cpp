@@ -357,7 +357,11 @@ bool Knitter::setNextLine(uint8_t lineNumber) {
     // FIXME: Is there even a need for a new line?
     if (lineNumber == m_currentLineNumber) {
       m_lineRequested = false;
-      //GlobalBeeper::finishedLine();
+
+      // Beeper is causing problems with flanking needles on the 270
+      if (m_machineType != Kh270) {
+        GlobalBeeper::finishedLine();
+      }
       success = true;
     } else {
       // line numbers didn't match -> request again
