@@ -141,7 +141,6 @@ private:
   // resulting needle data
   uint8_t m_solenoidToSet;
   uint8_t m_pixelToSet;
-  uint8_t m_lastPixel;
 
 #if AYAB_TESTS
   // Note: ideally tests would only rely on the public interface.

@@ -79,7 +79,6 @@ void Knitter::init() {
   m_position = 0U;
   m_hallActive = NoDirection;
   m_pixelToSet = 0;
-  m_lastPixel = 0;
 #ifdef DBG_NOMACHINE
   m_prevState = false;
 #endif
