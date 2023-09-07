@@ -29,6 +29,8 @@ jobs:
     - name: Install PlatformIO Core
       run: |
         pip install --upgrade platformio
+    - name: Install sonar-scanner and build-wrapper
+      uses: SonarSource/sonarcloud-github-c-cpp@v2
     - name: Build for Arduino UNO
       run: |
         build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} platformio run --environment uno
