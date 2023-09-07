@@ -12,7 +12,6 @@ jobs:
       uses: actions/checkout@v3
       with:
         submodules: recursive
-        fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of sonar analysis
     - name: Set variables
       id: vars
       run: |
@@ -30,8 +29,6 @@ jobs:
     - name: Install PlatformIO Core
       run: |
         pip install --upgrade platformio
-    - name: Install sonar-scanner and build-wrapper
-      uses: SonarSource/sonarcloud-github-c-cpp@v2
     - name: Build for Arduino UNO
       run: |
         build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} platformio run --environment uno
@@ -67,6 +64,19 @@ jobs:
         branch: gh-pages
         folder: doc
         config_file: Doxyfile
+
+  sonar-scan:
+  needs: build-firmware
+    runs-on: ubuntu-latest
+    env:
+      BUILD_WRAPPER_OUT_DIR: build_wrapper_output_directory
+    - name: Checkout repo and submodules
+      uses: actions/checkout@v3
+      with:
+        submodules: recursive
+        fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of sonar analysis
+    - name: Install sonar-scanner and build-wrapper
+      uses: SonarSource/sonarcloud-github-c-cpp@v2
     - name: Analyze with SonarCloud
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
