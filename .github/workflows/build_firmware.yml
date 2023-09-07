@@ -66,23 +66,3 @@ jobs:
         branch: gh-pages
         folder: doc
         config_file: Doxyfile
-
-  sonar-scan:
-    needs: build-firmware
-    runs-on: ubuntu-latest
-    env:
-      BUILD_WRAPPER_OUT_DIR: build_wrapper_output_directory
-    steps:
-    - name: Checkout repo and submodules
-      uses: actions/checkout@v3
-      with:
-        submodules: recursive
-        fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of sonar analysis
-    - name: Install sonar-scanner and build-wrapper
-      uses: SonarSource/sonarcloud-github-c-cpp@v2
-    - name: Analyze with SonarCloud
-      env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        sonar-scanner --define sonar.cfamily.build-wrapper-output="${{ env.BUILD_WRAPPER_OUT_DIR }}"
