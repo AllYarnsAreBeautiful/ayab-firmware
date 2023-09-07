@@ -1,4 +1,4 @@
-name: Test
+name: Run Tests
 
 on: [push, pull_request]
 
@@ -6,7 +6,8 @@ permissions:
   checks: write
   pull-requests: write
 jobs:
-  run-test:
+  test:
+    name: Test
     runs-on: ubuntu-latest
     if: ${{!github.event.pull_request.draft}}
     steps:
@@ -20,7 +21,7 @@ jobs:
         eval "${MATRIX_EVAL}"
         pip install gcovr
         gcovr --version
-    - name: Run Test
+    - name: Run test.sh
       run: |
         ./test/test.sh
     - name: Publish Test Results
