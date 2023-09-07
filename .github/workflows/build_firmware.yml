@@ -3,7 +3,7 @@ name: Build Firmware
 on: [push, pull_request]
 
 jobs:
-  build-firmware:
+  build:
     name: Build
     runs-on: ubuntu-latest
     steps:
