@@ -135,7 +135,7 @@ void Encoders::encA_rising() {
   // Update carriage position
   if (Right == m_direction) {
     if (m_position < END_RIGHT[m_machineType]) {
-      m_position++;
+      m_position = m_position + 1;
     }
   }
 
@@ -207,7 +207,7 @@ void Encoders::encA_falling() {
   // Update carriage position
   if (Left == m_direction) {
     if (m_position > END_LEFT[m_machineType]) {
-      m_position--;
+      m_position = m_position - 1;
     }
   }
 
