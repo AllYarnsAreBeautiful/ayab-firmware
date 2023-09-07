@@ -66,7 +66,7 @@ jobs:
         config_file: Doxyfile
 
   sonar-scan:
-  needs: build-firmware
+    needs: build-firmware
     runs-on: ubuntu-latest
     env:
       BUILD_WRAPPER_OUT_DIR: build_wrapper_output_directory
