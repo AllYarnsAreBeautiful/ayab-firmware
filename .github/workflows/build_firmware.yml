@@ -70,6 +70,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       BUILD_WRAPPER_OUT_DIR: build_wrapper_output_directory
+    steps:
     - name: Checkout repo and submodules
       uses: actions/checkout@v3
       with:
