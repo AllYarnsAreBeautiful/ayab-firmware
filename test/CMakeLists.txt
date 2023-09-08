@@ -68,9 +68,12 @@ set(COMMON_DEFINES
     AYAB_TESTS
     )
 set(COMMON_FLAGS
-    -Wall -Wextra -Wpedantic
+    -Wall
+    -Wextra
+    -Wpedantic
     -Wno-vla
     -Werror
+    -Wno-ignored-qualifiers
     --coverage
     -g -Og
     )

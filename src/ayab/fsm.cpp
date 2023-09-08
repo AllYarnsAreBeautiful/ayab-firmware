@@ -132,7 +132,7 @@ void Fsm::state_ready() {
 /*!
  * \brief Action of machine in state `OpState::knit`.
  */
-void Fsm::state_knit() {
+const void Fsm::state_knit() {
   digitalWrite(LED_PIN_A, HIGH); // green LED on
   GlobalKnitter::knit();
 }
@@ -140,7 +140,7 @@ void Fsm::state_knit() {
 /*!
  * \brief Action of machine in state `OpState::test`.
  */
-void Fsm::state_test() {
+const void Fsm::state_test() {
   GlobalKnitter::encodePosition();
   GlobalTester::loop();
   if (m_nextState == OpState::init) {

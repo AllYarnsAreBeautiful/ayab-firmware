@@ -465,7 +465,7 @@ bool Knitter::calculatePixelAndSolenoid() {
 /*!
  * \brief Finish knitting procedure.
  */
-void Knitter::stopKnitting() {
+const void Knitter::stopKnitting() {
   GlobalBeeper::endWork();
   GlobalFsm::setState(OpState::ready);
 
