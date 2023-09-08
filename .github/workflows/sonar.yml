@@ -1,10 +1,12 @@
 name: Sonar
 
+# https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#workflow_run
 on:
   workflow_run:
     workflows: [Build]
     types: [completed]
-      
+
+jobs:
   sonar:
     runs-on: ubuntu-latest
     # does not run on forks
