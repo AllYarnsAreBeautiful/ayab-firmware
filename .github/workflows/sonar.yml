@@ -3,8 +3,8 @@ name: Sonar
 # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#workflow_run
 on:
   workflow_run:
-    workflows: [Build]
-    types: [completed, in_progress]
+    workflows: [Test]
+    types: [completed]
 
 jobs:
   check:
