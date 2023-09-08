@@ -50,7 +50,7 @@ void Com::update() {
   gComMock->update();
 }
 
-void Com::send(uint8_t *payload, size_t length) {
+void Com::send(uint8_t *payload, size_t length) const {
   assert(gComMock != nullptr);
   gComMock->send(payload, length);
 }
@@ -65,13 +65,13 @@ void Com::sendMsg(AYAB_API_t id, char *msg) {
   gComMock->sendMsg(id, msg);
 }
 
-void Com::send_reqLine(const uint8_t lineNumber, Err_t error) {
+void Com::send_reqLine(const uint8_t lineNumber, Err_t error) const {
   assert(gComMock != nullptr);
   gComMock->send_reqLine(lineNumber, error);
 }
 
 void Com::send_indState(Carriage_t carriage, uint8_t position,
-                        const uint8_t initState) {
+                        const uint8_t initState) const {
   assert(gComMock != nullptr);
   gComMock->send_indState(carriage, position, initState);
 }

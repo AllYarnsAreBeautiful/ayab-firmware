@@ -48,7 +48,7 @@ void Com::update() {
  * \param payload A pointer to a data buffer.
  * \param length The number of bytes in the data buffer.
  */
-void Com::send(uint8_t *payload, size_t length) {
+void Com::send(uint8_t *payload, size_t length) const {
   // TODO(TP): insert a workaround for hardware test code
   /*
   #ifdef AYAB_HW_TEST
@@ -84,7 +84,7 @@ void Com::sendMsg(AYAB_API_t id, char *msg) {
  * \param lineNumber The line number requested (0-indexed and modulo 256).
  * \param error Error code (0 = success).
  */
-void Com::send_reqLine(const uint8_t lineNumber, Err_t error) {
+void Com::send_reqLine(const uint8_t lineNumber, Err_t error) const {
   uint8_t payload[REQLINE_LEN] = {reqLine_msgid, lineNumber, error};
   send(static_cast<uint8_t *>(payload), REQLINE_LEN);
 }
@@ -96,7 +96,7 @@ void Com::send_reqLine(const uint8_t lineNumber, Err_t error) {
  * \param initState State of readiness (0 = ready, other values = not ready).
  */
 void Com::send_indState(Carriage_t carriage, uint8_t position,
-                        const uint8_t initState) {
+                        const uint8_t initState) const {
   uint16_t leftHallValue = GlobalEncoders::getHallValue(Left);
   uint16_t rightHallValue = GlobalEncoders::getHallValue(Right);
   uint8_t payload[INDSTATE_LEN] = {
@@ -348,7 +348,7 @@ void Com::h_unrecognized() {
 /*!
  * \brief Send `cnfInfo` message.
  */
-const void Com::send_cnfInfo() {
+void Com::send_cnfInfo() const {
   // Max. length of suffix string: 16 bytes + \0
   uint8_t payload[22];
   payload[0] = cnfInfo_msgid;
@@ -364,7 +364,7 @@ const void Com::send_cnfInfo() {
  * \brief Send `cnfInit` message.
  * \param error Error code (0 = success, other values = error).
  */
-void Com::send_cnfInit(Err_t error) {
+void Com::send_cnfInit(Err_t error) const {
   uint8_t payload[2];
   payload[0] = cnfInit_msgid;
   payload[1] = static_cast<uint8_t>(error);
@@ -376,7 +376,7 @@ void Com::send_cnfInit(Err_t error) {
  * \brief Send `cnfStart` message.
  * \param error Error code (0 = success, other values = error).
  */
-void Com::send_cnfStart(Err_t error) {
+void Com::send_cnfStart(Err_t error) const {
   uint8_t payload[2];
   payload[0] = cnfStart_msgid;
   payload[1] = static_cast<uint8_t>(error);
@@ -387,7 +387,7 @@ void Com::send_cnfStart(Err_t error) {
  * \brief Send `cnfTest` message.
  * \param error Error code (0 = success, other values = error).
  */
-void Com::send_cnfTest(Err_t error) {
+void Com::send_cnfTest(Err_t error) const {
   uint8_t payload[2];
   payload[0] = cnfTest_msgid;
   payload[1] = static_cast<uint8_t>(error);
@@ -407,7 +407,7 @@ void Com::send_cnfTest(Err_t error) {
  *
  * Faster code using a lookup table is available, if needed.
  */
-const uint8_t Com::CRC8(const uint8_t *buffer, size_t len) {
+uint8_t Com::CRC8(const uint8_t *buffer, size_t len) const {
   uint8_t crc = 0x00U;
 
   while (len--) {

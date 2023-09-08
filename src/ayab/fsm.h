@@ -111,11 +111,11 @@ public:
   void dispatch() final;
 
 private:
-  void state_wait_for_machine();
+  void state_wait_for_machine() const;
   void state_init();
   void state_ready();
-  const void state_knit();
-  const void state_test();
+  void state_knit() const;
+  void state_test() const;
   void state_error();
 
   // machine state

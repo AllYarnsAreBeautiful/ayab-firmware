@@ -110,7 +110,7 @@ public:
 private:
   void reqLine(uint8_t lineNumber);
   bool calculatePixelAndSolenoid();
-  const void stopKnitting();
+  void stopKnitting() const;
 
   // job parameters
   Machine_t m_machineType;

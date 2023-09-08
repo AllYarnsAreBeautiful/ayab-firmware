@@ -75,7 +75,7 @@ public:
   void endWork() final;
 
 private:
-  const void beep(uint8_t length);
+  void beep(uint8_t length) const;
 };
 
 #endif // BEEPER_H_
