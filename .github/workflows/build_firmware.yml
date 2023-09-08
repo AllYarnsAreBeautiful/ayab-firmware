@@ -1,6 +1,6 @@
 name: Build Firmware
 
-on: [push, pull_request]
+on: [workflow_call]
 
 jobs:
   build-firmware:
@@ -8,68 +8,25 @@ jobs:
     env:
       BUILD_WRAPPER_OUT_DIR: build_wrapper_output_directory
     steps:
-    - name: Checkout repo and submodules
-      uses: actions/checkout@v3
-      with:
-        submodules: recursive
-        fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of sonar analysis
-    - name: Set variables
-      id: vars
-      run: |
-        echo "flag=$(if [[ ${{github.event_name}} == push ]] && [[ ${{github.ref_type}} == tag ]] && ( [[ ${{ github.ref_name }} =~ ^v?[0-9]+\.[0-9]+\.[0-9]+-?[a-zA-Z0-9]+$ ]] || [[ ${{ github.ref_name }} =~ ^v?[0-9]+\.[0-9]+\.[0-9]+$ ]] ); then x=1; else x=0; fi; echo $x)" >> $GITHUB_OUTPUT
-        echo "sha-short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
-        echo "tag=$(git describe --tags)" >> $GITHUB_OUTPUT
-        echo "draft=$(git describe --tags | sed -e 's/^test.*/true/;s/^v.*/false/')" >> $GITHUB_OUTPUT
-    - name: Cache pip & platformio
-      uses: actions/cache@v3
-      with:
-        path: |
-          ~/.cache/pip
-          ~/.platformio/.cache
-        key: ${{ runner.os }}-pio-${{ hashFiles('**/platformio.ini') }}
-    - name: Install PlatformIO Core
-      run: |
-        pip install --upgrade platformio
-    - name: Install sonar-scanner and build-wrapper
-      uses: SonarSource/sonarcloud-github-c-cpp@v2
-    - name: Build for Arduino UNO
-      run: |
-        build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} platformio run --environment uno
-        mkdir -p build
-        mv .pio/build/uno/firmware.hex build/ayab_monolithic_uno.hex
-        echo ${{ steps.vars.outputs.tag }}
-        echo ${{ steps.vars.outputs.flag }}
-    - name: Archive build
-      uses: actions/upload-artifact@v3
-      with:
-        name: ${{format('{0}-{1}',github.sha,github.run_number)}}
-        path: build/*.hex
-    - name: Create release
-      if: steps.vars.outputs.flag == 1
-      uses: ncipollo/release-action@v1
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        tag: ${{ steps.vars.outputs.tag }}
-        name: Release ${{ steps.vars.outputs.tag }}
-        commit: ${{ steps.vars.outputs.sha }}
-        body: ""  # release message, alternative to body_path
-        # body_path: release_text.md  # uncomment if not used
-        draft: ${{ steps.vars.outputs.draft }}
-        prerelease: false
-        allowUpdates: true
-        artifacts: build/*.hex
-        replacesArtifacts: true
-    - name: Deploy source code documentation to pages
-      if: steps.vars.outputs.flag == 1
-      uses: DenverCoder1/doxygen-github-pages-action@v1.3.0
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        branch: gh-pages
-        folder: doc
-        config_file: Doxyfile
-    - name: Analyze with SonarCloud
-      env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        sonar-scanner --define sonar.cfamily.build-wrapper-output="${{ env.BUILD_WRAPPER_OUT_DIR }}"
+      - name: Checkout repo and submodules
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+          fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of sonar analysis
+      - name: Cache pip & platformio
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/pip
+            ~/.platformio/.cache
+          key: ${{ runner.os }}-pio-${{ hashFiles('**/platformio.ini') }}
+      - name: Install PlatformIO Core
+        run: |
+          pip install --upgrade platformio
+      - name: Install sonar-scanner and build-wrapper
+        uses: SonarSource/sonarcloud-github-c-cpp@v2
+      - name: Build for Arduino UNO
+        run: |
+          build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} platformio run --environment uno
+          mkdir -p build
+          mv .pio/build/uno/firmware.hex build/ayab_monolithic_uno.hex

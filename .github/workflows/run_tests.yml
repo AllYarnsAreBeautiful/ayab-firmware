@@ -10,22 +10,26 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{!github.event.pull_request.draft}}
     steps:
-    - name: Checkout repo and submodules
-      uses: actions/checkout@v2
-      with:
-        submodules: recursive
-    - name: Install dependencies
-      run: |
-        MATRIX_EVAL="CC=gcc-9 && CXX=g++-9"
-        eval "${MATRIX_EVAL}"
-        pip install gcovr
-        gcovr --version
-    - name: Run Test
-      run: |
-        ./test/test.sh
-    - name: Publish Test Results
-      uses: EnricoMi/publish-unit-test-result-action@v2
-      if: always()
-      with:
-        files: |
-          ./test/build/xml_out/*
+      - name: Build Firmware
+        uses: ./.github/workflows/build_firmware
+      - name: Install dependencies
+        run: |
+          MATRIX_EVAL="CC=gcc-9 && CXX=g++-9"
+          eval "${MATRIX_EVAL}"
+          pip install gcovr
+          gcovr --version
+      - name: Run Test
+        run: |
+          ./test/test.sh
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          files: |
+            ./test/build/xml_out/*
+      - name: Analyze with SonarCloud
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          sonar-scanner --define sonar.cfamily.build-wrapper-output="${{ env.BUILD_WRAPPER_OUT_DIR }}"

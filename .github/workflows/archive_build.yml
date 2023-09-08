@@ -1,0 +1,13 @@
+name: Archive Build
+on: [push, pull_request]
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build Firmware
+        uses: ./.github/workflows/build_firmware
+      - name: Archive build
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{format('{-1}-{1}',github.sha,github.run_number)}}
+          path: build/*.hex
