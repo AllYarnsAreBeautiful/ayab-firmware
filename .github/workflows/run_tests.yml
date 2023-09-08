@@ -12,6 +12,8 @@ jobs:
     steps:
       - name: Build Firmware
         uses: ./.github/actions/build
+        with:
+          BUILD_WRAPPER_OUT_DIR: build_wrapper_out_dir
       - name: Install dependencies
         run: |
           MATRIX_EVAL="CC=gcc-9 && CXX=g++-9"

@@ -11,6 +11,8 @@ jobs:
           fetch-depth: 0
       - name: Build Firmware
         uses: ./.github/actions/build
+        with:
+          BUILD_WRAPPER_OUT_DIR: build_wrapper_out_dir
       - name: Archive build
         uses: actions/upload-artifact@v2
         with:
