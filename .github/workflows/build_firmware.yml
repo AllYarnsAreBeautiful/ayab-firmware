@@ -68,6 +68,7 @@ jobs:
         folder: doc
         config_file: Doxyfile
     - name: Analyze with SonarCloud
+      if: github.repository == 'AllYarnsAreBeautiful/ayab-firmware'
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
