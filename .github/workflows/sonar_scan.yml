@@ -2,8 +2,9 @@ name: Sonar
 
 on:
   workflow_run:
-    workflows: ["Build"]
-    types: [completed]
+    workflows: [Build]
+    types: 
+      - completed
 
 jobs:
   sonar:
