@@ -5,7 +5,7 @@ verbose=0
 clean=0
 sonar=0
 # parse arguments
-while getopts "vc" opt; do
+while getopts "vcs" opt; do
     case $opt in
         v)   verbose=1
              ;;
