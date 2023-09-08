@@ -3,25 +3,20 @@ name: Sonar
 # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#workflow_run
 on:
   workflow_run:
-    workflows: [Test]
+    workflows: [Build]
     types: [completed]
-
-jobs:
-  check:
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo 'The triggering workflow failed'
       
   sonar:
     runs-on: ubuntu-latest
-    if: github.event.workflow_run.conclusion == 'success'
+    # does not run on forks
+    if: github.event.workflow_run.conclusion == 'success' && github.repository == 'AllYarnsAreBeautiful/ayab-firmware'
     steps:
     - name: Checkout repo and submodules
       uses: actions/checkout@v3
       with:
         repository: ${{ github.event.workflow_run.head_repository.full_name }}
         ref: ${{ github.event.workflow_run.head_branch }}
-        fetch-depth: 0  # Shallow clones should be disabled for better relevance of Sonar analysis
+        fetch-depth: 0  # shallow clones should be disabled for better relevance of Sonar analysis
     - name: SonarCloud Scan
       uses: sonarsource/sonarcloud-github-action@master
       env:
