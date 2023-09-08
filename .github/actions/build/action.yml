@@ -6,11 +6,6 @@ inputs:
 runs:
   using: "composite"
   steps:
-    # Checkout repo and submodules
-    - uses: actions/checkout@v3
-      with:
-        submodules: recursive
-        fetch-depth: 0
     # Cache pip & platformio
     - uses: actions/cache@v3
       with:
@@ -21,6 +16,7 @@ runs:
     # Install PlatformIO Core
     - run: |
         pip install --upgrade platformio
+      shell: bash
     # Install sonar-scanner and build-wrapper
     - uses: SonarSource/sonarcloud-github-c-cpp@v2
     # Build for Arduino UNO
@@ -28,3 +24,4 @@ runs:
         build-wrapper-linux-x86-64 --out-dir ${{ inputs.BUILD_WRAPPER_OUT_DIR }} platformio run --environment uno
         mkdir -p build
         mv .pio/build/uno/firmware.hex build/ayab_monolithic_uno.hex
+      shell: bash
