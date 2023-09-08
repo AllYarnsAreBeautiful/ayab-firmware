@@ -1,4 +1,4 @@
-name: Run Tests
+name: Test
 
 on: [push, pull_request]
 
@@ -20,7 +20,7 @@ jobs:
         eval "${MATRIX_EVAL}"
         pip install gcovr
         gcovr --version
-    - name: Run test.sh
+    - name: Run Tests
       run: |
         ./test/test.sh
     - name: Publish Test Results
