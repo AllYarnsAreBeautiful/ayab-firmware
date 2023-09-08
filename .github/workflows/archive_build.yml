@@ -16,5 +16,5 @@ jobs:
       - name: Archive build
         uses: actions/upload-artifact@v2
         with:
-          name: ${{format('{-1}-{1}',github.sha,github.run_number)}}
+          name: ${{format('{0}-{1}',github.sha,github.run_number)}}
           path: build/*.hex
