@@ -50,7 +50,7 @@ GCOVR_ARGS="--exclude-unreachable-branches --exclude-throw-branches \
 	    -e test_* -e libraries* -e src/ayab/global_knitter.cpp \
 	    -e src/ayab/global_fsm.cpp"
 
-if [[ $sonar -eq 1]]; then 
+if [[ $sonar -eq 1 ]]; then
   gcovr -r . $GCOVR_ARGS --sonarqube ./test/build/coverage.xml
 else
   gcovr -r . $GCOVR_ARGS  --html-details -o ./test/build/coverage.html
