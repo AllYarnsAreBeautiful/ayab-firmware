@@ -10,6 +10,11 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{!github.event.pull_request.draft}}
     steps:
+      - name: Checkout repo and submodules
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+          fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of sonar analysis
       - name: Build Firmware
         uses: ./.github/workflows/build_firmware
       - name: Install dependencies
