@@ -146,6 +146,11 @@ void Encoders::encA_rising() {
     return;
   }
 
+  // If the carriage is already set, ignore the rest.
+  if (m_carriage == Knit && m_machineType == Kh270) {
+    return;
+  }
+
   // In front of Left Hall Sensor?
   uint16_t hallValue = analogRead(EOL_PIN_L);
   if ((hallValue < FILTER_L_MIN[m_machineType]) ||
@@ -164,10 +169,9 @@ void Encoders::encA_rising() {
     if (m_machineType == Kh270) {
       m_carriage = Knit;
 
-      // The 270 carriage has two magnets. If we're past the start_position then we've 
-      // already seen the first one and don't need to do the rest of setup.
-      if (m_position > start_position) {
-        return;
+      // The first magnet on the carriage looks like Lace, the second looks like Knit
+      if (detected_carriage == Knit) {
+        start_position = start_position + MAGNET_DISTANCE_270;
       }
     } else if (m_carriage == NoCarriage) {
       m_carriage = detected_carriage;

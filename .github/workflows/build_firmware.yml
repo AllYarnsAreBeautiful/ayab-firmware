@@ -5,11 +5,14 @@ on: [push, pull_request]
 jobs:
   build-firmware:
     runs-on: ubuntu-latest
+    env:
+      BUILD_WRAPPER_OUT_DIR: build_wrapper_output_directory
     steps:
     - name: Checkout repo and submodules
       uses: actions/checkout@v3
       with:
         submodules: recursive
+        fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of sonar analysis
     - name: Set variables
       id: vars
       run: |
@@ -27,9 +30,11 @@ jobs:
     - name: Install PlatformIO Core
       run: |
         pip install --upgrade platformio
+    - name: Install sonar-scanner and build-wrapper
+      uses: SonarSource/sonarcloud-github-c-cpp@v2
     - name: Build for Arduino UNO
       run: |
-        platformio run --environment uno
+        build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} platformio run --environment uno
         mkdir -p build
         mv .pio/build/uno/firmware.hex build/ayab_monolithic_uno.hex
         echo ${{ steps.vars.outputs.tag }}
@@ -62,3 +67,9 @@ jobs:
         branch: gh-pages
         folder: doc
         config_file: Doxyfile
+    - name: Analyze with SonarCloud
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        sonar-scanner --define sonar.cfamily.build-wrapper-output="${{ env.BUILD_WRAPPER_OUT_DIR }}"
