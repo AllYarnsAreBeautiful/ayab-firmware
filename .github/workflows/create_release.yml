@@ -13,7 +13,7 @@ jobs:
           submodules: recursive
           fetch-depth: 0
       - name: Build Firmware
-        uses: ./.github/workflows/build_firmware
+        uses: ./.github/workflows/build_firmware.yml
       - name: Create release
         uses: ncipollo/release-action@v1
         with:
