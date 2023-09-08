@@ -3,7 +3,7 @@ name: Sonar
 on:
   workflow_run:
     workflows: [Build]
-    types: [requested]
+    types: [completed]
 
 jobs:
   sonar:
@@ -18,28 +18,6 @@ jobs:
         repository: ${{ github.event.workflow_run.head_repository.full_name }}
         ref: ${{ github.event.workflow_run.head_branch }}
         fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of sonar analysis
-#    - name: 'Download code coverage'
-#      uses: actions/github-script@v6
-#      with:
-#        script: |
-#          let allArtifacts = await github.rest.actions.listWorkflowRunArtifacts({
-#              owner: context.repo.owner,
-#              repo: context.repo.repo,
-#              run_id: context.payload.workflow_run.id,
-#          });
-#          let matchArtifact = allArtifacts.data.artifacts.filter((artifact) => {
-#              return artifact.name == "ayab-firmware-code-coverage"
-#          })[0];
-#          let download = await github.rest.actions.downloadArtifact({
-#              owner: context.repo.owner,
-#              repo: context.repo.repo,
-#              artifact_id: matchArtifact.id,
-#              archive_format: 'zip',
-#          });
-#          let fs = require('fs');
-#          fs.writeFileSync(`${process.env.GITHUB_WORKSPACE}/ayab-firmware-code-coverage.zip`, Buffer.from(download.data));
-#    - name: 'Unzip code coverage'
-#      run: unzip ayab-firmware-code-coverage.zip -d coverage
     - name: SonarCloud Scan
       uses: sonarsource/sonarcloud-github-action@master
       env:
