@@ -108,7 +108,7 @@ constexpr uint8_t MAGNET_DISTANCE_270 = 12U;
  */
 class EncodersInterface {
 public:
-  virtual ~EncodersInterface(){};
+  virtual ~EncodersInterface() = default;
 
   // any methods that need to be mocked should go here
   virtual void encA_interrupt() = 0;
@@ -173,26 +173,26 @@ class Encoders : public EncodersInterface {
 public:
   Encoders() = default;
 
-  void encA_interrupt();
-  uint16_t getHallValue(Direction_t pSensor);
+  void encA_interrupt() final;
+  uint16_t getHallValue(Direction_t pSensor) final;
 
-  void init(Machine_t machineType);
-  Machine_t getMachineType();
+  void init(Machine_t machineType) final;
+  Machine_t getMachineType() final;
 
   // void setBeltShift(BeltShift_t beltShift);
-  BeltShift_t getBeltShift();
+  BeltShift_t getBeltShift() final;
 
   // void setCarriage(Carriage_t carriage);
-  Carriage_t getCarriage();
+  Carriage_t getCarriage() final;
 
   // void setDirection(Direction_t direction);
-  Direction_t getDirection();
+  Direction_t getDirection() final;
 
   // void setHallActive(Direction_t hallActive);
-  Direction_t getHallActive();
+  Direction_t getHallActive() final;
 
   // void setPosition(uint8_t position);
-  uint8_t getPosition();
+  uint8_t getPosition() final;
 
 private:
   Machine_t m_machineType;

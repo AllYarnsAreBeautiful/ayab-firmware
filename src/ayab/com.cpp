@@ -348,7 +348,7 @@ void Com::h_unrecognized() {
 /*!
  * \brief Send `cnfInfo` message.
  */
-void Com::send_cnfInfo() {
+const void Com::send_cnfInfo() {
   // Max. length of suffix string: 16 bytes + \0
   uint8_t payload[22];
   payload[0] = cnfInfo_msgid;
@@ -407,7 +407,7 @@ void Com::send_cnfTest(Err_t error) {
  *
  * Faster code using a lookup table is available, if needed.
  */
-uint8_t Com::CRC8(const uint8_t *buffer, size_t len) {
+const uint8_t Com::CRC8(const uint8_t *buffer, size_t len) {
   uint8_t crc = 0x00U;
 
   while (len--) {

@@ -33,7 +33,7 @@ constexpr uint8_t BUFFER_LEN = 40;
 
 class TesterInterface {
 public:
-  virtual ~TesterInterface(){};
+  virtual ~TesterInterface() = default;
 
   // any methods that need to be mocked should go here
   virtual Err_t startTest(Machine_t machineType) = 0;
@@ -89,31 +89,31 @@ public:
 
 class Tester : public TesterInterface {
 public:
-  Err_t startTest(Machine_t machineType);
-  void loop();
-  void helpCmd();
-  void sendCmd();
-  void beepCmd();
-  void setSingleCmd(const uint8_t *buffer, size_t size);
-  void setAllCmd(const uint8_t *buffer, size_t size);
-  void readEOLsensorsCmd();
-  void readEncodersCmd();
-  void autoReadCmd();
-  void autoTestCmd();
-  void stopCmd();
-  void quitCmd();
+  Err_t startTest(Machine_t machineType) final;
+  void loop() final;
+  void helpCmd() final;
+  void sendCmd() final;
+  void beepCmd() final;
+  void setSingleCmd(const uint8_t *buffer, size_t size) final;
+  void setAllCmd(const uint8_t *buffer, size_t size) final;
+  void readEOLsensorsCmd() final;
+  void readEncodersCmd() final;
+  void autoReadCmd() final;
+  void autoTestCmd() final;
+  void stopCmd() final;
+  void quitCmd() final;
 #ifndef AYAB_TESTS
-  void encoderAChange();
+  void encoderAChange() final;
 #endif
 
 private:
   void setUp();
-  void beep();
+  const void beep();
   void readEOLsensors();
   void readEncoders();
   void autoRead();
-  void autoTestEven();
-  void autoTestOdd();
+  const void autoTestEven();
+  const void autoTestOdd();
   void handleTimerEvent();
 
   bool m_autoReadOn = false;

@@ -80,7 +80,7 @@ constexpr uint8_t REQLINE_LEN = 3U;
 
 class ComInterface {
 public:
-  virtual ~ComInterface(){};
+  virtual ~ComInterface() = default;
 
   // any methods that need to be mocked should go here
   virtual void init() = 0;
@@ -125,15 +125,15 @@ private:
 
 class Com : public ComInterface {
 public:
-  void init();
-  void update();
-  void send(uint8_t *payload, size_t length);
-  void sendMsg(AYAB_API_t id, const char *msg);
-  void sendMsg(AYAB_API_t id, char *msg);
-  void send_reqLine(const uint8_t lineNumber, Err_t error = SUCCESS);
+  void init() final;
+  void update() final;
+  void send(uint8_t *payload, size_t length) final;
+  void sendMsg(AYAB_API_t id, const char *msg) final;
+  void sendMsg(AYAB_API_t id, char *msg) final;
+  void send_reqLine(const uint8_t lineNumber, Err_t error = SUCCESS) final;
   void send_indState(Carriage_t carriage, uint8_t position,
-                     const uint8_t initState = SUCCESS);
-  void onPacketReceived(const uint8_t *buffer, size_t size);
+                     const uint8_t initState = SUCCESS) final;
+  void onPacketReceived(const uint8_t *buffer, size_t size) final;
 
 private:
   SLIPPacketSerial m_packetSerial;
@@ -147,11 +147,11 @@ private:
   void h_reqTest(const uint8_t *buffer, size_t size);
   void h_unrecognized();
 
-  void send_cnfInfo();
+  const void send_cnfInfo();
   void send_cnfInit(Err_t error);
   void send_cnfStart(Err_t error);
   void send_cnfTest(Err_t error);
-  uint8_t CRC8(const uint8_t *buffer, size_t len);
+  const uint8_t CRC8(const uint8_t *buffer, size_t len);
 };
 
 #endif // COM_H_

@@ -56,7 +56,7 @@ void Beeper::endWork() {
  *
  * /param length number of beeps
  */
-void Beeper::beep(uint8_t length) {
+const void Beeper::beep(uint8_t length) {
 
   for (uint8_t i = 0U; i < length; ++i) {
 

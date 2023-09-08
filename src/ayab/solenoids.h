@@ -39,7 +39,7 @@ constexpr uint8_t SOLENOID_BUFFER_SIZE = 16U;
 
 class SolenoidsInterface {
 public:
-  virtual ~SolenoidsInterface(){};
+  virtual ~SolenoidsInterface() = default;
 
   // any methods that need to be mocked should go here
   virtual void init() = 0;
@@ -74,21 +74,18 @@ class Solenoids : public SolenoidsInterface {
   FRIEND_TEST(SolenoidsTest, test_setSolenoid3);
 #endif
 public:
-  Solenoids()
-      : mcp_0(), mcp_1()
-  {
-  }
+  Solenoids() = default;
 
-  void init();
-  void setSolenoid(uint8_t solenoid, bool state);
-  void setSolenoids(uint16_t state);
+  void init() final;
+  void setSolenoid(uint8_t solenoid, bool state) final;
+  void setSolenoids(uint16_t state) final;
 
 private:
   uint16_t solenoidState = 0x0000U;
   void write(uint16_t state);
 
-  Adafruit_MCP23008 mcp_0;
-  Adafruit_MCP23008 mcp_1;
+  Adafruit_MCP23008 mcp_0 = Adafruit_MCP23008();
+  Adafruit_MCP23008 mcp_1 = Adafruit_MCP23008();
 };
 
 #endif // SOLENOIDS_H_
