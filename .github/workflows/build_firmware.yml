@@ -16,7 +16,7 @@ jobs:
     - name: Set variables
       id: vars
       run: |
-        echo "flag=$(if [[ ${{github.event_name}} == push ]] && [[ ${{github.ref_type}} == tag ]] && ( [[ ${{ github.ref_name }} =~ ^v?[0-9]+\.[0-9]+\.[0-9]+-?[a-zA-Z0-9]+$ ]] || [[ ${{ github.ref_name }} =~ ^v?[0-9]+\.[0-9]+\.[0-9]+$ ]] ); then x=1; else x=0; fi; echo $x)" >> $GITHUB_OUTPUT
+        echo "flag=$(if [[ ${{ github.event_name }} == push ]] && [[ ${{ github.ref_type }} == tag ]] && ( [[ ${{ github.ref_name }} =~ ^v?[0-9]+\.[0-9]+\.[0-9]+-?[a-zA-Z0-9]+$ ]] || [[ ${{ github.ref_name }} =~ ^v?[0-9]+\.[0-9]+\.[0-9]+$ ]] ); then x=1; else x=0; fi; echo $x)" >> $GITHUB_OUTPUT
         echo "sha-short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
         echo "tag=$(git describe --tags)" >> $GITHUB_OUTPUT
         echo "draft=$(git describe --tags | sed -e 's/^test.*/true/;s/^v.*/false/')" >> $GITHUB_OUTPUT
@@ -68,6 +68,7 @@ jobs:
         folder: doc
         config_file: Doxyfile
     - name: Analyze with SonarCloud
+      if: github.repository == 'AllYarnsAreBeautiful/ayab-firmware' && ( ( github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == 'AllYarnsAreBeautiful/ayab-firmware' ) || github.event_name == 'push' )
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
