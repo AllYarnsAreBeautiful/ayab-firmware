@@ -11,7 +11,7 @@ jobs:
     if: ${{!github.event.pull_request.draft}}
     steps:
       - name: Build Firmware
-        uses: ./.github/actions/build/action.yml
+        uses: ./.github/actions/build
       - name: Install dependencies
         run: |
           MATRIX_EVAL="CC=gcc-9 && CXX=g++-9"

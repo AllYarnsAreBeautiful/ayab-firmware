@@ -10,7 +10,7 @@ jobs:
           submodules: recursive
           fetch-depth: 0
       - name: Build Firmware
-        uses: ./.github/actions/build/action.yml
+        uses: ./.github/actions/build
       - name: Archive build
         uses: actions/upload-artifact@v2
         with:
