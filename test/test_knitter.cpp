@@ -334,15 +334,15 @@ TEST_F(KnitterTest, test_startKnitting_failures) {
   get_to_ready(Kh910);
 
   // `m_stopNeedle` lower than `m_startNeedle`
-  ASSERT_TRUE(knitter->startKnitting(1, 0, pattern, false) != 0);
+  ASSERT_TRUE(knitter->startKnitting(1, 0, pattern, false) != ErrorCode::SUCCESS);
 
   // `m_stopNeedle` out of range
   ASSERT_TRUE(knitter->startKnitting(0, NUM_NEEDLES[Kh910], pattern,
-                                     false) != 0);
+                                     false) != ErrorCode::SUCCESS);
 
   // null pattern
   ASSERT_TRUE(knitter->startKnitting(0, NUM_NEEDLES[Kh910] - 1, nullptr,
-                                     false) != 0);
+                                     false) != ErrorCode::SUCCESS);
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
