@@ -285,7 +285,7 @@ TEST_F(KnitterTest, test_startKnitting_NoMachine) {
   ASSERT_EQ(m, NoMachine);
   ASSERT_TRUE(knitter->initMachine(m) != 0);
   ASSERT_TRUE(
-      knitter->startKnitting(0, NUM_NEEDLES[m] - 1, pattern, false) != 0);
+      knitter->startKnitting(0, NUM_NEEDLES[m] - 1, pattern, false) != ErrorCode::SUCCESS);
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
@@ -294,7 +294,7 @@ TEST_F(KnitterTest, test_startKnitting_NoMachine) {
 TEST_F(KnitterTest, test_startKnitting_invalidMachine) {
   uint8_t pattern[] = {1};
   ASSERT_TRUE(knitter->initMachine(NUM_MACHINES) != 0);
-  ASSERT_TRUE(knitter->startKnitting(0, 1, pattern, false) != 0);
+  ASSERT_TRUE(knitter->startKnitting(0, 1, pattern, false) != ErrorCode::SUCCESS);
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
@@ -303,7 +303,7 @@ TEST_F(KnitterTest, test_startKnitting_invalidMachine) {
 TEST_F(KnitterTest, test_startKnitting_notReady) {
   uint8_t pattern[] = {1};
   ASSERT_TRUE(knitter->startKnitting(0, NUM_NEEDLES[Kh910] - 1, pattern,
-                                     false) != 0);
+                                     false) != ErrorCode::SUCCESS);
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
