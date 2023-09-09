@@ -228,7 +228,7 @@ void Com::h_reqInit(const uint8_t *buffer, size_t size) {
 void Com::h_reqStart(const uint8_t *buffer, size_t size) {
   if (size < 5U) {
     // Need 5 bytes from buffer below.
-    send_cnfStart(static_cast<uint8_t>(ErrorCode::ERR_EXPECTED_LONGER_MESSAGE));
+    send_cnfStart(ErrorCode::ERR_EXPECTED_LONGER_MESSAGE);
     return;
   }
 
@@ -239,7 +239,7 @@ void Com::h_reqStart(const uint8_t *buffer, size_t size) {
   uint8_t crc8 = buffer[4];
   // Check crc on bytes 0-4 of buffer.
   if (crc8 != CRC8(buffer, 4)) {
-    send_cnfStart(static_cast<uint8_t>(ErrorCode::ERR_CHECKSUM_ERROR));
+    send_cnfStart(ErrorCode::ERR_CHECKSUM_ERROR);
     return;
   }
 
