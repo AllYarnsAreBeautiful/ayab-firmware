@@ -142,7 +142,7 @@ public:
   static Machine_t getMachineType();
   static BeltShift_t getBeltShift();
   static Carriage_t getCarriage();
-  static Direction_t getDirection();;
+  static Direction_t getDirection();
   static Direction_t getHallActive();
   static uint8_t getPosition();
 };
