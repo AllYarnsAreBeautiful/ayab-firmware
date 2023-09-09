@@ -181,7 +181,7 @@ protected:
 
   void expected_init_machine(Machine_t m) {
     // Init the machine
-    ASSERT_EQ(knitter->initMachine(m), SUCCESS);
+    ASSERT_EQ(knitter->initMachine(m), ErrorCode::SUCCESS);
     expected_dispatch_wait_for_machine();
 
     ASSERT_EQ(fsm->getState(), OpState::init);
@@ -201,7 +201,7 @@ protected:
     get_to_ready(m);
     uint8_t pattern[] = {1};
     EXPECT_CALL(*beeperMock, ready);
-    ASSERT_EQ(knitter->startKnitting(0, NUM_NEEDLES[m] - 1, pattern, false), SUCCESS);
+    ASSERT_EQ(knitter->startKnitting(0, NUM_NEEDLES[m] - 1, pattern, false), ErrorCode::SUCCESS);
     expected_dispatch_ready();
 
     // ends in state `OpState::knit`
