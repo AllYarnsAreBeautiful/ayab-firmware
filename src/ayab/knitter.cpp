@@ -57,7 +57,6 @@ void Knitter::init() {
   pinMode(DBG_BTN_PIN, INPUT);
 #endif
 
-  // FIXME(TP): should this go in `main()`?
   GlobalSolenoids::init();
 
   // explicitly initialize members
@@ -354,7 +353,7 @@ uint8_t Knitter::getStartOffset(const Direction_t direction) {
 bool Knitter::setNextLine(uint8_t lineNumber) {
   bool success = false;
   if (m_lineRequested) {
-    // FIXME: Is there even a need for a new line?
+    // Is there even a need for a new line?
     if (lineNumber == m_currentLineNumber) {
       m_lineRequested = false;
 
