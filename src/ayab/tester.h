@@ -110,7 +110,7 @@ private:
   void setUp();
   void beep() const;
   void readEOLsensors();
-  void readEncoders();
+  void readEncoders() const;
   void autoRead();
   void autoTestEven() const;
   void autoTestOdd() const;
