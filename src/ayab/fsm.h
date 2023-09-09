@@ -33,7 +33,7 @@ using OpState_t = enum OpState;
 // diagnostic purposes (that is, for debugging).
 // Non-zero error codes are subject to change.
 // Such changes will be considered non-breaking.
-enum ErrorCode {
+enum class ErrorCode {
   SUCCESS = 0x00,
 
   // message not understood
