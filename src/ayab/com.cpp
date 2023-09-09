@@ -244,13 +244,6 @@ void Com::h_reqStart(const uint8_t *buffer, size_t size) {
   }
 
   // TODO(who?): verify operation
-  // memset(lineBuffer,0,sizeof(lineBuffer));
-  /*
-  // temporary solution:
-  for (uint8_t i = 0U; i < MAX_LINE_BUFFER_LEN; i++) {
-    lineBuffer[i] = 0xFFU;
-  }
-  */
   memset(lineBuffer, 0xFF, MAX_LINE_BUFFER_LEN);
 
   // Note (August 2020): the return value of this function has changed.
