@@ -198,7 +198,7 @@ void Knitter::encodePosition() {
     // store current encoder position for next call of this function
     m_sOldPosition = m_position;
     calculatePixelAndSolenoid();
-    indState(UNSPECIFIED_FAILURE);
+    indState(ErrorCode::UNSPECIFIED_FAILURE);
   }
 }
 
