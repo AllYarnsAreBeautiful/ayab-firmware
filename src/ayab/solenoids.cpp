@@ -32,7 +32,7 @@ void Solenoids::init() {
   mcp_0.begin(I2Caddr_sol1_8);
   mcp_1.begin(I2Caddr_sol9_16);
 
-  for (int i = 0; i < SOLENOID_BUFFER_SIZE / 2; i++) {
+  for (uint8_t i = 0; i < SOLENOID_BUFFER_SIZE / 2; i++) {
     mcp_0.pinMode(i, OUTPUT);
     mcp_1.pinMode(i, OUTPUT);
   }
