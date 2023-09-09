@@ -85,13 +85,13 @@ public:
   // any methods that need to be mocked should go here
   virtual void init() = 0;
   virtual void update() = 0;
-  virtual void send(uint8_t *payload, size_t length) = 0;
+  virtual void send(uint8_t *payload, size_t length) const = 0;
   virtual void sendMsg(AYAB_API_t id, const char *msg) = 0;
   virtual void sendMsg(AYAB_API_t id, char *msg) = 0;
   virtual void send_reqLine(const uint8_t lineNumber,
-                            Err_t error = SUCCESS) = 0;
+                            Err_t error = SUCCESS) const = 0;
   virtual void send_indState(Carriage_t carriage, uint8_t position,
-                             const uint8_t initState = SUCCESS) = 0;
+                             const uint8_t initState = SUCCESS) const = 0;
   virtual void onPacketReceived(const uint8_t *buffer, size_t size) = 0;
 };
 
@@ -127,12 +127,12 @@ class Com : public ComInterface {
 public:
   void init() final;
   void update() final;
-  void send(uint8_t *payload, size_t length) final;
+  void send(uint8_t *payload, size_t length) const final;
   void sendMsg(AYAB_API_t id, const char *msg) final;
   void sendMsg(AYAB_API_t id, char *msg) final;
-  void send_reqLine(const uint8_t lineNumber, Err_t error = SUCCESS) final;
+  void send_reqLine(const uint8_t lineNumber, Err_t error = SUCCESS) const final;
   void send_indState(Carriage_t carriage, uint8_t position,
-                     const uint8_t initState = SUCCESS) final;
+                     const uint8_t initState = SUCCESS) const final;
   void onPacketReceived(const uint8_t *buffer, size_t size) final;
 
 private:
@@ -147,11 +147,11 @@ private:
   void h_reqTest(const uint8_t *buffer, size_t size);
   void h_unrecognized();
 
-  const void send_cnfInfo();
-  void send_cnfInit(Err_t error);
-  void send_cnfStart(Err_t error);
-  void send_cnfTest(Err_t error);
-  const uint8_t CRC8(const uint8_t *buffer, size_t len);
+  void send_cnfInfo() const;
+  void send_cnfInit(Err_t error) const;
+  void send_cnfStart(Err_t error) const;
+  void send_cnfTest(Err_t error) const;
+  uint8_t CRC8(const uint8_t *buffer, size_t len) const;
 };
 
 #endif // COM_H_

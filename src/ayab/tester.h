@@ -108,12 +108,12 @@ public:
 
 private:
   void setUp();
-  const void beep();
+  void beep() const;
   void readEOLsensors();
   void readEncoders();
   void autoRead();
-  const void autoTestEven();
-  const void autoTestOdd();
+  void autoTestEven() const;
+  void autoTestOdd() const;
   void handleTimerEvent();
 
   bool m_autoReadOn = false;

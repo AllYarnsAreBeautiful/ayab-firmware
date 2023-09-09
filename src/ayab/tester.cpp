@@ -233,7 +233,7 @@ void Tester::setUp() {
 /*!
  * \brief Make a beep.
  */
-const void Tester::beep() {
+void Tester::beep() const {
   GlobalBeeper::ready();
 }
 
@@ -277,7 +277,7 @@ void Tester::autoRead() {
 /*!
  * \brief Set even-numbered solenoids.
  */
-const void Tester::autoTestEven() {
+void Tester::autoTestEven() const {
   GlobalCom::sendMsg(testRes_msgid, "Set even solenoids\n");
   digitalWrite(LED_PIN_A, HIGH);
   digitalWrite(LED_PIN_B, HIGH);
@@ -287,7 +287,7 @@ const void Tester::autoTestEven() {
 /*!
  * \brief Set odd-numbered solenoids.
  */
-const void Tester::autoTestOdd() {
+void Tester::autoTestOdd() const {
   GlobalCom::sendMsg(testRes_msgid, "Set odd solenoids\n");
   digitalWrite(LED_PIN_A, LOW);
   digitalWrite(LED_PIN_B, LOW);
