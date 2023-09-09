@@ -113,23 +113,12 @@ public:
   // any methods that need to be mocked should go here
   virtual void encA_interrupt() = 0;
   virtual uint16_t getHallValue(Direction_t pSensor) = 0;
-
   virtual void init(Machine_t machineType) = 0;
   virtual Machine_t getMachineType() = 0;
-
-  // virtual void setBeltShift(BeltShift_t beltShift) = 0;
   virtual BeltShift_t getBeltShift() = 0;
-
-  // virtual void setCarriage(Carriage_t carriage) = 0;
   virtual Carriage_t getCarriage() = 0;
-
-  // virtual void setDirection(Direction_t direction) = 0;
   virtual Direction_t getDirection() = 0;
-
-  // virtual void setHallActive(Direction_t hallActive) = 0;
   virtual Direction_t getHallActive() = 0;
-
-  // virtual void setPosition(uint8_t position) = 0;
   virtual uint8_t getPosition() = 0;
 };
 
@@ -149,23 +138,12 @@ public:
 
   static void encA_interrupt();
   static uint16_t getHallValue(Direction_t pSensor);
-
   static void init(Machine_t machineType);
   static Machine_t getMachineType();
-
-  // static void setBeltShift(BeltShift_t beltShift);
   static BeltShift_t getBeltShift();
-
-  // static void setCarriage(Carriage_t carriage);
   static Carriage_t getCarriage();
-
-  // static void setDirection(Direction_t direction);
-  static Direction_t getDirection();
-
-  // static void setHallActive(Direction_t hallActive);
+  static Direction_t getDirection();;
   static Direction_t getHallActive();
-
-  // static void setPosition(uint8_t position);
   static uint8_t getPosition();
 };
 
@@ -175,23 +153,12 @@ public:
 
   void encA_interrupt() final;
   uint16_t getHallValue(Direction_t pSensor) final;
-
   void init(Machine_t machineType) final;
   Machine_t getMachineType() final;
-
-  // void setBeltShift(BeltShift_t beltShift);
   BeltShift_t getBeltShift() final;
-
-  // void setCarriage(Carriage_t carriage);
   Carriage_t getCarriage() final;
-
-  // void setDirection(Direction_t direction);
   Direction_t getDirection() final;
-
-  // void setHallActive(Direction_t hallActive);
   Direction_t getHallActive() final;
-
-  // void setPosition(uint8_t position);
   uint8_t getPosition() final;
 
 private:
