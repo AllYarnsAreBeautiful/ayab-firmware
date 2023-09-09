@@ -89,9 +89,9 @@ public:
   virtual void sendMsg(AYAB_API_t id, const char *msg) = 0;
   virtual void sendMsg(AYAB_API_t id, char *msg) = 0;
   virtual void send_reqLine(const uint8_t lineNumber,
-                            Err_t error = static_cast<uint8_t>(SUCCESS)) const = 0;
+                            Err_t error = static_cast<uint8_t>(ErrState::SUCCESS)) const = 0;
   virtual void send_indState(Carriage_t carriage, uint8_t position,
-                             const uint8_t initState = static_cast<uint8_t>(SUCCESS)) const = 0;
+                             const uint8_t initState = static_cast<uint8_t>(ErrState::SUCCESS)) const = 0;
   virtual void onPacketReceived(const uint8_t *buffer, size_t size) = 0;
 };
 
@@ -114,9 +114,9 @@ public:
   static void send(uint8_t *payload, size_t length);
   static void sendMsg(AYAB_API_t id, const char *msg);
   static void sendMsg(AYAB_API_t id, char *msg);
-  static void send_reqLine(const uint8_t lineNumber, Err_t error = static_cast<uint8_t>(SUCCESS));
+  static void send_reqLine(const uint8_t lineNumber, Err_t error = static_cast<uint8_t>(ErrState::SUCCESS));
   static void send_indState(Carriage_t carriage, uint8_t position,
-                            const uint8_t initState = static_cast<uint8_t>(SUCCESS));
+                            const uint8_t initState = static_cast<uint8_t>(ErrState::SUCCESS));
   static void onPacketReceived(const uint8_t *buffer, size_t size);
 
 private:
