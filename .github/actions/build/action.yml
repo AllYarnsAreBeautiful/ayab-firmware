@@ -1,0 +1,27 @@
+name: Build AYAB
+description: Builds AYAB
+inputs:
+  BUILD_WRAPPER_OUT_DIR:
+    required: true
+runs:
+  using: "composite"
+  steps:
+    # Cache pip & platformio
+    - uses: actions/cache@v3
+      with:
+        path: |
+          ~/.cache/pip
+          ~/.platformio/.cache
+        key: ${{ runner.os }}-pio-${{ hashFiles('**/platformio.ini') }}
+    # Install PlatformIO Core
+    - run: |
+        pip install --upgrade platformio
+      shell: bash
+    # Install sonar-scanner and build-wrapper
+    - uses: SonarSource/sonarcloud-github-c-cpp@v2
+    # Build for Arduino UNO
+    - run: |
+        build-wrapper-linux-x86-64 --out-dir ${{ inputs.BUILD_WRAPPER_OUT_DIR }} platformio run --environment uno
+        mkdir -p build
+        mv .pio/build/uno/firmware.hex build/ayab_monolithic_uno.hex
+      shell: bash

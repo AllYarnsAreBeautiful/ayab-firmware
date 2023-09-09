@@ -4,6 +4,7 @@ build*
 *.hex
 *.a
 .*/*
+!.github/
 *.pu
 html
 *.swp
