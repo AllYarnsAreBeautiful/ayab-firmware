@@ -85,7 +85,7 @@ void Com::sendMsg(AYAB_API_t id, char *msg) {
  * \param error Error code (0 = success).
  */
 void Com::send_reqLine(const uint8_t lineNumber, Err_t error) const {
-  uint8_t payload[REQLINE_LEN] = {reqLine_msgid, lineNumber, error};
+  uint8_t payload[REQLINE_LEN] = {reqLine_msgid, lineNumber, static_cast<uint8_t>(error)};
   send(static_cast<uint8_t *>(payload), REQLINE_LEN);
 }
 
@@ -201,7 +201,7 @@ void Com::onPacketReceived(const uint8_t *buffer, size_t size) {
 void Com::h_reqInit(const uint8_t *buffer, size_t size) {
   if (size < 3U) {
     // Need 3 bytes from buffer below.
-    send_cnfInit(static_cast<uint8_t>(ErrorCode::ERR_EXPECTED_LONGER_MESSAGE));
+    send_cnfInit(ErrorCode::ERR_EXPECTED_LONGER_MESSAGE);
     return;
   }
 
@@ -210,7 +210,7 @@ void Com::h_reqInit(const uint8_t *buffer, size_t size) {
   uint8_t crc8 = buffer[2];
   // Check crc on bytes 0-4 of buffer.
   if (crc8 != CRC8(buffer, 2)) {
-    send_cnfInit(static_cast<uint8_t>(ErrorCode::ERR_CHECKSUM_ERROR));
+    send_cnfInit(ErrorCode::ERR_CHECKSUM_ERROR);
     return;
   }
 
@@ -323,7 +323,7 @@ void Com::h_reqInfo() {
 void Com::h_reqTest(const uint8_t *buffer, size_t size) {
   if (size < 2U) {
     // message is too short
-    send_cnfTest(static_cast<uint8_t>(ErrorCode::ERR_EXPECTED_LONGER_MESSAGE));
+    send_cnfTest(ErrorCode::ERR_EXPECTED_LONGER_MESSAGE);
     return;
   }
 
