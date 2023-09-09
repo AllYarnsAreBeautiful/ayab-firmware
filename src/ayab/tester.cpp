@@ -256,7 +256,7 @@ void Tester::readEncoders() {
  * \brief Read the End of Line sensors.
  */
 void Tester::readEOLsensors() {
-  uint16_t hallSensor = static_cast<uint16_t>(analogRead(EOL_PIN_L));
+  auto hallSensor = static_cast<uint16_t>(analogRead(EOL_PIN_L));
   sprintf(buf, "  EOL_L: %hu", hallSensor);
   GlobalCom::sendMsg(testRes_msgid, buf);
   hallSensor = static_cast<uint16_t>(analogRead(EOL_PIN_R));
@@ -298,7 +298,7 @@ void Tester::autoTestOdd() const {
  * \brief Timer event every 500ms to handle auto functions.
  */
 void Tester::handleTimerEvent() {
-  if (m_autoReadOn and m_timerEventOdd) {
+  if (m_autoReadOn && m_timerEventOdd) {
     autoRead();
   }
   if (m_autoTestOn) {
@@ -308,5 +308,5 @@ void Tester::handleTimerEvent() {
       autoTestEven();
     }
   }
-  m_timerEventOdd = not m_timerEventOdd;
+  m_timerEventOdd = !m_timerEventOdd;
 }

@@ -101,14 +101,14 @@ void Com::send_indState(Carriage_t carriage, uint8_t position,
   uint16_t rightHallValue = GlobalEncoders::getHallValue(Right);
   uint8_t payload[INDSTATE_LEN] = {
       indState_msgid,
-      static_cast<uint8_t>(initState),
+      initState,
       static_cast<uint8_t>(GlobalFsm::getState()),
       highByte(leftHallValue),
       lowByte(leftHallValue),
       highByte(rightHallValue),
       lowByte(rightHallValue),
       static_cast<uint8_t>(carriage),
-      static_cast<uint8_t>(position),
+      position,
       static_cast<uint8_t>(GlobalEncoders::getDirection()),
   };
   send(static_cast<uint8_t *>(payload), INDSTATE_LEN);
@@ -205,7 +205,7 @@ void Com::h_reqInit(const uint8_t *buffer, size_t size) {
     return;
   }
 
-  Machine_t machineType = static_cast<Machine_t>(buffer[1]);
+  auto machineType = static_cast<Machine_t>(buffer[1]);
 
   uint8_t crc8 = buffer[2];
   // Check crc on bytes 0-4 of buffer.
@@ -234,7 +234,7 @@ void Com::h_reqStart(const uint8_t *buffer, size_t size) {
 
   uint8_t startNeedle = buffer[1];
   uint8_t stopNeedle = buffer[2];
-  bool continuousReportingEnabled = static_cast<bool>(buffer[3]);
+  auto continuousReportingEnabled = static_cast<bool>(buffer[3]);
 
   uint8_t crc8 = buffer[4];
   // Check crc on bytes 0-4 of buffer.
@@ -271,7 +271,7 @@ void Com::h_reqStart(const uint8_t *buffer, size_t size) {
  * \todo sl: Assert size? Handle error?
  */
 void Com::h_cnfLine(const uint8_t *buffer, size_t size) {
-  uint8_t m = static_cast<uint8_t>(GlobalKnitter::getMachineType());
+  auto m = static_cast<uint8_t>(GlobalKnitter::getMachineType());
   uint8_t lenLineBuffer = LINE_BUFFER_LEN[m];
   if (size < lenLineBuffer + 5U) {
     // message is too short
@@ -327,7 +327,7 @@ void Com::h_reqTest(const uint8_t *buffer, size_t size) {
     return;
   }
 
-  Machine_t machineType = static_cast<Machine_t>(buffer[1]);
+  auto machineType = static_cast<Machine_t>(buffer[1]);
 
   // Note (August 2020): the return value of this function has changed.
   // Previously, it returned `true` for success and `false` for failure.

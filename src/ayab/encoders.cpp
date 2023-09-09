@@ -38,7 +38,7 @@
 void Encoders::encA_interrupt() {
   m_hallActive = NoDirection;
 
-  bool currentState = static_cast<bool>(digitalRead(ENC_PIN_A));
+  auto currentState = static_cast<bool>(digitalRead(ENC_PIN_A));
 
   if (!m_oldState && currentState) {
     encA_rising();
