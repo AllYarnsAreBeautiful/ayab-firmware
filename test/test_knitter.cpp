@@ -283,7 +283,7 @@ TEST_F(KnitterTest, test_startKnitting_NoMachine) {
   uint8_t pattern[] = {1};
   Machine_t m = knitter->getMachineType();
   ASSERT_EQ(m, NoMachine);
-  ASSERT_TRUE(knitter->initMachine(m) != 0);
+  ASSERT_TRUE(knitter->initMachine(m) != ErrorCode::SUCCESS);
   ASSERT_TRUE(
       knitter->startKnitting(0, NUM_NEEDLES[m] - 1, pattern, false) != ErrorCode::SUCCESS);
 
@@ -293,7 +293,7 @@ TEST_F(KnitterTest, test_startKnitting_NoMachine) {
 
 TEST_F(KnitterTest, test_startKnitting_invalidMachine) {
   uint8_t pattern[] = {1};
-  ASSERT_TRUE(knitter->initMachine(NUM_MACHINES) != 0);
+  ASSERT_TRUE(knitter->initMachine(NUM_MACHINES) != ErrorCode::SUCCESS);
   ASSERT_TRUE(knitter->startKnitting(0, 1, pattern, false) != ErrorCode::SUCCESS);
 
   // test expectations without destroying instance
