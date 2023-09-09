@@ -125,7 +125,7 @@ void Fsm::state_init() {
 /*!
  * \brief Action of machine in state `OpState::ready`.
  */
-void Fsm::state_ready() {
+void Fsm::state_ready() const {
   digitalWrite(LED_PIN_A, LOW); // green LED off
 }
 
