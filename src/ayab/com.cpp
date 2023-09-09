@@ -96,12 +96,12 @@ void Com::send_reqLine(const uint8_t lineNumber, Err_t error) const {
  * \param initState State of readiness (0 = ready, other values = not ready).
  */
 void Com::send_indState(Carriage_t carriage, uint8_t position,
-                        const uint8_t initState) const {
+                        Err_t error) const {
   uint16_t leftHallValue = GlobalEncoders::getHallValue(Left);
   uint16_t rightHallValue = GlobalEncoders::getHallValue(Right);
   uint8_t payload[INDSTATE_LEN] = {
       indState_msgid,
-      initState,
+      error,
       static_cast<uint8_t>(GlobalFsm::getState()),
       highByte(leftHallValue),
       lowByte(leftHallValue),
