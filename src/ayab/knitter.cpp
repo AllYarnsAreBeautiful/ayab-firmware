@@ -221,10 +221,10 @@ bool Knitter::isReady() {
     m_lastHall = m_hallActive;
   }
 
-  bool passedLeft = Right == m_direction and Left == m_lastHall and
-        m_position > (END_LEFT[m_machineType] + END_OFFSET[m_machineType] + GARTER_SLOP);
-  bool passedRight = Left == m_direction and Right == m_lastHall and
-        m_position < (END_RIGHT[m_machineType] - END_OFFSET[m_machineType] - GARTER_SLOP);
+  bool passedLeft = (Right == m_direction) && (Left == m_lastHall) &&
+        (m_position > (END_LEFT[m_machineType] + END_OFFSET[m_machineType] + GARTER_SLOP));
+  bool passedRight = (Left == m_direction) && (Right == m_lastHall) &&
+        (m_position < (END_RIGHT[m_machineType] - END_OFFSET[m_machineType] - GARTER_SLOP));
   // Machine is initialized when left Hall sensor is passed in Right direction
   // New feature (August 2020): the machine is also initialized
   // when the right Hall sensor is passed in Left direction.
@@ -251,7 +251,8 @@ void Knitter::knit() {
     // TODO(who?): optimize delay for various Arduino models
     delay(START_KNITTING_DELAY);
     GlobalBeeper::finishedLine();
-    reqLine(++m_currentLineNumber);
+    ++m_currentLineNumber;
+    reqLine(m_currentLineNumber);
   }
 
 #ifdef DBG_NOMACHINE
@@ -260,7 +261,8 @@ void Knitter::knit() {
 
   if (m_prevState && !state) {
     if (!m_lineRequested) {
-      reqLine(++m_currentLineNumber);
+      ++m_currentLineNumber;
+      reqLine(m_currentLineNumber);
     }
   }
   m_prevState = state;
@@ -297,20 +299,19 @@ void Knitter::knit() {
     m_workedOnLine = true;
   }
 
-  if ((m_pixelToSet < m_startNeedle - END_OF_LINE_OFFSET_L[m_machineType]) ||
-      (m_pixelToSet > m_stopNeedle + END_OF_LINE_OFFSET_R[m_machineType])) {
-    // outside of the active needles
+  if (((m_pixelToSet < m_startNeedle - END_OF_LINE_OFFSET_L[m_machineType]) ||
+       (m_pixelToSet > m_stopNeedle + END_OF_LINE_OFFSET_R[m_machineType])) &&
+      m_workedOnLine) {
+    // outside of the active needles and
+    // already worked on the current line -> finished the line
+    m_workedOnLine = false;
 
-    if (m_workedOnLine) {
-      // already worked on the current line -> finished the line
-      m_workedOnLine = false;
-
-      if (!m_lineRequested && !m_lastLineFlag) {
-        // request new line from host
-        reqLine(++m_currentLineNumber);
-      } else if (m_lastLineFlag) {
-        stopKnitting();
-      }
+    if (!m_lineRequested && !m_lastLineFlag) {
+      // request new line from host
+      ++m_currentLineNumber;
+      reqLine(m_currentLineNumber);
+    } else if (m_lastLineFlag) {
+      stopKnitting();
     }
   }
 #endif // DBG_NOMACHINE
