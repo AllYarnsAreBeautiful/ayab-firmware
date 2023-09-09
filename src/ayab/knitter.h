@@ -32,7 +32,7 @@
 
 class KnitterInterface {
 public:
-  virtual ~KnitterInterface(){};
+  virtual ~KnitterInterface() = default;
 
   // any methods that need to be mocked should go here
   virtual void init() = 0;
@@ -90,27 +90,27 @@ public:
 
 class Knitter : public KnitterInterface {
 public:
-  void init();
-  void setUpInterrupt();
-  void isr();
+  void init() final;
+  void setUpInterrupt() final;
+  void isr() final;
   Err_t startKnitting(uint8_t startNeedle,
                       uint8_t stopNeedle, uint8_t *pattern_start,
-                      bool continuousReportingEnabled);
-  Err_t initMachine(Machine_t machine);
-  void encodePosition();
-  bool isReady();
-  void knit();
-  void indState(Err_t error = SUCCESS);
-  uint8_t getStartOffset(const Direction_t direction);
-  Machine_t getMachineType();
-  bool setNextLine(uint8_t lineNumber);
-  void setLastLine();
-  void setMachineType(Machine_t);
+                      bool continuousReportingEnabled) final;
+  Err_t initMachine(Machine_t machine) final;
+  void encodePosition() final;
+  bool isReady() final;
+  void knit() final;
+  void indState(Err_t error = SUCCESS) final;
+  uint8_t getStartOffset(const Direction_t direction) final;
+  Machine_t getMachineType() final;
+  bool setNextLine(uint8_t lineNumber) final;
+  void setLastLine() final;
+  void setMachineType(Machine_t) final;
 
 private:
   void reqLine(uint8_t lineNumber);
   bool calculatePixelAndSolenoid();
-  void stopKnitting();
+  const void stopKnitting();
 
   // job parameters
   Machine_t m_machineType;

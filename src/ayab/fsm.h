@@ -24,7 +24,7 @@
 #ifndef FSM_H_
 #define FSM_H_
 
-enum class OpState { wait_for_machine, init, ready, knit, test, error};
+enum class OpState {wait_for_machine, init, ready, knit, test, error};
 using OpState_t = enum OpState;
 
 // As of APIv6, the only important distinction
@@ -73,7 +73,7 @@ using Err_t = enum ErrorCode;
 
 class FsmInterface {
 public:
-  virtual ~FsmInterface(){};
+  virtual ~FsmInterface() = default;
 
   // any methods that need to be mocked should go here
   virtual void init() = 0;
@@ -105,17 +105,17 @@ public:
 
 class Fsm : public FsmInterface {
 public:
-  void init();
-  OpState_t getState();
-  void setState(OpState_t state);
-  void dispatch();
+  void init() final;
+  OpState_t getState() final;
+  void setState(OpState_t state) final;
+  void dispatch() final;
 
 private:
   void state_wait_for_machine();
   void state_init();
   void state_ready();
-  void state_knit();
-  void state_test();
+  const void state_knit();
+  const void state_test();
   void state_error();
 
   // machine state

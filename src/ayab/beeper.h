@@ -38,7 +38,7 @@ constexpr uint8_t BEEP_NO_DUTY = 255U;
 
 class BeeperInterface {
 public:
-  virtual ~BeeperInterface(){};
+  virtual ~BeeperInterface() = default;
 
   // any methods that need to be mocked should go here
   virtual void ready() = 0;
@@ -70,12 +70,12 @@ public:
  */
 class Beeper : public BeeperInterface {
 public:
-  void ready();
-  void finishedLine();
-  void endWork();
+  void ready() final;
+  void finishedLine() final;
+  void endWork() final;
 
 private:
-  void beep(uint8_t length);
+  const void beep(uint8_t length);
 };
 
 #endif // BEEPER_H_
