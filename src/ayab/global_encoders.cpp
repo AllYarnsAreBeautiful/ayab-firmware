@@ -37,55 +37,21 @@ void GlobalEncoders::init(Machine_t machineType) {
   m_instance->init(machineType);
 }
 
-/*
-Machine_t GlobalEncoders::getMachineType() {
-  return m_instance->getMachineType();
-}
-
-void GlobalEncoders::setBeltShift(BeltShift_t beltShift) {
-  m_instance->setBeltShift(beltShift);
-}
-*/
-
 BeltShift_t GlobalEncoders::getBeltShift() {
   return m_instance->getBeltShift();
 }
-
-/*
-void GlobalEncoders::setCarriage(Carriage_t carriage) {
-  m_instance->setCarriage(carriage);
-}
-*/
 
 Carriage_t GlobalEncoders::getCarriage() {
   return m_instance->getCarriage();
 }
 
-/*
-void GlobalEncoders::setDirection(Direction_t direction) {
-  m_instance->setDirection(direction);
-}
-*/
-
 Direction_t GlobalEncoders::getDirection() {
   return m_instance->getDirection();
 }
 
-/*
-void GlobalEncoders::setHallActive(Direction_t hallActive) {
-  m_instance->setHallActive(hallActive);
-}
-*/
-
 Direction_t GlobalEncoders::getHallActive() {
   return m_instance->getHallActive();
 }
-
-/*
-void GlobalEncoders::setPosition(uint8_t position) {
-  m_instance->setPosition(position);
-}
-*/
 
 uint8_t GlobalEncoders::getPosition() {
   return m_instance->getPosition();
