@@ -169,7 +169,7 @@ private:
   volatile Direction_t m_direction;
   volatile Direction_t m_hallActive;
   volatile uint8_t m_position;
-  volatile uint8_t m_oldState; //atomic substitute for `bool` 
+  volatile unsigned char m_oldState; //atomic substitute for `bool` 
 
   void encA_rising();
   void encA_falling();
