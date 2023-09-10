@@ -35,13 +35,13 @@
 // Global definitions: references elsewhere must use `extern`.
 // Each of the following is a pointer to a singleton class
 // containing static methods.
-const GlobalBeeper *beeper;
-const GlobalCom *com;
-const GlobalEncoders *encoders;
-const GlobalFsm *fsm;
-const GlobalKnitter *knitter;
-const GlobalSolenoids *solenoids;
-const GlobalTester *tester;
+constexpr GlobalBeeper *beeper;
+constexpr GlobalCom *com;
+constexpr GlobalEncoders *encoders;
+constexpr GlobalFsm *fsm;
+constexpr GlobalKnitter *knitter;
+constexpr GlobalSolenoids *solenoids;
+constexpr GlobalTester *tester;
 
 // Initialize static members.
 // Each singleton class contains a pointer to a static instance

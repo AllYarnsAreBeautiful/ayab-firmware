@@ -240,7 +240,7 @@ void Tester::beep() const {
 /*!
  * \brief Read the Hall sensors that determine which carriage is in use.
  */
-void Tester::readEncoders() {
+void Tester::readEncoders() const {
   GlobalCom::sendMsg(testRes_msgid, "  ENC_A: ");
   bool state = digitalRead(ENC_PIN_A);
   GlobalCom::sendMsg(testRes_msgid, state ? "HIGH" : "LOW");

@@ -304,7 +304,7 @@ void Com::h_cnfLine(const uint8_t *buffer, size_t size) {
  * \param buffer A pointer to a data buffer.
  * \param size The number of bytes in the data buffer.
  */
-void Com::h_reqInfo() {
+void Com::h_reqInfo() const {
   send_cnfInfo();
 }
 
@@ -313,7 +313,7 @@ void Com::h_reqInfo() {
  * \param buffer A pointer to a data buffer.
  * \param size The number of bytes in the data buffer.
  */
-void Com::h_reqTest(const uint8_t *buffer, size_t size) {
+void Com::h_reqTest(const uint8_t *buffer, size_t size) const {
   if (size < 2U) {
     // message is too short
     send_cnfTest(ErrorCode::ERR_EXPECTED_LONGER_MESSAGE);

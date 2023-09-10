@@ -143,8 +143,8 @@ private:
   void h_reqInit(const uint8_t *buffer, size_t size);
   void h_reqStart(const uint8_t *buffer, size_t size);
   void h_cnfLine(const uint8_t *buffer, size_t size);
-  void h_reqInfo();
-  void h_reqTest(const uint8_t *buffer, size_t size);
+  void h_reqInfo() const;
+  void h_reqTest(const uint8_t *buffer, size_t size) const;
   void h_unrecognized();
 
   void send_cnfInfo() const;

@@ -113,7 +113,7 @@ public:
 private:
   void state_wait_for_machine() const;
   void state_init();
-  void state_ready();
+  void state_ready() const;
   void state_knit() const;
   void state_test() const;
   void state_error();
