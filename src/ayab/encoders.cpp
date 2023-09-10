@@ -38,7 +38,7 @@
 void Encoders::encA_interrupt() {
   m_hallActive = NoDirection;
 
-  auto currentState = static_cast<bool>(digitalRead(ENC_PIN_A));
+  auto currentState = static_cast<uint8_t>(digitalRead(ENC_PIN_A)); // atomic substitute for `bool`
 
   if (!m_oldState && currentState) {
     encA_rising();
@@ -74,7 +74,7 @@ void Encoders::init(Machine_t machineType) {
   m_hallActive = NoDirection;
   m_beltShift = BeltShift::Unknown;
   m_carriage = NoCarriage;
-  m_oldState = false;
+  m_oldState = 0; // false
 }
 
 /*!
