@@ -25,7 +25,6 @@
 #define BOARD_H_
 
 #include <Arduino.h>
-#include <pins_arduino.h>
 
 // Pin Assignments
 constexpr uint8_t EOL_PIN_R = A0; // Analog
@@ -57,5 +56,8 @@ constexpr uint16_t START_KNITTING_DELAY = 2000U;
 #else
 #error "untested board"
 #endif
+
+// Missing from Arduino.h
+#define digitalPinToInterrupt(p)  ((p) == 2 ? 0 : ((p) == 3 ? 1 : NOT_AN_INTERRUPT))
 
 #endif // BOARD_H_
