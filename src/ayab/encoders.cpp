@@ -173,7 +173,7 @@ void Encoders::encA_rising() {
       }
     } else if (m_carriage == NoCarriage) {
       m_carriage = detected_carriage;
-    } else if (m_carriage != detected_carriage && m_position > start_position) {
+    } else if ((m_carriage != detected_carriage) && (m_position > start_position)) {
       m_carriage = Garter;
 
       // Belt shift and start position were set when the first magnet passed
@@ -216,7 +216,7 @@ void Encoders::encA_falling() {
 
   hallValueSmall = (hallValue < FILTER_R_MIN[m_machineType]);
 
-  if (hallValueSmall || hallValue > FILTER_R_MAX[m_machineType]) {
+  if (hallValueSmall || (hallValue > FILTER_R_MAX[m_machineType])) {
     m_hallActive = Right;
 
     // The garter carriage has a second set of magnets that are going to
