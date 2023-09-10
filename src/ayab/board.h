@@ -58,7 +58,7 @@ constexpr uint16_t START_KNITTING_DELAY = 2000U;
 #endif
 
 // Missing from Arduino.h
-#define NOT_AN_INTERRUPT -1
-#define digitalPinToInterrupt(p)  ((p) == 2 ? 0 : ((p) == 3 ? 1 : NOT_AN_INTERRUPT))
+constexpr NOT_AN_INTERRUPT = -1;
+constexpr digitalPinToInterrupt(p) = ((p) == 2 ? 0 : ((p) == 3 ? 1 : NOT_AN_INTERRUPT));
 
 #endif // BOARD_H_
