@@ -25,6 +25,7 @@
 #define BOARD_H_
 
 #include <Arduino.h>
+#include <pins_arduino.h>
 
 // Pin Assignments
 constexpr uint8_t EOL_PIN_R = A0; // Analog
