@@ -57,8 +57,4 @@ constexpr uint16_t START_KNITTING_DELAY = 2000U;
 #error "untested board"
 #endif
 
-// Missing from Arduino.h
-constexpr int NOT_AN_INTERRUPT = -1;
-constexpr int digitalPinToInterrupt(p) = ((p) == 2 ? 0 : ((p) == 3 ? 1 : NOT_AN_INTERRUPT));
-
 #endif // BOARD_H_
