@@ -145,7 +145,7 @@ private:
   void h_cnfLine(const uint8_t *buffer, size_t size);
   void h_reqInfo() const;
   void h_reqTest(const uint8_t *buffer, size_t size) const;
-  void h_unrecognized();
+  void h_unrecognized() const;
 
   void send_cnfInfo() const;
   void send_cnfInit(Err_t error) const;
