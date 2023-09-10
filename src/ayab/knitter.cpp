@@ -57,7 +57,6 @@ void Knitter::init() {
   pinMode(DBG_BTN_PIN, INPUT);
 #endif
 
-  // FIXME(TP): should this go in `main()`?
   GlobalSolenoids::init();
 
   // explicitly initialize members
@@ -126,13 +125,13 @@ void Knitter::isr() {
  */
 Err_t Knitter::initMachine(Machine_t machineType) {
   if (GlobalFsm::getState() != OpState::wait_for_machine) {
-    return ERR_WRONG_MACHINE_STATE;
+    return ErrorCode::ERR_WRONG_MACHINE_STATE;
   }
   if (machineType == NoMachine) {
-    return ERR_NO_MACHINE_TYPE;
+    return ErrorCode::ERR_NO_MACHINE_TYPE;
   }
   if (machineType >= NUM_MACHINES) {
-    return ERR_MACHINE_TYPE_INVALID;
+    return ErrorCode::ERR_MACHINE_TYPE_INVALID;
   }
 
   m_machineType = machineType;
@@ -143,7 +142,7 @@ Err_t Knitter::initMachine(Machine_t machineType) {
   // Now that we have enough start state, we can set up interrupts
   setUpInterrupt();
 
-  return SUCCESS;
+  return ErrorCode::SUCCESS;
 }
 
 /*!
@@ -158,13 +157,13 @@ Err_t Knitter::startKnitting(uint8_t startNeedle,
                              uint8_t stopNeedle, uint8_t *pattern_start,
                              bool continuousReportingEnabled) {
   if (GlobalFsm::getState() != OpState::ready) {
-    return ERR_WRONG_MACHINE_STATE;
+    return ErrorCode::ERR_WRONG_MACHINE_STATE;
   }
   if (pattern_start == nullptr) {
-    return ERR_NULL_POINTER_ARGUMENT;
+    return ErrorCode::ERR_NULL_POINTER_ARGUMENT;
   }
   if (startNeedle >= stopNeedle || stopNeedle >= NUM_NEEDLES[m_machineType]) {
-    return ERR_NEEDLE_VALUE_INVALID;
+    return ErrorCode::ERR_NEEDLE_VALUE_INVALID;
   }
 
   // record argument values
@@ -184,7 +183,7 @@ Err_t Knitter::startKnitting(uint8_t startNeedle,
   GlobalBeeper::ready();
 
   // success
-  return SUCCESS;
+  return ErrorCode::SUCCESS;
 }
 
 /*!
@@ -198,7 +197,7 @@ void Knitter::encodePosition() {
     // store current encoder position for next call of this function
     m_sOldPosition = m_position;
     calculatePixelAndSolenoid();
-    indState(UNSPECIFIED_FAILURE);
+    indState(ErrorCode::UNSPECIFIED_FAILURE);
   }
 }
 
@@ -232,7 +231,7 @@ bool Knitter::isReady() {
 
 #endif // DBG_NOMACHINE
     GlobalSolenoids::setSolenoids(SOLENOIDS_BITMASK);
-    indState(SUCCESS);
+    indState(ErrorCode::SUCCESS);
     return true; // move to `OpState::ready`
   }
 
@@ -277,7 +276,7 @@ void Knitter::knit() {
 
   if (m_continuousReportingEnabled) {
     // send current position to GUI
-    indState(SUCCESS);
+    indState(ErrorCode::SUCCESS);
   }
 
   if (!calculatePixelAndSolenoid()) {
@@ -354,7 +353,7 @@ uint8_t Knitter::getStartOffset(const Direction_t direction) {
 bool Knitter::setNextLine(uint8_t lineNumber) {
   bool success = false;
   if (m_lineRequested) {
-    // FIXME: Is there even a need for a new line?
+    // Is there even a need for a new line?
     if (lineNumber == m_currentLineNumber) {
       m_lineRequested = false;
 
@@ -394,7 +393,7 @@ void Knitter::setMachineType(Machine_t machineType) {
  * \param lineNumber Line number requested.
  */
 void Knitter::reqLine(uint8_t lineNumber) {
-  GlobalCom::send_reqLine(lineNumber, SUCCESS);
+  GlobalCom::send_reqLine(lineNumber, ErrorCode::SUCCESS);
   m_lineRequested = true;
 }
 

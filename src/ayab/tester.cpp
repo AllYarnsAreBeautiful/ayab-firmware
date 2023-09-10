@@ -170,9 +170,9 @@ Err_t Tester::startTest(Machine_t machineType) {
     GlobalFsm::setState(OpState::test);
     GlobalKnitter::setMachineType(machineType);
     setUp();
-    return SUCCESS;
+    return ErrorCode::SUCCESS;
   }
-  return ERR_WRONG_MACHINE_STATE;
+  return ErrorCode::ERR_WRONG_MACHINE_STATE;
 }
 
 /*!

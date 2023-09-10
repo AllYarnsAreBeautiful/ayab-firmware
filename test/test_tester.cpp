@@ -77,7 +77,7 @@ protected:
     // `setUp()` must have been called to reach `millis()`
     EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(t));
 
-    ASSERT_TRUE(tester->startTest(Kh930) == 0);
+    ASSERT_TRUE(tester->startTest(Kh930) == ErrorCode::SUCCESS);
   }
 
   void expect_write(bool once) {
@@ -245,7 +245,7 @@ TEST_F(TesterTest, test_loop_autoTest) {
 TEST_F(TesterTest, test_startTest_fail) {
   // can't start test from state `OpState::knit`
   EXPECT_CALL(*fsmMock, getState).WillOnce(Return(OpState::knit));
-  ASSERT_TRUE(tester->startTest(Kh910) != 0);
+  ASSERT_TRUE(tester->startTest(Kh910) != ErrorCode::SUCCESS);
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(fsmMock));

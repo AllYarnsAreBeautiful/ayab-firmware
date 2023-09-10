@@ -85,7 +85,7 @@ void Com::sendMsg(AYAB_API_t id, char *msg) {
  * \param error Error code (0 = success).
  */
 void Com::send_reqLine(const uint8_t lineNumber, Err_t error) const {
-  uint8_t payload[REQLINE_LEN] = {reqLine_msgid, lineNumber, error};
+  uint8_t payload[REQLINE_LEN] = {reqLine_msgid, lineNumber, static_cast<uint8_t>(error)};
   send(static_cast<uint8_t *>(payload), REQLINE_LEN);
 }
 
@@ -96,12 +96,12 @@ void Com::send_reqLine(const uint8_t lineNumber, Err_t error) const {
  * \param initState State of readiness (0 = ready, other values = not ready).
  */
 void Com::send_indState(Carriage_t carriage, uint8_t position,
-                        const uint8_t initState) const {
+                        Err_t error) const {
   uint16_t leftHallValue = GlobalEncoders::getHallValue(Left);
   uint16_t rightHallValue = GlobalEncoders::getHallValue(Right);
   uint8_t payload[INDSTATE_LEN] = {
       indState_msgid,
-      initState,
+      static_cast<uint8_t>(error),
       static_cast<uint8_t>(GlobalFsm::getState()),
       highByte(leftHallValue),
       lowByte(leftHallValue),
@@ -201,7 +201,7 @@ void Com::onPacketReceived(const uint8_t *buffer, size_t size) {
 void Com::h_reqInit(const uint8_t *buffer, size_t size) {
   if (size < 3U) {
     // Need 3 bytes from buffer below.
-    send_cnfInit(ERR_EXPECTED_LONGER_MESSAGE);
+    send_cnfInit(ErrorCode::ERR_EXPECTED_LONGER_MESSAGE);
     return;
   }
 
@@ -210,7 +210,7 @@ void Com::h_reqInit(const uint8_t *buffer, size_t size) {
   uint8_t crc8 = buffer[2];
   // Check crc on bytes 0-4 of buffer.
   if (crc8 != CRC8(buffer, 2)) {
-    send_cnfInit(ERR_CHECKSUM_ERROR);
+    send_cnfInit(ErrorCode::ERR_CHECKSUM_ERROR);
     return;
   }
 
@@ -228,7 +228,7 @@ void Com::h_reqInit(const uint8_t *buffer, size_t size) {
 void Com::h_reqStart(const uint8_t *buffer, size_t size) {
   if (size < 5U) {
     // Need 5 bytes from buffer below.
-    send_cnfStart(ERR_EXPECTED_LONGER_MESSAGE);
+    send_cnfStart(ErrorCode::ERR_EXPECTED_LONGER_MESSAGE);
     return;
   }
 
@@ -239,18 +239,11 @@ void Com::h_reqStart(const uint8_t *buffer, size_t size) {
   uint8_t crc8 = buffer[4];
   // Check crc on bytes 0-4 of buffer.
   if (crc8 != CRC8(buffer, 4)) {
-    send_cnfStart(ERR_CHECKSUM_ERROR);
+    send_cnfStart(ErrorCode::ERR_CHECKSUM_ERROR);
     return;
   }
 
   // TODO(who?): verify operation
-  // memset(lineBuffer,0,sizeof(lineBuffer));
-  /*
-  // temporary solution:
-  for (uint8_t i = 0U; i < MAX_LINE_BUFFER_LEN; i++) {
-    lineBuffer[i] = 0xFFU;
-  }
-  */
   memset(lineBuffer, 0xFF, MAX_LINE_BUFFER_LEN);
 
   // Note (August 2020): the return value of this function has changed.
@@ -323,7 +316,7 @@ void Com::h_reqInfo() {
 void Com::h_reqTest(const uint8_t *buffer, size_t size) {
   if (size < 2U) {
     // message is too short
-    send_cnfTest(ERR_EXPECTED_LONGER_MESSAGE);
+    send_cnfTest(ErrorCode::ERR_EXPECTED_LONGER_MESSAGE);
     return;
   }
 

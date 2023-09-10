@@ -14,7 +14,7 @@ jobs:
         with:
           BUILD_WRAPPER_OUT_DIR: build_wrapper_out_dir
       - name: Archive build
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: ${{format('{0}-{1}',github.sha,github.run_number)}}
           path: build/*.hex

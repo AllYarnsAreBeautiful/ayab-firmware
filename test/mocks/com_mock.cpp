@@ -71,9 +71,9 @@ void Com::send_reqLine(const uint8_t lineNumber, Err_t error) const {
 }
 
 void Com::send_indState(Carriage_t carriage, uint8_t position,
-                        const uint8_t initState) const {
+                        Err_t error) const {
   assert(gComMock != nullptr);
-  gComMock->send_indState(carriage, position, initState);
+  gComMock->send_indState(carriage, position, error);
 }
 
 void Com::onPacketReceived(const uint8_t *buffer, size_t size) {

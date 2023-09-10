@@ -133,10 +133,8 @@ void Encoders::encA_rising() {
   m_direction = digitalRead(ENC_PIN_B) != 0 ? Right : Left;
 
   // Update carriage position
-  if (Right == m_direction) {
-    if (m_position < END_RIGHT[m_machineType]) {
-      m_position = m_position + 1;
-    }
+  if ((Right == m_direction) && (m_position < END_RIGHT[m_machineType])) {
+    m_position = m_position + 1;
   }
 
   // The garter carriage has a second set of magnets that are going to
@@ -205,10 +203,8 @@ void Encoders::encA_falling() {
   m_direction = digitalRead(ENC_PIN_B) ? Left : Right;
 
   // Update carriage position
-  if (Left == m_direction) {
-    if (m_position > END_LEFT[m_machineType]) {
-      m_position = m_position - 1;
-    }
+  if ((Left == m_direction) && (m_position > END_LEFT[m_machineType])) {
+    m_position = m_position - 1;
   }
 
   // In front of Right Hall Sensor?
