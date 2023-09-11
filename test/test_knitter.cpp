@@ -90,12 +90,12 @@ protected:
 
   uint8_t get_position_past_left() {
     Machine_t type = knitter->getMachineType();
-    return (END_LEFT[type] + END_OFFSET[type] + GARTER_SLOP) + 1;
+    return (END_LEFT_PLUS_OFFSET[type] + GARTER_SLOP) + 1;
   }
 
   uint8_t get_position_past_right() {
     Machine_t type = knitter->getMachineType();
-    return (END_RIGHT[type] - END_OFFSET[type] - GARTER_SLOP) - 1;
+    return (END_RIGHT_MINUS_OFFSET[type] - GARTER_SLOP) - 1;
   }
 
   void expect_knitter_init() {
