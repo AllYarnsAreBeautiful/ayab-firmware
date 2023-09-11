@@ -60,7 +60,7 @@ TEST_F(EncodersTest, test_encA_rising_not_in_front) {
   EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_L))
       .WillOnce(Return(FILTER_L_MIN[static_cast<uint8_t>(encoders->getMachineType())]));
   encoders->encA_interrupt();
-  ASSERT_EQ(encoders->getDirection(), Right);
+  ASSERT_EQ(encoders->getDirection(), Direction_t::Right);
   ASSERT_EQ(encoders->getPosition(), 0x01);
   ASSERT_EQ(encoders->getCarriage(), Carriage_t::NoCarriage);
 }
@@ -89,8 +89,8 @@ TEST_F(EncodersTest, test_encA_rising_in_front_notKH270) {
 
   encoders->encA_interrupt();
 
-  ASSERT_EQ(encoders->getDirection(), Right);
-  ASSERT_EQ(encoders->getHallActive(), Left);
+  ASSERT_EQ(encoders->getDirection(), Direction_t::Right);
+  ASSERT_EQ(encoders->getHallActive(), Direction_t::Left);
   ASSERT_EQ(encoders->getPosition(), END_OFFSET[static_cast<uint8_t>(encoders->getMachineType())]);
   ASSERT_EQ(encoders->getCarriage(), Carriage_t::Lace);
   ASSERT_EQ(encoders->getBeltShift(), BeltShift::Regular);
@@ -120,8 +120,8 @@ TEST_F(EncodersTest, test_encA_rising_in_front_KH270) {
 
   encoders->encA_interrupt();
 
-  ASSERT_EQ(encoders->getDirection(), Right);
-  ASSERT_EQ(encoders->getHallActive(), Left);
+  ASSERT_EQ(encoders->getDirection(), Direction_t::Right);
+  ASSERT_EQ(encoders->getHallActive(), Direction_t::Left);
   ASSERT_EQ(encoders->getPosition(), END_OFFSET[static_cast<uint8_t>(encoders->getMachineType())]);
   ASSERT_EQ(encoders->getCarriage(), Carriage_t::Knit);
   ASSERT_EQ(encoders->getBeltShift(), BeltShift::Regular);
@@ -208,8 +208,8 @@ TEST_F(EncodersTest, test_encA_falling_in_front) {
 
   encoders->encA_interrupt();
 
-  ASSERT_EQ(encoders->getDirection(), Right);
-  ASSERT_EQ(encoders->getHallActive(), Right);
+  ASSERT_EQ(encoders->getDirection(), Direction_t::Right);
+  ASSERT_EQ(encoders->getHallActive(), Direction_t::Right);
   ASSERT_EQ(encoders->getPosition(), 227);
   ASSERT_EQ(encoders->getCarriage(), Carriage_t::NoCarriage);
   ASSERT_EQ(encoders->getBeltShift(), BeltShift::Shifted);
@@ -317,12 +317,12 @@ TEST_F(EncodersTest, test_getBeltShift) {
 
 TEST_F(EncodersTest, test_getDirection) {
   Direction_t d = encoders->getDirection();
-  ASSERT_EQ(d, NoDirection);
+  ASSERT_EQ(d, Direction_t::NoDirection);
 }
 
 TEST_F(EncodersTest, test_getHallActive) {
   Direction_t d = encoders->getHallActive();
-  ASSERT_EQ(d, NoDirection);
+  ASSERT_EQ(d, Direction_t::NoDirection);
 }
 
 TEST_F(EncodersTest, test_getCarriage) {
@@ -345,12 +345,12 @@ TEST_F(EncodersTest, test_getHallValue) {
   uint16_t v = encoders->getHallValue(NoDirection);
   ASSERT_EQ(v, 0u);
   EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_L));
-  v = encoders->getHallValue(Left);
+  v = encoders->getHallValue(Direction_t::Left);
   ASSERT_EQ(v, 0u);
   EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_R));
-  v = encoders->getHallValue(Right);
+  v = encoders->getHallValue(Direction_t::Right);
   ASSERT_EQ(v, 0u);
   EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_R)).WillOnce(Return(0xbeefu));
-  v = encoders->getHallValue(Right);
+  v = encoders->getHallValue(Direction_t::Right);
   ASSERT_EQ(v, 0xbeefu);
 }
