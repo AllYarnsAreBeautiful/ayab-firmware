@@ -35,25 +35,25 @@
 // Global definitions: references elsewhere must use `extern`.
 // Each of the following is a pointer to a singleton class
 // containing static methods.
-constexpr GlobalBeeper *beeper;
-constexpr GlobalCom *com;
-constexpr GlobalEncoders *encoders;
-constexpr GlobalFsm *fsm;
-constexpr GlobalKnitter *knitter;
-constexpr GlobalSolenoids *solenoids;
-constexpr GlobalTester *tester;
+constexpr GlobalBeeper    *beeper    = GlobalBeeper();
+constexpr GlobalCom       *com       = GlobalCom();
+constexpr GlobalEncoders  *encoders  = GlobalEncoders();
+constexpr GlobalFsm       *fsm       = GlobalFsm();
+constexpr GlobalKnitter   *knitter   = GlobalKnitter();
+constexpr GlobalSolenoids *solenoids = GlobalSolenoids();
+constexpr GlobalTester    *tester    = GlobalTester();
 
 // Initialize static members.
 // Each singleton class contains a pointer to a static instance
 // that implements a public interface. When testing, a pointer
 // to an instance of a mock class can be substituted.
-BeeperInterface *GlobalBeeper::m_instance = new Beeper();
-ComInterface *GlobalCom::m_instance = new Com();
-EncodersInterface *GlobalEncoders::m_instance = new Encoders();
-FsmInterface *GlobalFsm::m_instance = new Fsm();
-KnitterInterface *GlobalKnitter::m_instance = new Knitter();
+BeeperInterface    *GlobalBeeper::m_instance    = new Beeper();
+ComInterface       *GlobalCom::m_instance       = new Com();
+EncodersInterface  *GlobalEncoders::m_instance  = new Encoders();
+FsmInterface       *GlobalFsm::m_instance       = new Fsm();
+KnitterInterface   *GlobalKnitter::m_instance   = new Knitter();
 SolenoidsInterface *GlobalSolenoids::m_instance = new Solenoids();
-TesterInterface *GlobalTester::m_instance = new Tester();
+TesterInterface    *GlobalTester::m_instance    = new Tester();
 
 /*!
  * Setup - do once before going to the main loop.
