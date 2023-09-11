@@ -55,7 +55,7 @@ TesterInterface *GlobalTester::m_instance = tester;
 
 int main(int argc, char *argv[]) {
   ::testing::InitGoogleMock(&argc, argv);
-	RUN_ALL_TESTS();
+	if (RUN_ALL_TESTS()) {}
 	// Always return zero-code and allow PlatformIO to parse results
 	return 0;
 }
