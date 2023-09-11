@@ -140,7 +140,7 @@ TEST_F(ComTest, test_reqtest_fail) {
 TEST_F(ComTest, test_reqtest_success_KH270) {
   uint8_t buffer[] = {reqTest_msgid, static_cast<uint8_t>(Machine_t::Kh270)};
   EXPECT_CALL(*fsmMock, setState(OpState::test));
-  EXPECT_CALL(*knitterMock, setMachineType(Kh270));
+  EXPECT_CALL(*knitterMock, setMachineType(Machine_t::Kh270));
   EXPECT_CALL(*arduinoMock, millis);
   expected_write_onPacketReceived(buffer, sizeof(buffer), false);
 
