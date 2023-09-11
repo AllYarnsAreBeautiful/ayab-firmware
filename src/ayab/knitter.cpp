@@ -425,7 +425,7 @@ bool Knitter::calculatePixelAndSolenoid() {
       } else if (BeltShift::Shifted == m_beltShift) {
         m_solenoidToSet = m_position % SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];
       }
-      if (Lace == m_carriage) {
+      if (Carriage_t::Lace == m_carriage) {
         m_pixelToSet = m_pixelToSet - SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];
       }
     } else {
