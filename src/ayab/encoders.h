@@ -40,13 +40,13 @@ enum Carriage {
 };
 using Carriage_t = enum Carriage;
 
-enum MachineType {
+enum class MachineType {
   NoMachine = -1,
   Kh910 = 0,
   Kh930 = 1,
-  Kh270 = 2,
-  NUM_MACHINES = 3
+  Kh270 = 2
 };
+constexpr uint8_t NUM_MACHINES = 3;
 using Machine_t = enum MachineType;
 
 enum class BeltShift { Unknown, Regular, Shifted, Lace_Regular, Lace_Shifted };
