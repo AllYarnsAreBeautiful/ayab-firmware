@@ -280,7 +280,7 @@ TEST_F(KnitterTest, test_isr) {
 TEST_F(KnitterTest, test_startKnitting_NoMachine) {
   uint8_t pattern[] = {1};
   Machine_t m = knitter->getMachineType();
-  ASSERT_EQ(m, NoMachine);
+  ASSERT_EQ(m, Machine_t::NoMachine);
   ASSERT_TRUE(knitter->initMachine(m) != ErrorCode::SUCCESS);
   ASSERT_TRUE(
       knitter->startKnitting(0, NUM_NEEDLES[static_cast<uint8_t>(m)] - 1, pattern, false) != ErrorCode::SUCCESS);
@@ -291,7 +291,7 @@ TEST_F(KnitterTest, test_startKnitting_NoMachine) {
 
 TEST_F(KnitterTest, test_startKnitting_invalidMachine) {
   uint8_t pattern[] = {1};
-  ASSERT_TRUE(knitter->initMachine(NUM_MACHINES) != ErrorCode::SUCCESS);
+  ASSERT_TRUE(knitter->initMachine(Machine_t::NoMachine) != ErrorCode::SUCCESS);
   ASSERT_TRUE(knitter->startKnitting(0, 1, pattern, false) != ErrorCode::SUCCESS);
 
   // test expectations without destroying instance
@@ -335,11 +335,11 @@ TEST_F(KnitterTest, test_startKnitting_failures) {
   ASSERT_TRUE(knitter->startKnitting(1, 0, pattern, false) != ErrorCode::SUCCESS);
 
   // `m_stopNeedle` out of range
-  ASSERT_TRUE(knitter->startKnitting(0, NUM_NEEDLES[Kh910], pattern,
+  ASSERT_TRUE(knitter->startKnitting(0, NUM_NEEDLES[static_cast<uint8_t>(Machine_t::Kh910)], pattern,
                                      false) != ErrorCode::SUCCESS);
 
   // null pattern
-  ASSERT_TRUE(knitter->startKnitting(0, NUM_NEEDLES[Kh910] - 1, nullptr,
+  ASSERT_TRUE(knitter->startKnitting(0, NUM_NEEDLES[static_cast<uint8_t>(Machine_t::Kh910)] - 1, nullptr,
                                      false) != ErrorCode::SUCCESS);
 
   // test expectations without destroying instance
@@ -355,7 +355,7 @@ TEST_F(KnitterTest, test_setNextLine) {
   expected_dispatch_knit(true);
 
   // outside of the active needles
-  expected_isr(NUM_NEEDLES[Kh910] + END_OF_LINE_OFFSET_R[Kh910] + 1 + knitter->getStartOffset(Left));
+  expected_isr(NUM_NEEDLES[static_cast<uint8_t>(Machine_t::Kh910)] + END_OF_LINE_OFFSET_R[static_cast<uint8_t>(Machine_t::Kh910)] + 1 + knitter->getStartOffset(Left));
   EXPECT_CALL(*solenoidsMock, setSolenoid).Times(1);
   expected_dispatch_knit(false);
 
