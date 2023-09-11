@@ -455,12 +455,12 @@ TEST_F(KnitterTest, test_knit_Kh270) {
 
   // don't set `m_workedonline` to `true`
   const uint8_t OFFSET = END_OF_LINE_OFFSET_R[static_cast<uint8_t>(Machine_t::Kh270)];
-  expected_isr(8 + STOP_NEEDLE + OFFSET, Right, Left, BeltShift::Regular, Knit);
+  expected_isr(8 + STOP_NEEDLE + OFFSET, Right, Left, BeltShift::Regular, Carriage_t::Knit);
   EXPECT_CALL(*solenoidsMock, setSolenoid);
   expect_indState();
   expected_dispatch_knit(false);
 
-  expected_isr(START_NEEDLE, Right, Left, BeltShift::Regular, Knit);
+  expected_isr(START_NEEDLE, Right, Left, BeltShift::Regular, Carriage_t::Knit);
   EXPECT_CALL(*solenoidsMock, setSolenoid);
   expect_indState();
   expected_dispatch_knit(false);
