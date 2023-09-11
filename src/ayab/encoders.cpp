@@ -36,7 +36,7 @@
  * `m_machineType` assumed valid.
  */
 void Encoders::encA_interrupt() {
-  m_hallActive = NoDirection;
+  m_hallActive = Direction_t::NoDirection;
 
   auto currentState = static_cast<bool>(digitalRead(ENC_PIN_A));
 
@@ -133,7 +133,7 @@ void Encoders::encA_rising() {
   m_direction = digitalRead(ENC_PIN_B) != 0 ? Direction_t::Right : Direction_t::Left;
 
   // Update carriage position
-  if ((Right == m_direction) && (m_position < END_RIGHT[static_cast<uint8_t>(m_machineType)])) {
+  if ((Direction_t::Right == m_direction) && (m_position < END_RIGHT[static_cast<uint8_t>(m_machineType)])) {
     m_position = m_position + 1;
   }
 
@@ -153,7 +153,7 @@ void Encoders::encA_rising() {
   uint16_t hallValue = analogRead(EOL_PIN_L);
   if ((hallValue < FILTER_L_MIN[static_cast<uint8_t>(m_machineType)]) ||
       (hallValue > FILTER_L_MAX[static_cast<uint8_t>(m_machineType)])) {
-    m_hallActive = Left;
+    m_hallActive = Direction_t::Left;
 
     Carriage detected_carriage = Carriage_t::NoCarriage;
     uint8_t start_position = END_LEFT_PLUS_OFFSET[static_cast<uint8_t>(m_machineType)];
@@ -217,7 +217,7 @@ void Encoders::encA_falling() {
   hallValueSmall = (hallValue < FILTER_R_MIN[static_cast<uint8_t>(m_machineType)]);
 
   if (hallValueSmall || hallValue > FILTER_R_MAX[static_cast<uint8_t>(m_machineType)]) {
-    m_hallActive = Right;
+    m_hallActive = Direction_t::Right;
 
     // The garter carriage has a second set of magnets that are going to
     // pass the sensor and will reset state incorrectly if allowed to
