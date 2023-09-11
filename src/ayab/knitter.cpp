@@ -74,9 +74,9 @@ void Knitter::init() {
   m_sOldPosition = 0U;
   m_firstRun = true;
   m_workedOnLine = false;
-  m_lastHall = NoDirection;
+  m_lastHall = Direction_t::NoDirection;
   m_position = 0U;
-  m_hallActive = NoDirection;
+  m_hallActive = Direction_t::NoDirection;
   m_pixelToSet = 0;
 #ifdef DBG_NOMACHINE
   m_prevState = false;
@@ -208,13 +208,13 @@ bool Knitter::isReady() {
   // will be a second magnet passing the sensor.
   // Keep track of the last seen hall sensor because we may be making a decision
   // after it passes.
-  if (m_hallActive != NoDirection) {
+  if (m_hallActive != Direction_t::NoDirection) {
     m_lastHall = m_hallActive;
   }
 
-  bool passedLeft = (Right == m_direction) && (Left == m_lastHall) &&
+  bool passedLeft = (Direction_t::Right == m_direction) && (Direction_t::Left == m_lastHall) &&
         (m_position > (END_LEFT_PLUS_OFFSET[static_cast<uint8_t>(m_machineType)] + GARTER_SLOP));
-  bool passedRight = (Left == m_direction) && (Right == m_lastHall) &&
+  bool passedRight = (Direction_t::Left == m_direction) && (Direction_t::Right == m_lastHall) &&
         (m_position < (END_RIGHT_MINUS_OFFSET[static_cast<uint8_t>(m_machineType)] - GARTER_SLOP));
   // Machine is initialized when left Hall sensor is passed in Right direction
   // New feature (August 2020): the machine is also initialized
@@ -327,12 +327,12 @@ Machine_t Knitter::getMachineType() {
  * \return Start offset, or 0 if unobtainable.
  */
 uint8_t Knitter::getStartOffset(const Direction_t direction) {
-  if ((direction == NoDirection) || (direction >= NUM_DIRECTIONS) ||
+  if ((direction == Direction_t::NoDirection) ||
       (m_carriage == Carriage_t::NoCarriage) ||
       (m_machineType == Machine_t::NoMachine)) {
     return 0U;
   }
-  return START_OFFSET[static_cast<uint8_t>(m_machineType)][direction][static_cast<uint8_t>(m_carriage)];
+  return START_OFFSET[static_cast<uint8_t>(m_machineType)][static_cast<uint8_t>(direction)][static_cast<uint8_t>(m_carriage)];
 }
 
 /*!
@@ -397,7 +397,7 @@ bool Knitter::calculatePixelAndSolenoid() {
   // calculate the solenoid and pixel to be set
   // implemented according to machine manual
   // magic numbers from machine manual
-  case Right:
+  case Direction_t::Right:
     startOffset = getStartOffset(Left);
     if (m_position >= startOffset) {
       m_pixelToSet = m_position - startOffset;
@@ -415,7 +415,7 @@ bool Knitter::calculatePixelAndSolenoid() {
     }
     break;
 
-  case Left:
+  case Direction_t::Left:
     startOffset = getStartOffset(Right);
     if (m_position <= (END_RIGHT[static_cast<uint8_t>(m_machineType)] - startOffset)) {
       m_pixelToSet = m_position - startOffset;
