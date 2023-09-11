@@ -58,7 +58,7 @@ TEST_F(EncodersTest, test_encA_rising_not_in_front) {
   EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_B)).WillOnce(Return(true));
   // Not in front of Left Hall Sensor
   EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_L))
-      .WillOnce(Return(FILTER_L_MIN[encoders->getMachineType()]));
+      .WillOnce(Return(FILTER_L_MIN[static_cast<uint8_t>(encoders->getMachineType())]));
   encoders->encA_interrupt();
   ASSERT_EQ(encoders->getDirection(), Right);
   ASSERT_EQ(encoders->getPosition(), 0x01);
@@ -97,7 +97,7 @@ TEST_F(EncodersTest, test_encA_rising_in_front_notKH270) {
 }
 
 TEST_F(EncodersTest, test_encA_rising_in_front_KH270) {
-  encoders->init(Kh270);
+  encoders->init(Machine_t::Kh270);
   ASSERT_TRUE(encoders->getMachineType() == Machine_t::Kh270);
   // We should not enter the falling function
   EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_R)).Times(0);
