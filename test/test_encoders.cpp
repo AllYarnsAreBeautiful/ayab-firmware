@@ -342,7 +342,7 @@ TEST_F(EncodersTest, test_init) {
 }
 
 TEST_F(EncodersTest, test_getHallValue) {
-  uint16_t v = encoders->getHallValue(NoDirection);
+  uint16_t v = encoders->getHallValue(Direction_t::NoDirection);
   ASSERT_EQ(v, 0u);
   EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_L));
   v = encoders->getHallValue(Direction_t::Left);
