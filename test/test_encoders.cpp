@@ -83,7 +83,7 @@ TEST_F(EncodersTest, test_encA_rising_in_front_notKH270) {
   EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_B)).WillOnce(Return(true));
   // In front of Left Hall Sensor
   EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_L))
-      .WillOnce(Return(FILTER_L_MIN[encoders->getMachineType()] - 1));
+      .WillOnce(Return(FILTER_L_MIN[static_cast<uint8_t>(encoders->getMachineType())] - 1));
   // BeltShift is regular
   EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_C)).WillOnce(Return(true));
 
@@ -91,7 +91,7 @@ TEST_F(EncodersTest, test_encA_rising_in_front_notKH270) {
 
   ASSERT_EQ(encoders->getDirection(), Right);
   ASSERT_EQ(encoders->getHallActive(), Left);
-  ASSERT_EQ(encoders->getPosition(), END_OFFSET[encoders->getMachineType()]);
+  ASSERT_EQ(encoders->getPosition(), END_OFFSET[static_cast<uint8_t>(encoders->getMachineType())]);
   ASSERT_EQ(encoders->getCarriage(), Lace);
   ASSERT_EQ(encoders->getBeltShift(), BeltShift::Regular);
 }
@@ -114,7 +114,7 @@ TEST_F(EncodersTest, test_encA_rising_in_front_KH270) {
   EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_B)).WillOnce(Return(true));
   // In front of Left Hall Sensor
   EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_L))
-      .WillOnce(Return(FILTER_L_MIN[encoders->getMachineType()] - 1));
+      .WillOnce(Return(FILTER_L_MIN[static_cast<uint8_t>(encoders->getMachineType())] - 1));
   // BeltShift is regular
   EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_C)).WillOnce(Return(true));
 
@@ -122,7 +122,7 @@ TEST_F(EncodersTest, test_encA_rising_in_front_KH270) {
 
   ASSERT_EQ(encoders->getDirection(), Right);
   ASSERT_EQ(encoders->getHallActive(), Left);
-  ASSERT_EQ(encoders->getPosition(), END_OFFSET[encoders->getMachineType()]);
+  ASSERT_EQ(encoders->getPosition(), END_OFFSET[static_cast<uint8_t>(encoders->getMachineType())]);
   ASSERT_EQ(encoders->getCarriage(), Knit);
   ASSERT_EQ(encoders->getBeltShift(), BeltShift::Regular);
 }
@@ -134,7 +134,7 @@ TEST_F(EncodersTest, test_encA_rising_in_front_G_carriage) {
   EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_B)).WillOnce(Return(true)).WillOnce(Return(false));
   // In front of Left Hall Sensor
   EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_L))
-      .WillOnce(Return(FILTER_L_MAX[encoders->getMachineType()] + 1));
+      .WillOnce(Return(FILTER_L_MAX[static_cast<uint8_t>(encoders->getMachineType())] + 1));
   // BeltShift is regular
   EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_C)).WillOnce(Return(true));
 
@@ -145,7 +145,7 @@ TEST_F(EncodersTest, test_encA_rising_in_front_G_carriage) {
   // Create a falling edge
   EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_A)).WillOnce(Return(false));
   EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_R))
-      .WillOnce(Return(FILTER_R_MAX[encoders->getMachineType()] + 1));
+      .WillOnce(Return(FILTER_R_MAX[static_cast<uint8_t>(encoders->getMachineType())] + 1));
   EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_C));
   encoders->encA_interrupt();
   // Create a rising edge
@@ -154,7 +154,7 @@ TEST_F(EncodersTest, test_encA_rising_in_front_G_carriage) {
   EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_B)).WillOnce(Return(true));
   // In front of Left Hall Sensor
   EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_L))
-      .WillOnce(Return(FILTER_L_MIN[encoders->getMachineType()] - 1));
+      .WillOnce(Return(FILTER_L_MIN[static_cast<uint8_t>(encoders->getMachineType())] - 1));
 
   encoders->encA_interrupt();
 
@@ -173,13 +173,13 @@ TEST_F(EncodersTest, test_encA_falling_not_in_front) {
   EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_B)).WillOnce(Return(true)).WillOnce(Return(false));
   // Not in front of Left Hall Sensor
   EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_L))
-      .WillOnce(Return(FILTER_L_MIN[encoders->getMachineType()]));
+      .WillOnce(Return(FILTER_L_MIN[static_cast<uint8_t>(encoders->getMachineType())]));
   encoders->encA_interrupt();
   encoders->encA_interrupt();
 
   EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_A)).WillOnce(Return(false));
   EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_R))
-      .WillOnce(Return(FILTER_R_MIN[encoders->getMachineType()]));
+      .WillOnce(Return(FILTER_R_MIN[static_cast<uint8_t>(encoders->getMachineType())]));
 
   encoders->encA_interrupt();
 }
@@ -196,13 +196,13 @@ TEST_F(EncodersTest, test_encA_falling_in_front) {
   EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_B)).WillOnce(Return(false)).WillOnce(Return(false));
   // In front of Left Hall Sensor
   EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_L))
-      .WillOnce(Return(FILTER_L_MIN[encoders->getMachineType()]));
+      .WillOnce(Return(FILTER_L_MIN[static_cast<uint8_t>(encoders->getMachineType())]));
   encoders->encA_interrupt();
   encoders->encA_interrupt();
 
   EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_A)).WillOnce(Return(false));
   EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_R))
-      .WillOnce(Return(FILTER_R_MAX[encoders->getMachineType()] + 1));
+      .WillOnce(Return(FILTER_R_MAX[static_cast<uint8_t>(encoders->getMachineType())] + 1));
   // BeltShift is shifted
   EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_C)).WillOnce(Return(true));
 
@@ -223,25 +223,25 @@ TEST_F(EncodersTest, test_encA_falling_at_end) {
   EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_B)).WillOnce(Return(false)).WillOnce(Return(true));
   // In front of Left Hall Sensor
   EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_L))
-      .WillOnce(Return(FILTER_L_MAX[encoders->getMachineType()]));
+      .WillOnce(Return(FILTER_L_MAX[static_cast<uint8_t>(encoders->getMachineType())]));
   EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_C)).Times(0);
   encoders->encA_interrupt();
 
   EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_A)).WillOnce(Return(false));
   EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_R))
-      .WillOnce(Return(FILTER_R_MAX[encoders->getMachineType()] + 1));
+      .WillOnce(Return(FILTER_R_MAX[static_cast<uint8_t>(encoders->getMachineType())] + 1));
   EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_C));
 
   encoders->encA_interrupt();
   ASSERT_EQ(encoders->getPosition(), 227);
 
   uint16_t pos = 227;
-  while (pos < END_RIGHT[encoders->getMachineType()]) {
+  while (pos < END_RIGHT[static_cast<uint8_t>(encoders->getMachineType())]) {
     // Rising
     EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_A)).WillOnce(Return(true));
     EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_B)).WillOnce(Return(true));
     EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_L))
-        .WillOnce(Return(FILTER_L_MAX[encoders->getMachineType()]));
+        .WillOnce(Return(FILTER_L_MAX[static_cast<uint8_t>(encoders->getMachineType())]));
     encoders->encA_interrupt();
     ASSERT_EQ(encoders->getPosition(), ++pos);
 
@@ -249,7 +249,7 @@ TEST_F(EncodersTest, test_encA_falling_at_end) {
     EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_A)).WillOnce(Return(false));
     EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_B));
     EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_R))
-        .WillOnce(Return(FILTER_R_MAX[encoders->getMachineType()]));
+        .WillOnce(Return(FILTER_R_MAX[static_cast<uint8_t>(encoders->getMachineType())]));
     encoders->encA_interrupt();
     ASSERT_EQ(encoders->getPosition(), pos);
   }
@@ -259,7 +259,7 @@ TEST_F(EncodersTest, test_encA_falling_at_end) {
   EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_A)).WillOnce(Return(true));
   EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_B)).WillOnce(Return(true));
   EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_L))
-      .WillOnce(Return(FILTER_L_MAX[encoders->getMachineType()]));
+      .WillOnce(Return(FILTER_L_MAX[static_cast<uint8_t>(encoders->getMachineType())]));
   encoders->encA_interrupt();
   ASSERT_EQ(encoders->getPosition(), pos);
 }
@@ -279,7 +279,7 @@ TEST_F(EncodersTest, test_encA_falling_set_K_carriage_KH910) {
   EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_A)).WillOnce(Return(false));
   EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_B));
   EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_R))
-      .WillOnce(Return(FILTER_R_MIN[encoders->getMachineType()] - 1));
+      .WillOnce(Return(FILTER_R_MIN[static_cast<uint8_t>(encoders->getMachineType())] - 1));
   EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_C));
 
   encoders->encA_interrupt();
@@ -292,7 +292,7 @@ TEST_F(EncodersTest, test_encA_falling_not_at_end) {
   EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_B)).WillOnce(Return(false));
   EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_C));
   EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_L))
-      .WillOnce(Return(FILTER_R_MAX[encoders->getMachineType()] + 1));
+      .WillOnce(Return(FILTER_R_MAX[static_cast<uint8_t>(encoders->getMachineType())] + 1));
   encoders->encA_interrupt();
   ASSERT_EQ(encoders->getPosition(), 28);
 
@@ -300,7 +300,7 @@ TEST_F(EncodersTest, test_encA_falling_not_at_end) {
   EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_A)).WillOnce(Return(false));
   EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_B)).WillOnce(Return(false));
   EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_R))
-      .WillOnce(Return(FILTER_R_MAX[encoders->getMachineType()]));
+      .WillOnce(Return(FILTER_R_MAX[static_cast<uint8_t>(encoders->getMachineType())]));
   encoders->encA_interrupt();
   ASSERT_EQ(encoders->getPosition(), 28);
 }
