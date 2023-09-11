@@ -399,7 +399,6 @@ void Knitter::reqLine(uint8_t lineNumber) {
  */
 bool Knitter::calculatePixelAndSolenoid() {
   uint8_t startOffset = 0;
-  bool success = true;
 
   switch (m_direction) {
   // calculate the solenoid and pixel to be set
@@ -424,7 +423,7 @@ bool Knitter::calculatePixelAndSolenoid() {
         m_solenoidToSet = m_solenoidToSet + 3;
       }
     } else {
-      success = false;
+      return false;
     }
     break;
 
@@ -447,15 +446,14 @@ bool Knitter::calculatePixelAndSolenoid() {
         m_solenoidToSet = m_solenoidToSet + 3;
       }
     } else {
-      success = false;
+      return false;
     }
     break;
 
   default:
-    success = false;
-    break;
+    return false;
   }
-  return success;
+  return true;
 }
 
 /*!
