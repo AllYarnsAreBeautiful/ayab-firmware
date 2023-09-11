@@ -180,7 +180,7 @@ TEST_F(ComTest, test_reqstart_success_KH910) {
 }
 
 TEST_F(ComTest, test_reqstart_success_KH270) {
-  reqInit(Machine_t::h270);
+  reqInit(Machine_t::Kh270);
   uint8_t buffer[] = {reqStart_msgid, 0, 10, 1, 0x36};
   EXPECT_CALL(*knitterMock, startKnitting);
   expected_write_onPacketReceived(buffer, sizeof(buffer), false);
