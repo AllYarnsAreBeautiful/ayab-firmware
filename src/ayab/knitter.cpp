@@ -328,11 +328,11 @@ Machine_t Knitter::getMachineType() {
  */
 uint8_t Knitter::getStartOffset(const Direction_t direction) {
   if ((direction == NoDirection) || (direction >= NUM_DIRECTIONS) ||
-      (m_carriage == NoCarriage) || (m_carriage >= NUM_CARRIAGES) ||
+      (m_carriage == Carriage_t::NoCarriage)
       (m_machineType == Machine_t::NoMachine)) {
     return 0U;
   }
-  return START_OFFSET[static_cast<uint8_t>(m_machineType)][direction][m_carriage];
+  return START_OFFSET[static_cast<uint8_t>(m_machineType)][direction][static_cast<uint8_t>(m_carriage)];
 }
 
 /*!
@@ -407,7 +407,7 @@ bool Knitter::calculatePixelAndSolenoid() {
       } else if (BeltShift::Shifted == m_beltShift) {
         m_solenoidToSet = (m_position - HALF_SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)]) % SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];
       }
-      if (Lace == m_carriage) {
+      if (Carriage_t::Lace == m_carriage) {
         m_pixelToSet = m_pixelToSet + HALF_SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];
       }
     } else {
