@@ -333,7 +333,7 @@ void Com::h_reqTest(const uint8_t *buffer, size_t size) const {
 /*!
  * \brief Handle unrecognized command.
  */
-void Com::h_unrecognized() {
+void Com::h_unrecognized() const {
   // do nothing
 }
 // GCOVR_EXCL_STOP
