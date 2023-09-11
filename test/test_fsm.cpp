@@ -86,7 +86,7 @@ protected:
     expect_knitter_init();
     knitter->init();
     knitter->setMachineType(Machine_t::Kh910);
-    expected_isr(NoDirection, NoDirection, 0);
+    expected_isr(Direction_t::NoDirection, Direction_t::NoDirection, 0);
   }
 
   void TearDown() override {
@@ -234,17 +234,17 @@ TEST_F(FsmTest, test_dispatch_init) {
   ASSERT_EQ(fsm->getState(), OpState::init);
 
   // no transition to state `OpState::ready`
-  expected_isr(Left, Left, 0);
+  expected_isr(Direction_t::Left, Direction_t::Left, 0);
   expected_dispatch_init();
   ASSERT_TRUE(fsm->getState() == OpState::init);
 
   // no transition to state `OpState::ready`
-  expected_isr(Right, Right, 0);
+  expected_isr(Direction_t::Right, Direction_t::Right, 0);
   expected_dispatch_init();
   ASSERT_TRUE(fsm->getState() == OpState::init);
 
   // transition to state `OpState::ready`
-  expected_isr(Left, Right, positionPassedRight);
+  expected_isr(Direction_t::Left, Direction_t::Right, positionPassedRight);
   expect_get_ready();
   expected_dispatch();
   ASSERT_EQ(fsm->getState(), OpState::ready);
@@ -254,7 +254,7 @@ TEST_F(FsmTest, test_dispatch_init) {
   expected_dispatch_ready();
 
   // transition to state `OpState::ready`
-  expected_isr(Right, Left, positionPassedLeft);
+  expected_isr(Direction_t::Right, Direction_t::Left, positionPassedLeft);
   expect_get_ready();
   expected_dispatch();
   ASSERT_TRUE(fsm->getState() == OpState::ready);
