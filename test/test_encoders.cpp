@@ -34,7 +34,7 @@ class EncodersTest : public ::testing::Test {
 protected:
   void SetUp() override {
     arduinoMock = arduinoMockInstance();
-    encoders->init(Kh910);
+    encoders->init(Machine_t::Kh910);
   }
 
   void TearDown() override {
@@ -66,7 +66,7 @@ TEST_F(EncodersTest, test_encA_rising_not_in_front) {
 }
 
 TEST_F(EncodersTest, test_encA_rising_in_front_notKH270) {
-  ASSERT_FALSE(encoders->getMachineType() == Kh270);
+  ASSERT_FALSE(encoders->getMachineType() == Machine_t::Kh270);
   ASSERT_EQ(encoders->getCarriage(), NoCarriage);
   // We should not enter the falling function
   EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_R)).Times(0);
@@ -98,7 +98,7 @@ TEST_F(EncodersTest, test_encA_rising_in_front_notKH270) {
 
 TEST_F(EncodersTest, test_encA_rising_in_front_KH270) {
   encoders->init(Kh270);
-  ASSERT_TRUE(encoders->getMachineType() == Kh270);
+  ASSERT_TRUE(encoders->getMachineType() == Machine_t::Kh270);
   // We should not enter the falling function
   EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_R)).Times(0);
   // Create a rising edge
@@ -266,7 +266,7 @@ TEST_F(EncodersTest, test_encA_falling_at_end) {
 
 // requires FILTER_R_MIN != 0
 TEST_F(EncodersTest, test_encA_falling_set_K_carriage_KH910) {
-  ASSERT_TRUE(encoders->getMachineType() == Kh910);
+  ASSERT_TRUE(encoders->getMachineType() == Machine_t::Kh910);
 
   // Create a rising edge
   EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_A)).WillOnce(Return(true));
@@ -332,13 +332,13 @@ TEST_F(EncodersTest, test_getCarriage) {
 
 TEST_F(EncodersTest, test_getMachineType) {
   Machine_t m = encoders->getMachineType();
-  ASSERT_EQ(m, Kh910);
+  ASSERT_EQ(m, Machine_t::Kh910);
 }
 
 TEST_F(EncodersTest, test_init) {
-  encoders->init(Kh270);
+  encoders->init(Machine_t::Kh270);
   Machine_t m = encoders->getMachineType();
-  ASSERT_EQ(m, Kh270);
+  ASSERT_EQ(m, Machine_t::Kh270);
 }
 
 TEST_F(EncodersTest, test_getHallValue) {
