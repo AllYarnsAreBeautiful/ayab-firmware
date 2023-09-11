@@ -63,6 +63,8 @@ constexpr uint8_t END_LEFT[NUM_MACHINES] = {0U, 0U, 0U};
 constexpr uint8_t END_RIGHT[NUM_MACHINES] = {255U, 255U, 140U};
 constexpr uint8_t END_OFFSET[NUM_MACHINES] = {28U, 28U, 5U};
 
+// The following two arrays are created by combining, respectively,
+// the arrays END_LEFT and END_RIGHT with END_OFFSET
 constexpr uint8_t END_LEFT_PLUS_OFFSET[NUM_MACHINES] = {28U, 28U, 5U};
 constexpr uint8_t END_RIGHT_MINUS_OFFSET[NUM_MACHINES] = {227U, 227U, 135U};
 
