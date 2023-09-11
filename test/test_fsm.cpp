@@ -49,8 +49,8 @@ extern SolenoidsMock *solenoids;
 extern TesterMock *tester;
 
 // Defaults for position
-const uint8_t positionPassedLeft = (END_LEFT_PLUS_OFFSET[Kh910] + GARTER_SLOP) + 1;
-const uint8_t positionPassedRight = (END_RIGHT_MINUS_OFFSET[Kh910] - GARTER_SLOP) - 1;
+const uint8_t positionPassedLeft = (END_LEFT_PLUS_OFFSET[static_cast<uint8_t>(Machine_t::Kh910)] + GARTER_SLOP) + 1;
+const uint8_t positionPassedRight = (END_RIGHT_MINUS_OFFSET[static_cast<uint8_t>(Machine_t::Kh910)] - GARTER_SLOP) - 1;
 
 class FsmTest : public ::testing::Test {
 protected:
@@ -85,7 +85,7 @@ protected:
     // ASSERT_TRUE(fsm->getState() == OpState::init);
     expect_knitter_init();
     knitter->init();
-    knitter->setMachineType(Kh910);
+    knitter->setMachineType(Machine_t::Kh910);
     expected_isr(NoDirection, NoDirection, 0);
   }
 
