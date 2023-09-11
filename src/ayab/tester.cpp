@@ -109,7 +109,7 @@ void Tester::setAllCmd(const uint8_t *buffer, size_t size) {
   GlobalSolenoids::setSolenoids(solenoidState);
 }
 
-/*!  // G COVR_EXCL_LINE
+/*!
  * \brief Read EOL sensors command handler.
  */
 void Tester::readEOLsensorsCmd() {

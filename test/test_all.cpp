@@ -54,6 +54,6 @@ SolenoidsInterface *GlobalSolenoids::m_instance = solenoids;
 TesterInterface *GlobalTester::m_instance = tester;
 
 int main(int argc, char *argv[]) {
-  ::testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
+  ::testing::InitGoogleMock(&argc, argv);
+	return RUN_ALL_TESTS();
 }
