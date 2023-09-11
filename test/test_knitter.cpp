@@ -300,7 +300,7 @@ TEST_F(KnitterTest, test_startKnitting_invalidMachine) {
 
 TEST_F(KnitterTest, test_startKnitting_notReady) {
   uint8_t pattern[] = {1};
-  ASSERT_TRUE(knitter->startKnitting(0, NUM_NEEDLES[Kh910] - 1, pattern,
+  ASSERT_TRUE(knitter->startKnitting(0, NUM_NEEDLES[static_cast<uint8_t>(Machine_t::Kh910)] - 1, pattern,
                                      false) != ErrorCode::SUCCESS);
 
   // test expectations without destroying instance
@@ -524,7 +524,7 @@ TEST_F(KnitterTest, test_knit_lastLine) {
 }
 
 TEST_F(KnitterTest, test_knit_lastLine_and_no_req) {
-  get_to_knit(Kh910);
+  get_to_knit(Machine_t::Kh910);
 
   // Note: probing private data and methods to get full branch coverage.
   knitter->m_stopNeedle = 100;
@@ -674,10 +674,8 @@ TEST_F(KnitterTest, test_getStartOffset) {
   ASSERT_EQ(knitter->getStartOffset(Right), 0);
 
   knitter->m_carriage = Lace;
-  knitter->m_machineType = NoMachine;
+  knitter->m_machineType = Machine_t::NoMachine;
   ASSERT_EQ(knitter->getStartOffset(Left), 0);
-
-  knitter->m_machineType = NUM_MACHINES;
   ASSERT_EQ(knitter->getStartOffset(Right), 0);
 
   // test expectations without destroying instance
