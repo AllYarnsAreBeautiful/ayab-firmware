@@ -31,7 +31,8 @@
 enum class Direction { 
   NoDirection = -1, 
   Left = 0, 
-  Right = 1}
+  Right = 1
+};
 constexpr uint8_t NUM_DIRECTIONS = 2;
 using Direction_t = enum Direction;
 
