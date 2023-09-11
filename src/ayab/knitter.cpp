@@ -217,9 +217,9 @@ bool Knitter::isReady() {
   }
 
   bool passedLeft = (Right == m_direction) && (Left == m_lastHall) &&
-        (m_position > (END_LEFT[m_machineType] + END_OFFSET[m_machineType] + GARTER_SLOP));
+        (m_position > (END_LEFT_PLUS_OFFSET[m_machineType] + GARTER_SLOP));
   bool passedRight = (Left == m_direction) && (Right == m_lastHall) &&
-        (m_position < (END_RIGHT[m_machineType] - END_OFFSET[m_machineType] - GARTER_SLOP));
+        (m_position < (END_RIGHT_MINUS_OFFSET[m_machineType] - GARTER_SLOP));
   // Machine is initialized when left Hall sensor is passed in Right direction
   // New feature (August 2020): the machine is also initialized
   // when the right Hall sensor is passed in Left direction.

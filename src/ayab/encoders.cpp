@@ -156,7 +156,7 @@ void Encoders::encA_rising() {
     m_hallActive = Left;
 
     Carriage detected_carriage = NoCarriage;
-    uint8_t start_position = END_LEFT[m_machineType] + END_OFFSET[m_machineType];
+    uint8_t start_position = END_LEFT_PLUS_OFFSET[m_machineType];
 
     if (hallValue >= FILTER_L_MIN[m_machineType]) {
       detected_carriage = Knit;
@@ -230,6 +230,6 @@ void Encoders::encA_falling() {
     m_beltShift = digitalRead(ENC_PIN_C) != 0 ? BeltShift::Shifted : BeltShift::Regular;
 
     // Known position of the carriage -> overwrite position
-    m_position = END_RIGHT[m_machineType] - END_OFFSET[m_machineType];
+    m_position = END_RIGHT_MINUS_OFFSET[m_machineType];
   }
 }
