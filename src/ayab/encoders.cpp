@@ -73,7 +73,7 @@ void Encoders::init(Machine_t machineType) {
   m_direction = NoDirection;
   m_hallActive = NoDirection;
   m_beltShift = BeltShift::Unknown;
-  m_carriage = NoCarriage;
+  m_carriage = Carriage_t::NoCarriage;
   m_oldState = false;
 }
 
@@ -140,12 +140,12 @@ void Encoders::encA_rising() {
   // The garter carriage has a second set of magnets that are going to
   // pass the sensor and will reset state incorrectly if allowed to
   // continue.
-  if (m_carriage == Garter) {
+  if (m_carriage == Carriage_t::Garter) {
     return;
   }
 
   // If the carriage is already set, ignore the rest.
-  if ((m_carriage == Knit) && (m_machineType == Machine_t::Kh270)) {
+  if ((m_carriage == Carriage_t::Knit) && (m_machineType == Machine_t::Kh270)) {
     return;
   }
 
@@ -155,26 +155,26 @@ void Encoders::encA_rising() {
       (hallValue > FILTER_L_MAX[static_cast<uint8_t>(m_machineType)])) {
     m_hallActive = Left;
 
-    Carriage detected_carriage = NoCarriage;
+    Carriage detected_carriage = Carriage_t::NoCarriage;
     uint8_t start_position = END_LEFT_PLUS_OFFSET[static_cast<uint8_t>(m_machineType)];
 
     if (hallValue >= FILTER_L_MIN[static_cast<uint8_t>(m_machineType)]) {
-      detected_carriage = Knit;
+      detected_carriage = Carriage_t::Knit;
     } else {
-      detected_carriage = Lace;
+      detected_carriage = Carriage_t::Lace;
     }
 
     if (m_machineType == Machine_t::Kh270) {
-      m_carriage = Knit;
+      m_carriage = Carriage_t::Knit;
 
       // The first magnet on the carriage looks like Lace, the second looks like Knit
-      if (detected_carriage == Knit) {
+      if (detected_carriage == Carriage_t::Knit) {
         start_position = start_position + MAGNET_DISTANCE_270;
       }
-    } else if (m_carriage == NoCarriage) {
+    } else if (m_carriage == Carriage_t::NoCarriage) {
       m_carriage = detected_carriage;
     } else if (m_carriage != detected_carriage && m_position > start_position) {
-      m_carriage = Garter;
+      m_carriage = Carriage_t::Garter;
 
       // Belt shift and start position were set when the first magnet passed
       // the sensor and we assumed we were working with a standard carriage.
@@ -222,8 +222,8 @@ void Encoders::encA_falling() {
     // The garter carriage has a second set of magnets that are going to
     // pass the sensor and will reset state incorrectly if allowed to
     // continue.
-    if (hallValueSmall && (m_carriage != Garter)) {
-      m_carriage = Knit;
+    if (hallValueSmall && (m_carriage != Carriage_t::Garter)) {
+      m_carriage = Carriage_t::Knit;
     }
 
     // Belt shift signal only decided in front of hall sensor
