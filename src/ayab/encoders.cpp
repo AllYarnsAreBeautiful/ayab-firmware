@@ -203,7 +203,7 @@ void Encoders::encA_falling() {
   m_direction = digitalRead(ENC_PIN_B) ? Direction_t::Left : Direction_t::Right;
 
   // Update carriage position
-  if ((Left == m_direction) && (m_position > END_LEFT[static_cast<uint8_t>(m_machineType)])) {
+  if ((Direction_t::Left == m_direction) && (m_position > END_LEFT[static_cast<uint8_t>(m_machineType)])) {
     m_position = m_position - 1;
   }
 
