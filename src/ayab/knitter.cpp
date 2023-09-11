@@ -254,11 +254,9 @@ void Knitter::knit() {
   // TODO(who?): check if debounce is needed
   bool state = digitalRead(DBG_BTN_PIN);
 
-  if (m_prevState && !state) {
-    if (!m_lineRequested) {
+  if (m_prevState && !state && !m_lineRequested) {
       ++m_currentLineNumber;
       reqLine(m_currentLineNumber);
-    }
   }
   m_prevState = state;
 #else
@@ -336,7 +334,6 @@ uint8_t Knitter::getStartOffset(const Direction_t direction) {
   if ((direction == NoDirection) || (direction >= NUM_DIRECTIONS) ||
       (m_carriage == NoCarriage) || (m_carriage >= NUM_CARRIAGES) ||
       (m_machineType == NoMachine) || (m_machineType >= NUM_MACHINES)) {
-    // TODO(TP): return error state?
     return 0U;
   }
   return START_OFFSET[m_machineType][direction][m_carriage];
@@ -345,9 +342,9 @@ uint8_t Knitter::getStartOffset(const Direction_t direction) {
 /*!
  * \brief Set line number of next row to be knitted.
  * \param lineNumber Line number (0-indexed and modulo 256).
+ * \return `true` if successful, `false` otherwise.
  */
 bool Knitter::setNextLine(uint8_t lineNumber) {
-  bool success = false;
   if (m_lineRequested) {
     // Is there even a need for a new line?
     if (lineNumber == m_currentLineNumber) {
@@ -357,13 +354,13 @@ bool Knitter::setNextLine(uint8_t lineNumber) {
       if (m_machineType != Kh270) {
         GlobalBeeper::finishedLine();
       }
-      success = true;
+      return true;
     } else {
       // line numbers didn't match -> request again
       reqLine(m_currentLineNumber);
     }
   }
-  return success;
+  return false;
 }
 
 /*!
@@ -395,7 +392,7 @@ void Knitter::reqLine(uint8_t lineNumber) {
 
 /*!
  * \brief Calculate the solenoid and pixel to be set.
- * \param `true` if successful, `false` otherwise.
+ * \return `true` if successful, `false` otherwise.
  */
 bool Knitter::calculatePixelAndSolenoid() {
   uint8_t startOffset = 0;
