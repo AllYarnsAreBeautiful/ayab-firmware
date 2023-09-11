@@ -54,9 +54,9 @@ void Encoders::encA_interrupt() {
  */
 uint16_t Encoders::getHallValue(Direction_t pSensor) {
   switch (pSensor) {
-  case Left:
+  case Direction_t::Left:
     return analogRead(EOL_PIN_L);
-  case Right:
+  case Direction_t::Right:
     return analogRead(EOL_PIN_R);
   default:
     return 0;
@@ -70,8 +70,8 @@ uint16_t Encoders::getHallValue(Direction_t pSensor) {
 void Encoders::init(Machine_t machineType) {
   m_machineType = machineType;
   m_position = 0U;
-  m_direction = NoDirection;
-  m_hallActive = NoDirection;
+  m_direction = Direction_t::NoDirection;
+  m_hallActive = Direction_t::NoDirection;
   m_beltShift = BeltShift::Unknown;
   m_carriage = Carriage_t::NoCarriage;
   m_oldState = false;
@@ -130,7 +130,7 @@ Machine_t Encoders::getMachineType() {
  */
 void Encoders::encA_rising() {
   // Update direction
-  m_direction = digitalRead(ENC_PIN_B) != 0 ? Right : Left;
+  m_direction = digitalRead(ENC_PIN_B) != 0 ? Direction_t::Right : Direction_t::Left;
 
   // Update carriage position
   if ((Right == m_direction) && (m_position < END_RIGHT[static_cast<uint8_t>(m_machineType)])) {
@@ -200,7 +200,7 @@ void Encoders::encA_rising() {
  */
 void Encoders::encA_falling() {
   // Update direction
-  m_direction = digitalRead(ENC_PIN_B) ? Left : Right;
+  m_direction = digitalRead(ENC_PIN_B) ? Direction_t::Left : Direction_t::Right;
 
   // Update carriage position
   if ((Left == m_direction) && (m_position > END_LEFT[static_cast<uint8_t>(m_machineType)])) {
