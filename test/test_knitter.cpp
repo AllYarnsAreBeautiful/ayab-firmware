@@ -127,11 +127,11 @@ protected:
   }
 
   void expect_isr(Direction_t dir, Direction_t hall) {
-    expect_isr(1, dir, hall, BeltShift::Regular, Knit);
+    expect_isr(1, dir, hall, BeltShift::Regular, Carriage_t::Knit);
   }
 
   void expected_isr(uint8_t pos, Direction_t dir, Direction_t hall) {
-    expect_isr(pos, dir, hall, BeltShift::Regular, Knit);
+    expect_isr(pos, dir, hall, BeltShift::Regular, Carriage_t::Knit);
     knitter->isr();
   }
 
@@ -141,7 +141,7 @@ protected:
   }
 
   void expect_isr(uint16_t pos) {
-    expect_isr(pos, Right, Left, BeltShift::Regular, Garter);
+    expect_isr(pos, Right, Left, BeltShift::Regular, Carriage_t::Garter);
   }
 
   void expected_isr(uint16_t pos) {
@@ -398,7 +398,7 @@ TEST_F(KnitterTest, test_knit_Kh910) {
   expected_dispatch_knit(false);
 
   // no useful position calculated by `calculatePixelAndSolenoid()`
-  expected_isr(100, NoDirection, Right, BeltShift::Shifted, Knit);
+  expected_isr(100, NoDirection, Right, BeltShift::Shifted, Carriage_t::Knit);
   EXPECT_CALL(*solenoidsMock, setSolenoid).Times(0);
   expect_indState();
   expected_dispatch_knit(false);
@@ -448,7 +448,7 @@ TEST_F(KnitterTest, test_knit_Kh270) {
   expected_dispatch_knit(false);
 
   // no useful position calculated by `calculatePixelAndSolenoid()`
-  expected_isr(60, NoDirection, Right, BeltShift::Shifted, Knit);
+  expected_isr(60, NoDirection, Right, BeltShift::Shifted, Carriage_t::Knit);
   EXPECT_CALL(*solenoidsMock, setSolenoid).Times(0);
   expect_indState();
   expected_dispatch_knit(false);
@@ -545,7 +545,7 @@ TEST_F(KnitterTest, test_knit_lastLine_and_no_req) {
   knitter->knit();
 
   ASSERT_EQ(knitter->getStartOffset(NUM_DIRECTIONS), 0);
-  knitter->m_carriage = NUM_CARRIAGES;
+  knitter->m_carriage = Carriage_t::NoCarriage;
   ASSERT_EQ(knitter->getStartOffset(Right), 0);
 
   // test expectations without destroying instance
@@ -607,50 +607,50 @@ TEST_F(KnitterTest, test_calculatePixelAndSolenoid) {
   expected_dispatch_init();
 
   // new position, different beltShift and active hall
-  expected_isr(100, Right, Right, BeltShift::Shifted, Lace);
+  expected_isr(100, Right, Right, BeltShift::Shifted, Carriage_t::Lace);
   expected_dispatch_test();
 
   // no direction, need to change position to enter test
-  expected_isr(101, NoDirection, Right, BeltShift::Shifted, Lace);
+  expected_isr(101, NoDirection, Right, BeltShift::Shifted, Carriage_t::Lace);
   expected_dispatch_test();
 
   // no belt, need to change position to enter test
-  expected_isr(100, Right, Right, BeltShift::Unknown, Lace);
+  expected_isr(100, Right, Right, BeltShift::Unknown, Carriage_t::Lace);
   expected_dispatch_test();
 
   // no belt on left side, need to change position to enter test
-  expected_isr(101, Left, Right, BeltShift::Unknown, Garter);
+  expected_isr(101, Left, Right, BeltShift::Unknown, Carriage_t::Garter);
   expected_dispatch_test();
 
   // left Lace carriage
-  expected_isr(100, Left, Right, BeltShift::Unknown, Lace);
+  expected_isr(100, Left, Right, BeltShift::Unknown, Carriage_t::Lace);
   expected_dispatch_test();
 
   // regular belt on left, need to change position to enter test
-  expected_isr(101, Left, Right, BeltShift::Regular, Garter);
+  expected_isr(101, Left, Right, BeltShift::Regular, Carriage_t::Garter);
   expected_dispatch_test();
 
   // shifted belt on left, need to change position to enter test
-  expected_isr(100, Left, Right, BeltShift::Shifted, Garter);
+  expected_isr(100, Left, Right, BeltShift::Shifted, Carriage_t::Garter);
   expected_dispatch_test();
 
   // off of right end, position is changed
-  expected_isr(END_RIGHT[static_cast<uint8_t>(Machine_t::Kh910)], Left, Right, BeltShift::Unknown, Lace);
+  expected_isr(END_RIGHT[static_cast<uint8_t>(Machine_t::Kh910)], Left, Right, BeltShift::Unknown, Carriage_t::Lace);
   expected_dispatch_test();
 
   // direction right, have not reached offset
-  expected_isr(39, Right, Left, BeltShift::Unknown, Lace);
+  expected_isr(39, Right, Left, BeltShift::Unknown, Carriage_t::Lace);
   expected_dispatch_test();
 
   // KH270
   knitter->setMachineType(Machine_t::Kh270);
 
   // K carriage direction left
-  expected_isr(0, Left, Right, BeltShift::Regular, Knit);
+  expected_isr(0, Left, Right, BeltShift::Regular, Carriage_t::Knit);
   expected_dispatch_test();
 
   // K carriage direction right
-  expected_isr(END_RIGHT[static_cast<uint8_t>(Machine_t::Kh270)], Right, Left, BeltShift::Regular, Knit);
+  expected_isr(END_RIGHT[static_cast<uint8_t>(Machine_t::Kh270)], Right, Left, BeltShift::Regular, Carriage_t::Knit);
   expected_dispatch_test();
 
   // test expectations without destroying instance
@@ -662,18 +662,16 @@ TEST_F(KnitterTest, test_calculatePixelAndSolenoid) {
 
 TEST_F(KnitterTest, test_getStartOffset) {
   // out of range values
-  knitter->m_carriage = Knit;
+  knitter->m_carriage = Carriage_t::Knit;
   ASSERT_EQ(knitter->getStartOffset(NoDirection), 0);
 
   ASSERT_EQ(knitter->getStartOffset(NUM_DIRECTIONS), 0);
 
-  knitter->m_carriage = NoCarriage;
+  knitter->m_carriage = Carriage_t::NoCarriage;
   ASSERT_EQ(knitter->getStartOffset(Left), 0);
-
-  knitter->m_carriage = NUM_CARRIAGES;
   ASSERT_EQ(knitter->getStartOffset(Right), 0);
 
-  knitter->m_carriage = Lace;
+  knitter->m_carriage = Carriage_t::Lace;
   knitter->m_machineType = Machine_t::NoMachine;
   ASSERT_EQ(knitter->getStartOffset(Left), 0);
   ASSERT_EQ(knitter->getStartOffset(Right), 0);
