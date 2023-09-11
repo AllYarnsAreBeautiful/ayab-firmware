@@ -77,7 +77,7 @@ protected:
     // `setUp()` must have been called to reach `millis()`
     EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(t));
 
-    ASSERT_TRUE(tester->startTest(Kh930) == ErrorCode::SUCCESS);
+    ASSERT_TRUE(tester->startTest(Machine_t::Kh930) == ErrorCode::SUCCESS);
   }
 
   void expect_write(bool once) {
