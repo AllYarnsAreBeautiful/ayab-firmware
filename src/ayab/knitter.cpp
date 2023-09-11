@@ -158,7 +158,7 @@ Err_t Knitter::startKnitting(uint8_t startNeedle,
   if (pattern_start == nullptr) {
     return ErrorCode::ERR_NULL_POINTER_ARGUMENT;
   }
-  if (startNeedle >= stopNeedle || stopNeedle >= NUM_NEEDLES[m_machineType]) {
+  if ((startNeedle >= stopNeedle) || (stopNeedle >= NUM_NEEDLES[m_machineType])) {
     return ErrorCode::ERR_NEEDLE_VALUE_INVALID;
   }
 
@@ -410,7 +410,7 @@ bool Knitter::calculatePixelAndSolenoid() {
     if (m_position >= startOffset) {
       m_pixelToSet = m_position - startOffset;
 
-      if (BeltShift::Regular == m_beltShift || m_machineType == Kh270) {
+      if ((BeltShift::Regular == m_beltShift) || (m_machineType == Kh270)) {
         m_solenoidToSet = m_position % SOLENOIDS_NUM[m_machineType];
       } else if (BeltShift::Shifted == m_beltShift) {
         m_solenoidToSet = (m_position - HALF_SOLENOIDS_NUM[m_machineType]) % SOLENOIDS_NUM[m_machineType];
@@ -433,7 +433,7 @@ bool Knitter::calculatePixelAndSolenoid() {
     if (m_position <= (END_RIGHT[m_machineType] - startOffset)) {
       m_pixelToSet = m_position - startOffset;
 
-      if (BeltShift::Regular == m_beltShift || m_machineType == Kh270) {
+      if ((BeltShift::Regular == m_beltShift) || (m_machineType == Kh270)) {
         m_solenoidToSet = (m_position + HALF_SOLENOIDS_NUM[m_machineType]) % SOLENOIDS_NUM[m_machineType];
       } else if (BeltShift::Shifted == m_beltShift) {
         m_solenoidToSet = m_position % SOLENOIDS_NUM[m_machineType];
