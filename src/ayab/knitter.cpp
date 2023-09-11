@@ -398,7 +398,7 @@ bool Knitter::calculatePixelAndSolenoid() {
   // implemented according to machine manual
   // magic numbers from machine manual
   case Direction_t::Right:
-    startOffset = getStartOffset(Left);
+    startOffset = getStartOffset(Direction_t::Left);
     if (m_position >= startOffset) {
       m_pixelToSet = m_position - startOffset;
 
@@ -416,7 +416,7 @@ bool Knitter::calculatePixelAndSolenoid() {
     break;
 
   case Direction_t::Left:
-    startOffset = getStartOffset(Right);
+    startOffset = getStartOffset(Direction_t::Right);
     if (m_position <= (END_RIGHT[static_cast<uint8_t>(m_machineType)] - startOffset)) {
       m_pixelToSet = m_position - startOffset;
 
