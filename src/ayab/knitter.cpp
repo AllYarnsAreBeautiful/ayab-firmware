@@ -414,11 +414,6 @@ bool Knitter::calculatePixelAndSolenoid() {
       if (Lace == m_carriage) {
         m_pixelToSet = m_pixelToSet + HALF_SOLENOIDS_NUM[m_machineType];
       }
-
-      // The 270 has 12 solenoids but they get shifted over 3 bits
-      if (m_machineType == Kh270) {
-        m_solenoidToSet = m_solenoidToSet + 3;
-      }
     } else {
       return false;
     }
@@ -437,11 +432,6 @@ bool Knitter::calculatePixelAndSolenoid() {
       if (Lace == m_carriage) {
         m_pixelToSet = m_pixelToSet - SOLENOIDS_NUM[m_machineType];
       }
-
-      // The 270 has 12 solenoids but they get shifted over 3 bits
-      if (m_machineType == Kh270) {
-        m_solenoidToSet = m_solenoidToSet + 3;
-      }
     } else {
       return false;
     }
@@ -449,6 +439,10 @@ bool Knitter::calculatePixelAndSolenoid() {
 
   default:
     return false;
+  }
+  // The 270 has 12 solenoids but they get shifted over 3 bits
+  if (m_machineType == Kh270) {
+    m_solenoidToSet = m_solenoidToSet + 3;
   }
   return true;
 }
