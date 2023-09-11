@@ -274,7 +274,7 @@ void Com::h_cnfLine(const uint8_t *buffer, size_t size) {
   }
 
   uint8_t lineNumber = buffer[1];
-  /* uint8_t color = buffer[2];  // currently unused */
+  /* uint8_t color = buffer[2];  */ // currently unused
   uint8_t flags = buffer[3];
 
   for (uint8_t i = 0U; i < lenLineBuffer; i++) {
@@ -333,7 +333,7 @@ void Com::h_reqTest(const uint8_t *buffer, size_t size) const {
 /*!
  * \brief Handle unrecognized command.
  */
-void Com::h_unrecognized() {
+void Com::h_unrecognized() const {
   // do nothing
 }
 // GCOVR_EXCL_STOP
