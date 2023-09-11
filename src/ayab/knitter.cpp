@@ -469,9 +469,5 @@ void Knitter::stopKnitting() const {
   GlobalBeeper::finishedLine();
 
   // detaching ENC_PIN_A, Interrupt #0
-  /*
-  // `digitalPinToInterrupt` macro not backported until Arduino !DE v.1.0.6
-  detachInterrupt(digitalPinToInterrupt(ENC_PIN_A));
-  */
-  // detachInterrupt(0);
+  /* detachInterrupt(digitalPinToInterrupt(ENC_PIN_A)); */
 }
