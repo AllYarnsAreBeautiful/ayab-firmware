@@ -81,13 +81,13 @@ void Tester::setSingleCmd(const uint8_t *buffer, size_t size) {
   }
   uint8_t solenoidNumber = buffer[1];
   if (solenoidNumber > 15) {
-    sprintf(buf, "Error: invalid solenoid index %i\n", solenoidNumber);
+    snprintf(buf, BUFFER_LEN, "Error: invalid solenoid index %i\n", solenoidNumber);
     GlobalCom::sendMsg(testRes_msgid, buf);
     return;
   }
   uint8_t solenoidState = buffer[2];
   if (solenoidState > 1) {
-    sprintf(buf, "Error: invalid solenoid value %i\n", solenoidState);
+    snprintf(buf, BUFFER_LEN, "Error: invalid solenoid value %i\n", solenoidState);
     GlobalCom::sendMsg(testRes_msgid, buf);
     return;
   }
@@ -203,11 +203,11 @@ void Tester::encoderAChange() {
 void Tester::setUp() {
   // Print welcome message
   GlobalCom::sendMsg(testRes_msgid, "AYAB Hardware Test, ");
-  sprintf(buf, "Firmware v%hhu", FW_VERSION_MAJ);
+  snprintf(buf, BUFFER_LEN, "Firmware v%hhu", FW_VERSION_MAJ);
   GlobalCom::sendMsg(testRes_msgid, buf);
-  sprintf(buf, ".%hhu", FW_VERSION_MIN);
+  snprintf(buf, BUFFER_LEN, ".%hhu", FW_VERSION_MIN);
   GlobalCom::sendMsg(testRes_msgid, buf);
-  sprintf(buf, " API v%hhu\n\n", API_VERSION);
+  snprintf(buf, BUFFER_LEN, " API v%hhu\n\n", API_VERSION);
   GlobalCom::sendMsg(testRes_msgid, buf);
   helpCmd();
 
@@ -253,10 +253,10 @@ void Tester::readEncoders() const {
  */
 void Tester::readEOLsensors() {
   auto hallSensor = static_cast<uint16_t>(analogRead(EOL_PIN_L));
-  sprintf(buf, "  EOL_L: %hu", hallSensor);
+  snprintf(buf, BUFFER_LEN, "  EOL_L: %hu", hallSensor);
   GlobalCom::sendMsg(testRes_msgid, buf);
   hallSensor = static_cast<uint16_t>(analogRead(EOL_PIN_R));
-  sprintf(buf, "  EOL_R: %hu", hallSensor);
+  snprintf(buf, BUFFER_LEN, "  EOL_R: %hu", hallSensor);
   GlobalCom::sendMsg(testRes_msgid, buf);
 }
 
