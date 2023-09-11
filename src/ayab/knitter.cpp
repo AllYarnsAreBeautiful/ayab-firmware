@@ -62,7 +62,7 @@ void Knitter::init() {
   // explicitly initialize members
 
   // job parameters
-  m_machineType = NoMachine;
+  m_machineType = Machine_t::NoMachine;
   m_startNeedle = 0U;
   m_stopNeedle = 0U;
   m_lineBuffer = nullptr;
@@ -123,13 +123,9 @@ Err_t Knitter::initMachine(Machine_t machineType) {
   if (GlobalFsm::getState() != OpState::wait_for_machine) {
     return ErrorCode::ERR_WRONG_MACHINE_STATE;
   }
-  if (machineType == NoMachine) {
+  if (machineType == Machine_t::NoMachine) {
     return ErrorCode::ERR_NO_MACHINE_TYPE;
   }
-  if (machineType >= NUM_MACHINES) {
-    return ErrorCode::ERR_MACHINE_TYPE_INVALID;
-  }
-
   m_machineType = machineType;
 
   GlobalEncoders::init(machineType);
@@ -158,7 +154,7 @@ Err_t Knitter::startKnitting(uint8_t startNeedle,
   if (pattern_start == nullptr) {
     return ErrorCode::ERR_NULL_POINTER_ARGUMENT;
   }
-  if ((startNeedle >= stopNeedle) || (stopNeedle >= NUM_NEEDLES[m_machineType])) {
+  if ((startNeedle >= stopNeedle) || (stopNeedle >= NUM_NEEDLES[static_cast<uint8_t>(m_machineType)])) {
     return ErrorCode::ERR_NEEDLE_VALUE_INVALID;
   }
 
@@ -217,9 +213,9 @@ bool Knitter::isReady() {
   }
 
   bool passedLeft = (Right == m_direction) && (Left == m_lastHall) &&
-        (m_position > (END_LEFT_PLUS_OFFSET[m_machineType] + GARTER_SLOP));
+        (m_position > (END_LEFT_PLUS_OFFSET[static_cast<uint8_t>(m_machineType)] + GARTER_SLOP));
   bool passedRight = (Left == m_direction) && (Right == m_lastHall) &&
-        (m_position < (END_RIGHT_MINUS_OFFSET[m_machineType] - GARTER_SLOP));
+        (m_position < (END_RIGHT_MINUS_OFFSET[static_cast<uint8_t>(m_machineType)] - GARTER_SLOP));
   // Machine is initialized when left Hall sensor is passed in Right direction
   // New feature (August 2020): the machine is also initialized
   // when the right Hall sensor is passed in Left direction.
@@ -292,8 +288,8 @@ void Knitter::knit() {
     m_workedOnLine = true;
   }
 
-  if (((m_pixelToSet < m_startNeedle - END_OF_LINE_OFFSET_L[m_machineType]) ||
-       (m_pixelToSet > m_stopNeedle + END_OF_LINE_OFFSET_R[m_machineType])) &&
+  if (((m_pixelToSet < m_startNeedle - END_OF_LINE_OFFSET_L[static_cast<uint8_t>(m_machineType)]) ||
+       (m_pixelToSet > m_stopNeedle + END_OF_LINE_OFFSET_R[static_cast<uint8_t>(m_machineType)])) &&
       m_workedOnLine) {
     // outside of the active needles and
     // already worked on the current line -> finished the line
@@ -333,7 +329,7 @@ Machine_t Knitter::getMachineType() {
 uint8_t Knitter::getStartOffset(const Direction_t direction) {
   if ((direction == NoDirection) || (direction >= NUM_DIRECTIONS) ||
       (m_carriage == NoCarriage) || (m_carriage >= NUM_CARRIAGES) ||
-      (m_machineType == NoMachine) || (m_machineType >= NUM_MACHINES)) {
+      (m_machineType == Machine_t::NoMachine)) {
     return 0U;
   }
   return START_OFFSET[m_machineType][direction][m_carriage];
@@ -350,8 +346,8 @@ bool Knitter::setNextLine(uint8_t lineNumber) {
     if (lineNumber == m_currentLineNumber) {
       m_lineRequested = false;
 
-      // Beeper is causing problems with flanking needles on the 270
-      if (m_machineType != Kh270) {
+      // FIXME: Beeper is causing problems with flanking needles on the 270
+      if (m_machineType != Machine_t::Kh270) {
         GlobalBeeper::finishedLine();
       }
       return true;
@@ -406,13 +402,13 @@ bool Knitter::calculatePixelAndSolenoid() {
     if (m_position >= startOffset) {
       m_pixelToSet = m_position - startOffset;
 
-      if ((BeltShift::Regular == m_beltShift) || (m_machineType == Kh270)) {
-        m_solenoidToSet = m_position % SOLENOIDS_NUM[m_machineType];
+      if ((BeltShift::Regular == m_beltShift) || (m_machineType == Machine_t::Kh270)) {
+        m_solenoidToSet = m_position % SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];
       } else if (BeltShift::Shifted == m_beltShift) {
-        m_solenoidToSet = (m_position - HALF_SOLENOIDS_NUM[m_machineType]) % SOLENOIDS_NUM[m_machineType];
+        m_solenoidToSet = (m_position - HALF_SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)]) % SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];
       }
       if (Lace == m_carriage) {
-        m_pixelToSet = m_pixelToSet + HALF_SOLENOIDS_NUM[m_machineType];
+        m_pixelToSet = m_pixelToSet + HALF_SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];
       }
     } else {
       return false;
@@ -421,16 +417,16 @@ bool Knitter::calculatePixelAndSolenoid() {
 
   case Left:
     startOffset = getStartOffset(Right);
-    if (m_position <= (END_RIGHT[m_machineType] - startOffset)) {
+    if (m_position <= (END_RIGHT[static_cast<uint8_t>(m_machineType)] - startOffset)) {
       m_pixelToSet = m_position - startOffset;
 
       if ((BeltShift::Regular == m_beltShift) || (m_machineType == Kh270)) {
-        m_solenoidToSet = (m_position + HALF_SOLENOIDS_NUM[m_machineType]) % SOLENOIDS_NUM[m_machineType];
+        m_solenoidToSet = (m_position + HALF_SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)]) % SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];
       } else if (BeltShift::Shifted == m_beltShift) {
-        m_solenoidToSet = m_position % SOLENOIDS_NUM[m_machineType];
+        m_solenoidToSet = m_position % SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];
       }
       if (Lace == m_carriage) {
-        m_pixelToSet = m_pixelToSet - SOLENOIDS_NUM[m_machineType];
+        m_pixelToSet = m_pixelToSet - SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];
       }
     } else {
       return false;
@@ -441,7 +437,7 @@ bool Knitter::calculatePixelAndSolenoid() {
     return false;
   }
   // The 270 has 12 solenoids but they get shifted over 3 bits
-  if (m_machineType == Kh270) {
+  if (m_machineType == Machine_t::Kh270) {
     m_solenoidToSet = m_solenoidToSet + 3;
   }
   return true;
