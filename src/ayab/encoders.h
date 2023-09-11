@@ -31,13 +31,13 @@
 enum Direction { NoDirection = -1, Left = 0, Right = 1, NUM_DIRECTIONS = 2 };
 using Direction_t = enum Direction;
 
-enum Carriage {
+enum class Carriage {
   NoCarriage = -1,
   Knit = 0,
   Lace = 1,
-  Garter = 2,
-  NUM_CARRIAGES = 3
+  Garter = 2
 };
+constexpr uint8_t NUM_CARRIAGES = 3;
 using Carriage_t = enum Carriage;
 
 enum class MachineType {
