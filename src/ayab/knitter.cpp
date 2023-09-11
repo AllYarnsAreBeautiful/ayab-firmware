@@ -88,16 +88,12 @@ void Knitter::init() {
  */
 void Knitter::setUpInterrupt() {
   // (re-)attach ENC_PIN_A(=2), interrupt #0
-  detachInterrupt(0);
+  detachInterrupt(digitalPinToInterrupt(ENC_PIN_A));
 #ifndef AYAB_TESTS
   // Attaching ENC_PIN_A, Interrupt #0
   // This interrupt cannot be enabled until
   // the machine type has been validated.
-  /*
-  // `digitalPinToInterrupt` macro not backported until Arduino IDE v.1.0.6
-  attachInterrupt(digitalPinToInterrupt(ENC_PIN_A), isr_wrapper, CHANGE);
-  */
-  attachInterrupt(0, GlobalKnitter::isr, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(ENC_PIN_A), GlobalKnitter::isr, CHANGE);
 #endif // AYAB_TESTS
 }
 
@@ -162,7 +158,7 @@ Err_t Knitter::startKnitting(uint8_t startNeedle,
   if (pattern_start == nullptr) {
     return ErrorCode::ERR_NULL_POINTER_ARGUMENT;
   }
-  if (startNeedle >= stopNeedle || stopNeedle >= NUM_NEEDLES[m_machineType]) {
+  if ((startNeedle >= stopNeedle) || (stopNeedle >= NUM_NEEDLES[m_machineType])) {
     return ErrorCode::ERR_NEEDLE_VALUE_INVALID;
   }
 
@@ -258,11 +254,9 @@ void Knitter::knit() {
   // TODO(who?): check if debounce is needed
   bool state = digitalRead(DBG_BTN_PIN);
 
-  if (m_prevState && !state) {
-    if (!m_lineRequested) {
+  if (m_prevState && !state && !m_lineRequested) {
       ++m_currentLineNumber;
       reqLine(m_currentLineNumber);
-    }
   }
   m_prevState = state;
 #else
@@ -340,7 +334,6 @@ uint8_t Knitter::getStartOffset(const Direction_t direction) {
   if ((direction == NoDirection) || (direction >= NUM_DIRECTIONS) ||
       (m_carriage == NoCarriage) || (m_carriage >= NUM_CARRIAGES) ||
       (m_machineType == NoMachine) || (m_machineType >= NUM_MACHINES)) {
-    // TODO(TP): return error state?
     return 0U;
   }
   return START_OFFSET[m_machineType][direction][m_carriage];
@@ -349,9 +342,9 @@ uint8_t Knitter::getStartOffset(const Direction_t direction) {
 /*!
  * \brief Set line number of next row to be knitted.
  * \param lineNumber Line number (0-indexed and modulo 256).
+ * \return `true` if successful, `false` otherwise.
  */
 bool Knitter::setNextLine(uint8_t lineNumber) {
-  bool success = false;
   if (m_lineRequested) {
     // Is there even a need for a new line?
     if (lineNumber == m_currentLineNumber) {
@@ -361,13 +354,13 @@ bool Knitter::setNextLine(uint8_t lineNumber) {
       if (m_machineType != Kh270) {
         GlobalBeeper::finishedLine();
       }
-      success = true;
+      return true;
     } else {
       // line numbers didn't match -> request again
       reqLine(m_currentLineNumber);
     }
   }
-  return success;
+  return false;
 }
 
 /*!
@@ -399,11 +392,10 @@ void Knitter::reqLine(uint8_t lineNumber) {
 
 /*!
  * \brief Calculate the solenoid and pixel to be set.
- * \param `true` if successful, `false` otherwise.
+ * \return `true` if successful, `false` otherwise.
  */
 bool Knitter::calculatePixelAndSolenoid() {
   uint8_t startOffset = 0;
-  bool success = true;
 
   switch (m_direction) {
   // calculate the solenoid and pixel to be set
@@ -414,7 +406,7 @@ bool Knitter::calculatePixelAndSolenoid() {
     if (m_position >= startOffset) {
       m_pixelToSet = m_position - startOffset;
 
-      if (BeltShift::Regular == m_beltShift || m_machineType == Kh270) {
+      if ((BeltShift::Regular == m_beltShift) || (m_machineType == Kh270)) {
         m_solenoidToSet = m_position % SOLENOIDS_NUM[m_machineType];
       } else if (BeltShift::Shifted == m_beltShift) {
         m_solenoidToSet = (m_position - HALF_SOLENOIDS_NUM[m_machineType]) % SOLENOIDS_NUM[m_machineType];
@@ -422,13 +414,8 @@ bool Knitter::calculatePixelAndSolenoid() {
       if (Lace == m_carriage) {
         m_pixelToSet = m_pixelToSet + HALF_SOLENOIDS_NUM[m_machineType];
       }
-
-      // The 270 has 12 solenoids but they get shifted over 3 bits
-      if (m_machineType == Kh270) {
-        m_solenoidToSet = m_solenoidToSet + 3;
-      }
     } else {
-      success = false;
+      return false;
     }
     break;
 
@@ -437,7 +424,7 @@ bool Knitter::calculatePixelAndSolenoid() {
     if (m_position <= (END_RIGHT[m_machineType] - startOffset)) {
       m_pixelToSet = m_position - startOffset;
 
-      if (BeltShift::Regular == m_beltShift || m_machineType == Kh270) {
+      if ((BeltShift::Regular == m_beltShift) || (m_machineType == Kh270)) {
         m_solenoidToSet = (m_position + HALF_SOLENOIDS_NUM[m_machineType]) % SOLENOIDS_NUM[m_machineType];
       } else if (BeltShift::Shifted == m_beltShift) {
         m_solenoidToSet = m_position % SOLENOIDS_NUM[m_machineType];
@@ -445,21 +432,19 @@ bool Knitter::calculatePixelAndSolenoid() {
       if (Lace == m_carriage) {
         m_pixelToSet = m_pixelToSet - SOLENOIDS_NUM[m_machineType];
       }
-
-      // The 270 has 12 solenoids but they get shifted over 3 bits
-      if (m_machineType == Kh270) {
-        m_solenoidToSet = m_solenoidToSet + 3;
-      }
     } else {
-      success = false;
+      return false;
     }
     break;
 
   default:
-    success = false;
-    break;
+    return false;
   }
-  return success;
+  // The 270 has 12 solenoids but they get shifted over 3 bits
+  if (m_machineType == Kh270) {
+    m_solenoidToSet = m_solenoidToSet + 3;
+  }
+  return true;
 }
 
 /*!
@@ -473,9 +458,5 @@ void Knitter::stopKnitting() const {
   GlobalBeeper::finishedLine();
 
   // detaching ENC_PIN_A, Interrupt #0
-  /*
-  // `digitalPinToInterrupt` macro not backported until Arduino !DE v.1.0.6
-  detachInterrupt(digitalPinToInterrupt(ENC_PIN_A));
-  */
-  // detachInterrupt(0);
+  /* detachInterrupt(digitalPinToInterrupt(ENC_PIN_A)); */
 }

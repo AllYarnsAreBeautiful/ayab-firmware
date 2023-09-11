@@ -52,4 +52,7 @@
 #define A6 6
 #define A7 7
 
+#define NOT_AN_INTERRUPT -1
+#define digitalPinToInterrupt(p)  ((p) == 2 ? 0 : ((p) == 3 ? 1 : NOT_AN_INTERRUPT))
+
 #endif  // ARDUINO_MOCK_H_
