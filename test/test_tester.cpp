@@ -71,7 +71,7 @@ protected:
   void expect_startTest(unsigned long t) {
     EXPECT_CALL(*fsmMock, getState).WillOnce(Return(OpState::ready));
     EXPECT_CALL(*fsmMock, setState(OpState::test));
-    EXPECT_CALL(*knitterMock, setMachineType(Kh930));
+    EXPECT_CALL(*knitterMock, setMachineType(Machine_t::Kh930));
     expect_write(false);
 
     // `setUp()` must have been called to reach `millis()`
