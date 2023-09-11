@@ -145,7 +145,7 @@ void Encoders::encA_rising() {
   }
 
   // If the carriage is already set, ignore the rest.
-  if ((m_carriage == Knit) && (m_machineType == Machine::Kh270)) {
+  if ((m_carriage == Knit) && (m_machineType == Machine_t::Kh270)) {
     return;
   }
 
@@ -164,7 +164,7 @@ void Encoders::encA_rising() {
       detected_carriage = Lace;
     }
 
-    if (m_machineType == Machine::Kh270) {
+    if (m_machineType == Machine_t::Kh270) {
       m_carriage = Knit;
 
       // The first magnet on the carriage looks like Lace, the second looks like Knit
