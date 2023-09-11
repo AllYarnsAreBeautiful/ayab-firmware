@@ -635,7 +635,7 @@ TEST_F(KnitterTest, test_calculatePixelAndSolenoid) {
   expected_dispatch_test();
 
   // off of right end, position is changed
-  expected_isr(END_RIGHT[Kh910], Left, Right, BeltShift::Unknown, Lace);
+  expected_isr(END_RIGHT[static_cast<uint8_t>(Machine_t::Kh910)], Left, Right, BeltShift::Unknown, Lace);
   expected_dispatch_test();
 
   // direction right, have not reached offset
@@ -650,7 +650,7 @@ TEST_F(KnitterTest, test_calculatePixelAndSolenoid) {
   expected_dispatch_test();
 
   // K carriage direction right
-  expected_isr(END_RIGHT[Kh270], Right, Left, BeltShift::Regular, Knit);
+  expected_isr(END_RIGHT[static_cast<uint8_t>(Machine_t::Kh270)], Right, Left, BeltShift::Regular, Knit);
   expected_dispatch_test();
 
   // test expectations without destroying instance
