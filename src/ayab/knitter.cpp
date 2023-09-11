@@ -328,7 +328,7 @@ Machine_t Knitter::getMachineType() {
  */
 uint8_t Knitter::getStartOffset(const Direction_t direction) {
   if ((direction == NoDirection) || (direction >= NUM_DIRECTIONS) ||
-      (m_carriage == Carriage_t::NoCarriage)
+      (m_carriage == Carriage_t::NoCarriage) ||
       (m_machineType == Machine_t::NoMachine)) {
     return 0U;
   }
