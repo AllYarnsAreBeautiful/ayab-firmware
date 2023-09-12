@@ -28,7 +28,7 @@
 
 // Enumerated constants
 
-enum class : int8_t Direction { 
+enum class Direction : int8_t { 
   NoDirection = -1, 
   Left = 0, 
   Right = 1
@@ -36,7 +36,7 @@ enum class : int8_t Direction {
 constexpr int8_t NUM_DIRECTIONS = 2;
 using Direction_t = enum Direction;
 
-enum class : int8_t Carriage {
+enum class Carriage : int8_t {
   NoCarriage = -1,
   Knit = 0,
   Lace = 1,
@@ -45,7 +45,7 @@ enum class : int8_t Carriage {
 constexpr int8_t NUM_CARRIAGES = 3;
 using Carriage_t = enum Carriage;
 
-enum class : int8_t MachineType {
+enum class MachineType : int8_t {
   NoMachine = -1,
   Kh910 = 0,
   Kh930 = 1,
@@ -54,7 +54,7 @@ enum class : int8_t MachineType {
 constexpr int8_t NUM_MACHINES = 3;
 using Machine_t = enum MachineType;
 
-enum class : int8_t BeltShift { Unknown, Regular, Shifted, Lace_Regular, Lace_Shifted };
+enum class BeltShift : int8_t { Unknown, Regular, Shifted, Lace_Regular, Lace_Shifted };
 using BeltShift_t = enum BeltShift;
 
 // Machine constants
