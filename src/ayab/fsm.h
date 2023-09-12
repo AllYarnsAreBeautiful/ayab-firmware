@@ -25,12 +25,12 @@
 #define FSM_H_
 
 enum class OpState : unsigned char {
-  wait_for_machine = 1,
-  init = 2,
-  ready = 3,
-  knit = 4,
-  test = 5,
-  error = 6
+  wait_for_machine,
+  init,
+  ready,
+  knit,
+  test,
+  error
 };
 using OpState_t = enum OpState;
 
