@@ -29,7 +29,7 @@
 // Enumerated constants
 
 enum class Direction : unsigned char { 
-  NoDirection = -1, 
+  NoDirection = 0xFF, 
   Left = 0, 
   Right = 1
 };
@@ -37,7 +37,7 @@ constexpr int NUM_DIRECTIONS = 2;
 using Direction_t = enum Direction;
 
 enum class Carriage : unsigned char {
-  NoCarriage = -1,
+  NoCarriage = 0xFF,
   Knit = 0,
   Lace = 1,
   Garter = 2
@@ -46,7 +46,7 @@ constexpr int NUM_CARRIAGES = 3;
 using Carriage_t = enum Carriage;
 
 enum class MachineType : unsigned char {
-  NoMachine = -1,
+  NoMachine = 0xFF,
   Kh910 = 0,
   Kh930 = 1,
   Kh270 = 2
