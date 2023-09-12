@@ -91,7 +91,7 @@ protected:
   }
 
   void reqInit(Machine_t machine) {
-    uint8_t buffer[] = {reqInit_msgid, static_cast<signed char>(machine)};
+    uint8_t buffer[] = {reqInit_msgid, static_cast<uint8_t>(machine)};
     EXPECT_CALL(*fsmMock, setState(OpState::init));
     expected_write_onPacketReceived(buffer, sizeof(buffer), true);
   }
@@ -104,7 +104,7 @@ TEST_F(ComTest, test_API) {
 */
 
 TEST_F(ComTest, test_reqInit_too_short_error) {
-  uint8_t buffer[] = {reqInit_msgid, static_cast<signed char>(Machine_t::Kh910)};
+  uint8_t buffer[] = {reqInit_msgid, static_cast<uint8_t>(Machine_t::Kh910)};
   //EXPECT_CALL(*serialMock, write(cnfInit_msgid));
   //EXPECT_CALL(*serialMock, write(EXPECTED_LONGER_MESSAGE));
   //EXPECT_CALL(*serialMock, write(SLIP::END));
@@ -116,7 +116,7 @@ TEST_F(ComTest, test_reqInit_too_short_error) {
 }
 
 TEST_F(ComTest, test_reqInit_checksum_error) {
-  uint8_t buffer[] = {reqInit_msgid, static_cast<signed char>(Machine_t::Kh910), 0};
+  uint8_t buffer[] = {reqInit_msgid, static_cast<uint8_t>(Machine_t::Kh910), 0};
   //EXPECT_CALL(*serialMock, write(cnfInit_msgid));
   //EXPECT_CALL(*serialMock, write(CHECKSUM_ERROR));
   //EXPECT_CALL(*serialMock, write(SLIP::END));
@@ -138,7 +138,7 @@ TEST_F(ComTest, test_reqtest_fail) {
 }
 
 TEST_F(ComTest, test_reqtest_success_KH270) {
-  uint8_t buffer[] = {reqTest_msgid, static_cast<signed char>(Machine_t::Kh270)};
+  uint8_t buffer[] = {reqTest_msgid, static_cast<uint8_t>(Machine_t::Kh270)};
   EXPECT_CALL(*fsmMock, setState(OpState::test));
   EXPECT_CALL(*knitterMock, setMachineType(Machine_t::Kh270));
   EXPECT_CALL(*arduinoMock, millis);
