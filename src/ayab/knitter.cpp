@@ -154,7 +154,7 @@ Err_t Knitter::startKnitting(uint8_t startNeedle,
   if (pattern_start == nullptr) {
     return ErrorCode::ERR_NULL_POINTER_ARGUMENT;
   }
-  if ((startNeedle >= stopNeedle) || (stopNeedle >= NUM_NEEDLES[static_cast<signed char>(m_machineType)])) {
+  if ((startNeedle >= stopNeedle) || (stopNeedle >= NUM_NEEDLES[static_cast<uint8_t>(m_machineType)])) {
     return ErrorCode::ERR_NEEDLE_VALUE_INVALID;
   }
 
@@ -213,9 +213,9 @@ bool Knitter::isReady() {
   }
 
   bool passedLeft = (Direction_t::Right == m_direction) && (Direction_t::Left == m_lastHall) &&
-        (m_position > (END_LEFT_PLUS_OFFSET[static_cast<signed char>(m_machineType)] + GARTER_SLOP));
+        (m_position > (END_LEFT_PLUS_OFFSET[static_cast<uint8_t>(m_machineType)] + GARTER_SLOP));
   bool passedRight = (Direction_t::Left == m_direction) && (Direction_t::Right == m_lastHall) &&
-        (m_position < (END_RIGHT_MINUS_OFFSET[static_cast<signed char>(m_machineType)] - GARTER_SLOP));
+        (m_position < (END_RIGHT_MINUS_OFFSET[static_cast<uint8_t>(m_machineType)] - GARTER_SLOP));
   // Machine is initialized when left Hall sensor is passed in Right direction
   // New feature (August 2020): the machine is also initialized
   // when the right Hall sensor is passed in Left direction.
@@ -288,8 +288,8 @@ void Knitter::knit() {
     m_workedOnLine = true;
   }
 
-  if (((m_pixelToSet < m_startNeedle - END_OF_LINE_OFFSET_L[static_cast<signed char>(m_machineType)]) ||
-       (m_pixelToSet > m_stopNeedle + END_OF_LINE_OFFSET_R[static_cast<signed char>(m_machineType)])) &&
+  if (((m_pixelToSet < m_startNeedle - END_OF_LINE_OFFSET_L[static_cast<uint8_t>(m_machineType)]) ||
+       (m_pixelToSet > m_stopNeedle + END_OF_LINE_OFFSET_R[static_cast<uint8_t>(m_machineType)])) &&
       m_workedOnLine) {
     // outside of the active needles and
     // already worked on the current line -> finished the line
@@ -332,7 +332,7 @@ uint8_t Knitter::getStartOffset(const Direction_t direction) {
       (m_machineType == Machine_t::NoMachine)) {
     return 0U;
   }
-  return START_OFFSET[static_cast<signed char>(m_machineType)][static_cast<signed char>(direction)][static_cast<signed char>(m_carriage)];
+  return START_OFFSET[static_cast<uint8_t>(m_machineType)][static_cast<uint8_t>(direction)][static_cast<uint8_t>(m_carriage)];
 }
 
 /*!
@@ -403,12 +403,12 @@ bool Knitter::calculatePixelAndSolenoid() {
       m_pixelToSet = m_position - startOffset;
 
       if ((BeltShift::Regular == m_beltShift) || (m_machineType == Machine_t::Kh270)) {
-        m_solenoidToSet = m_position % SOLENOIDS_NUM[static_cast<signed char>(m_machineType)];
+        m_solenoidToSet = m_position % SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];
       } else if (BeltShift::Shifted == m_beltShift) {
-        m_solenoidToSet = (m_position - HALF_SOLENOIDS_NUM[static_cast<signed char>(m_machineType)]) % SOLENOIDS_NUM[static_cast<signed char>(m_machineType)];
+        m_solenoidToSet = (m_position - HALF_SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)]) % SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];
       }
       if (Carriage_t::Lace == m_carriage) {
-        m_pixelToSet = m_pixelToSet + HALF_SOLENOIDS_NUM[static_cast<signed char>(m_machineType)];
+        m_pixelToSet = m_pixelToSet + HALF_SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];
       }
     } else {
       return false;
@@ -417,16 +417,16 @@ bool Knitter::calculatePixelAndSolenoid() {
 
   case Direction_t::Left:
     startOffset = getStartOffset(Direction_t::Right);
-    if (m_position <= (END_RIGHT[static_cast<signed char>(m_machineType)] - startOffset)) {
+    if (m_position <= (END_RIGHT[static_cast<uint8_t>(m_machineType)] - startOffset)) {
       m_pixelToSet = m_position - startOffset;
 
       if ((BeltShift::Regular == m_beltShift) || (m_machineType == Machine_t::Kh270)) {
-        m_solenoidToSet = (m_position + HALF_SOLENOIDS_NUM[static_cast<signed char>(m_machineType)]) % SOLENOIDS_NUM[static_cast<signed char>(m_machineType)];
+        m_solenoidToSet = (m_position + HALF_SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)]) % SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];
       } else if (BeltShift::Shifted == m_beltShift) {
-        m_solenoidToSet = m_position % SOLENOIDS_NUM[static_cast<signed char>(m_machineType)];
+        m_solenoidToSet = m_position % SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];
       }
       if (Carriage_t::Lace == m_carriage) {
-        m_pixelToSet = m_pixelToSet - SOLENOIDS_NUM[static_cast<signed char>(m_machineType)];
+        m_pixelToSet = m_pixelToSet - SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];
       }
     } else {
       return false;
