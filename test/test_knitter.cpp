@@ -581,7 +581,7 @@ TEST_F(KnitterTest, test_knit_new_line) {
 
   // Position has changed since last call to operate function
   // `m_pixelToSet` is above `m_stopNeedle` + END_OF_LINE_OFFSET_R
-  expected_isr(NUM_NEEDLES[static_cast<uint8_t>(Machine_t::Kh910)] + END_OF_LINE_OFFSET_R[static_cast<uint8_t>(Machine_t::Kh910)] + 1 + knitter->getStartOffset(Left));
+  expected_isr(NUM_NEEDLES[static_cast<uint8_t>(Machine_t::Kh910)] + END_OF_LINE_OFFSET_R[static_cast<uint8_t>(Machine_t::Kh910)] + 1 + knitter->getStartOffset(Direction_t::Left));
 
   // set `m_lineRequested` to `false`
   EXPECT_CALL(*beeperMock, finishedLine);
