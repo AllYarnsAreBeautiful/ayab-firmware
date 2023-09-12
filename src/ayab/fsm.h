@@ -24,7 +24,14 @@
 #ifndef FSM_H_
 #define FSM_H_
 
-enum class OpState : uint8_t {wait_for_machine, init, ready, knit, test, error};
+enum class OpState : uint8_t {
+  wait_for_machine = 1,
+  init = 2,
+  ready = 3,
+  knit = 4,
+  test = 5,
+  error = 6
+};
 using OpState_t = enum OpState;
 
 // As of APIv6, the only important distinction
