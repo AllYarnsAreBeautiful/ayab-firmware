@@ -24,7 +24,7 @@
 #ifndef FSM_H_
 #define FSM_H_
 
-enum class OpState {wait_for_machine, init, ready, knit, test, error};
+enum class OpState : uint8_t {wait_for_machine, init, ready, knit, test, error};
 using OpState_t = enum OpState;
 
 // As of APIv6, the only important distinction
@@ -33,7 +33,7 @@ using OpState_t = enum OpState;
 // diagnostic purposes (that is, for debugging).
 // Non-zero error codes are subject to change.
 // Such changes will be considered non-breaking.
-enum class ErrorCode {
+enum class ErrorCode : uint8_t {
   SUCCESS = 0x00,
 
   // message not understood
