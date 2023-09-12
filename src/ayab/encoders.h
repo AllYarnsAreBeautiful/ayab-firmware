@@ -28,33 +28,33 @@
 
 // Enumerated constants
 
-enum class Direction : int8_t { 
+enum class Direction : signed char { 
   NoDirection = -1, 
   Left = 0, 
   Right = 1
 };
-constexpr int8_t NUM_DIRECTIONS = 2;
+constexpr signed char NUM_DIRECTIONS = 2;
 using Direction_t = enum Direction;
 
-enum class Carriage : int8_t {
+enum class Carriage : signed char {
   NoCarriage = -1,
   Knit = 0,
   Lace = 1,
   Garter = 2
 };
-constexpr int8_t NUM_CARRIAGES = 3;
+constexpr signed char NUM_CARRIAGES = 3;
 using Carriage_t = enum Carriage;
 
-enum class MachineType : int8_t {
+enum class MachineType : signed char {
   NoMachine = -1,
   Kh910 = 0,
   Kh930 = 1,
   Kh270 = 2
 };
-constexpr int8_t NUM_MACHINES = 3;
+constexpr signed char NUM_MACHINES = 3;
 using Machine_t = enum MachineType;
 
-enum class BeltShift : int8_t { Unknown, Regular, Shifted, Lace_Regular, Lace_Shifted };
+enum class BeltShift : signed char { Unknown, Regular, Shifted, Lace_Regular, Lace_Shifted };
 using BeltShift_t = enum BeltShift;
 
 // Machine constants
