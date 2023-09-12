@@ -24,7 +24,7 @@
 #ifndef FSM_H_
 #define FSM_H_
 
-enum class OpState : uint8_t {
+enum class OpState : unsigned char {
   wait_for_machine = 1,
   init = 2,
   ready = 3,
@@ -40,7 +40,7 @@ using OpState_t = enum OpState;
 // diagnostic purposes (that is, for debugging).
 // Non-zero error codes are subject to change.
 // Such changes will be considered non-breaking.
-enum class ErrorCode : uint8_t {
+enum class ErrorCode : unsigned char {
   SUCCESS = 0x00,
 
   // message not understood
