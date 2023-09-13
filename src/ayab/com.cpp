@@ -97,8 +97,8 @@ void Com::send_reqLine(const uint8_t lineNumber, Err_t error) const {
  */
 void Com::send_indState(Carriage_t carriage, uint8_t position,
                         Err_t error) const {
-  uint16_t leftHallValue = GlobalEncoders::getHallValue(Left);
-  uint16_t rightHallValue = GlobalEncoders::getHallValue(Right);
+  uint16_t leftHallValue = GlobalEncoders::getHallValue(Direction_t::Left);
+  uint16_t rightHallValue = GlobalEncoders::getHallValue(Direction_t::Right);
   uint8_t payload[INDSTATE_LEN] = {
       indState_msgid,
       static_cast<uint8_t>(error),
