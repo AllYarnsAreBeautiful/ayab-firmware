@@ -25,7 +25,6 @@
 #define ARDUINO_MOCK_H_
 
 #include <arduino-mock/Arduino.h>
-#include <arduino-mock/Serial.h>
 
 #define digitalPinToBitMask(x) (x)
 #define digitalPinToPort(x) (x)
