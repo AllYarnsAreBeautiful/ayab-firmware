@@ -23,6 +23,7 @@
 
 #include <gtest/gtest.h>
 
+#include <beeper.h>
 #include <com.h>
 #include <encoders.h>
 
@@ -35,6 +36,7 @@ using ::testing::Mock;
 using ::testing::Return;
 
 extern Com *com;
+extern Beeper *beeper;
 
 extern FsmMock *fsm;
 extern KnitterMock *knitter;
@@ -104,7 +106,7 @@ TEST_F(ComTest, test_API) {
 */
 
 TEST_F(ComTest, test_reqInit_too_short_error) {
-  uint8_t buffer[] = {reqInit_msgid, static_cast<uint8_t>(Kh910)};
+  uint8_t buffer[] = {reqInit_msgid, static_cast<uint8_t>(Machine_t::Kh910)};
   //EXPECT_CALL(*serialMock, write(cnfInit_msgid));
   //EXPECT_CALL(*serialMock, write(EXPECTED_LONGER_MESSAGE));
   //EXPECT_CALL(*serialMock, write(SLIP::END));
@@ -116,7 +118,7 @@ TEST_F(ComTest, test_reqInit_too_short_error) {
 }
 
 TEST_F(ComTest, test_reqInit_checksum_error) {
-  uint8_t buffer[] = {reqInit_msgid, static_cast<uint8_t>(Kh910), 0};
+  uint8_t buffer[] = {reqInit_msgid, static_cast<uint8_t>(Machine_t::Kh910), 0};
   //EXPECT_CALL(*serialMock, write(cnfInit_msgid));
   //EXPECT_CALL(*serialMock, write(CHECKSUM_ERROR));
   //EXPECT_CALL(*serialMock, write(SLIP::END));
@@ -138,9 +140,9 @@ TEST_F(ComTest, test_reqtest_fail) {
 }
 
 TEST_F(ComTest, test_reqtest_success_KH270) {
-  uint8_t buffer[] = {reqTest_msgid, Kh270};
+  uint8_t buffer[] = {reqTest_msgid, static_cast<uint8_t>(Machine_t::Kh270)};
   EXPECT_CALL(*fsmMock, setState(OpState::test));
-  EXPECT_CALL(*knitterMock, setMachineType(Kh270));
+  EXPECT_CALL(*knitterMock, setMachineType(Machine_t::Kh270));
   EXPECT_CALL(*arduinoMock, millis);
   expected_write_onPacketReceived(buffer, sizeof(buffer), false);
 
@@ -170,7 +172,7 @@ TEST_F(ComTest, test_reqstart_fail2) {
 }
 
 TEST_F(ComTest, test_reqstart_success_KH910) {
-  reqInit(Kh910);
+  reqInit(Machine_t::Kh910);
   uint8_t buffer[] = {reqStart_msgid, 0, 10, 1, 0x36};
   EXPECT_CALL(*knitterMock, startKnitting);
   expected_write_onPacketReceived(buffer, sizeof(buffer), false);
@@ -180,7 +182,7 @@ TEST_F(ComTest, test_reqstart_success_KH910) {
 }
 
 TEST_F(ComTest, test_reqstart_success_KH270) {
-  reqInit(Kh270);
+  reqInit(Machine_t::Kh270);
   uint8_t buffer[] = {reqStart_msgid, 0, 10, 1, 0x36};
   EXPECT_CALL(*knitterMock, startKnitting);
   expected_write_onPacketReceived(buffer, sizeof(buffer), false);
@@ -206,9 +208,12 @@ TEST_F(ComTest, test_sendCmd) {
 
 TEST_F(ComTest, test_beepCmd) {
   uint8_t buffer[] = {beepCmd_msgid};
-  EXPECT_CALL(*arduinoMock, analogWrite(PIEZO_PIN, _)).Times(AtLeast(1));
-  EXPECT_CALL(*arduinoMock, delay(BEEP_DELAY)).Times(AtLeast(1));
   expected_write_onPacketReceived(buffer, sizeof(buffer), true);
+  EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(0U));
+  beeper->schedule();
+  EXPECT_CALL(*arduinoMock, analogWrite(PIEZO_PIN, BEEP_ON_DUTY));
+  EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(1U));
+  beeper->schedule();
 }
 
 TEST_F(ComTest, test_setSingleCmd) {
@@ -304,7 +309,7 @@ TEST_F(ComTest, test_cnfline_kh910) {
                         0xA7}; // CRC8
 
   // start KH910 job
-  knitterMock->initMachine(Kh910);
+  knitterMock->initMachine(Machine_t::Kh910);
   knitterMock->startKnitting(0, 199, pattern, false);
 
   // first call increments line number to zero, not accepted
@@ -392,5 +397,5 @@ TEST_F(ComTest, test_send_indState) {
   EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_L));
   EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_R));
   expect_write(true);
-  com->send_indState(Knit, 0, ErrorCode::SUCCESS);
+  com->send_indState(Carriage::Knit, 0, ErrorCode::SUCCESS);
 }

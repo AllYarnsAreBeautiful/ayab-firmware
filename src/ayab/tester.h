@@ -30,6 +30,7 @@
 #include "encoders.h"
 
 constexpr uint8_t BUFFER_LEN = 40;
+constexpr unsigned int TEST_LOOP_DELAY = 500; // ms
 
 class TesterInterface {
 public:

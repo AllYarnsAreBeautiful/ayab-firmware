@@ -30,9 +30,12 @@
 
 class BeeperMock : public BeeperInterface {
 public:
+  MOCK_METHOD0(init, void());
+  MOCK_METHOD0(getState, BeepState());
   MOCK_METHOD0(ready, void());
   MOCK_METHOD0(finishedLine, void());
   MOCK_METHOD0(endWork, void());
+  MOCK_METHOD0(schedule, void());
 };
 
 BeeperMock *beeperMockInstance();

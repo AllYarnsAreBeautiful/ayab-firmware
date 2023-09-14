@@ -162,7 +162,7 @@ void Fsm::state_error() {
   // every 500ms
   // send `indState` and flash LEDs
   unsigned long now = millis();
-  if (now - m_flashTime >= 500) {
+  if (now - m_flashTime >= FLASH_DELAY) {
     digitalWrite(LED_PIN_A, m_flash);  // green LED
     digitalWrite(LED_PIN_B, !m_flash); // yellow LED
     m_flash = !m_flash;

@@ -23,7 +23,7 @@
 
 #include <gtest/gtest.h>
 
-#include <com.h>
+#include <beeper.h>
 #include <tester.h>
 
 #include <fsm_mock.h>
@@ -35,6 +35,7 @@ using ::testing::AtLeast;
 using ::testing::Mock;
 using ::testing::Return;
 
+extern Beeper *beeper;
 extern Tester *tester;
 
 extern FsmMock *fsm;
@@ -64,20 +65,20 @@ protected:
   }
 
   ArduinoMock *arduinoMock;
-  SerialMock *serialMock;
   FsmMock *fsmMock;
   KnitterMock *knitterMock;
+  SerialMock *serialMock;
 
   void expect_startTest(unsigned long t) {
     EXPECT_CALL(*fsmMock, getState).WillOnce(Return(OpState::ready));
     EXPECT_CALL(*fsmMock, setState(OpState::test));
-    EXPECT_CALL(*knitterMock, setMachineType(Kh930));
+    EXPECT_CALL(*knitterMock, setMachineType(Machine_t::Kh930));
     expect_write(false);
 
     // `setUp()` must have been called to reach `millis()`
     EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(t));
 
-    ASSERT_TRUE(tester->startTest(Kh930) == ErrorCode::SUCCESS);
+    ASSERT_TRUE(tester->startTest(Machine_t::Kh930) == ErrorCode::SUCCESS);
   }
 
   void expect_write(bool once) {
@@ -118,9 +119,12 @@ TEST_F(TesterTest, test_sendCmd) {
 
 TEST_F(TesterTest, test_beepCmd) {
   expect_write(true);
-  EXPECT_CALL(*arduinoMock, analogWrite(PIEZO_PIN, _)).Times(AtLeast(1));
-  EXPECT_CALL(*arduinoMock, delay(50)).Times(AtLeast(1));
   tester->beepCmd();
+  EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(0U));
+  beeper->schedule();
+  EXPECT_CALL(*arduinoMock, analogWrite(PIEZO_PIN, BEEP_ON_DUTY));
+  EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(1U));
+  beeper->schedule();
 }
 
 TEST_F(TesterTest, test_setSingleCmd_fail1) {
@@ -199,13 +203,13 @@ TEST_F(TesterTest, test_quitCmd) {
 
 TEST_F(TesterTest, test_loop_default) {
   expect_startTest(0);
-  EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(499));
+  EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(TEST_LOOP_DELAY - 1));
   tester->loop();
 }
 
 TEST_F(TesterTest, test_loop_null) {
   expect_startTest(0);
-  EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(500));
+  EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(TEST_LOOP_DELAY));
   tester->loop();
 }
 
@@ -215,7 +219,7 @@ TEST_F(TesterTest, test_loop_autoTest) {
   tester->autoTestCmd();
 
   // m_timerEventOdd = false
-  EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(500));
+  EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(TEST_LOOP_DELAY));
   expect_write(true);
   expect_readEOLsensors(false);
   expect_readEncoders(false);
@@ -224,7 +228,7 @@ TEST_F(TesterTest, test_loop_autoTest) {
   tester->loop();
 
   // m_timerEventOdd = false
-  EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(1000));
+  EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(2 * TEST_LOOP_DELAY));
   expect_write(false);
   expect_readEOLsensors(true);
   expect_readEncoders(true);
@@ -234,7 +238,7 @@ TEST_F(TesterTest, test_loop_autoTest) {
 
   // after `stopCmd()`
   tester->stopCmd();
-  EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(1500));
+  EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(3 * TEST_LOOP_DELAY));
   expect_readEOLsensors(false);
   expect_readEncoders(false);
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, _)).Times(0);
@@ -245,7 +249,7 @@ TEST_F(TesterTest, test_loop_autoTest) {
 TEST_F(TesterTest, test_startTest_fail) {
   // can't start test from state `OpState::knit`
   EXPECT_CALL(*fsmMock, getState).WillOnce(Return(OpState::knit));
-  ASSERT_TRUE(tester->startTest(Kh910) != ErrorCode::SUCCESS);
+  ASSERT_TRUE(tester->startTest(Machine_t::Kh910) != ErrorCode::SUCCESS);
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(fsmMock));

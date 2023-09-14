@@ -36,7 +36,7 @@
  * `m_machineType` assumed valid.
  */
 void Encoders::encA_interrupt() {
-  m_hallActive = NoDirection;
+  m_hallActive = Direction_t::NoDirection;
 
   auto currentState = static_cast<bool>(digitalRead(ENC_PIN_A));
 
@@ -54,9 +54,9 @@ void Encoders::encA_interrupt() {
  */
 uint16_t Encoders::getHallValue(Direction_t pSensor) {
   switch (pSensor) {
-  case Left:
+  case Direction_t::Left:
     return analogRead(EOL_PIN_L);
-  case Right:
+  case Direction_t::Right:
     return analogRead(EOL_PIN_R);
   default:
     return 0;
@@ -70,10 +70,10 @@ uint16_t Encoders::getHallValue(Direction_t pSensor) {
 void Encoders::init(Machine_t machineType) {
   m_machineType = machineType;
   m_position = 0U;
-  m_direction = NoDirection;
-  m_hallActive = NoDirection;
+  m_direction = Direction_t::NoDirection;
+  m_hallActive = Direction_t::NoDirection;
   m_beltShift = BeltShift::Unknown;
-  m_carriage = NoCarriage;
+  m_carriage = Carriage_t::NoCarriage;
   m_oldState = false;
 }
 
@@ -130,51 +130,51 @@ Machine_t Encoders::getMachineType() {
  */
 void Encoders::encA_rising() {
   // Update direction
-  m_direction = digitalRead(ENC_PIN_B) != 0 ? Right : Left;
+  m_direction = digitalRead(ENC_PIN_B) != 0 ? Direction_t::Right : Direction_t::Left;
 
   // Update carriage position
-  if ((Right == m_direction) && (m_position < END_RIGHT[m_machineType])) {
+  if ((Direction_t::Right == m_direction) && (m_position < END_RIGHT[static_cast<uint8_t>(m_machineType)])) {
     m_position = m_position + 1;
   }
 
   // The garter carriage has a second set of magnets that are going to
   // pass the sensor and will reset state incorrectly if allowed to
   // continue.
-  if (m_carriage == Garter) {
+  if (m_carriage == Carriage_t::Garter) {
     return;
   }
 
   // If the carriage is already set, ignore the rest.
-  if (m_carriage == Knit && m_machineType == Kh270) {
+  if ((m_carriage == Carriage_t::Knit) && (m_machineType == Machine_t::Kh270)) {
     return;
   }
 
   // In front of Left Hall Sensor?
   uint16_t hallValue = analogRead(EOL_PIN_L);
-  if ((hallValue < FILTER_L_MIN[m_machineType]) ||
-      (hallValue > FILTER_L_MAX[m_machineType])) {
-    m_hallActive = Left;
+  if ((hallValue < FILTER_L_MIN[static_cast<uint8_t>(m_machineType)]) ||
+      (hallValue > FILTER_L_MAX[static_cast<uint8_t>(m_machineType)])) {
+    m_hallActive = Direction_t::Left;
 
-    Carriage detected_carriage = NoCarriage;
-    uint8_t start_position = END_LEFT_PLUS_OFFSET[m_machineType];
+    Carriage detected_carriage = Carriage_t::NoCarriage;
+    uint8_t start_position = END_LEFT_PLUS_OFFSET[static_cast<uint8_t>(m_machineType)];
 
-    if (hallValue >= FILTER_L_MIN[m_machineType]) {
-      detected_carriage = Knit;
+    if (hallValue >= FILTER_L_MIN[static_cast<uint8_t>(m_machineType)]) {
+      detected_carriage = Carriage_t::Knit;
     } else {
-      detected_carriage = Lace;
+      detected_carriage = Carriage_t::Lace;
     }
 
-    if (m_machineType == Kh270) {
-      m_carriage = Knit;
+    if (m_machineType == Machine_t::Kh270) {
+      m_carriage = Carriage_t::Knit;
 
       // The first magnet on the carriage looks like Lace, the second looks like Knit
-      if (detected_carriage == Knit) {
+      if (detected_carriage == Carriage_t::Knit) {
         start_position = start_position + MAGNET_DISTANCE_270;
       }
-    } else if (m_carriage == NoCarriage) {
+    } else if (m_carriage == Carriage_t::NoCarriage) {
       m_carriage = detected_carriage;
     } else if (m_carriage != detected_carriage && m_position > start_position) {
-      m_carriage = Garter;
+      m_carriage = Carriage_t::Garter;
 
       // Belt shift and start position were set when the first magnet passed
       // the sensor and we assumed we were working with a standard carriage.
@@ -200,10 +200,10 @@ void Encoders::encA_rising() {
  */
 void Encoders::encA_falling() {
   // Update direction
-  m_direction = digitalRead(ENC_PIN_B) ? Left : Right;
+  m_direction = digitalRead(ENC_PIN_B) ? Direction_t::Left : Direction_t::Right;
 
   // Update carriage position
-  if ((Left == m_direction) && (m_position > END_LEFT[m_machineType])) {
+  if ((Direction_t::Left == m_direction) && (m_position > END_LEFT[static_cast<uint8_t>(m_machineType)])) {
     m_position = m_position - 1;
   }
 
@@ -214,22 +214,22 @@ void Encoders::encA_falling() {
   // by being explicit about that behaviour being expected.
   bool hallValueSmall = false;
 
-  hallValueSmall = (hallValue < FILTER_R_MIN[m_machineType]);
+  hallValueSmall = (hallValue < FILTER_R_MIN[static_cast<uint8_t>(m_machineType)]);
 
-  if (hallValueSmall || hallValue > FILTER_R_MAX[m_machineType]) {
-    m_hallActive = Right;
+  if (hallValueSmall || hallValue > FILTER_R_MAX[static_cast<uint8_t>(m_machineType)]) {
+    m_hallActive = Direction_t::Right;
 
     // The garter carriage has a second set of magnets that are going to
     // pass the sensor and will reset state incorrectly if allowed to
     // continue.
-    if (hallValueSmall && m_carriage != Garter) {
-      m_carriage = Knit;
+    if (hallValueSmall && (m_carriage != Carriage_t::Garter)) {
+      m_carriage = Carriage_t::Knit;
     }
 
     // Belt shift signal only decided in front of hall sensor
     m_beltShift = digitalRead(ENC_PIN_C) != 0 ? BeltShift::Shifted : BeltShift::Regular;
 
     // Known position of the carriage -> overwrite position
-    m_position = END_RIGHT_MINUS_OFFSET[m_machineType];
+    m_position = END_RIGHT_MINUS_OFFSET[static_cast<uint8_t>(m_machineType)];
   }
 }
