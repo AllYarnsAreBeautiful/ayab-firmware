@@ -392,5 +392,5 @@ TEST_F(ComTest, test_send_indState) {
   EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_L));
   EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_R));
   expect_write(true);
-  com->send_indState(Carriage::Knit, 0, ErrorCode::SUCCESS);
+  com->send_indState(Carriage::Knit, 0, ErrorCode::success);
 }

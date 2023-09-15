@@ -201,7 +201,7 @@ void Com::onPacketReceived(const uint8_t *buffer, size_t size) {
 void Com::h_reqInit(const uint8_t *buffer, size_t size) {
   if (size < 3U) {
     // Need 3 bytes from buffer below.
-    send_cnfInit(ErrorCode::ERR_EXPECTED_LONGER_MESSAGE);
+    send_cnfInit(ErrorCode::expected_longer_message);
     return;
   }
 
@@ -210,7 +210,7 @@ void Com::h_reqInit(const uint8_t *buffer, size_t size) {
   uint8_t crc8 = buffer[2];
   // Check crc on bytes 0-4 of buffer.
   if (crc8 != CRC8(buffer, 2)) {
-    send_cnfInit(ErrorCode::ERR_CHECKSUM_ERROR);
+    send_cnfInit(ErrorCode::checksum_error);
     return;
   }
 
@@ -228,7 +228,7 @@ void Com::h_reqInit(const uint8_t *buffer, size_t size) {
 void Com::h_reqStart(const uint8_t *buffer, size_t size) {
   if (size < 5U) {
     // Need 5 bytes from buffer below.
-    send_cnfStart(ErrorCode::ERR_EXPECTED_LONGER_MESSAGE);
+    send_cnfStart(ErrorCode::expected_longer_message);
     return;
   }
 
@@ -239,7 +239,7 @@ void Com::h_reqStart(const uint8_t *buffer, size_t size) {
   uint8_t crc8 = buffer[4];
   // Check crc on bytes 0-4 of buffer.
   if (crc8 != CRC8(buffer, 4)) {
-    send_cnfStart(ErrorCode::ERR_CHECKSUM_ERROR);
+    send_cnfStart(ErrorCode::checksum_error);
     return;
   }
 
@@ -316,7 +316,7 @@ void Com::h_reqInfo() const {
 void Com::h_reqTest(const uint8_t *buffer, size_t size) const {
   if (size < 2U) {
     // message is too short
-    send_cnfTest(ErrorCode::ERR_EXPECTED_LONGER_MESSAGE);
+    send_cnfTest(ErrorCode::expected_longer_message);
     return;
   }
 
