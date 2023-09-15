@@ -446,7 +446,7 @@ bool Knitter::calculatePixelAndSolenoid() {
   }
   // The 270 has 12 solenoids but they get shifted over 3 bits
   if (m_machineType == Machine_t::Kh270) {
-    m_solenoidToSet = m_solenoidToSet + 3;
+    m_solenoidToSet += 3;
   }
   return true;
 }
