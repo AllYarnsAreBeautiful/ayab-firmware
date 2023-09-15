@@ -85,6 +85,7 @@ void Com::sendMsg(AYAB_API_t id, char *msg) {
  * \param error Error code (0 = success).
  */
 void Com::send_reqLine(const uint8_t lineNumber, Err_t error) const {
+  // `payload` will be allocated on stack since length is compile-time constant
   uint8_t payload[REQLINE_LEN] = {reqLine_msgid, lineNumber, static_cast<uint8_t>(error)};
   send(static_cast<uint8_t *>(payload), REQLINE_LEN);
 }
@@ -99,6 +100,7 @@ void Com::send_indState(Carriage_t carriage, uint8_t position,
                         Err_t error) const {
   uint16_t leftHallValue = GlobalEncoders::getHallValue(Direction_t::Left);
   uint16_t rightHallValue = GlobalEncoders::getHallValue(Direction_t::Right);
+  // `payload` will be allocated on stack since length is compile-time constant
   uint8_t payload[INDSTATE_LEN] = {
       indState_msgid,
       static_cast<uint8_t>(error),
@@ -264,8 +266,8 @@ void Com::h_reqStart(const uint8_t *buffer, size_t size) {
  * \todo sl: Assert size? Handle error?
  */
 void Com::h_cnfLine(const uint8_t *buffer, size_t size) {
-  auto m = static_cast<uint8_t>(GlobalKnitter::getMachineType());
-  uint8_t lenLineBuffer = LINE_BUFFER_LEN[m];
+  auto machineType = static_cast<uint8_t>(GlobalKnitter::getMachineType());
+  uint8_t lenLineBuffer = LINE_BUFFER_LEN[machineType];
   if (size < lenLineBuffer + 5U) {
     // message is too short
     // TODO(sl): handle error?
@@ -343,6 +345,7 @@ void Com::h_unrecognized() const {
  */
 void Com::send_cnfInfo() const {
   // Max. length of suffix string: 16 bytes + \0
+  // `payload` will be allocated on stack since length is compile-time constant
   uint8_t payload[22];
   payload[0] = cnfInfo_msgid;
   payload[1] = API_VERSION;
@@ -358,6 +361,7 @@ void Com::send_cnfInfo() const {
  * \param error Error code (0 = success, other values = error).
  */
 void Com::send_cnfInit(Err_t error) const {
+  // `payload` will be allocated on stack since length is compile-time constant
   uint8_t payload[2];
   payload[0] = cnfInit_msgid;
   payload[1] = static_cast<uint8_t>(error);
@@ -370,6 +374,7 @@ void Com::send_cnfInit(Err_t error) const {
  * \param error Error code (0 = success, other values = error).
  */
 void Com::send_cnfStart(Err_t error) const {
+  // `payload` will be allocated on stack since length is compile-time constant
   uint8_t payload[2];
   payload[0] = cnfStart_msgid;
   payload[1] = static_cast<uint8_t>(error);
@@ -381,6 +386,7 @@ void Com::send_cnfStart(Err_t error) const {
  * \param error Error code (0 = success, other values = error).
  */
 void Com::send_cnfTest(Err_t error) const {
+  // `payload` will be allocated on stack since length is compile-time constant
   uint8_t payload[2];
   payload[0] = cnfTest_msgid;
   payload[1] = static_cast<uint8_t>(error);
