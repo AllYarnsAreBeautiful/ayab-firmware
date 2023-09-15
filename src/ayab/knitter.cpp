@@ -149,7 +149,7 @@ Err_t Knitter::initMachine(Machine_t machineType) {
 Err_t Knitter::startKnitting(uint8_t startNeedle,
                              uint8_t stopNeedle, uint8_t *pattern_start,
                              bool continuousReportingEnabled) {
-  uint8_t machineType = static_cast<uint8_t>(m_machineType);
+  auto machineType = static_cast<uint8_t>(m_machineType);
   
   if (GlobalFsm::getState() != OpState::ready) {
     return ErrorCode::ERR_WRONG_MACHINE_STATE;
@@ -202,7 +202,7 @@ void Knitter::encodePosition() {
  * Machine type assumed valid.
  */
 bool Knitter::isReady() {
-  uint8_t machineType = static_cast<uint8_t>(m_machineType);
+  auto machineType = static_cast<uint8_t>(m_machineType);
 
 #ifdef DBG_NOMACHINE
   // TODO(who?): check if debounce is needed
@@ -244,7 +244,7 @@ bool Knitter::isReady() {
  * Machine type assumed valid.
  */
 void Knitter::knit() {
-  uint8_t machineType = static_cast<uint8_t>(m_machineType);
+  auto machineType = static_cast<uint8_t>(m_machineType);
   
   if (m_firstRun) {
     m_firstRun = false;
@@ -401,7 +401,7 @@ void Knitter::reqLine(uint8_t lineNumber) {
  * Machine type assumed valid.
  */
 bool Knitter::calculatePixelAndSolenoid() {
-  uint8_t machineType = static_cast<uint8_t>(m_machineType);
+  auto machineType = static_cast<uint8_t>(m_machineType);
   uint8_t startOffset = 0;
 
   switch (m_direction) {
