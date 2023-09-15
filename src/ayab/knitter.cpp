@@ -144,6 +144,7 @@ Err_t Knitter::initMachine(Machine_t machineType) {
  * \param patternStart Pointer to buffer containing pattern data.
  * \param continuousReportingEnabled Flag variable indicating whether the device continuously reports its status to the host.
  * \return Error code (0 = success, other values = error).
+ * Machine type assumed valid.
  */
 Err_t Knitter::startKnitting(uint8_t startNeedle,
                              uint8_t stopNeedle, uint8_t *pattern_start,
@@ -198,6 +199,7 @@ void Knitter::encodePosition() {
 /*!
  * \brief Assess whether the Finite State Machine is ready to move from state `OpState::init` to `OpState::ready`.
  * \return `true` if ready to move from state `OpState::init` to `OpState::ready`, false otherwise.
+ * Machine type assumed valid.
  */
 bool Knitter::isReady() {
   machineType = static_cast<uint8_t>(m_machineType);
@@ -239,6 +241,7 @@ bool Knitter::isReady() {
 
 /*!
  * \brief Function that is repeatedly called during state `OpState::knit`
+ * Machine type assumed valid.
  */
 void Knitter::knit() {
   machineType = static_cast<uint8_t>(m_machineType);
@@ -395,6 +398,7 @@ void Knitter::reqLine(uint8_t lineNumber) {
 /*!
  * \brief Calculate the solenoid and pixel to be set.
  * \return `true` if successful, `false` otherwise.
+ * Machine type assumed valid.
  */
 bool Knitter::calculatePixelAndSolenoid() {
   machineType = static_cast<uint8_t>(m_machineType);
