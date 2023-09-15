@@ -149,15 +149,14 @@ Err_t Knitter::initMachine(Machine_t machineType) {
 Err_t Knitter::startKnitting(uint8_t startNeedle,
                              uint8_t stopNeedle, uint8_t *pattern_start,
                              bool continuousReportingEnabled) {
-  auto machineType = static_cast<uint8_t>(m_machineType);
-  
   if (GlobalFsm::getState() != OpState::ready) {
     return ErrorCode::ERR_WRONG_MACHINE_STATE;
   }
   if (pattern_start == nullptr) {
     return ErrorCode::ERR_NULL_POINTER_ARGUMENT;
   }
-  if ((startNeedle >= stopNeedle) || (stopNeedle >= NUM_NEEDLES[machineType])) {
+  auto machineType = static_cast<uint8_t>(m_machineType);
+    if ((startNeedle >= stopNeedle) || (stopNeedle >= NUM_NEEDLES[machineType])) {
     return ErrorCode::ERR_NEEDLE_VALUE_INVALID;
   }
 
@@ -202,8 +201,6 @@ void Knitter::encodePosition() {
  * Machine type assumed valid.
  */
 bool Knitter::isReady() {
-  auto machineType = static_cast<uint8_t>(m_machineType);
-
 #ifdef DBG_NOMACHINE
   // TODO(who?): check if debounce is needed
   bool state = digitalRead(DBG_BTN_PIN);
@@ -218,6 +215,7 @@ bool Knitter::isReady() {
     m_lastHall = m_hallActive;
   }
 
+  auto machineType = static_cast<uint8_t>(m_machineType);
   bool passedLeft = (Direction_t::Right == m_direction) && (Direction_t::Left == m_lastHall) &&
         (m_position > (END_LEFT_PLUS_OFFSET[machineType] + GARTER_SLOP));
   bool passedRight = (Direction_t::Left == m_direction) && (Direction_t::Right == m_lastHall) &&
@@ -243,9 +241,7 @@ bool Knitter::isReady() {
  * \brief Function that is repeatedly called during state `OpState::knit`
  * Machine type assumed valid.
  */
-void Knitter::knit() {
-  auto machineType = static_cast<uint8_t>(m_machineType);
-  
+void Knitter::knit() {  
   if (m_firstRun) {
     m_firstRun = false;
     // TODO(who?): optimize delay for various Arduino models
@@ -297,6 +293,7 @@ void Knitter::knit() {
     m_workedOnLine = true;
   }
 
+  auto machineType = static_cast<uint8_t>(m_machineType);
   if (((m_pixelToSet < m_startNeedle - END_OF_LINE_OFFSET_L[machineType]) ||
        (m_pixelToSet > m_stopNeedle + END_OF_LINE_OFFSET_R[machineType])) &&
       m_workedOnLine) {
