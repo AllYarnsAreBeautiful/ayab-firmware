@@ -124,37 +124,37 @@ TEST_F(TesterTest, test_beepCmd) {
 }
 
 TEST_F(TesterTest, test_setSingleCmd_fail1) {
-  const uint8_t buf[] = {setSingleCmd_msgid, 0};
+  const uint8_t buf[] = {static_cast<uint8_t>(AYAB_API::setSingleCmd), 0};
   expect_write(false);
   tester->setSingleCmd(buf, 2);
 }
 
 TEST_F(TesterTest, test_setSingleCmd_fail2) {
-  const uint8_t buf[] = {setSingleCmd_msgid, 16, 0};
+  const uint8_t buf[] = {static_cast<uint8_t>(AYAB_API::setSingleCmd), 16, 0};
   expect_write(false);
   tester->setSingleCmd(buf, 3);
 }
 
 TEST_F(TesterTest, test_setSingleCmd_fail3) {
-  const uint8_t buf[] = {setSingleCmd_msgid, 15, 2};
+  const uint8_t buf[] = {static_cast<uint8_t>(AYAB_API::setSingleCmd), 15, 2};
   expect_write(false);
   tester->setSingleCmd(buf, 3);
 }
 
 TEST_F(TesterTest, test_setSingleCmd_success) {
-  const uint8_t buf[] = {setSingleCmd_msgid, 15, 1};
+  const uint8_t buf[] = {static_cast<uint8_t>(AYAB_API::setSingleCmd), 15, 1};
   expect_write(true);
   tester->setSingleCmd(buf, 3);
 }
 
 TEST_F(TesterTest, test_setAllCmd_fail1) {
-  const uint8_t buf[] = {setAllCmd_msgid, 0};
+  const uint8_t buf[] = {static_cast<uint8_t>(AYAB_API::setAllCmd), 0};
   expect_write(false);
   tester->setAllCmd(buf, 2);
 }
 
 TEST_F(TesterTest, test_setAllCmd_success) {
-  const uint8_t buf[] = {setAllCmd_msgid, 0xff, 0xff};
+  const uint8_t buf[] = {static_cast<uint8_t>(AYAB_API::setAllCmd), 0xff, 0xff};
   expect_write(true);
   tester->setAllCmd(buf, 3);
 }

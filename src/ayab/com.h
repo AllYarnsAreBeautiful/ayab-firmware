@@ -46,31 +46,31 @@ constexpr uint32_t SERIAL_BAUDRATE = 115200U;
 constexpr uint8_t MAX_LINE_BUFFER_LEN = 25U;
 constexpr uint8_t MAX_MSG_BUFFER_LEN = 255U;
 
-enum AYAB_API {
-  reqStart_msgid = 0x01,
-  cnfStart_msgid = 0xC1,
-  reqLine_msgid = 0x82,
-  cnfLine_msgid = 0x42,
-  reqInfo_msgid = 0x03,
-  cnfInfo_msgid = 0xC3,
-  reqTest_msgid = 0x04,
-  cnfTest_msgid = 0xC4,
-  indState_msgid = 0x84,
-  helpCmd_msgid = 0x25,
-  sendCmd_msgid = 0x26,
-  beepCmd_msgid = 0x27,
-  setSingleCmd_msgid = 0x28,
-  setAllCmd_msgid = 0x29,
-  readEOLsensorsCmd_msgid = 0x2A,
-  readEncodersCmd_msgid = 0x2B,
-  autoReadCmd_msgid = 0x2C,
-  autoTestCmd_msgid = 0x2D,
-  stopCmd_msgid = 0x2E,
-  quitCmd_msgid = 0x2F,
-  reqInit_msgid = 0x05,
-  cnfInit_msgid = 0xC5,
-  testRes_msgid = 0xEE,
-  debug_msgid = 0x9F
+enum class AYAB_API : unsigned char {
+  reqStart = 0x01,
+  cnfStart = 0xC1,
+  reqLine = 0x82,
+  cnfLine = 0x42,
+  reqInfo = 0x03,
+  cnfInfo = 0xC3,
+  reqTest = 0x04,
+  cnfTest = 0xC4,
+  indState = 0x84,
+  helpCmd = 0x25,
+  sendCmd = 0x26,
+  beepCmd = 0x27,
+  setSingleCmd = 0x28,
+  setAllCmd = 0x29,
+  readEOLsensorsCmd = 0x2A,
+  readEncodersCmd = 0x2B,
+  autoReadCmd = 0x2C,
+  autoTestCmd = 0x2D,
+  stopCmd = 0x2E,
+  quitCmd = 0x2F,
+  reqInit = 0x05,
+  cnfInit = 0xC5,
+  testRes = 0xEE,
+  debug = 0x9F
 };
 using AYAB_API_t = enum AYAB_API;
 
