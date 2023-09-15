@@ -129,7 +129,7 @@ Machine_t Encoders::getMachineType() {
  * Bounds on `m_machineType` not checked.
  */
 void Encoders::encA_rising() {
-  machineType = static_cast<uint8_t>(m_machineType);
+  uint8_t machineType = static_cast<uint8_t>(m_machineType);
   
   // Update direction
   m_direction = digitalRead(ENC_PIN_B) != 0 ? Direction_t::Right : Direction_t::Left;
@@ -201,7 +201,7 @@ void Encoders::encA_rising() {
  * Bounds on `m_machineType` not checked.
  */
 void Encoders::encA_falling() {
-  machineType = static_cast<uint8_t>(m_machineType);
+  uint8_t machineType = static_cast<uint8_t>(m_machineType);
   
   // Update direction
   m_direction = digitalRead(ENC_PIN_B) ? Direction_t::Left : Direction_t::Right;
