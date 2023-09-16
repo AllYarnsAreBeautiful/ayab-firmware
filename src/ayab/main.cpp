@@ -59,7 +59,7 @@ TesterInterface    *GlobalTester::m_instance    = new Tester();
  * Setup - do once before going to the main loop.
  */
 void setup() {
-  GlobalBeeper::init();
+  GlobalBeeper::init(false);
   GlobalCom::init();
   GlobalFsm::init();
   GlobalKnitter::init();
@@ -71,5 +71,7 @@ void setup() {
  */
 void loop() {
   GlobalFsm::dispatch();
-  GlobalBeeper::schedule();
+  if (GlobalBeeper::enabled()) {
+    GlobalBeeper::schedule();
+  }
 }

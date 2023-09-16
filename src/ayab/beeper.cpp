@@ -31,8 +31,16 @@
 /*!
  * Initialize beeper
  */
-void Beeper::init() {
+void Beeper::init(bool enabled) {
   m_currentState = BeepState::Idle;
+  m_enabled = enabled;
+}
+
+/*!
+ * Get beeper enabled flag
+ */
+bool Beeper::enabled() {
+  return m_enabled;
 }
 
 /*!
@@ -46,21 +54,27 @@ BeepState Beeper::getState() {
  * Beep to indicate readiness
  */
 void Beeper::ready() {
-  beep(BEEP_NUM_READY);
+  if (m_enabled) {
+    beep(BEEP_NUM_READY);
+  }
 }
 
 /*!
  * Beep to indicate the end of a line
  */
 void Beeper::finishedLine() {
-  beep(BEEP_NUM_FINISHEDLINE);
+  if (m_enabled) {
+    beep(BEEP_NUM_FINISHEDLINE);
+  }
 }
 
 /*!
  * Beep to indicate the end the knitting pattern
  */
 void Beeper::endWork() {
-  beep(BEEP_NUM_ENDWORK);
+  if (m_enabled) {
+    beep(BEEP_NUM_ENDWORK);
+  }
 }
 
 /*!

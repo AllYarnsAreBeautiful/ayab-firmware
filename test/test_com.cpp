@@ -57,6 +57,7 @@ protected:
     Mock::AllowLeak(fsmMock);
     Mock::AllowLeak(knitterMock);
 
+    beeper->init(true);
     expect_init();
     com->init();
   }

@@ -27,8 +27,12 @@
 
 // static member functions
 
-void GlobalBeeper::init() {
-  m_instance->init();
+void GlobalBeeper::init(bool enabled) {
+  m_instance->init(enabled);
+}
+
+bool GlobalBeeper::enabled() {
+  return m_instance->enabled();
 }
 
 void GlobalBeeper::ready() {

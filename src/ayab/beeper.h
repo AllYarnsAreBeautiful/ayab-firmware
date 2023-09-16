@@ -43,7 +43,8 @@ public:
   virtual ~BeeperInterface() = default;
 
   // any methods that need to be mocked should go here
-  virtual void init() = 0;
+  virtual void init(bool enabled) = 0;
+  virtual bool enabled() = 0;
   virtual BeepState getState() = 0;
   virtual void ready() = 0;
   virtual void finishedLine() = 0;
@@ -65,7 +66,8 @@ public:
   // pointer to global instance whose methods are implemented
   static BeeperInterface *m_instance;
 
-  static void init();
+  static void init(bool enabled);
+  static bool enabled();
   static BeepState getState();
   static void ready();
   static void finishedLine();
@@ -78,7 +80,8 @@ public:
  */
 class Beeper : public BeeperInterface {
 public:
-  void init() final;
+  void init(bool enabled) final;
+  bool enabled() final;
   BeepState getState() final;
   void ready() final;
   void finishedLine() final;
@@ -92,6 +95,7 @@ private:
   BeepState m_nextState;
   unsigned long m_nextTime;
   uint8_t m_repeat;
+  bool m_enabled;
 };
 
 #endif // BEEPER_H_

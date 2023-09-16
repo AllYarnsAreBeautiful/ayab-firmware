@@ -57,6 +57,8 @@ protected:
     // cause a memory leak. We must notify the test that this is not the case.
     Mock::AllowLeak(fsmMock);
     Mock::AllowLeak(knitterMock);
+
+    beeper->init(true);
   }
 
   void TearDown() override {
