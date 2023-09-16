@@ -52,15 +52,18 @@ protected:
       ASSERT_EQ(beeper->getState(), BeepState::Wait);
       for (uint8_t i = 0; i < repeats; i++) {
         expectedBeepSchedule(BEEP_DELAY * 2 * i);
+        ASSERT_EQ(beeper->getState(), BeepState::On);
         EXPECT_CALL(*arduinoMock, analogWrite(PIEZO_PIN, BEEP_ON_DUTY));
-        expectedBeepSchedule(BEEP_DELAY * 2 * i + 1);
+        expectedBeepSchedule(BEEP_DELAY * 2 * i);
+        ASSERT_EQ(beeper->getState(), BeepState::Wait);
         expectedBeepSchedule(BEEP_DELAY * (2 * i + 1));
+        ASSERT_EQ(beeper->getState(), BeepState::Off);
         EXPECT_CALL(*arduinoMock, analogWrite(PIEZO_PIN, BEEP_OFF_DUTY));
-        expectedBeepSchedule(BEEP_DELAY * (2 * i + 1) + 1);
+        expectedBeepSchedule(BEEP_DELAY * (2 * i + 1));
+        ASSERT_EQ(beeper->getState(), BeepState::Wait);
       }
-      expectedBeepSchedule(BEEP_DELAY * (2 * repeats));
       EXPECT_CALL(*arduinoMock, analogWrite(PIEZO_PIN, BEEP_NO_DUTY));
-      expectedBeepSchedule(BEEP_DELAY * (2 * repeats) + 1);
+      expectedBeepSchedule(BEEP_DELAY * (2 * repeats));
     }
     ASSERT_EQ(beeper->getState(), BeepState::Idle);
   }
