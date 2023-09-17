@@ -60,8 +60,8 @@ set(COMMON_SOURCES
     ${SOURCE_DIRECTORY}/global_knitter.cpp
     ${PROJECT_SOURCE_DIR}/mocks/knitter_mock.cpp
 
-    ${SOURCE_DIRECTORY}/global_fsm.cpp
-    ${PROJECT_SOURCE_DIR}/mocks/fsm_mock.cpp
+    ${SOURCE_DIRECTORY}/global_op.cpp
+    ${PROJECT_SOURCE_DIR}/mocks/op_mock.cpp
     )
 set(COMMON_DEFINES
     ARDUINO=1819
@@ -140,9 +140,9 @@ add_executable(${PROJECT_NAME}_knitter
     ${SOURCE_DIRECTORY}/global_tester.cpp
     ${PROJECT_SOURCE_DIR}/mocks/tester_mock.cpp
 
-    ${SOURCE_DIRECTORY}/fsm.cpp
-    ${SOURCE_DIRECTORY}/global_fsm.cpp
-    ${PROJECT_SOURCE_DIR}/test_fsm.cpp
+    ${SOURCE_DIRECTORY}/op.cpp
+    ${SOURCE_DIRECTORY}/global_op.cpp
+    ${PROJECT_SOURCE_DIR}/test_op.cpp
 
     ${SOURCE_DIRECTORY}/knitter.cpp
     ${SOURCE_DIRECTORY}/global_knitter.cpp

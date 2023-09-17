@@ -27,8 +27,8 @@
 #include "beeper.h"
 #include "com.h"
 #include "encoders.h"
-#include "fsm.h"
 #include "knitter.h"
+#include "op.h"
 #include "solenoids.h"
 #include "tester.h"
 
@@ -38,8 +38,8 @@
 constexpr GlobalBeeper    *beeper;
 constexpr GlobalCom       *com;
 constexpr GlobalEncoders  *encoders;
-constexpr GlobalFsm       *fsm;
 constexpr GlobalKnitter   *knitter;
+constexpr GlobalOp        *op;
 constexpr GlobalSolenoids *solenoids;
 constexpr GlobalTester    *tester;
 
@@ -50,7 +50,7 @@ constexpr GlobalTester    *tester;
 BeeperInterface    *GlobalBeeper::m_instance    = new Beeper();
 ComInterface       *GlobalCom::m_instance       = new Com();
 EncodersInterface  *GlobalEncoders::m_instance  = new Encoders();
-FsmInterface       *GlobalFsm::m_instance       = new Fsm();
+OpInterface        *GlobalOp::m_instance        = new Op();
 KnitterInterface   *GlobalKnitter::m_instance   = new Knitter();
 SolenoidsInterface *GlobalSolenoids::m_instance = new Solenoids();
 TesterInterface    *GlobalTester::m_instance    = new Tester();
@@ -59,9 +59,10 @@ TesterInterface    *GlobalTester::m_instance    = new Tester();
  * Setup - do once before going to the main loop.
  */
 void setup() {
+  // Objects running in async context
   GlobalBeeper::init(false);
   GlobalCom::init();
-  GlobalFsm::init();
+  GlobalOp::init();
   GlobalKnitter::init();
   GlobalSolenoids::init();
 }
@@ -70,8 +71,14 @@ void setup() {
  * Main Loop - repeat forever.
  */
 void loop() {
-  GlobalFsm::dispatch();
+  // Non-blocking methods
+  // Cooperative Round Robin scheduling
+  GlobalOp::update();
+  GlobalCom::update();
+  if (GlobalTester::enabled()) {
+    GlobalTester::update();
+  }
   if (GlobalBeeper::enabled()) {
-    GlobalBeeper::schedule();
+    GlobalBeeper::update();
   }
 }

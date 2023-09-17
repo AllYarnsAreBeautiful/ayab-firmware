@@ -29,7 +29,7 @@
 #include <beeper_mock.h>
 #include <com_mock.h>
 #include <encoders_mock.h>
-#include <fsm_mock.h>
+#include <op_mock.h>
 #include <solenoids_mock.h>
 #include <tester_mock.h>
 
@@ -40,7 +40,7 @@ using ::testing::Return;
 using ::testing::TypedEq;
 
 extern Knitter *knitter;
-extern Fsm *fsm;
+extern Op *op;
 
 extern BeeperMock *beeper;
 extern ComMock *com;
@@ -72,7 +72,7 @@ protected:
     // start in state `OpState::init`
     expected_isr(Direction_t::NoDirection, Direction_t::NoDirection);
     EXPECT_CALL(*arduinoMock, millis);
-    fsm->init();
+    op->init();
     expect_knitter_init();
     knitter->init();
   }
@@ -163,18 +163,18 @@ protected:
 
   void expected_dispatch() {
     EXPECT_CALL(*comMock, update);
-    fsm->dispatch();
+    op->dispatch();
   }
 
   void expected_get_ready() {
     // starts in state `OpState::wait_for_machine`
-    ASSERT_EQ(fsm->getState(), OpState::init);
+    ASSERT_EQ(op->getState(), OpState::init);
 
     EXPECT_CALL(*solenoidsMock, setSolenoids(SOLENOIDS_BITMASK));
     expect_indState();
     expected_dispatch_init();
 
-    ASSERT_EQ(fsm->getState(), OpState::ready);
+    ASSERT_EQ(op->getState(), OpState::ready);
   }
 
   void expected_init_machine(Machine_t m) {
@@ -182,7 +182,7 @@ protected:
     ASSERT_EQ(knitter->initMachine(m), ErrorCode::SUCCESS);
     expected_dispatch_wait_for_machine();
 
-    ASSERT_EQ(fsm->getState(), OpState::init);
+    ASSERT_EQ(op->getState(), OpState::init);
   }
 
   void get_to_ready(Machine_t m) {
@@ -203,7 +203,7 @@ protected:
     expected_dispatch_ready();
 
     // ends in state `OpState::knit`
-    ASSERT_TRUE(fsm->getState() == OpState::knit);
+    ASSERT_TRUE(op->getState() == OpState::knit);
   }
 
   void expected_dispatch_knit(bool first) {
@@ -214,14 +214,14 @@ protected:
       expected_dispatch();
       return;
     }
-    ASSERT_TRUE(fsm->getState() == OpState::knit);
+    ASSERT_TRUE(op->getState() == OpState::knit);
     EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, HIGH)); // green LED on
     expected_dispatch();
   }
 
   void expected_dispatch_wait_for_machine() {
     // starts in state `OpState::init`
-    ASSERT_EQ(fsm->getState(), OpState::wait_for_machine);
+    ASSERT_EQ(op->getState(), OpState::wait_for_machine);
 
     EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, LOW));
     expected_dispatch();
@@ -229,7 +229,7 @@ protected:
 
   void expected_dispatch_init() {
     // starts in state `OpState::init`
-    ASSERT_EQ(fsm->getState(), OpState::init);
+    ASSERT_EQ(op->getState(), OpState::init);
 
     EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, LOW));
     expected_dispatch();
@@ -237,7 +237,7 @@ protected:
 
   void expected_dispatch_ready() {
     // starts in state `OpState::ready`
-    ASSERT_TRUE(fsm->getState() == OpState::ready);
+    ASSERT_TRUE(op->getState() == OpState::ready);
 
     EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, LOW));
     expected_dispatch();
@@ -245,7 +245,7 @@ protected:
 
   void expected_dispatch_test() {
     // starts in state `OpState::test`
-    ASSERT_EQ(fsm->getState(), OpState::test);
+    ASSERT_EQ(op->getState(), OpState::test);
 
     expect_indState();
     EXPECT_CALL(*testerMock, loop);
@@ -603,7 +603,7 @@ TEST_F(KnitterTest, test_knit_new_line) {
 TEST_F(KnitterTest, test_calculatePixelAndSolenoid) {
   // initialize
   expected_init_machine(Machine_t::Kh910);
-  fsm->setState(OpState::test);
+  op->setState(OpState::test);
   expected_dispatch_init();
 
   // new position, different beltShift and active hall
@@ -678,13 +678,13 @@ TEST_F(KnitterTest, test_getStartOffset) {
   ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
 }
 
-TEST_F(KnitterTest, test_fsm_init_LL) {
+TEST_F(KnitterTest, test_op_init_LL) {
   expected_init_machine(Machine_t::Kh910);
 
   // not ready
   expected_isr(get_position_past_right(), Direction_t::Left, Direction_t::Left);
   expected_dispatch_init();
-  ASSERT_EQ(fsm->getState(), OpState::init);
+  ASSERT_EQ(op->getState(), OpState::init);
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
@@ -692,13 +692,13 @@ TEST_F(KnitterTest, test_fsm_init_LL) {
   ASSERT_TRUE(Mock::VerifyAndClear(encodersMock));
 }
 
-TEST_F(KnitterTest, test_fsm_init_RR) {
+TEST_F(KnitterTest, test_op_init_RR) {
   expected_init_machine(Machine_t::Kh910);
 
   // still not ready
   expected_isr(get_position_past_left(), Direction_t::Right, Direction_t::Right);
   expected_dispatch_init();
-  ASSERT_EQ(fsm->getState(), OpState::init);
+  ASSERT_EQ(op->getState(), OpState::init);
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
@@ -706,7 +706,7 @@ TEST_F(KnitterTest, test_fsm_init_RR) {
   ASSERT_TRUE(Mock::VerifyAndClear(encodersMock));
 }
 
-TEST_F(KnitterTest, test_fsm_init_RL) {
+TEST_F(KnitterTest, test_op_init_RL) {
   expected_init_machine(Machine_t::Kh910);
 
   // Machine is initialized when Left hall sensor
@@ -720,14 +720,14 @@ TEST_F(KnitterTest, test_fsm_init_RL) {
   ASSERT_TRUE(Mock::VerifyAndClear(encodersMock));
 }
 
-TEST_F(KnitterTest, test_fsm_init_LR) {
+TEST_F(KnitterTest, test_op_init_LR) {
   expected_init_machine(Machine_t::Kh910);
 
   // New feature (August 2020): the machine is also initialized
   // when the right Hall sensor is passed in the Left direction.
   expected_isr(get_position_past_right(), Direction_t::Left, Direction_t::Right);
   expected_get_ready();
-  ASSERT_EQ(fsm->getState(), OpState::ready);
+  ASSERT_EQ(op->getState(), OpState::ready);
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));

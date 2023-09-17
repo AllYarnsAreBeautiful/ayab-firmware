@@ -21,8 +21,10 @@
  *    http://ayab-knitting.com
  */
 
-#ifndef FSM_H_
-#define FSM_H_
+#ifndef OP_H_
+#define OP_H_
+
+#include "encoders.h"
 
 enum class OpState : unsigned char {
   wait_for_machine,
@@ -80,15 +82,21 @@ using Err_t = enum ErrorCode;
 
 constexpr unsigned int FLASH_DELAY = 500; // ms
 
-class FsmInterface {
+class OpInterface {
 public:
-  virtual ~FsmInterface() = default;
+  virtual ~OpInterface() = default;
 
   // any methods that need to be mocked should go here
   virtual void init() = 0;
-  virtual OpState_t getState() = 0;
+  virtual void update() = 0;
+  virtual void cacheEncoders() = 0;
   virtual void setState(OpState_t state) = 0;
-  virtual void dispatch() = 0;
+  virtual OpState_t getState() = 0;
+  virtual BeltShift_t getBeltShift() = 0;
+  virtual Carriage_t getCarriage() = 0;
+  virtual Direction_t getDirection() = 0;
+  virtual Direction_t getHallActive() = 0;
+  virtual uint8_t getPosition() = 0;
 };
 
 // Singleton container class for static methods.
@@ -97,27 +105,39 @@ public:
 // both of which classes implement the pure virtual methods
 // of the `KnitterInterface` class.
 
-class GlobalFsm final {
+class GlobalOp final {
 private:
   // singleton class so private constructor is appropriate
-  GlobalFsm() = default;
+  GlobalOp() = default;
 
 public:
   // pointer to global instance whose methods are implemented
-  static FsmInterface *m_instance;
+  static OpInterface *m_instance;
 
   static void init();
-  static OpState_t getState();
+  static void update();
+  static void cacheEncoders();
   static void setState(OpState_t state);
-  static void dispatch();
+  static OpState_t getState();
+  static BeltShift_t getBeltShift();
+  static Carriage_t getCarriage();
+  static Direction_t getDirection();
+  static Direction_t getHallActive();
+  static uint8_t getPosition();
 };
 
-class Fsm : public FsmInterface {
+class Op : public OpInterface {
 public:
   void init() final;
-  OpState_t getState() final;
+  void update() final;
+  void cacheEncoders() final;
   void setState(OpState_t state) final;
-  void dispatch() final;
+  OpState_t getState() final;
+  BeltShift_t getBeltShift() final;
+  Carriage_t getCarriage() final;
+  Direction_t getDirection() final;
+  Direction_t getHallActive() final;
+  uint8_t getPosition() final;
 
 private:
   void state_wait_for_machine() const;
@@ -137,6 +157,13 @@ private:
   // flashing LEDs in error state
   bool m_flash;
   unsigned long m_flashTime;
+
+  // cached Encoder values
+  BeltShift_t m_beltShift;
+  Carriage_t m_carriage;
+  Direction_t m_direction;
+  Direction_t m_hallActive;
+  uint8_t m_position;
 };
 
-#endif // FSM_H_
+#endif // OP_H_

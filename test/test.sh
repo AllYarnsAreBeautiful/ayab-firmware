@@ -48,7 +48,7 @@ cd ../..
 GCOVR_ARGS="--exclude-unreachable-branches --exclude-throw-branches \
             --exclude-directories 'test/build/arduino_mock$' \
 	    -e test_* -e lib* -e src/ayab/global_knitter.cpp \
-	    -e src/ayab/global_fsm.cpp"
+	    -e src/ayab/global_op.cpp"
 
 if [[ $sonar -eq 1 ]]; then
   gcovr -r . $GCOVR_ARGS --sonarqube ./test/build/coverage.xml

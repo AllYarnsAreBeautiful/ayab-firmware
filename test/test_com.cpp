@@ -27,8 +27,8 @@
 #include <com.h>
 #include <encoders.h>
 
-#include <fsm_mock.h>
 #include <knitter_mock.h>
+#include <op_mock.h>
 
 using ::testing::_;
 using ::testing::AtLeast;
@@ -38,7 +38,7 @@ using ::testing::Return;
 extern Com *com;
 extern Beeper *beeper;
 
-extern FsmMock *fsm;
+extern OpMock *op;
 extern KnitterMock *knitter;
 
 class ComTest : public ::testing::Test {
@@ -48,13 +48,13 @@ protected:
     serialMock = serialMockInstance();
 
     // pointer to global instance
-    fsmMock = fsm;
+    opMock = op;
     knitterMock = knitter;
 
     // The global instance does not get destroyed at the end of each test.
     // Ordinarily the mock instance would be local and such behaviour would
     // cause a memory leak. We must notify the test that this is not the case.
-    Mock::AllowLeak(fsmMock);
+    Mock::AllowLeak(opMock);
     Mock::AllowLeak(knitterMock);
 
     beeper->init(true);
@@ -68,7 +68,7 @@ protected:
   }
 
   ArduinoMock *arduinoMock;
-  FsmMock *fsmMock;
+  OpMock *opMock;
   KnitterMock *knitterMock;
   SerialMock *serialMock;
 
@@ -95,7 +95,7 @@ protected:
 
   void reqInit(Machine_t machine) {
     uint8_t buffer[] = {reqInit_msgid, static_cast<uint8_t>(machine)};
-    EXPECT_CALL(*fsmMock, setState(OpState::init));
+    EXPECT_CALL(*opMock, setState(OpState::init));
     expected_write_onPacketReceived(buffer, sizeof(buffer), true);
   }
 };
@@ -111,11 +111,11 @@ TEST_F(ComTest, test_reqInit_too_short_error) {
   //EXPECT_CALL(*serialMock, write(cnfInit_msgid));
   //EXPECT_CALL(*serialMock, write(EXPECTED_LONGER_MESSAGE));
   //EXPECT_CALL(*serialMock, write(SLIP::END));
-  EXPECT_CALL(*fsmMock, setState(OpState::init)).Times(0);
+  EXPECT_CALL(*opMock, setState(OpState::init)).Times(0);
   com->onPacketReceived(buffer, sizeof(buffer));
 
   // test expectations without destroying instance
-  ASSERT_TRUE(Mock::VerifyAndClear(fsmMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(opMock));
 }
 
 TEST_F(ComTest, test_reqInit_checksum_error) {
@@ -123,32 +123,32 @@ TEST_F(ComTest, test_reqInit_checksum_error) {
   //EXPECT_CALL(*serialMock, write(cnfInit_msgid));
   //EXPECT_CALL(*serialMock, write(CHECKSUM_ERROR));
   //EXPECT_CALL(*serialMock, write(SLIP::END));
-  EXPECT_CALL(*fsmMock, setState(OpState::init)).Times(0);
+  EXPECT_CALL(*opMock, setState(OpState::init)).Times(0);
   com->onPacketReceived(buffer, sizeof(buffer));
 
   // test expectations without destroying instance
-  ASSERT_TRUE(Mock::VerifyAndClear(fsmMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(opMock));
 }
 
 TEST_F(ComTest, test_reqtest_fail) {
   // no machineType
   uint8_t buffer[] = {reqTest_msgid};
-  EXPECT_CALL(*fsmMock, setState(OpState::test)).Times(0);
+  EXPECT_CALL(*opMock, setState(OpState::test)).Times(0);
   expected_write_onPacketReceived(buffer, sizeof(buffer), true);
 
   // test expectations without destroying instance
-  ASSERT_TRUE(Mock::VerifyAndClear(fsmMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(opMock));
 }
 
 TEST_F(ComTest, test_reqtest_success_KH270) {
   uint8_t buffer[] = {reqTest_msgid, static_cast<uint8_t>(Machine_t::Kh270)};
-  EXPECT_CALL(*fsmMock, setState(OpState::test));
+  EXPECT_CALL(*opMock, setState(OpState::test));
   EXPECT_CALL(*knitterMock, setMachineType(Machine_t::Kh270));
   EXPECT_CALL(*arduinoMock, millis);
   expected_write_onPacketReceived(buffer, sizeof(buffer), false);
 
   // test expectations without destroying instance
-  ASSERT_TRUE(Mock::VerifyAndClear(fsmMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(opMock));
   ASSERT_TRUE(Mock::VerifyAndClear(knitterMock));
 }
 
@@ -260,12 +260,12 @@ TEST_F(ComTest, test_stopCmd) {
 TEST_F(ComTest, test_quitCmd) {
   uint8_t buffer[] = {quitCmd_msgid};
   EXPECT_CALL(*knitterMock, setUpInterrupt);
-  EXPECT_CALL(*fsmMock, setState(OpState::init));
+  EXPECT_CALL(*opMock, setState(OpState::init));
   com->onPacketReceived(buffer, sizeof(buffer));
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(knitterMock));
-  ASSERT_TRUE(Mock::VerifyAndClear(fsmMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(opMock));
 }
 
 TEST_F(ComTest, test_unrecognized) {

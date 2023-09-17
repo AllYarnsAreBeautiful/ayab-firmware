@@ -44,16 +44,6 @@ void Knitter::init() {
   gKnitterMock->init();
 }
 
-void Knitter::setUpInterrupt() {
-  assert(gKnitterMock != nullptr);
-  gKnitterMock->setUpInterrupt();
-}
-
-void Knitter::isr() {
-  assert(gKnitterMock != nullptr);
-  gKnitterMock->isr();
-}
-
 Err_t Knitter::startKnitting(uint8_t startNeedle,
                              uint8_t stopNeedle, uint8_t *pattern_start,
                              bool continuousReportingEnabled) {
@@ -80,11 +70,6 @@ bool Knitter::isReady() {
 void Knitter::knit() {
   assert(gKnitterMock != nullptr);
   gKnitterMock->knit();
-}
-
-void Knitter::indState(Err_t error) {
-  assert(gKnitterMock != nullptr);
-  gKnitterMock->indState(error);
 }
 
 uint8_t Knitter::getStartOffset(const Direction_t direction) {

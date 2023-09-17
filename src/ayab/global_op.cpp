@@ -1,6 +1,5 @@
-/*!`
- * \file fsm_mock.cpp
- *
+/*!
+ * \file global_op.cpp
  * This file is part of AYAB.
  *
  *    AYAB is free software: you can redistribute it and/or modify
@@ -17,45 +16,50 @@
  *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
  *
  *    Original Work Copyright 2013 Christian Obersteiner, Andreas Müller
- *    Modified Work Copyright 2020-3 Sturla Lange, Tom Price
+ *    Modified Work Copyright 2020 Sturla Lange, Tom Price
  *    http://ayab-knitting.com
  */
 
-#include <fsm.h>
-#include <fsm_mock.h>
+#include "op.h"
 
-static FsmMock *gFsmMock = nullptr;
+// static member functions
 
-FsmMock *fsmMockInstance() {
-  if (!gFsmMock) {
-    gFsmMock = new FsmMock();
-  }
-  return gFsmMock;
+void GlobalOp::init() {
+  m_instance->init();
 }
 
-void releaseFsmMock() {
-  if (gFsmMock) {
-    delete gFsmMock;
-    gFsmMock = nullptr;
-  }
+void GlobalOp::update() {
+  m_instance->update();
 }
 
-void Fsm::init() {
-  assert(gFsmMock != nullptr);
-  gFsmMock->init();
+void GlobalOp::cacheEncoders() {
+  m_instance->cacheEncoders();
 }
 
-OpState_t Fsm::getState() {
-  assert(gFsmMock != nullptr);
-  return gFsmMock->getState();
+void GlobalOp::setState(OpState_t state) {
+  m_instance->setState(state);
 }
 
-void Fsm::setState(OpState_t state) {
-  assert(gFsmMock != nullptr);
-  gFsmMock->setState(state);
+OpState_t GlobalOp::getState() {
+  return m_instance->getState();
 }
 
-void Fsm::dispatch() {
-  assert(gFsmMock != nullptr);
-  gFsmMock->dispatch();
+BeltShift_t GlobalOp::getBeltShift() {
+  return m_instance->getBeltShift();
+}
+
+Carriage_t GlobalOp::getCarriage() {
+  return m_instance->getCarriage();
+}
+
+Direction_t GlobalOp::getDirection() {
+  return m_instance->getDirection();
+}
+
+Direction_t GlobalOp::getHallActive() {
+  return m_instance->getHallActive();
+}
+
+uint8_t GlobalOp::getPosition() {
+  return m_instance->getPosition();
 }

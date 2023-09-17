@@ -1,5 +1,6 @@
-/*!
- * \file global_fsm.cpp
+/*!`
+ * \file op_mock.cpp
+ *
  * This file is part of AYAB.
  *
  *    AYAB is free software: you can redistribute it and/or modify
@@ -16,26 +17,50 @@
  *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
  *
  *    Original Work Copyright 2013 Christian Obersteiner, Andreas Müller
- *    Modified Work Copyright 2020 Sturla Lange, Tom Price
+ *    Modified Work Copyright 2020-3 Sturla Lange, Tom Price
  *    http://ayab-knitting.com
  */
 
-#include "fsm.h"
+#include <op.h>
+#include <op_mock.h>
 
-// static member functions
+static OpMock *gOpMock = nullptr;
 
-void GlobalFsm::init() {
-  m_instance->init();
+OpMock *opMockInstance() {
+  if (!gOpMock) {
+    gOpMock = new OpMock();
+  }
+  return gOpMock;
 }
 
-OpState_t GlobalFsm::getState() {
-  return m_instance->getState();
+void releaseOpMock() {
+  if (gOpMock) {
+    delete gOpMock;
+    gOpMock = nullptr;
+  }
 }
 
-void GlobalFsm::setState(OpState_t state) {
-  m_instance->setState(state);
+void Op::init() {
+  assert(gOpMock != nullptr);
+  gOpMock->init();
 }
 
-void GlobalFsm::dispatch() {
-  m_instance->dispatch();
+OpState_t Op::getState() {
+  assert(gOpMock != nullptr);
+  return gOpMock->getState();
+}
+
+void Op::setState(OpState_t state) {
+  assert(gOpMock != nullptr);
+  gOpMock->setState(state);
+}
+
+void Op::update() {
+  assert(gOpMock != nullptr);
+  gOpMock->update();
+}
+
+void Op::cacheEncoders() {
+  assert(gOpMock != nullptr);
+  gOpMock->cacheEncoders();
 }

@@ -30,8 +30,12 @@ Err_t GlobalTester::startTest(Machine_t machineType) {
   return m_instance->startTest(machineType);
 }
 
-void GlobalTester::loop() {
-  m_instance->loop();
+bool GlobalTester::enabled() {
+  return m_instance->enabled();
+}
+
+void GlobalTester::update() {
+  m_instance->update();
 }
 
 void GlobalTester::helpCmd() {

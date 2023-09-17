@@ -31,16 +31,6 @@ void GlobalKnitter::init() {
   m_instance->init();
 }
 
-void GlobalKnitter::setUpInterrupt() {
-  m_instance->setUpInterrupt();
-}
-
-#ifndef AYAB_TESTS
-void GlobalKnitter::isr() {
-  m_instance->isr();
-}
-#endif
-
 Err_t GlobalKnitter::initMachine(Machine_t machine) {
   return m_instance->initMachine(machine);
 }
@@ -62,10 +52,6 @@ bool GlobalKnitter::isReady() {
 
 void GlobalKnitter::knit() {
   m_instance->knit();
-}
-
-void GlobalKnitter::indState(Err_t error) {
-  m_instance->indState(error);
 }
 
 uint8_t GlobalKnitter::getStartOffset(const Direction_t direction) {

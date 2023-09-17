@@ -31,12 +31,12 @@
 class BeeperMock : public BeeperInterface {
 public:
   MOCK_METHOD1(init, void(bool));
-  MOCK_METHOD0(enabled, bool());
-  MOCK_METHOD0(getState, BeepState());
+  MOCK_METHOD0(update, void());
   MOCK_METHOD0(ready, void());
   MOCK_METHOD0(finishedLine, void());
   MOCK_METHOD0(endWork, void());
-  MOCK_METHOD0(schedule, void());
+  MOCK_METHOD0(getState, BeepState());
+  MOCK_METHOD0(enabled, bool());
 };
 
 BeeperMock *beeperMockInstance();

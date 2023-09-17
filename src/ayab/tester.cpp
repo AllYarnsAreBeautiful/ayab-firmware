@@ -26,11 +26,47 @@
 
 #include "beeper.h"
 #include "com.h"
-#include "fsm.h"
 #include "knitter.h"
+#include "op.h"
+#include "solenoids.h"
 #include "tester.h"
 
 // public methods
+
+/*!
+ * \brief Start hardware test.
+ * \param machineType Machine type.
+ * \return Error code (0 = success, other values = error).
+ */
+Err_t Tester::startTest(Machine_t machineType) {
+  OpState_t currentState = GlobalOp::getState();
+  if (OpState::wait_for_machine == currentState || OpState::init == currentState || OpState::ready == currentState) {
+    GlobalOp::setState(OpState::test);
+    GlobalKnitter::setMachineType(machineType);
+    setUp();
+    return ErrorCode::SUCCESS;
+  }
+  return ErrorCode::ERR_WRONG_MACHINE_STATE;
+}
+
+/*!
+ * \brief Main loop for hardware tests.
+ */
+void Tester::update() {
+  GlobalKnitter::encodePosition();
+  unsigned long now = millis();
+  if (now - m_lastTime >= TEST_LOOP_DELAY) {
+    m_lastTime = now;
+    handleTimerEvent();
+  }
+}
+
+/*!
+ * \brief Returns whether the hardware test loop is active.
+ */
+ bool Tester::enabled() {
+  return m_autoReadOn || m_autoTestOn;
+}
 
 /*!
  * \brief Help command handler.
@@ -155,35 +191,11 @@ void Tester::stopCmd() {
  * \brief Quit command handler.
  */
 void Tester::quitCmd() {
-  GlobalFsm::setState(OpState::init);
-  GlobalKnitter::setUpInterrupt();
-}
-
-/*!
- * \brief Start hardware test.
- * \param machineType Machine type.
- * \return Error code (0 = success, other values = error).
- */
-Err_t Tester::startTest(Machine_t machineType) {
-  OpState_t currentState = GlobalFsm::getState();
-  if (OpState::wait_for_machine == currentState || OpState::init == currentState || OpState::ready == currentState) {
-    GlobalFsm::setState(OpState::test);
-    GlobalKnitter::setMachineType(machineType);
-    setUp();
-    return ErrorCode::SUCCESS;
-  }
-  return ErrorCode::ERR_WRONG_MACHINE_STATE;
-}
-
-/*!
- * \brief Main loop for hardware tests.
- */
-void Tester::loop() {
-  unsigned long now = millis();
-  if (now - m_lastTime >= TEST_LOOP_DELAY) {
-    m_lastTime = now;
-    handleTimerEvent();
-  }
+  m_autoReadOn = false;
+  m_autoTestOn = false;
+  GlobalOp::setState(OpState::init);
+  GlobalKnitter::init();
+  GlobalEncoders::setUpInterrupt();
 }
 
 #ifndef AYAB_TESTS

@@ -22,8 +22,10 @@
  *    http://ayab-knitting.com
  */
 
+#include "beeper.h"
 #include "com.h"
 #include "knitter.h"
+#include "op.h"
 #include "tester.h"
 
 /*!
@@ -95,21 +97,20 @@ void Com::send_reqLine(const uint8_t lineNumber, Err_t error) const {
  * \param position Position of knitting carriage in needles from left hand side.
  * \param initState State of readiness (0 = ready, other values = not ready).
  */
-void Com::send_indState(Carriage_t carriage, uint8_t position,
-                        Err_t error) const {
+void Com::send_indState(Err_t error) const {
   uint16_t leftHallValue = GlobalEncoders::getHallValue(Direction_t::Left);
   uint16_t rightHallValue = GlobalEncoders::getHallValue(Direction_t::Right);
   uint8_t payload[INDSTATE_LEN] = {
       indState_msgid,
       static_cast<uint8_t>(error),
-      static_cast<uint8_t>(GlobalFsm::getState()),
+      static_cast<uint8_t>(GlobalOp::getState()),
       highByte(leftHallValue),
       lowByte(leftHallValue),
       highByte(rightHallValue),
       lowByte(rightHallValue),
-      static_cast<uint8_t>(carriage),
-      position,
-      static_cast<uint8_t>(GlobalEncoders::getDirection()),
+      static_cast<uint8_t>(GlobalOp::getCarriage()),
+      GlobalOp::getPosition(),
+      static_cast<uint8_t>(GlobalOp::getDirection()),
   };
   send(static_cast<uint8_t *>(payload), INDSTATE_LEN);
 }

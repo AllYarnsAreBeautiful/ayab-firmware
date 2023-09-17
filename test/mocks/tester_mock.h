@@ -30,7 +30,8 @@
 class TesterMock : public TesterInterface {
 public:
   MOCK_METHOD1(startTest, Err_t(Machine_t machineType));
-  MOCK_METHOD0(loop, void());
+  MOCK_METHOD0(update, void());
+  MOCK_METHOD0(enabled, bool());
   MOCK_METHOD0(helpCmd, void());
   MOCK_METHOD0(sendCmd, void());
   MOCK_METHOD0(beepCmd, void());

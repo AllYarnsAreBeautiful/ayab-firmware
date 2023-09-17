@@ -29,9 +29,9 @@
 #include "beeper.h"
 #include "com.h"
 #include "encoders.h"
-#include "fsm.h"
 #include "knitter.h"
-#include "tester.h"
+#include "op.h"
+#include "solenoids.h"
 
 #ifdef CLANG_TIDY
 // clang-tidy doesn't find these macros for some reason,
@@ -75,43 +75,10 @@ void Knitter::init() {
   m_firstRun = true;
   m_workedOnLine = false;
   m_lastHall = Direction_t::NoDirection;
-  m_position = 0U;
-  m_hallActive = Direction_t::NoDirection;
   m_pixelToSet = 0;
 #ifdef DBG_NOMACHINE
   m_prevState = false;
 #endif
-}
-
-/*!
- * \brief Initialize interrupt service routine for Knitter object.
- */
-void Knitter::setUpInterrupt() {
-  // (re-)attach ENC_PIN_A(=2), interrupt #0
-  detachInterrupt(digitalPinToInterrupt(ENC_PIN_A));
-#ifndef AYAB_TESTS
-  // Attaching ENC_PIN_A, Interrupt #0
-  // This interrupt cannot be enabled until
-  // the machine type has been validated.
-  attachInterrupt(digitalPinToInterrupt(ENC_PIN_A), GlobalKnitter::isr, CHANGE);
-#endif // AYAB_TESTS
-}
-
-/*!
- * \brief Interrupt service routine.
- *
- * Update machine state data.
- * Must execute as fast as possible.
- * Machine type assumed valid.
- */
-void Knitter::isr() {
-  // update machine state data
-  GlobalEncoders::encA_interrupt();
-  m_position = GlobalEncoders::getPosition();
-  m_direction = GlobalEncoders::getDirection();
-  m_hallActive = GlobalEncoders::getHallActive();
-  m_beltShift = GlobalEncoders::getBeltShift();
-  m_carriage = GlobalEncoders::getCarriage();
 }
 
 /*!
@@ -120,7 +87,7 @@ void Knitter::isr() {
  * \return Error code (0 = success, other values = error).
  */
 Err_t Knitter::initMachine(Machine_t machineType) {
-  if (GlobalFsm::getState() != OpState::wait_for_machine) {
+  if (GlobalOp::getState() != OpState::wait_for_machine) {
     return ErrorCode::ERR_WRONG_MACHINE_STATE;
   }
   if (machineType == Machine_t::NoMachine) {
@@ -129,10 +96,10 @@ Err_t Knitter::initMachine(Machine_t machineType) {
   m_machineType = machineType;
 
   GlobalEncoders::init(machineType);
-  GlobalFsm::setState(OpState::init);
+  GlobalOp::setState(OpState::init);
 
   // Now that we have enough start state, we can set up interrupts
-  setUpInterrupt();
+  GlobalEncoders::setUpInterrupt();
 
   return ErrorCode::SUCCESS;
 }
@@ -148,7 +115,7 @@ Err_t Knitter::initMachine(Machine_t machineType) {
 Err_t Knitter::startKnitting(uint8_t startNeedle,
                              uint8_t stopNeedle, uint8_t *pattern_start,
                              bool continuousReportingEnabled) {
-  if (GlobalFsm::getState() != OpState::ready) {
+  if (GlobalOp::getState() != OpState::ready) {
     return ErrorCode::ERR_WRONG_MACHINE_STATE;
   }
   if (pattern_start == nullptr) {
@@ -171,7 +138,7 @@ Err_t Knitter::startKnitting(uint8_t startNeedle,
   m_lastLineFlag = false;
 
   // proceed to next state
-  GlobalFsm::setState(OpState::knit);
+  GlobalOp::setState(OpState::knit);
   GlobalBeeper::ready();
 
   // success
@@ -184,12 +151,13 @@ Err_t Knitter::startKnitting(uint8_t startNeedle,
  * Used in hardware test procedure.
  */
 void Knitter::encodePosition() {
-  if (m_sOldPosition != m_position) {
+  auto position = GlobalOp::getPosition();
+  if (m_sOldPosition != position) {
     // only act if there is an actual change of position
     // store current encoder position for next call of this function
-    m_sOldPosition = m_position;
+    m_sOldPosition = position;
     calculatePixelAndSolenoid();
-    indState(ErrorCode::UNSPECIFIED_FAILURE);
+    GlobalCom::send_indState(ErrorCode::UNSPECIFIED_FAILURE);
   }
 }
 
@@ -208,14 +176,17 @@ bool Knitter::isReady() {
   // will be a second magnet passing the sensor.
   // Keep track of the last seen hall sensor because we may be making a decision
   // after it passes.
-  if (m_hallActive != Direction_t::NoDirection) {
-    m_lastHall = m_hallActive;
+  auto hallActive = GlobalOp::getHallActive();
+  if (hallActive != Direction_t::NoDirection) {
+    m_lastHall = hallActive;
   }
 
-  bool passedLeft = (Direction_t::Right == m_direction) && (Direction_t::Left == m_lastHall) &&
-        (m_position > (END_LEFT_PLUS_OFFSET[static_cast<uint8_t>(m_machineType)] + GARTER_SLOP));
-  bool passedRight = (Direction_t::Left == m_direction) && (Direction_t::Right == m_lastHall) &&
-        (m_position < (END_RIGHT_MINUS_OFFSET[static_cast<uint8_t>(m_machineType)] - GARTER_SLOP));
+  auto direction = GlobalOp::getDirection();
+  auto position = GlobalOp::getPosition();
+  bool passedLeft = (Direction_t::Right == direction) && (Direction_t::Left == m_lastHall) &&
+        (position > (END_LEFT_PLUS_OFFSET[static_cast<uint8_t>(m_machineType)] + GARTER_SLOP));
+  bool passedRight = (Direction_t::Left == direction) && (Direction_t::Right == m_lastHall) &&
+        (position < (END_RIGHT_MINUS_OFFSET[static_cast<uint8_t>(m_machineType)] - GARTER_SLOP));
   // Machine is initialized when left Hall sensor is passed in Right direction
   // New feature (August 2020): the machine is also initialized
   // when the right Hall sensor is passed in Left direction.
@@ -223,7 +194,7 @@ bool Knitter::isReady() {
 
 #endif // DBG_NOMACHINE
     GlobalSolenoids::setSolenoids(SOLENOIDS_BITMASK);
-    indState(ErrorCode::SUCCESS);
+    GlobalCom::send_indState(ErrorCode::SUCCESS);
     return true; // move to `OpState::ready`
   }
 
@@ -256,17 +227,18 @@ void Knitter::knit() {
   }
   m_prevState = state;
 #else
+  auto position = GlobalOp::getPosition();
   // only act if there is an actual change of position
-  if (m_sOldPosition == m_position) {
+  if (m_sOldPosition == position) {
     return;
   }
 
   // store current carriage position for next call of this function
-  m_sOldPosition = m_position;
+  m_sOldPosition = position;
 
   if (m_continuousReportingEnabled) {
     // send current position to GUI
-    indState(ErrorCode::SUCCESS);
+    GlobalCom::send_indState(ErrorCode::SUCCESS);
   }
 
   if (!calculatePixelAndSolenoid()) {
@@ -307,14 +279,6 @@ void Knitter::knit() {
 }
 
 /*!
- * \brief Send `indState` message.
- * \param error Error state (0 = success, other values = error).
- */
-void Knitter::indState(Err_t error) {
-  GlobalCom::send_indState(m_carriage, m_position, error);
-}
-
-/*!
  * \brief Get knitting machine type.
  * \return Machine type.
  */
@@ -327,12 +291,13 @@ Machine_t Knitter::getMachineType() {
  * \return Start offset, or 0 if unobtainable.
  */
 uint8_t Knitter::getStartOffset(const Direction_t direction) {
+  auto carriage = GlobalOp::getCarriage();
   if ((direction == Direction_t::NoDirection) ||
-      (m_carriage == Carriage_t::NoCarriage) ||
+      (carriage == Carriage_t::NoCarriage) ||
       (m_machineType == Machine_t::NoMachine)) {
     return 0U;
   }
-  return START_OFFSET[static_cast<uint8_t>(m_machineType)][static_cast<uint8_t>(direction)][static_cast<uint8_t>(m_carriage)];
+  return START_OFFSET[static_cast<uint8_t>(m_machineType)][static_cast<uint8_t>(direction)][static_cast<uint8_t>(carriage)];
 }
 
 /*!
@@ -389,21 +354,25 @@ void Knitter::reqLine(uint8_t lineNumber) {
 bool Knitter::calculatePixelAndSolenoid() {
   uint8_t startOffset = 0;
 
-  switch (m_direction) {
+  auto direction = GlobalOp::getDirection();
+  auto position = GlobalOp::getPosition();
+  auto beltShift = GlobalOp::getBeltShift();
+  auto carriage = GlobalOp::getCarriage();
+  switch (direction) {
   // calculate the solenoid and pixel to be set
   // implemented according to machine manual
   // magic numbers from machine manual
   case Direction_t::Right:
     startOffset = getStartOffset(Direction_t::Left);
-    if (m_position >= startOffset) {
-      m_pixelToSet = m_position - startOffset;
+    if (position >= startOffset) {
+      m_pixelToSet = position - startOffset;
 
-      if ((BeltShift::Regular == m_beltShift) || (m_machineType == Machine_t::Kh270)) {
-        m_solenoidToSet = m_position % SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];
-      } else if (BeltShift::Shifted == m_beltShift) {
-        m_solenoidToSet = (m_position - HALF_SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)]) % SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];
+      if ((BeltShift::Regular == beltShift) || (m_machineType == Machine_t::Kh270)) {
+        m_solenoidToSet = position % SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];
+      } else if (BeltShift::Shifted == beltShift) {
+        m_solenoidToSet = (position - HALF_SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)]) % SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];
       }
-      if (Carriage_t::Lace == m_carriage) {
+      if (Carriage_t::Lace == carriage) {
         m_pixelToSet = m_pixelToSet + HALF_SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];
       }
     } else {
@@ -413,15 +382,15 @@ bool Knitter::calculatePixelAndSolenoid() {
 
   case Direction_t::Left:
     startOffset = getStartOffset(Direction_t::Right);
-    if (m_position <= (END_RIGHT[static_cast<uint8_t>(m_machineType)] - startOffset)) {
-      m_pixelToSet = m_position - startOffset;
+    if (position <= (END_RIGHT[static_cast<uint8_t>(m_machineType)] - startOffset)) {
+      m_pixelToSet = position - startOffset;
 
-      if ((BeltShift::Regular == m_beltShift) || (m_machineType == Machine_t::Kh270)) {
-        m_solenoidToSet = (m_position + HALF_SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)]) % SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];
-      } else if (BeltShift::Shifted == m_beltShift) {
-        m_solenoidToSet = m_position % SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];
+      if ((BeltShift::Regular == beltShift) || (m_machineType == Machine_t::Kh270)) {
+        m_solenoidToSet = (position + HALF_SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)]) % SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];
+      } else if (BeltShift::Shifted == beltShift) {
+        m_solenoidToSet = position % SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];
       }
-      if (Carriage_t::Lace == m_carriage) {
+      if (Carriage_t::Lace == carriage) {
         m_pixelToSet = m_pixelToSet - SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];
       }
     } else {
@@ -444,7 +413,7 @@ bool Knitter::calculatePixelAndSolenoid() {
  */
 void Knitter::stopKnitting() const {
   GlobalBeeper::endWork();
-  GlobalFsm::setState(OpState::ready);
+  GlobalOp::setState(OpState::ready);
 
   GlobalSolenoids::setSolenoids(SOLENOIDS_BITMASK);
   GlobalBeeper::finishedLine();

@@ -1,7 +1,6 @@
 /*!
- * \file fsm.cpp
- * \brief Singleton class containing methods for the finite state machine
- *    that co-ordinates the AYAB firmware.
+ * \file op.cpp
+ * \brief Class containing methods for knit and test operations.
  *
  * This file is part of AYAB.
  *
@@ -30,17 +29,18 @@
 
 #include "board.h"
 #include <Arduino.h>
+#include <util/atomic.h>
 
 #include "com.h"
-#include "fsm.h"
 #include "knitter.h"
+#include "op.h"
 
 // Public methods
 
 /*!
  * \brief Initialize Finite State Machine.
  */
-void Fsm::init() {
+void Op::init() {
   m_currentState = OpState::wait_for_machine;
   m_nextState = OpState::wait_for_machine;
   m_flash = false;
@@ -49,27 +49,10 @@ void Fsm::init() {
 }
 
 /*!
- * \brief Get machine state.
- * \return Current state of Finite State Machine.
- */
-OpState_t Fsm::getState() {
-  return m_currentState;
-}
-
-/*!
- * \brief Set machine state.
- * \param state State.
- *
- * Does not take effect until next `dispatch()`
- */
-void Fsm::setState(OpState_t state) {
-  m_nextState = state;
-}
-
-/*!
  * \brief Dispatch on machine state
  */
-void Fsm::dispatch() {
+void Op::update() {
+  cacheEncoders();
   switch (m_currentState) {
   case OpState::wait_for_machine:
     state_wait_for_machine();
@@ -99,23 +82,95 @@ void Fsm::dispatch() {
     break;
   }
   m_currentState = m_nextState;
-  GlobalCom::update();
 }
 // GCOVR_EXCL_STOP
+
+/*!
+ * \brief Cache Encoder values
+ */
+void Op::cacheEncoders() {
+  // update machine state data
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+    m_beltShift  = GlobalEncoders::getBeltShift();
+    m_carriage   = GlobalEncoders::getCarriage();
+    m_direction  = GlobalEncoders::getDirection();
+    m_hallActive = GlobalEncoders::getHallActive();
+    m_position   = GlobalEncoders::getPosition();
+  }
+}
+
+/*!
+ * \brief Set machine state.
+ * \param state State.
+ *
+ * Does not take effect until next `update()`
+ */
+void Op::setState(OpState_t state) {
+  m_nextState = state;
+}
+
+/*!
+ * \brief Get machine state.
+ * \return Current state of Finite State Machine.
+ */
+OpState_t Op::getState() {
+  return m_currentState;
+}
+
+/*!
+ * \brief Get cached beltShift value.
+ * \return Cached beltShift value.
+ */
+BeltShift_t Op::getBeltShift() {
+  return m_beltShift;
+}
+
+/*!
+ * \brief Get cached carriage value.
+ * \return Cached carriage value.
+ */
+Carriage_t Op::getCarriage() {
+  return m_carriage;
+}
+
+/*!
+ * \brief Get cached direction value.
+ * \return Cached direction value.
+ */
+Direction_t Op::getDirection() {
+  return m_direction;
+}
+
+/*!
+ * \brief Get cached hallActive value.
+ * \return Cached hallActive value.
+ */
+Direction_t Op::getHallActive() {
+  return m_hallActive;
+}
+
+/*!
+ * \brief Get cached position value.
+ * \return Cached position value.
+ */
+uint8_t Op::getPosition() {
+  return m_position;
+}
+
 
 // Private methods
 
 /*!
  * \brief Action of machine in state `wait_for_machine`.
  */
-void Fsm::state_wait_for_machine() const {
+void Op::state_wait_for_machine() const {
   digitalWrite(LED_PIN_A, LOW); // green LED off
 }
 
 /*!
  * \brief Action of machine in state `OpState::init`.
  */
-void Fsm::state_init() {
+void Op::state_init() {
   digitalWrite(LED_PIN_A, LOW); // green LED off
   if (GlobalKnitter::isReady()) {
     setState(OpState::ready);
@@ -125,14 +180,14 @@ void Fsm::state_init() {
 /*!
  * \brief Action of machine in state `OpState::ready`.
  */
-void Fsm::state_ready() const {
+void Op::state_ready() const {
   digitalWrite(LED_PIN_A, LOW); // green LED off
 }
 
 /*!
  * \brief Action of machine in state `OpState::knit`.
  */
-void Fsm::state_knit() const {
+void Op::state_knit() const {
   digitalWrite(LED_PIN_A, HIGH); // green LED on
   GlobalKnitter::knit();
 }
@@ -140,21 +195,16 @@ void Fsm::state_knit() const {
 /*!
  * \brief Action of machine in state `OpState::test`.
  */
-void Fsm::state_test() const {
-  GlobalKnitter::encodePosition();
-  GlobalTester::loop();
-  if (m_nextState == OpState::init) {
-    // quit test
-    GlobalKnitter::init();
-  }
+void Op::state_test() const {
 }
 
 /*!
  * \brief Action of machine in state `OpState::error`.
  */
-void Fsm::state_error() {
+void Op::state_error() {
   if (m_nextState == OpState::init) {
     // exit error state
+    digitalWrite(LED_PIN_A, LOW); // green LED off
     digitalWrite(LED_PIN_B, LOW); // yellow LED off
     GlobalKnitter::init();
     return;
@@ -167,8 +217,7 @@ void Fsm::state_error() {
     digitalWrite(LED_PIN_B, !m_flash); // yellow LED
     m_flash = !m_flash;
     m_flashTime = now;
-
     // send error message
-    GlobalKnitter::indState(m_error);
+    GlobalCom::send_indState(m_error);
   }
 }

@@ -24,6 +24,7 @@
 #ifndef ENCODERS_H_
 #define ENCODERS_H_
 
+#include "board.h"
 #include <Arduino.h>
 
 // Enumerated constants
@@ -122,9 +123,9 @@ public:
   virtual ~EncodersInterface() = default;
 
   // any methods that need to be mocked should go here
-  virtual void encA_interrupt() = 0;
-  virtual uint16_t getHallValue(Direction_t pSensor) = 0;
   virtual void init(Machine_t machineType) = 0;
+  virtual void isr() = 0;
+  virtual uint16_t getHallValue(Direction_t pSensor) = 0;
   virtual Machine_t getMachineType() = 0;
   virtual BeltShift_t getBeltShift() = 0;
   virtual Carriage_t getCarriage() = 0;
@@ -147,9 +148,12 @@ public:
   // pointer to global instance whose methods are implemented
   static EncodersInterface *m_instance;
 
-  static void encA_interrupt();
-  static uint16_t getHallValue(Direction_t pSensor);
   static void init(Machine_t machineType);
+  static void setUpInterrupt();
+#ifndef AYAB_TESTS
+  static void isr();
+#endif
+  static uint16_t getHallValue(Direction_t pSensor);
   static Machine_t getMachineType();
   static BeltShift_t getBeltShift();
   static Carriage_t getCarriage();
@@ -162,9 +166,9 @@ class Encoders : public EncodersInterface {
 public:
   Encoders() = default;
 
-  void encA_interrupt() final;
-  uint16_t getHallValue(Direction_t pSensor) final;
   void init(Machine_t machineType) final;
+  void isr() final;
+  uint16_t getHallValue(Direction_t pSensor) final;
   Machine_t getMachineType() final;
   BeltShift_t getBeltShift() final;
   Carriage_t getCarriage() final;

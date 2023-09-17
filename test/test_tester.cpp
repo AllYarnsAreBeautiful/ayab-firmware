@@ -26,7 +26,7 @@
 #include <beeper.h>
 #include <tester.h>
 
-#include <fsm_mock.h>
+#include <op_mock.h>
 #include <knitter_mock.h>
 
 using ::testing::_;
@@ -38,8 +38,8 @@ using ::testing::Return;
 extern Beeper *beeper;
 extern Tester *tester;
 
-extern FsmMock *fsm;
 extern KnitterMock *knitter;
+extern OpMock *op;
 
 class TesterTest : public ::testing::Test {
 protected:
@@ -49,13 +49,13 @@ protected:
     // serialCommandMock = serialCommandMockInstance();
 
     // pointers to global instances
-    fsmMock = fsm;
+    opMock = op;
     knitterMock = knitter;
 
     // The global instances do not get destroyed at the end of each test.
     // Ordinarily the mock instance would be local and such behaviour would
     // cause a memory leak. We must notify the test that this is not the case.
-    Mock::AllowLeak(fsmMock);
+    Mock::AllowLeak(opMock);
     Mock::AllowLeak(knitterMock);
 
     beeper->init(true);
@@ -67,13 +67,13 @@ protected:
   }
 
   ArduinoMock *arduinoMock;
-  FsmMock *fsmMock;
+  OpMock *opMock;
   KnitterMock *knitterMock;
   SerialMock *serialMock;
 
   void expect_startTest(unsigned long t) {
-    EXPECT_CALL(*fsmMock, getState).WillOnce(Return(OpState::ready));
-    EXPECT_CALL(*fsmMock, setState(OpState::test));
+    EXPECT_CALL(*opMock, getState).WillOnce(Return(OpState::ready));
+    EXPECT_CALL(*opMock, setState(OpState::test));
     EXPECT_CALL(*knitterMock, setMachineType(Machine_t::Kh930));
     expect_write(false);
 
@@ -195,12 +195,12 @@ TEST_F(TesterTest, test_autoTestCmd) {
 
 TEST_F(TesterTest, test_quitCmd) {
   EXPECT_CALL(*knitterMock, setUpInterrupt);
-  EXPECT_CALL(*fsmMock, setState(OpState::init));
+  EXPECT_CALL(*opMock, setState(OpState::init));
   tester->quitCmd();
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(knitterMock));
-  ASSERT_TRUE(Mock::VerifyAndClear(fsmMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(opMock));
 }
 
 TEST_F(TesterTest, test_loop_default) {
@@ -250,17 +250,17 @@ TEST_F(TesterTest, test_loop_autoTest) {
 
 TEST_F(TesterTest, test_startTest_fail) {
   // can't start test from state `OpState::knit`
-  EXPECT_CALL(*fsmMock, getState).WillOnce(Return(OpState::knit));
+  EXPECT_CALL(*opMock, getState).WillOnce(Return(OpState::knit));
   ASSERT_TRUE(tester->startTest(Machine_t::Kh910) != ErrorCode::SUCCESS);
 
   // test expectations without destroying instance
-  ASSERT_TRUE(Mock::VerifyAndClear(fsmMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(opMock));
 }
 
 TEST_F(TesterTest, test_startTest_success) {
   expect_startTest(0);
 
   // test expectations without destroying instance
-  ASSERT_TRUE(Mock::VerifyAndClear(fsmMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(opMock));
   ASSERT_TRUE(Mock::VerifyAndClear(knitterMock));
 }

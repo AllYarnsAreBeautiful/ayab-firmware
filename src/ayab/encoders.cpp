@@ -23,45 +23,9 @@
  *    http://ayab-knitting.com
  */
 
-#include "board.h"
 #include <Arduino.h>
 
 #include "encoders.h"
-
-
-/*!
- * \brief Service encoder A interrupt routine.
- *
- * Determines edge of signal and dispatches to private rising/falling functions.
- * `m_machineType` assumed valid.
- */
-void Encoders::encA_interrupt() {
-  m_hallActive = Direction_t::NoDirection;
-
-  auto currentState = static_cast<bool>(digitalRead(ENC_PIN_A));
-
-  if (!m_oldState && currentState) {
-    encA_rising();
-  } else if (m_oldState && !currentState) {
-    encA_falling();
-  }
-  m_oldState = currentState;
-}
-
-/*!
- * \brief Read hall sensor on left and right.
- * \param pSensor Which sensor to read (left or right).
- */
-uint16_t Encoders::getHallValue(Direction_t pSensor) {
-  switch (pSensor) {
-  case Direction_t::Left:
-    return analogRead(EOL_PIN_L);
-  case Direction_t::Right:
-    return analogRead(EOL_PIN_R);
-  default:
-    return 0;
-  }
-}
 
 /*!
  * \brief Initialize machine type.
@@ -75,6 +39,41 @@ void Encoders::init(Machine_t machineType) {
   m_beltShift = BeltShift::Unknown;
   m_carriage = Carriage_t::NoCarriage;
   m_oldState = false;
+}
+
+/*!
+ * \brief Interrupt service routine.
+ *
+ * Update machine state data.
+ * Must execute as fast as possible.
+ * Machine type assumed valid.
+ */
+void Encoders::isr() {
+  m_hallActive = Direction_t::NoDirection;
+
+  auto currentState = static_cast<bool>(digitalRead(ENC_PIN_A));
+
+  if (!m_oldState && currentState) {
+    encA_rising();
+  } else if (m_oldState && !currentState) {
+    encA_falling();
+  }
+  m_oldState = currentState;
+}
+
+/*!
+ * \brief Read Hall sensor on left and right.
+ * \param pSensor Which sensor to read (left or right).
+ */
+uint16_t Encoders::getHallValue(Direction_t pSensor) {
+  switch (pSensor) {
+  case Direction_t::Left:
+    return analogRead(EOL_PIN_L);
+  case Direction_t::Right:
+    return analogRead(EOL_PIN_R);
+  default:
+    return 0;
+  }
 }
 
 /*!

@@ -80,7 +80,7 @@ void Beeper::endWork() {
 /*!
  * Beep handler scheduled from main loop
  */
-void Beeper::schedule() {
+void Beeper::update() {
   long unsigned int now = millis();
   switch (m_currentState) {
   case BeepState::On:

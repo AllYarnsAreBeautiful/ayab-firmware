@@ -44,12 +44,12 @@ public:
 
   // any methods that need to be mocked should go here
   virtual void init(bool enabled) = 0;
-  virtual bool enabled() = 0;
-  virtual BeepState getState() = 0;
+  virtual void update() = 0;
   virtual void ready() = 0;
   virtual void finishedLine() = 0;
   virtual void endWork() = 0;
-  virtual void schedule() = 0;
+  virtual BeepState getState() = 0;
+  virtual bool enabled() = 0;
 };
 
 // Container class for the static methods that control the beeper.
@@ -67,12 +67,12 @@ public:
   static BeeperInterface *m_instance;
 
   static void init(bool enabled);
-  static bool enabled();
-  static BeepState getState();
+  static void update();
   static void ready();
   static void finishedLine();
   static void endWork();
-  static void schedule();
+  static BeepState getState();
+  static bool enabled();
 };
 
 /*!
@@ -81,12 +81,12 @@ public:
 class Beeper : public BeeperInterface {
 public:
   void init(bool enabled) final;
-  bool enabled() final;
-  BeepState getState() final;
+  void update() final;
   void ready() final;
   void finishedLine() final;
   void endWork() final;
-  void schedule() final;
+  BeepState getState() final;
+  bool enabled() final;
 
 private:
   void beep(uint8_t repeats);

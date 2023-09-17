@@ -24,11 +24,8 @@
 #ifndef KNITTER_H_
 #define KNITTER_H_
 
-#include "beeper.h"
-#include "com.h"
 #include "encoders.h"
-#include "solenoids.h"
-#include "tester.h"
+#include "op.h"
 
 class KnitterInterface {
 public:
@@ -36,8 +33,6 @@ public:
 
   // any methods that need to be mocked should go here
   virtual void init() = 0;
-  virtual void setUpInterrupt() = 0;
-  virtual void isr() = 0;
   virtual Err_t startKnitting(uint8_t startNeedle,
                               uint8_t stopNeedle, uint8_t *pattern_start,
                               bool continuousReportingEnabled) = 0;
@@ -45,7 +40,6 @@ public:
   virtual void encodePosition() = 0;
   virtual bool isReady() = 0;
   virtual void knit() = 0;
-  virtual void indState(Err_t error = ErrorCode::SUCCESS) = 0;
   virtual uint8_t getStartOffset(const Direction_t direction) = 0;
   virtual Machine_t getMachineType() = 0;
   virtual bool setNextLine(uint8_t lineNumber) = 0;
@@ -69,10 +63,6 @@ public:
   static KnitterInterface *m_instance;
 
   static void init();
-  static void setUpInterrupt();
-#ifndef AYAB_TESTS
-  static void isr();
-#endif
   static Err_t startKnitting(uint8_t startNeedle,
                              uint8_t stopNeedle, uint8_t *pattern_start,
                              bool continuousReportingEnabled);
@@ -80,7 +70,6 @@ public:
   static void encodePosition();
   static bool isReady();
   static void knit();
-  static void indState(Err_t error = ErrorCode::SUCCESS);
   static uint8_t getStartOffset(const Direction_t direction);
   static Machine_t getMachineType();
   static bool setNextLine(uint8_t lineNumber);
@@ -91,8 +80,6 @@ public:
 class Knitter : public KnitterInterface {
 public:
   void init() final;
-  void setUpInterrupt() final;
-  void isr() final;
   Err_t startKnitting(uint8_t startNeedle,
                       uint8_t stopNeedle, uint8_t *pattern_start,
                       bool continuousReportingEnabled) final;
@@ -100,7 +87,6 @@ public:
   void encodePosition() final;
   bool isReady() final;
   void knit() final;
-  void indState(Err_t error = ErrorCode::SUCCESS) final;
   uint8_t getStartOffset(const Direction_t direction) final;
   Machine_t getMachineType() final;
   bool setNextLine(uint8_t lineNumber) final;
@@ -120,12 +106,6 @@ private:
   bool m_continuousReportingEnabled;
 
   // current machine state
-  uint8_t m_position;
-  Direction_t m_direction;
-  Direction_t m_hallActive;
-  BeltShift_t m_beltShift;
-  Carriage_t m_carriage;
-
   bool m_lineRequested;
   uint8_t m_currentLineNumber;
   bool m_lastLineFlag;

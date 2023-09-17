@@ -25,16 +25,32 @@
 
 #include "encoders.h"
 
-void GlobalEncoders::encA_interrupt() {
-  m_instance->encA_interrupt();
+void GlobalEncoders::init(Machine_t machineType) {
+  m_instance->init(machineType);
 }
+
+/*!
+ * \brief Initialize interrupt service routine for Knitter object.
+ */
+void GlobalEncoders::setUpInterrupt() {
+  // (re-)attach ENC_PIN_A(=2), interrupt #0
+  detachInterrupt(digitalPinToInterrupt(ENC_PIN_A));
+#ifndef AYAB_TESTS
+  // Attaching ENC_PIN_A, Interrupt #0
+  // This interrupt cannot be enabled until
+  // the machine type has been validated.
+  attachInterrupt(digitalPinToInterrupt(ENC_PIN_A), GlobalEncoders::isr, CHANGE);
+#endif // AYAB_TESTS
+}
+
+#ifndef AYAB_TESTS
+void GlobalEncoders::isr() {
+  m_instance->isr();
+}
+#endif
 
 uint16_t GlobalEncoders::getHallValue(Direction_t pSensor) {
   return m_instance->getHallValue(pSensor);
-}
-
-void GlobalEncoders::init(Machine_t machineType) {
-  m_instance->init(machineType);
 }
 
 BeltShift_t GlobalEncoders::getBeltShift() {

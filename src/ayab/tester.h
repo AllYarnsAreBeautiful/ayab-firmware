@@ -38,7 +38,8 @@ public:
 
   // any methods that need to be mocked should go here
   virtual Err_t startTest(Machine_t machineType) = 0;
-  virtual void loop() = 0;
+  virtual void update() = 0;
+  virtual bool enabled() = 0;
   virtual void helpCmd() = 0;
   virtual void sendCmd() = 0;
   virtual void beepCmd() = 0;
@@ -71,7 +72,8 @@ public:
   static TesterInterface *m_instance;
 
   static Err_t startTest(Machine_t machineType);
-  static void loop();
+  static void update();
+  static bool enabled();
   static void helpCmd();
   static void sendCmd();
   static void beepCmd();
@@ -91,7 +93,8 @@ public:
 class Tester : public TesterInterface {
 public:
   Err_t startTest(Machine_t machineType) final;
-  void loop() final;
+  void update() final;
+  bool enabled() final;
   void helpCmd() final;
   void sendCmd() final;
   void beepCmd() final;

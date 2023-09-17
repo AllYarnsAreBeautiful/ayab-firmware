@@ -44,9 +44,13 @@ Err_t Tester::startTest(Machine_t machineType) {
   return gTesterMock->startTest(machineType);
 }
 
-void Tester::loop() {
+void Tester::update() {
   assert(gTesterMock != nullptr);
-  gTesterMock->loop();
+  gTesterMock->update();
+
+bool Tester::enabled() {
+  assert(gTesterMock != nullptr);
+  return gTesterMock->enabled();
 }
 
 void Tester::helpCmd() {
