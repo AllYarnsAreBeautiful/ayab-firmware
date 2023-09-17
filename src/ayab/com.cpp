@@ -85,7 +85,8 @@ void Com::sendMsg(AYAB_API_t id, char *msg) {
  * \param error Error code (0 = success).
  */
 void Com::send_reqLine(const uint8_t lineNumber, Err_t error) const {
-  uint8_t payload[REQLINE_LEN] = {reqLine_msgid, lineNumber, static_cast<uint8_t>(error)};
+  // `payload` will be allocated on stack since length is compile-time constant
+  uint8_t payload[REQLINE_LEN] = {static_cast<uint8_t>(AYAB_API::reqLine), lineNumber, static_cast<uint8_t>(error)};
   send(static_cast<uint8_t *>(payload), REQLINE_LEN);
 }
 
@@ -99,8 +100,9 @@ void Com::send_indState(Carriage_t carriage, uint8_t position,
                         Err_t error) const {
   uint16_t leftHallValue = GlobalEncoders::getHallValue(Direction_t::Left);
   uint16_t rightHallValue = GlobalEncoders::getHallValue(Direction_t::Right);
+  // `payload` will be allocated on stack since length is compile-time constant
   uint8_t payload[INDSTATE_LEN] = {
-      indState_msgid,
+      static_cast<uint8_t>(AYAB_API::indState),
       static_cast<uint8_t>(error),
       static_cast<uint8_t>(GlobalFsm::getState()),
       highByte(leftHallValue),
@@ -121,67 +123,67 @@ void Com::send_indState(Carriage_t carriage, uint8_t position,
  */
 void Com::onPacketReceived(const uint8_t *buffer, size_t size) {
   switch (buffer[0]) {
-  case reqInit_msgid:
+  case static_cast<uint8_t>(AYAB_API::reqInit):
     h_reqInit(buffer, size);
     break;
 
-  case reqStart_msgid:
+  case static_cast<uint8_t>(AYAB_API::reqStart):
     h_reqStart(buffer, size);
     break;
 
-  case cnfLine_msgid:
+  case static_cast<uint8_t>(AYAB_API::cnfLine):
     h_cnfLine(buffer, size);
     break;
 
-  case reqInfo_msgid:
+  case static_cast<uint8_t>(AYAB_API::reqInfo):
     h_reqInfo();
     break;
 
-  case reqTest_msgid:
+  case static_cast<uint8_t>(AYAB_API::reqTest):
     h_reqTest(buffer, size);
     break;
 
-  case helpCmd_msgid:
+  case static_cast<uint8_t>(AYAB_API::helpCmd):
     GlobalTester::helpCmd();
     break;
 
-  case sendCmd_msgid:
+  case static_cast<uint8_t>(AYAB_API::sendCmd):
     GlobalTester::sendCmd();
     break;
 
-  case beepCmd_msgid:
+  case static_cast<uint8_t>(AYAB_API::beepCmd):
     GlobalTester::beepCmd();
     break;
 
-  case setSingleCmd_msgid:
+  case static_cast<uint8_t>(AYAB_API::setSingleCmd):
     GlobalTester::setSingleCmd(buffer, size);
     break;
 
-  case setAllCmd_msgid:
+  case static_cast<uint8_t>(AYAB_API::setAllCmd):
     GlobalTester::setAllCmd(buffer, size);
     break;
 
-  case readEOLsensorsCmd_msgid:
+  case static_cast<uint8_t>(AYAB_API::readEOLsensorsCmd):
     GlobalTester::readEOLsensorsCmd();
     break;
 
-  case readEncodersCmd_msgid:
+  case static_cast<uint8_t>(AYAB_API::readEncodersCmd):
     GlobalTester::readEncodersCmd();
     break;
 
-  case autoReadCmd_msgid:
+  case static_cast<uint8_t>(AYAB_API::autoReadCmd):
     GlobalTester::autoReadCmd();
     break;
 
-  case autoTestCmd_msgid:
+  case static_cast<uint8_t>(AYAB_API::autoTestCmd):
     GlobalTester::autoTestCmd();
     break;
 
-  case stopCmd_msgid:
+  case static_cast<uint8_t>(AYAB_API::stopCmd):
     GlobalTester::stopCmd();
     break;
 
-  case quitCmd_msgid:
+   case static_cast<uint8_t>(AYAB_API::quitCmd):
     GlobalTester::quitCmd();
     break;
 
@@ -201,7 +203,7 @@ void Com::onPacketReceived(const uint8_t *buffer, size_t size) {
 void Com::h_reqInit(const uint8_t *buffer, size_t size) {
   if (size < 3U) {
     // Need 3 bytes from buffer below.
-    send_cnfInit(ErrorCode::ERR_EXPECTED_LONGER_MESSAGE);
+    send_cnfInit(ErrorCode::expected_longer_message);
     return;
   }
 
@@ -210,7 +212,7 @@ void Com::h_reqInit(const uint8_t *buffer, size_t size) {
   uint8_t crc8 = buffer[2];
   // Check crc on bytes 0-4 of buffer.
   if (crc8 != CRC8(buffer, 2)) {
-    send_cnfInit(ErrorCode::ERR_CHECKSUM_ERROR);
+    send_cnfInit(ErrorCode::checksum_error);
     return;
   }
 
@@ -228,7 +230,7 @@ void Com::h_reqInit(const uint8_t *buffer, size_t size) {
 void Com::h_reqStart(const uint8_t *buffer, size_t size) {
   if (size < 5U) {
     // Need 5 bytes from buffer below.
-    send_cnfStart(ErrorCode::ERR_EXPECTED_LONGER_MESSAGE);
+    send_cnfStart(ErrorCode::expected_longer_message);
     return;
   }
 
@@ -239,7 +241,7 @@ void Com::h_reqStart(const uint8_t *buffer, size_t size) {
   uint8_t crc8 = buffer[4];
   // Check crc on bytes 0-4 of buffer.
   if (crc8 != CRC8(buffer, 4)) {
-    send_cnfStart(ErrorCode::ERR_CHECKSUM_ERROR);
+    send_cnfStart(ErrorCode::checksum_error);
     return;
   }
 
@@ -264,8 +266,8 @@ void Com::h_reqStart(const uint8_t *buffer, size_t size) {
  * \todo sl: Assert size? Handle error?
  */
 void Com::h_cnfLine(const uint8_t *buffer, size_t size) {
-  auto m = static_cast<uint8_t>(GlobalKnitter::getMachineType());
-  uint8_t lenLineBuffer = LINE_BUFFER_LEN[m];
+  auto machineType = static_cast<uint8_t>(GlobalKnitter::getMachineType());
+  uint8_t lenLineBuffer = LINE_BUFFER_LEN[machineType];
   if (size < lenLineBuffer + 5U) {
     // message is too short
     // TODO(sl): handle error?
@@ -316,7 +318,7 @@ void Com::h_reqInfo() const {
 void Com::h_reqTest(const uint8_t *buffer, size_t size) const {
   if (size < 2U) {
     // message is too short
-    send_cnfTest(ErrorCode::ERR_EXPECTED_LONGER_MESSAGE);
+    send_cnfTest(ErrorCode::expected_longer_message);
     return;
   }
 
@@ -343,8 +345,9 @@ void Com::h_unrecognized() const {
  */
 void Com::send_cnfInfo() const {
   // Max. length of suffix string: 16 bytes + \0
+  // `payload` will be allocated on stack since length is compile-time constant
   uint8_t payload[22];
-  payload[0] = cnfInfo_msgid;
+  payload[0] = static_cast<uint8_t>(AYAB_API::cnfInfo);
   payload[1] = API_VERSION;
   payload[2] = FW_VERSION_MAJ;
   payload[3] = FW_VERSION_MIN;
@@ -358,8 +361,9 @@ void Com::send_cnfInfo() const {
  * \param error Error code (0 = success, other values = error).
  */
 void Com::send_cnfInit(Err_t error) const {
+  // `payload` will be allocated on stack since length is compile-time constant
   uint8_t payload[2];
-  payload[0] = cnfInit_msgid;
+  payload[0] = static_cast<uint8_t>(AYAB_API::cnfInit);
   payload[1] = static_cast<uint8_t>(error);
   send(payload, 2);
 }
@@ -370,8 +374,9 @@ void Com::send_cnfInit(Err_t error) const {
  * \param error Error code (0 = success, other values = error).
  */
 void Com::send_cnfStart(Err_t error) const {
+  // `payload` will be allocated on stack since length is compile-time constant
   uint8_t payload[2];
-  payload[0] = cnfStart_msgid;
+  payload[0] = static_cast<uint8_t>(AYAB_API::cnfStart);
   payload[1] = static_cast<uint8_t>(error);
   send(payload, 2);
 }
@@ -381,8 +386,9 @@ void Com::send_cnfStart(Err_t error) const {
  * \param error Error code (0 = success, other values = error).
  */
 void Com::send_cnfTest(Err_t error) const {
+  // `payload` will be allocated on stack since length is compile-time constant
   uint8_t payload[2];
-  payload[0] = cnfTest_msgid;
+  payload[0] = static_cast<uint8_t>(AYAB_API::cnfTest);
   payload[1] = static_cast<uint8_t>(error);
   send(payload, 2);
 }
