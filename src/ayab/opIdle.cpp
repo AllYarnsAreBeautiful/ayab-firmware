@@ -1,5 +1,6 @@
-/*!`
- * \file mock_beeper.h
+/*!
+ * \file opIdle.cpp
+ * \brief Class containing methods for hardware testing.
  *
  * This file is part of AYAB.
  *
@@ -21,25 +22,47 @@
  *    http://ayab-knitting.com
  */
 
-#ifndef MOCK_BEEPER_H_
-#define MOCK_BEEPER_H_
+#include <Arduino.h>
 
-#include <gmock/gmock.h>
+#include "com.h"
+#include "opIdle.h"
 
-#include <beeper.h>
+/*!
+ * \brief Initialize state OpIdle
+ */
+void OpIdle::init() {
+}
 
-class BeeperMock : public BeeperInterface {
-public:
-  MOCK_METHOD1(init, void(bool));
-  MOCK_METHOD0(update, void());
-  MOCK_METHOD0(ready, void());
-  MOCK_METHOD0(finishedLine, void());
-  MOCK_METHOD0(endWork, void());
-  MOCK_METHOD0(getState, BeepState());
-  MOCK_METHOD0(enabled, bool());
-};
+/*!
+ * \brief Start state OpIdle
+ * \return Error code (0 = success, other values = error).
+ */
+Err_t OpIdle::begin() {
+  digitalWrite(LED_PIN_A, LOW); // green LED off
+  return ErrorCode::success;
+}
 
-BeeperMock *beeperMockInstance();
-void releaseBeeperMock();
+/*!
+ * \brief Update method for state OpIdle
+ */
+void OpIdle::update() {
+}
 
-#endif // MOCK_BEEPER_H_
+/*!
+ * \brief Communication callback for state OpIdle
+ */
+void OpIdle::com(const uint8_t *buffer, size_t size) {
+  switch (buffer[0]) {
+  case static_cast<uint8_t>(AYAB_API::reqInit):
+    GlobalCom::h_reqInit(buffer, size);
+    break;
+  default:
+    break;
+  }
+}
+
+/*!
+ * \brief Finish state OpIdle
+ */
+void OpIdle::end() {
+}

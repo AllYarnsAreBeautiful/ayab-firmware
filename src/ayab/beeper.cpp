@@ -23,8 +23,6 @@
  *    http://ayab-knitting.com
  */
 
-#include <Arduino.h>
-
 #include "beeper.h"
 #include "board.h"
 
@@ -32,7 +30,7 @@
  * Initialize beeper
  */
 void Beeper::init(bool enabled) {
-  m_currentState = BeepState::Idle;
+  m_currentState = BeepState::idle;
   m_enabled = enabled;
 }
 
@@ -81,32 +79,32 @@ void Beeper::endWork() {
  * Beep handler scheduled from main loop
  */
 void Beeper::update() {
-  long unsigned int now = millis();
+  uint32_t now = millis();
   switch (m_currentState) {
-  case BeepState::On:
+  case BeepState::on:
     analogWrite(PIEZO_PIN, BEEP_ON_DUTY);
-    m_currentState = BeepState::Wait;
-    m_nextState = BeepState::Off;
+    m_currentState = BeepState::wait;
+    m_nextState = BeepState::off;
     m_nextTime = now + BEEP_DELAY;
     break;
-  case BeepState::Off:
+  case BeepState::off:
     analogWrite(PIEZO_PIN, BEEP_OFF_DUTY);
-    m_currentState = BeepState::Wait;
-    m_nextState = BeepState::On;
+    m_currentState = BeepState::wait;
+    m_nextState = BeepState::on;
     m_nextTime = now + BEEP_DELAY;
     m_repeat--;
     break;
-  case BeepState::Wait:
+  case BeepState::wait:
     if (now >= m_nextTime) {
       if (m_repeat == 0) {
         analogWrite(PIEZO_PIN, BEEP_NO_DUTY);
-        m_currentState = BeepState::Idle;
+        m_currentState = BeepState::idle;
       } else {
         m_currentState = m_nextState;
       }
     }
     break;
-  case BeepState::Idle:
+  case BeepState::idle:
   default:
     break;
   }
@@ -121,7 +119,7 @@ void Beeper::update() {
  */
 void Beeper::beep(uint8_t repeats) {
   m_repeat = repeats;
-  m_currentState = BeepState::Wait;
-  m_nextState = BeepState::On;
+  m_currentState = BeepState::wait;
+  m_nextState = BeepState::on;
   m_nextTime = millis();
 }

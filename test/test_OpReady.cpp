@@ -1,5 +1,5 @@
 /*!`
- * \file test_solenoids.cpp
+ * \file test_OpReady.cpp
  *
  * This file is part of AYAB.
  *
@@ -23,55 +23,52 @@
 
 #include <gtest/gtest.h>
 
-#include <solenoids.h>
-#include <Wire.h>
+#include <opReady.h>
 
+#include <fsm_mock.h>
+#include <opKnit_mock.h>
+
+using ::testing::_;
+using ::testing::An;
+using ::testing::AtLeast;
+using ::testing::Mock;
 using ::testing::Return;
 
-extern Solenoids *solenoids;
+extern OpReady *opReady;
 
-class SolenoidsTest : public ::testing::Test {
+extern FsmMock *fsm;
+extern OpKnitMock *opKnit;
+
+class TestOpReady : public ::testing::Test {
 protected:
   void SetUp() override {
     arduinoMock = arduinoMockInstance();
-    wireMock = WireMockInstance();
+    serialMock = serialMockInstance();
+    // serialCommandMock = serialCommandMockInstance();
+
+    // pointers to global instances
+    fsmMock = fsm;
+    opKnitMock = opKnit;
+
+    // The global instances do not get destroyed at the end of each test.
+    // Ordinarily the mock instance would be local and such behaviour would
+    // cause a memory leak. We must notify the test that this is not the case.
+    Mock::AllowLeak(fsmMock);
+    Mock::AllowLeak(opKnitMock);
   }
 
   void TearDown() override {
     releaseArduinoMock();
+    releaseSerialMock();
   }
 
   ArduinoMock *arduinoMock;
-  WireMock *wireMock;
+  FsmMock *fsmMock;
+  SerialMock *serialMock;
+  OpKnitMock *opKnitMock;
 };
 
-TEST_F(SolenoidsTest, test_construct) {
-}
-
-TEST_F(SolenoidsTest, test_init) {
-  solenoids->init();
-  ASSERT_TRUE(solenoids->solenoidState == 0U);
-}
-
-TEST_F(SolenoidsTest, test_setSolenoid1) {
-  solenoids->setSolenoids(0);
-  ASSERT_TRUE(solenoids->solenoidState == 0U);
-  solenoids->setSolenoid(0, true);
-  ASSERT_TRUE(solenoids->solenoidState == 1U);
-}
-
-TEST_F(SolenoidsTest, test_setSolenoid2) {
-  solenoids->setSolenoids(0);
-  ASSERT_TRUE(solenoids->solenoidState == 0U);
-  solenoids->setSolenoids(0);
-  ASSERT_TRUE(solenoids->solenoidState == 0U);
-  solenoids->setSolenoid(0, false);
-  ASSERT_TRUE(solenoids->solenoidState == 0U);
-}
-
-TEST_F(SolenoidsTest, test_setSolenoid3) {
-  solenoids->setSolenoids(0x8000);
-  ASSERT_TRUE(solenoids->solenoidState == 0x8000U);
-  solenoids->setSolenoid(16, false);
-  ASSERT_TRUE(solenoids->solenoidState == 0x8000U);
+TEST_F(TestOpReady, test_begin) {
+  EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, LOW));
+  ASSERT_TRUE(opReady->begin() == ErrorCode::success);
 }

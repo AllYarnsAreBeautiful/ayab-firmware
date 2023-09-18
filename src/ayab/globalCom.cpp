@@ -1,5 +1,5 @@
 /*!
- * \file global_com.cpp
+ * \file global_Com.cpp
  * \brief Singleton class containing methods for serial communication.
  *
  * This file is part of AYAB.
@@ -18,7 +18,7 @@
  *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
  *
  *    Original Work Copyright 2013 Christian Obersteiner, Andreas Müller
- *    Modified Work Copyright 2020 Sturla Lange, Tom Price
+ *    Modified Work Copyright 2020-3 Sturla Lange, Tom Price
  *    http://ayab-knitting.com
  */
 
@@ -36,6 +36,12 @@ void GlobalCom::update() {
   m_instance->update();
 }
 
+// GCOVR_EXCL_START
+void GlobalCom::onPacketReceived(const uint8_t *buffer, size_t size) {
+  m_instance->onPacketReceived(buffer, size);
+}
+// GCOVR_EXCL_STOP
+
 void GlobalCom::send(uint8_t *payload, size_t length) {
   m_instance->send(payload, length);
 }
@@ -48,16 +54,34 @@ void GlobalCom::sendMsg(AYAB_API_t id, char *msg) {
   m_instance->sendMsg(id, msg);
 }
 
-// GCOVR_EXCL_START
-void GlobalCom::onPacketReceived(const uint8_t *buffer, size_t size) {
-  m_instance->onPacketReceived(buffer, size);
-}
-// GCOVR_EXCL_STOP
-
 void GlobalCom::send_reqLine(const uint8_t lineNumber, Err_t error) {
   m_instance->send_reqLine(lineNumber, error);
 }
 
 void GlobalCom::send_indState(Err_t error) {
   m_instance->send_indState(error);
+}
+
+void GlobalCom::h_reqInit(const uint8_t *buffer, size_t size) {
+  m_instance->h_reqInit(buffer, size);
+}
+
+void GlobalCom::h_reqStart(const uint8_t *buffer, size_t size) {
+  m_instance->h_reqStart(buffer, size);
+}
+
+void GlobalCom::h_cnfLine(const uint8_t *buffer, size_t size) {
+  m_instance->h_cnfLine(buffer, size);
+}
+
+void GlobalCom::h_reqInfo() {
+  m_instance->h_reqInfo();
+}
+
+void GlobalCom::h_reqTest() {
+  m_instance->h_reqTest();
+}
+
+void GlobalCom::h_unrecognized() {
+  m_instance->h_unrecognized();
 }

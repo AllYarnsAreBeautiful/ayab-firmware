@@ -17,41 +17,57 @@
  *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
  *
  *    Original Work Copyright 2013 Christian Obersteiner, Andreas Müller
- *    Modified Work Copyright 2020 Sturla Lange, Tom Price
+ *    Modified Work Copyright 2020-3 Sturla Lange, Tom Price
  *    http://ayab-knitting.com
  */
 
 #include "gtest/gtest.h"
 
 #include <fsm.h>
-#include <knitter.h>
+#include <opKnit.h>
 
 #include <beeper_mock.h>
 #include <com_mock.h>
 #include <encoders_mock.h>
 #include <solenoids_mock.h>
-#include <tester_mock.h>
+
+#include <opIdle_mock.h>
+#include <opInit_mock.h>
+#include <opReady_mock.h>
+#include <opTest_mock.h>
+#include <opError_mock.h>
 
 // global definitions
 // references everywhere else must use `extern`
-Fsm *fsm = new Fsm();
-Knitter *knitter = new Knitter();
+FsmInterface    *fsm     = new Fsm();
+OpKnitInterface *opKnit  = new OpKnit();
 
-BeeperMock *beeper = new BeeperMock();
-ComMock *com = new ComMock();
-EncodersMock *encoders = new EncodersMock();
+BeeperMock    *beeper    = new BeeperMock();
+ComMock       *com       = new ComMock();
+EncodersMock  *encoders  = new EncodersMock();
 SolenoidsMock *solenoids = new SolenoidsMock();
-TesterMock *tester = new TesterMock();
+
+OpIdleMock    *opIdle    = new OpIdleMock();
+OpInitMock    *opInit    = new OpInitMock();
+OpReadyMock   *opReady   = new OpReadyMock();
+OpTestMock    *opTest    = new OpTestMock();
+OpErrorMock   *opError   = new OpErrorMock();
+
+// instantiate singleton classes with real objects
+FsmInterface    *GlobalFsm::m_instance    = fsm;
+OpKnitInterface *GlobalOpKnit::m_instance = opKnit;
 
 // instantiate singleton classes with mock objects
-FsmInterface *GlobalFsm::m_instance = fsm;
-KnitterInterface *GlobalKnitter::m_instance = knitter;
-
-BeeperInterface *GlobalBeeper::m_instance = beeper;
-ComInterface *GlobalCom::m_instance = com;
-EncodersInterface *GlobalEncoders::m_instance = encoders;
+BeeperInterface    *GlobalBeeper::m_instance    = beeper;
+ComInterface       *GlobalCom::m_instance       = com;
+EncodersInterface  *GlobalEncoders::m_instance  = encoders;
 SolenoidsInterface *GlobalSolenoids::m_instance = solenoids;
-TesterInterface *GlobalTester::m_instance = tester;
+
+OpIdleInterface    *GlobalOpIdle::m_instance    = opIdle;
+OpInitInterface    *GlobalOpInit::m_instance    = opInit;
+OpTestInterface    *GlobalOpTest::m_instance    = opTest;
+OpReadyInterface   *GlobalOpReady::m_instance   = opReady;
+OpErrorInterface   *GlobalOpError::m_instance   = opError;
 
 int main(int argc, char *argv[]) {
   ::testing::InitGoogleMock(&argc, argv);

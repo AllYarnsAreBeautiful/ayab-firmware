@@ -1,5 +1,5 @@
 /*!`
- * \file mock_beeper.h
+ * \file op_init_mock.cpp
  *
  * This file is part of AYAB.
  *
@@ -21,25 +21,45 @@
  *    http://ayab-knitting.com
  */
 
-#ifndef MOCK_BEEPER_H_
-#define MOCK_BEEPER_H_
+#include <op_init_mock.h>
 
-#include <gmock/gmock.h>
+static OpInitMock *gOpInitMock = nullptr;
 
-#include <beeper.h>
+OpInitMock *OpInitMockInstance() {
+  if (!gOpInitMock) {
+    gOpInitMock = new OpInitMock();
+  }
+  return gOpInitMock;
+}
 
-class BeeperMock : public BeeperInterface {
-public:
-  MOCK_METHOD1(init, void(bool));
-  MOCK_METHOD0(update, void());
-  MOCK_METHOD0(ready, void());
-  MOCK_METHOD0(finishedLine, void());
-  MOCK_METHOD0(endWork, void());
-  MOCK_METHOD0(getState, BeepState());
-  MOCK_METHOD0(enabled, bool());
-};
+void releaseOpInitMock() {
+  if (gOpInitMock) {
+    delete gOpInitMock;
+    gOpInitMock = nullptr;
+  }
+}
 
-BeeperMock *beeperMockInstance();
-void releaseBeeperMock();
+void OpInit::init() {
+  assert(gOpInitMock != nullptr);
+  gOpInitMock->init();
+}
 
-#endif // MOCK_BEEPER_H_
+Err_t OpInit::begin() {
+  assert(gOpInitMock != nullptr);
+  return gOpInitMock->begin();
+}
+
+void OpInit::update() {
+  assert(gOpInitMock != nullptr);
+  gOpInitMock->update();
+}
+
+void OpInit::com(const uint8_t *buffer, size_t size) {
+  assert(gOpInitMock != nullptr);
+  gOpInitMock->com(buffer, size);
+}
+
+void OpInit::end() {
+  assert(gOpInitMock != nullptr);
+  gOpInitMock->end();
+}

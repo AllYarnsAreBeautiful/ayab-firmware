@@ -17,7 +17,7 @@
  *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
  *
  *    Original Work Copyright 2013 Christian Obersteiner, Andreas Müller
- *    Modified Work Copyright 2020 Sturla Lange, Tom Price
+ *    Modified Work Copyright 2020-3 Sturla Lange, Tom Price
  *    http://ayab-knitting.com
  */
 
@@ -44,28 +44,28 @@ protected:
 
   void expectedBeepSchedule(unsigned long t) {
     EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(t));
-    beeper->schedule();
+    beeper->update();
   }
 
   void expectedBeepRepeats(uint8_t repeats, bool enabled) {
     if (enabled) {
-      ASSERT_EQ(beeper->getState(), BeepState::Wait);
+      ASSERT_EQ(beeper->getState(), BeepState::wait);
       for (uint8_t i = 0; i < repeats; i++) {
         expectedBeepSchedule(BEEP_DELAY * 2 * i);
-        ASSERT_EQ(beeper->getState(), BeepState::On);
+        ASSERT_EQ(beeper->getState(), BeepState::on);
         EXPECT_CALL(*arduinoMock, analogWrite(PIEZO_PIN, BEEP_ON_DUTY));
         expectedBeepSchedule(BEEP_DELAY * 2 * i);
-        ASSERT_EQ(beeper->getState(), BeepState::Wait);
+        ASSERT_EQ(beeper->getState(), BeepState::wait);
         expectedBeepSchedule(BEEP_DELAY * (2 * i + 1));
-        ASSERT_EQ(beeper->getState(), BeepState::Off);
+        ASSERT_EQ(beeper->getState(), BeepState::off);
         EXPECT_CALL(*arduinoMock, analogWrite(PIEZO_PIN, BEEP_OFF_DUTY));
         expectedBeepSchedule(BEEP_DELAY * (2 * i + 1));
-        ASSERT_EQ(beeper->getState(), BeepState::Wait);
+        ASSERT_EQ(beeper->getState(), BeepState::wait);
       }
       EXPECT_CALL(*arduinoMock, analogWrite(PIEZO_PIN, BEEP_NO_DUTY));
       expectedBeepSchedule(BEEP_DELAY * (2 * repeats));
     }
-    ASSERT_EQ(beeper->getState(), BeepState::Idle);
+    ASSERT_EQ(beeper->getState(), BeepState::idle);
   }
 };
 

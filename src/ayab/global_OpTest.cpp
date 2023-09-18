@@ -1,5 +1,5 @@
 /*!
- * \file global_tester.cpp
+ * \file global_OpTest.cpp
  * \brief Singleton class containing methods for hardware testing.
  *
  * This file is part of AYAB.
@@ -22,68 +22,77 @@
  *    http://ayab-knitting.com
  */
 
-#include "tester.h"
+#include "opTest.h"
 
 // static member functions
 
-Err_t GlobalTester::startTest(Machine_t machineType) {
-  return m_instance->startTest(machineType);
+void GlobalOpTest::init() {
+  m_instance->init();
 }
 
-bool GlobalTester::enabled() {
-  return m_instance->enabled();
+Err_t GlobalOpTest::begin() {
+  return m_instance->begin();
 }
 
-void GlobalTester::update() {
+void GlobalOpTest::update() {
   m_instance->update();
 }
 
-void GlobalTester::helpCmd() {
+void GlobalOpTest::com(const uint8_t *buffer, size_t size) {
+  m_instance->com(buffer, size);
+}
+
+void GlobalOpTest::end() {
+  m_instance->end();
+}
+
+
+bool GlobalOpTest::enabled() {
+  return m_instance->enabled();
+}
+
+void GlobalOpTest::helpCmd() {
   m_instance->helpCmd();
 }
 
-void GlobalTester::sendCmd() {
+void GlobalOpTest::sendCmd() {
   m_instance->sendCmd();
 }
 
-void GlobalTester::beepCmd() {
+void GlobalOpTest::beepCmd() {
   m_instance->beepCmd();
 }
 
-void GlobalTester::setSingleCmd(const uint8_t *buffer, size_t size) {
+void GlobalOpTest::setSingleCmd(const uint8_t *buffer, size_t size) {
   m_instance->setSingleCmd(buffer, size);
 }
 
-void GlobalTester::setAllCmd(const uint8_t *buffer, size_t size) {
+void GlobalOpTest::setAllCmd(const uint8_t *buffer, size_t size) {
   m_instance->setAllCmd(buffer, size);
 }
 
-void GlobalTester::readEOLsensorsCmd() {
+void GlobalOpTest::readEOLsensorsCmd() {
   m_instance->readEOLsensorsCmd();
 }
 
-void GlobalTester::readEncodersCmd() {
+void GlobalOpTest::readEncodersCmd() {
   m_instance->readEncodersCmd();
 }
 
-void GlobalTester::autoReadCmd() {
+void GlobalOpTest::autoReadCmd() {
   m_instance->autoReadCmd();
 }
 
-void GlobalTester::autoTestCmd() {
+void GlobalOpTest::autoTestCmd() {
   m_instance->autoTestCmd();
 }
 
-void GlobalTester::stopCmd() {
+void GlobalOpTest::stopCmd() {
   m_instance->stopCmd();
 }
 
-void GlobalTester::quitCmd() {
-  m_instance->quitCmd();
-}
-
 #ifndef AYAB_TESTS
-void GlobalTester::encoderAChange() {
+void GlobalOpTest::encoderAChange() {
   m_instance->encoderAChange();
 }
 #endif // AYAB_TESTS

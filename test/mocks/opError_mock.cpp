@@ -1,5 +1,5 @@
 /*!`
- * \file mock_beeper.h
+ * \file op_error_mock.cpp
  *
  * This file is part of AYAB.
  *
@@ -21,25 +21,45 @@
  *    http://ayab-knitting.com
  */
 
-#ifndef MOCK_BEEPER_H_
-#define MOCK_BEEPER_H_
+#include <op_error_mock.h>
 
-#include <gmock/gmock.h>
+static OpErrorMock *gOpErrorMock = nullptr;
 
-#include <beeper.h>
+OpErrorMock *OpErrorMockInstance() {
+  if (!gOpErrorMock) {
+    gOpErrorMock = new OpErrorMock();
+  }
+  return gOpErrorMock;
+}
 
-class BeeperMock : public BeeperInterface {
-public:
-  MOCK_METHOD1(init, void(bool));
-  MOCK_METHOD0(update, void());
-  MOCK_METHOD0(ready, void());
-  MOCK_METHOD0(finishedLine, void());
-  MOCK_METHOD0(endWork, void());
-  MOCK_METHOD0(getState, BeepState());
-  MOCK_METHOD0(enabled, bool());
-};
+void releaseOpErrorMock() {
+  if (gOpErrorMock) {
+    delete gOpErrorMock;
+    gOpErrorMock = nullptr;
+  }
+}
 
-BeeperMock *beeperMockInstance();
-void releaseBeeperMock();
+void OpError::init() {
+  assert(gOpErrorMock != nullptr);
+  gOpErrorMock->init();
+}
 
-#endif // MOCK_BEEPER_H_
+Err_t OpError::begin() {
+  assert(gOpErrorMock != nullptr);
+  return gOpErrorMock->begin();
+}
+
+void OpError::update() {
+  assert(gOpErrorMock != nullptr);
+  gOpErrorMock->update();
+}
+
+void OpError::com(const uint8_t *buffer, size_t size) {
+  assert(gOpErrorMock != nullptr);
+  gOpErrorMock->com(buffer, size);
+}
+
+void OpError::end() {
+  assert(gOpErrorMock != nullptr);
+  gOpErrorMock->end();
+}

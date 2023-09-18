@@ -1,5 +1,6 @@
-/*!`
- * \file mock_beeper.h
+/*!
+ * \file global_OpIdle.cpp
+ * \brief Singleton class containing methods for hardware testing.
  *
  * This file is part of AYAB.
  *
@@ -17,29 +18,30 @@
  *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
  *
  *    Original Work Copyright 2013 Christian Obersteiner, Andreas Müller
- *    Modified Work Copyright 2020-3 Sturla Lange, Tom Price
+ *    Modified Work Copyright 2020 Sturla Lange, Tom Price
  *    http://ayab-knitting.com
  */
 
-#ifndef MOCK_BEEPER_H_
-#define MOCK_BEEPER_H_
+#include "opIdle.h"
 
-#include <gmock/gmock.h>
+// static member functions
 
-#include <beeper.h>
+void GlobalOpIdle::init() {
+  m_instance->init();
+}
 
-class BeeperMock : public BeeperInterface {
-public:
-  MOCK_METHOD1(init, void(bool));
-  MOCK_METHOD0(update, void());
-  MOCK_METHOD0(ready, void());
-  MOCK_METHOD0(finishedLine, void());
-  MOCK_METHOD0(endWork, void());
-  MOCK_METHOD0(getState, BeepState());
-  MOCK_METHOD0(enabled, bool());
-};
+Err_t GlobalOpIdle::begin() {
+  return m_instance->begin();
+}
 
-BeeperMock *beeperMockInstance();
-void releaseBeeperMock();
+void GlobalOpIdle::update() {
+  m_instance->update();
+}
 
-#endif // MOCK_BEEPER_H_
+void GlobalOpIdle::com(const uint8_t *buffer, size_t size) {
+  m_instance->com(buffer, size);
+}
+
+void GlobalOpIdle::end() {
+  m_instance->end();
+}

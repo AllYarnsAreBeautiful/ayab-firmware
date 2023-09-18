@@ -1,5 +1,5 @@
 /*!`
- * \file knitter_mock.h
+ * \file opKnit_mock.h
  *
  * This file is part of AYAB.
  *
@@ -17,34 +17,37 @@
  *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
  *
  *    Original Work Copyright 2013 Christian Obersteiner, Andreas Müller
- *    Modified Work Copyright 2020 Sturla Lange, Tom Price
+ *    Modified Work Copyright 2020-3 Sturla Lange, Tom Price
  *    http://ayab-knitting.com
  */
 
-#ifndef KNITTER_MOCK_H_
-#define KNITTER_MOCK_H_
+#ifndef OP_KNIT_MOCK_H_
+#define OP_KNIT_MOCK_H_
 
 #include <gmock/gmock.h>
-#include <knitter.h>
+#include <opKnit.h>
+#include <op.h>
 
-class KnitterMock : public KnitterInterface {
+class OpKnitMock : public OpKnitInterface {
 public:
   MOCK_METHOD0(init, void());
+  MOCK_METHOD0(begin, Err_t());
+  MOCK_METHOD0(update, void());
+  MOCK_METHOD2(com, void(const uint8_t *buffer, size_t size));
+  MOCK_METHOD0(end, void());
+
   MOCK_METHOD4(startKnitting, Err_t(uint8_t startNeedle,
                                     uint8_t stopNeedle, uint8_t *pattern_start,
                                     bool continuousReportingEnabled));
-  MOCK_METHOD1(initMachine, Err_t(Machine_t machineType));
   MOCK_METHOD0(encodePosition, void());
   MOCK_METHOD0(isReady, bool());
-  MOCK_METHOD0(knit, void());
+  MOCK_METHOD0(doKnitting, void());
   MOCK_METHOD1(getStartOffset, uint8_t(const Direction_t direction));
-  MOCK_METHOD0(getMachineType, Machine_t());
   MOCK_METHOD1(setNextLine, bool(uint8_t lineNumber));
   MOCK_METHOD0(setLastLine, void());
-  MOCK_METHOD1(setMachineType, void(Machine_t));
 };
 
-KnitterMock *knitterMockInstance();
-void releaseKnitterMock();
+OpKnitMock *OpKnitMockInstance();
+void releaseOpKnitMock();
 
-#endif // KNITTER_MOCK_H_
+#endif // OP_KNIT_MOCK_H_

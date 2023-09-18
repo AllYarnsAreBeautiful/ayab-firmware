@@ -1,5 +1,6 @@
-/*!`
- * \file fsm_mock.h
+/*!
+ * \file global_OpReady.cpp
+ * \brief Singleton class containing methods for hardware testing.
  *
  * This file is part of AYAB.
  *
@@ -17,26 +18,30 @@
  *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
  *
  *    Original Work Copyright 2013 Christian Obersteiner, Andreas Müller
- *    Modified Work Copyright 2020 Sturla Lange, Tom Price
+ *    Modified Work Copyright 2020-3 Sturla Lange, Tom Price
  *    http://ayab-knitting.com
  */
 
-#ifndef FSM_MOCK_H_
-#define FSM_MOCK_H_
+#include "opReady.h"
 
-#include <fsm.h>
-#include <gmock/gmock.h>
+// static member functions
 
-class FsmMock : public FsmInterface {
-public:
-  MOCK_METHOD0(init, void());
-  MOCK_METHOD0(getState, OpState_t());
-  MOCK_METHOD1(setState, void(OpState_t state));
-  MOCK_METHOD0(update, void());
-  MOCK_METHOD0(cacheEncoders, void());
-};
+void GlobalOpReady::init() {
+  m_instance->init();
+}
 
-FsmMock *fsmMockInstance();
-void releaseFsmMock();
+Err_t GlobalOpReady::begin() {
+  return m_instance->begin();
+}
 
-#endif // FSM_MOCK_H_
+void GlobalOpReady::update() {
+  m_instance->update();
+}
+
+void GlobalOpReady::com(const uint8_t *buffer, size_t size) {
+  m_instance->com(buffer, size);
+}
+
+void GlobalOpReady::end() {
+  m_instance->end();
+}

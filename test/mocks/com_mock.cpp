@@ -50,6 +50,11 @@ void Com::update() {
   gComMock->update();
 }
 
+void Com::onPacketReceived(const uint8_t *buffer, size_t size) {
+  assert(gComMock != nullptr);
+  gComMock->onPacketReceived(buffer, size);
+}
+
 void Com::send(uint8_t *payload, size_t length) const {
   assert(gComMock != nullptr);
   gComMock->send(payload, length);
@@ -75,7 +80,32 @@ void Com::send_indState(Err_t error) const {
   gComMock->send_indState(error);
 }
 
-void Com::onPacketReceived(const uint8_t *buffer, size_t size) {
+void Com::h_reqInit(const uint8_t *buffer, size_t size) {
   assert(gComMock != nullptr);
-  gComMock->onPacketReceived(buffer, size);
+  gComMock->h_reqInit(buffer, size);
+}
+
+void Com::h_reqStart(const uint8_t *buffer, size_t size) {
+  assert(gComMock != nullptr);
+  gComMock->h_reqStart(buffer, size);
+}
+
+void Com::h_cnfLine(const uint8_t *buffer, size_t size) {
+  assert(gComMock != nullptr);
+  gComMock->h_cnfLine(buffer, size);
+}
+
+void Com::h_reqInfo() const {
+  assert(gComMock != nullptr);
+  gComMock->h_reqInfo();
+}
+
+void Com::h_reqTest() const {
+  assert(gComMock != nullptr);
+  gComMock->h_reqTest();
+}
+
+void Com::h_unrecognized() const {
+  assert(gComMock != nullptr);
+  gComMock->h_unrecognized();
 }

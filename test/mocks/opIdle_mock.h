@@ -1,5 +1,5 @@
 /*!`
- * \file tester_mock.h
+ * \file opIdle_mock.h
  *
  * This file is part of AYAB.
  *
@@ -17,35 +17,26 @@
  *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
  *
  *    Original Work Copyright 2013 Christian Obersteiner, Andreas Müller
- *    Modified Work Copyright 2020 Sturla Lange, Tom Price
+ *    Modified Work Copyright 2020-3 Sturla Lange, Tom Price
  *    http://ayab-knitting.com
  */
 
-#ifndef TESTER_MOCK_H_
-#define TESTER_MOCK_H_
+#ifndef OP_IDLE_MOCK_H_
+#define OP_IDLE_MOCK_H_
 
 #include <gmock/gmock.h>
-#include <tester.h>
+#include <opIdle.h>
 
-class TesterMock : public TesterInterface {
+class OpIdleMock : public OpIdleInterface {
 public:
-  MOCK_METHOD1(startTest, Err_t(Machine_t machineType));
+  MOCK_METHOD0(init, void());
+  MOCK_METHOD0(begin, Err_t());
   MOCK_METHOD0(update, void());
-  MOCK_METHOD0(enabled, bool());
-  MOCK_METHOD0(helpCmd, void());
-  MOCK_METHOD0(sendCmd, void());
-  MOCK_METHOD0(beepCmd, void());
-  MOCK_METHOD2(setSingleCmd, void(const uint8_t *, size_t));
-  MOCK_METHOD2(setAllCmd, void(const uint8_t *, size_t));
-  MOCK_METHOD0(readEOLsensorsCmd, void());
-  MOCK_METHOD0(readEncodersCmd, void());
-  MOCK_METHOD0(autoReadCmd, void());
-  MOCK_METHOD0(autoTestCmd, void());
-  MOCK_METHOD0(stopCmd, void());
-  MOCK_METHOD0(quitCmd, void());
+  MOCK_METHOD2(com, void(const uint8_t *buffer, size_t size));
+  MOCK_METHOD0(end, void());
 };
 
-TesterMock *testerMockInstance();
-void releaseTesterMock();
+OpIdleMock *OpIdleMockInstance();
+void releaseOpIdleMock();
 
-#endif // TESTER_MOCK_H_
+#endif // OP_IDLE_MOCK_H_

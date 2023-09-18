@@ -1,5 +1,5 @@
 /*!`
- * \file knitter.h
+ * \file opKnit.h
  *
  * This file is part of AYAB.
  *
@@ -17,89 +17,88 @@
  *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
  *
  *    Original Work Copyright 2013 Christian Obersteiner, Andreas Müller
- *    Modified Work Copyright 2020 Sturla Lange, Tom Price
+ *    Modified Work Copyright 2020-3 Sturla Lange, Tom Price
  *    http://ayab-knitting.com
  */
 
-#ifndef KNITTER_H_
-#define KNITTER_H_
+#ifndef OP_KNIT_H_
+#define OP_KNIT_H_
 
 #include "encoders.h"
 #include "fsm.h"
+#include "op.h"
 
-class KnitterInterface {
+class OpKnitInterface : public OpInterface {
 public:
-  virtual ~KnitterInterface() = default;
+  virtual ~OpKnitInterface() = default;
 
   // any methods that need to be mocked should go here
-  virtual void init() = 0;
   virtual Err_t startKnitting(uint8_t startNeedle,
                               uint8_t stopNeedle, uint8_t *pattern_start,
                               bool continuousReportingEnabled) = 0;
-  virtual Err_t initMachine(Machine_t machine) = 0;
   virtual void encodePosition() = 0;
   virtual bool isReady() = 0;
-  virtual void knit() = 0;
+  virtual void doKnitting() = 0;
   virtual uint8_t getStartOffset(const Direction_t direction) = 0;
-  virtual Machine_t getMachineType() = 0;
   virtual bool setNextLine(uint8_t lineNumber) = 0;
   virtual void setLastLine() = 0;
-  virtual void setMachineType(Machine_t) = 0;
 };
 
 // Singleton container class for static methods.
 // Dependency injection is enabled using a pointer
-// to a global instance of either `Knitter` or `KnitterMock`
+// to a global instance of either `OpKnit` or `OpKnitMock`
 // both of which classes implement the pure virtual methods
-// of the `KnitterInterface` class.
+// of the `OpKnitInterface` class.
 
-class GlobalKnitter final {
+class GlobalOpKnit final {
 private:
   // singleton class so private constructor is appropriate
-  GlobalKnitter() = default;
+  GlobalOpKnit() = default;
 
 public:
   // pointer to global instance whose methods are implemented
-  static KnitterInterface *m_instance;
+  static OpKnitInterface *m_instance;
 
   static void init();
+  static Err_t begin();
+  static void update();
+  static void com(const uint8_t *buffer, size_t size);
+  static void end();
+
   static Err_t startKnitting(uint8_t startNeedle,
                              uint8_t stopNeedle, uint8_t *pattern_start,
                              bool continuousReportingEnabled);
-  static Err_t initMachine(Machine_t machine);
   static void encodePosition();
   static bool isReady();
-  static void knit();
+  static void doKnitting();
   static uint8_t getStartOffset(const Direction_t direction);
-  static Machine_t getMachineType();
   static bool setNextLine(uint8_t lineNumber);
   static void setLastLine();
-  static void setMachineType(Machine_t);
 };
 
-class Knitter : public KnitterInterface {
+class OpKnit : public OpKnitInterface {
 public:
   void init() final;
+  Err_t begin() final;
+  void update() final;
+  void com(const uint8_t *buffer, size_t size) final;
+  void end() final;
+
   Err_t startKnitting(uint8_t startNeedle,
                       uint8_t stopNeedle, uint8_t *pattern_start,
                       bool continuousReportingEnabled) final;
-  Err_t initMachine(Machine_t machine) final;
   void encodePosition() final;
   bool isReady() final;
-  void knit() final;
+  void doKnitting() final;
   uint8_t getStartOffset(const Direction_t direction) final;
-  Machine_t getMachineType() final;
   bool setNextLine(uint8_t lineNumber) final;
   void setLastLine() final;
-  void setMachineType(Machine_t) final;
 
 private:
   void reqLine(uint8_t lineNumber);
   bool calculatePixelAndSolenoid();
-  void stopKnitting() const;
 
   // job parameters
-  Machine_t m_machineType;
   uint8_t m_startNeedle;
   uint8_t m_stopNeedle;
   uint8_t *m_lineBuffer;
@@ -123,10 +122,9 @@ private:
   uint8_t m_pixelToSet;
 
 #if AYAB_TESTS
-  // Note: ideally tests would only rely on the public interface.
-  FRIEND_TEST(KnitterTest, test_getStartOffset);
-  FRIEND_TEST(KnitterTest, test_knit_lastLine_and_no_req);
+  FRIEND_TEST(OpKnitTest, test_getStartOffset);
+  FRIEND_TEST(OpKnitTest, test_knit_lastLine_and_no_req);
 #endif
 };
 
-#endif // KNITTER_H_
+#endif // OP_KNIT_H_

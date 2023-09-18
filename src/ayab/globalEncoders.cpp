@@ -1,5 +1,5 @@
 /*!
- * \file global_encoders.cpp
+ * \file global_Encoders.cpp
  * \brief Singleton class containing methods governing encoders
  *    for BeltShift, Direction, Active Hall sensor and Carriage Type.
  *
@@ -19,7 +19,7 @@
  *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
  *
  *    Original Work Copyright 2013 Christian Obersteiner, Andreas Müller
- *    Modified Work Copyright 2020 Sturla Lange, Tom Price
+ *    Modified Work Copyright 2020-3 Sturla Lange, Tom Price
  *    http://ayab-knitting.com
  */
 
@@ -30,7 +30,7 @@ void GlobalEncoders::init(Machine_t machineType) {
 }
 
 /*!
- * \brief Initialize interrupt service routine for Knitter object.
+ * \brief Initialize interrupt service routine for Knit object.
  */
 void GlobalEncoders::setUpInterrupt() {
   // (re-)attach ENC_PIN_A(=2), interrupt #0

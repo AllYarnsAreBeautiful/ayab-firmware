@@ -15,11 +15,11 @@ A tabular representation of state transitions follows.
 
 | Transition      | Function / condition |
               --: | :--
- `Wait  -> Test`  | `Tester::startTest()`
- `Init  -> Test`  | `Tester::startTest()`
- `Ready -> Test`  | `Tester::startTest()`
- `Test  -> Init`  | `Tester::quitCmd()`
- `Wait  -> Init`  | `Knitter::initMachine()`
- `Init  -> Ready` | `Knitter::isReady()`
- `Ready -> Knit`  | `Knitter::startKnitting()`
+ `Wait  -> Test`  | `Test::startTest()`
+ `Init  -> Test`  | `Test::startTest()`
+ `Ready -> Test`  | `Test::startTest()`
+ `Test  -> Init`  | `Test::quitCmd()`
+ `Wait  -> Init`  | `Knit::initMachine()`
+ `Init  -> Ready` | `Knit::isReady()`
+ `Ready -> Knit`  | `Knit::startKnitting()`
  `Knit  -> Ready` | `m_workedOnLine && m_lastLineFlag`

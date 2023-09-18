@@ -1,5 +1,5 @@
 /*!`
- * \file com_mock.h
+ * \file opTest_mock.h
  *
  * This file is part of AYAB.
  *
@@ -21,32 +21,34 @@
  *    http://ayab-knitting.com
  */
 
-#ifndef COM_MOCK_H_
-#define COM_MOCK_H_
+#ifndef OP_TEST_MOCK_H_
+#define OP_TEST_MOCK_H_
 
 #include <gmock/gmock.h>
+#include <op_test.h>
 
-#include <com.h>
-
-class ComMock : public ComInterface {
+class OpTestMock : public OpTestInterface {
 public:
   MOCK_METHOD0(init, void());
+  MOCK_METHOD0(begin, Err_t());
   MOCK_METHOD0(update, void());
-  MOCK_METHOD2(onPacketReceived, void(const uint8_t *buffer, size_t size));
-  MOCK_CONST_METHOD2(send, void(uint8_t *payload, size_t length));
-  MOCK_METHOD2(sendMsg, void(AYAB_API_t id, const char *msg));
-  MOCK_METHOD2(sendMsg, void(AYAB_API_t id, char *msg));
-  MOCK_CONST_METHOD2(send_reqLine, void(const uint8_t, Err_t));
-  MOCK_CONST_METHOD1(send_indState, void(Err_t error));
-  MOCK_METHOD2(h_reqInit, void(const uint8_t *buffer, size_t size));
-  MOCK_METHOD2(h_reqStart, void(const uint8_t *buffer, size_t size));
-  MOCK_METHOD2(h_cnfLine, void(const uint8_t *buffer, size_t size));
-  MOCK_CONST_METHOD0(h_reqInfo, void());
-  MOCK_CONST_METHOD0(h_reqTest, void());
-  MOCK_CONST_METHOD0(h_unrecognized, void());
+  MOCK_METHOD2(com, void(const uint8_t *buffer, size_t size));
+  MOCK_METHOD0(end, void());
+
+  MOCK_METHOD0(enabled, bool());
+  MOCK_METHOD0(helpCmd, void());
+  MOCK_METHOD0(sendCmd, void());
+  MOCK_METHOD0(beepCmd, void());
+  MOCK_METHOD2(setSingleCmd, void(const uint8_t *, size_t));
+  MOCK_METHOD2(setAllCmd, void(const uint8_t *, size_t));
+  MOCK_METHOD0(readEOLsensorsCmd, void());
+  MOCK_METHOD0(readEncodersCmd, void());
+  MOCK_METHOD0(autoReadCmd, void());
+  MOCK_METHOD0(autoTestCmd, void());
+  MOCK_METHOD0(stopCmd, void());
 };
 
-ComMock *comMockInstance();
-void releaseComMock();
+OpTestMock *OpTestMockInstance();
+void releaseOpTestMock();
 
-#endif // COM_MOCK_H_
+#endif // TEST_MOCK_H_

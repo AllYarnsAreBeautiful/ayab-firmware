@@ -1,5 +1,5 @@
 /*!`
- * \file mock_beeper.h
+ * \file op_idle_mock.cpp
  *
  * This file is part of AYAB.
  *
@@ -21,25 +21,45 @@
  *    http://ayab-knitting.com
  */
 
-#ifndef MOCK_BEEPER_H_
-#define MOCK_BEEPER_H_
+#include <op_idle_mock.h>
 
-#include <gmock/gmock.h>
+static OpIdleMock *gOpIdleMock = nullptr;
 
-#include <beeper.h>
+OpIdleMock *OpIdleMockInstance() {
+  if (!gOpIdleMock) {
+    gOpIdleMock = new OpIdleMock();
+  }
+  return gOpIdleMock;
+}
 
-class BeeperMock : public BeeperInterface {
-public:
-  MOCK_METHOD1(init, void(bool));
-  MOCK_METHOD0(update, void());
-  MOCK_METHOD0(ready, void());
-  MOCK_METHOD0(finishedLine, void());
-  MOCK_METHOD0(endWork, void());
-  MOCK_METHOD0(getState, BeepState());
-  MOCK_METHOD0(enabled, bool());
-};
+void releaseOpIdleMock() {
+  if (gOpIdleMock) {
+    delete gOpIdleMock;
+    gOpIdleMock = nullptr;
+  }
+}
 
-BeeperMock *beeperMockInstance();
-void releaseBeeperMock();
+void OpIdle::init() {
+  assert(gOpIdleMock != nullptr);
+  gOpIdleMock->init();
+}
 
-#endif // MOCK_BEEPER_H_
+Err_t OpIdle::begin() {
+  assert(gOpIdleMock != nullptr);
+  return gOpIdleMock->begin();
+}
+
+void OpIdle::update() {
+  assert(gOpIdleMock != nullptr);
+  gOpIdleMock->update();
+}
+
+void OpIdle::com(const uint8_t *buffer, size_t size) {
+  assert(gOpIdleMock != nullptr);
+  gOpIdleMock->com(buffer, size);
+}
+
+void OpIdle::end() {
+  assert(gOpIdleMock != nullptr);
+  gOpIdleMock->end();
+}

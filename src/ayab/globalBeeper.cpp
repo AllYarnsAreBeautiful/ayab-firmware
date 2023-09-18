@@ -1,5 +1,7 @@
-/*!`
- * \file mock_beeper.h
+/*!
+ * \file global_Beeper.cpp
+ * \brief Singleton class containing methods to actuate a beeper
+ *    connected to PIEZO_PIN.
  *
  * This file is part of AYAB.
  *
@@ -21,25 +23,34 @@
  *    http://ayab-knitting.com
  */
 
-#ifndef MOCK_BEEPER_H_
-#define MOCK_BEEPER_H_
+#include "beeper.h"
 
-#include <gmock/gmock.h>
+// static member functions
 
-#include <beeper.h>
+void GlobalBeeper::init(bool enabled) {
+  m_instance->init(enabled);
+}
 
-class BeeperMock : public BeeperInterface {
-public:
-  MOCK_METHOD1(init, void(bool));
-  MOCK_METHOD0(update, void());
-  MOCK_METHOD0(ready, void());
-  MOCK_METHOD0(finishedLine, void());
-  MOCK_METHOD0(endWork, void());
-  MOCK_METHOD0(getState, BeepState());
-  MOCK_METHOD0(enabled, bool());
-};
+void GlobalBeeper::update() {
+  m_instance->update();
+}
 
-BeeperMock *beeperMockInstance();
-void releaseBeeperMock();
+void GlobalBeeper::ready() {
+  m_instance->ready();
+}
 
-#endif // MOCK_BEEPER_H_
+void GlobalBeeper::finishedLine() {
+  m_instance->finishedLine();
+}
+
+void GlobalBeeper::endWork() {
+  m_instance->endWork();
+}
+
+BeepState GlobalBeeper::getState() {
+  return m_instance->getState();
+}
+
+bool GlobalBeeper::enabled() {
+  return m_instance->enabled();
+}

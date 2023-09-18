@@ -24,11 +24,11 @@
 #ifndef SOLENOIDS_H_
 #define SOLENOIDS_H_
 
-#include "board.h"
-#include "encoders.h"
 #include <Arduino.h>
 #include <Adafruit_MCP23008.h>
-#include <Wire.h>
+
+#include "board.h"
+#include "encoders.h"
 
 // Different machines have a different number of solenoids.
 //                                              {910, 930, 270}

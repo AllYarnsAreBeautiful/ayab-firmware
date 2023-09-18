@@ -1,5 +1,5 @@
 /*!
- * \file global_op.cpp
+ * \file global_Fsm.cpp
  * This file is part of AYAB.
  *
  *    AYAB is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
  *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
  *
  *    Original Work Copyright 2013 Christian Obersteiner, Andreas Müller
- *    Modified Work Copyright 2020 Sturla Lange, Tom Price
+ *    Modified Work Copyright 2020-3 Sturla Lange, Tom Price
  *    http://ayab-knitting.com
  */
 
@@ -36,12 +36,20 @@ void GlobalFsm::cacheEncoders() {
   m_instance->cacheEncoders();
 }
 
-void GlobalFsm::setState(OpState_t state) {
+void GlobalFsm::setState(OpInterface* state) {
   m_instance->setState(state);
 }
 
-OpState_t GlobalFsm::getState() {
+OpInterface *GlobalFsm::getState() {
   return m_instance->getState();
+}
+
+void GlobalFsm::setMachineType(Machine_t machineType) {
+  m_instance->setMachineType(machineType);
+}
+
+Machine_t GlobalFsm::getMachineType() {
+  return m_instance->getMachineType();
 }
 
 BeltShift_t GlobalFsm::getBeltShift() {

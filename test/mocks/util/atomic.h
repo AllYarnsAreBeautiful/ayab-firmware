@@ -32,10 +32,10 @@
  /* $Id: atomic_8h_source.html,v 1.1.1.7 2022/01/29 09:22:01 joerg_wunsch Exp $ */
 
  #ifndef _UTIL_ATOMIC_H_
- #define _UTIL_ATOMIC_H_ 1
+ #define _UTIL_ATOMIC_H_
 
- #include <avr/io.h>
- #include <avr/interrupt.h>
+// #include <avr/io.h>
+// #include <avr/interrupt.h>
 
  #if !defined(__DOXYGEN__)
  /* Internal helper functions. */
