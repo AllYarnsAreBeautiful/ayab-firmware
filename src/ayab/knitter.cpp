@@ -121,10 +121,10 @@ void Knitter::isr() {
  */
 Err_t Knitter::initMachine(Machine_t machineType) {
   if (GlobalFsm::getState() != OpState::wait_for_machine) {
-    return ErrorCode::ERR_WRONG_MACHINE_STATE;
+    return ErrorCode::wrong_machine_state;
   }
   if (machineType == Machine_t::NoMachine) {
-    return ErrorCode::ERR_NO_MACHINE_TYPE;
+    return ErrorCode::no_machine_type;
   }
   m_machineType = machineType;
 
@@ -134,7 +134,7 @@ Err_t Knitter::initMachine(Machine_t machineType) {
   // Now that we have enough start state, we can set up interrupts
   setUpInterrupt();
 
-  return ErrorCode::SUCCESS;
+  return ErrorCode::success;
 }
 
 /*!
@@ -150,14 +150,14 @@ Err_t Knitter::startKnitting(uint8_t startNeedle,
                              uint8_t stopNeedle, uint8_t *pattern_start,
                              bool continuousReportingEnabled) {
   if (GlobalFsm::getState() != OpState::ready) {
-    return ErrorCode::ERR_WRONG_MACHINE_STATE;
+    return ErrorCode::wrong_machine_state;
   }
   if (pattern_start == nullptr) {
-    return ErrorCode::ERR_NULL_POINTER_ARGUMENT;
+    return ErrorCode::null_pointer_argument;
   }
   auto machineType = static_cast<uint8_t>(m_machineType);
     if ((startNeedle >= stopNeedle) || (stopNeedle >= NUM_NEEDLES[machineType])) {
-    return ErrorCode::ERR_NEEDLE_VALUE_INVALID;
+    return ErrorCode::needle_value_invalid;
   }
 
   // record argument values
@@ -177,7 +177,7 @@ Err_t Knitter::startKnitting(uint8_t startNeedle,
   GlobalBeeper::ready();
 
   // success
-  return ErrorCode::SUCCESS;
+  return ErrorCode::success;
 }
 
 /*!
@@ -191,7 +191,7 @@ void Knitter::encodePosition() {
     // store current encoder position for next call of this function
     m_sOldPosition = m_position;
     calculatePixelAndSolenoid();
-    indState(ErrorCode::UNSPECIFIED_FAILURE);
+    indState(ErrorCode::unspecified_failure);
   }
 }
 
@@ -227,7 +227,7 @@ bool Knitter::isReady() {
 
 #endif // DBG_NOMACHINE
     GlobalSolenoids::setSolenoids(SOLENOIDS_BITMASK);
-    indState(ErrorCode::SUCCESS);
+    indState(ErrorCode::success);
     return true; // move to `OpState::ready`
   }
 
@@ -271,7 +271,7 @@ void Knitter::knit() {
 
   if (m_continuousReportingEnabled) {
     // send current position to GUI
-    indState(ErrorCode::SUCCESS);
+    indState(ErrorCode::success);
   }
 
   if (!calculatePixelAndSolenoid()) {
@@ -388,7 +388,7 @@ void Knitter::setMachineType(Machine_t machineType) {
  * \param lineNumber Line number requested.
  */
 void Knitter::reqLine(uint8_t lineNumber) {
-  GlobalCom::send_reqLine(lineNumber, ErrorCode::SUCCESS);
+  GlobalCom::send_reqLine(lineNumber, ErrorCode::success);
   m_lineRequested = true;
 }
 
