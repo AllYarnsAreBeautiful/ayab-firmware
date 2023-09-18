@@ -1,6 +1,6 @@
 ### Finite State Machine
 
-The finite state machine is defined in the `Op` class.
+The finite state machine is defined in the `Fsm` class.
 
 | State  | Action |
      --: | :--

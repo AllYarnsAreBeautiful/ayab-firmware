@@ -1,5 +1,5 @@
 /*!
- * \file op.cpp
+ * \file fsm.cpp
  * \brief Class containing methods for knit and test operations.
  *
  * This file is part of AYAB.
@@ -32,15 +32,15 @@
 #include <util/atomic.h>
 
 #include "com.h"
+#include "fsm.h"
 #include "knitter.h"
-#include "op.h"
 
 // Public methods
 
 /*!
  * \brief Initialize Finite State Machine.
  */
-void Op::init() {
+void Fsm::init() {
   m_currentState = OpState::wait_for_machine;
   m_nextState = OpState::wait_for_machine;
   m_flash = false;
@@ -51,7 +51,7 @@ void Op::init() {
 /*!
  * \brief Dispatch on machine state
  */
-void Op::update() {
+void Fsm::update() {
   cacheEncoders();
   switch (m_currentState) {
   case OpState::wait_for_machine:
@@ -88,7 +88,7 @@ void Op::update() {
 /*!
  * \brief Cache Encoder values
  */
-void Op::cacheEncoders() {
+void Fsm::cacheEncoders() {
   // update machine state data
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     m_beltShift  = GlobalEncoders::getBeltShift();
@@ -105,7 +105,7 @@ void Op::cacheEncoders() {
  *
  * Does not take effect until next `update()`
  */
-void Op::setState(OpState_t state) {
+void Fsm::setState(OpState_t state) {
   m_nextState = state;
 }
 
@@ -113,7 +113,7 @@ void Op::setState(OpState_t state) {
  * \brief Get machine state.
  * \return Current state of Finite State Machine.
  */
-OpState_t Op::getState() {
+OpState_t Fsm::getState() {
   return m_currentState;
 }
 
@@ -121,7 +121,7 @@ OpState_t Op::getState() {
  * \brief Get cached beltShift value.
  * \return Cached beltShift value.
  */
-BeltShift_t Op::getBeltShift() {
+BeltShift_t Fsm::getBeltShift() {
   return m_beltShift;
 }
 
@@ -129,7 +129,7 @@ BeltShift_t Op::getBeltShift() {
  * \brief Get cached carriage value.
  * \return Cached carriage value.
  */
-Carriage_t Op::getCarriage() {
+Carriage_t Fsm::getCarriage() {
   return m_carriage;
 }
 
@@ -137,7 +137,7 @@ Carriage_t Op::getCarriage() {
  * \brief Get cached direction value.
  * \return Cached direction value.
  */
-Direction_t Op::getDirection() {
+Direction_t Fsm::getDirection() {
   return m_direction;
 }
 
@@ -145,7 +145,7 @@ Direction_t Op::getDirection() {
  * \brief Get cached hallActive value.
  * \return Cached hallActive value.
  */
-Direction_t Op::getHallActive() {
+Direction_t Fsm::getHallActive() {
   return m_hallActive;
 }
 
@@ -153,7 +153,7 @@ Direction_t Op::getHallActive() {
  * \brief Get cached position value.
  * \return Cached position value.
  */
-uint8_t Op::getPosition() {
+uint8_t Fsm::getPosition() {
   return m_position;
 }
 
@@ -163,14 +163,14 @@ uint8_t Op::getPosition() {
 /*!
  * \brief Action of machine in state `wait_for_machine`.
  */
-void Op::state_wait_for_machine() const {
+void Fsm::state_wait_for_machine() const {
   digitalWrite(LED_PIN_A, LOW); // green LED off
 }
 
 /*!
  * \brief Action of machine in state `OpState::init`.
  */
-void Op::state_init() {
+void Fsm::state_init() {
   digitalWrite(LED_PIN_A, LOW); // green LED off
   if (GlobalKnitter::isReady()) {
     setState(OpState::ready);
@@ -180,14 +180,14 @@ void Op::state_init() {
 /*!
  * \brief Action of machine in state `OpState::ready`.
  */
-void Op::state_ready() const {
+void Fsm::state_ready() const {
   digitalWrite(LED_PIN_A, LOW); // green LED off
 }
 
 /*!
  * \brief Action of machine in state `OpState::knit`.
  */
-void Op::state_knit() const {
+void Fsm::state_knit() const {
   digitalWrite(LED_PIN_A, HIGH); // green LED on
   GlobalKnitter::knit();
 }
@@ -195,13 +195,13 @@ void Op::state_knit() const {
 /*!
  * \brief Action of machine in state `OpState::test`.
  */
-void Op::state_test() const {
+void Fsm::state_test() const {
 }
 
 /*!
  * \brief Action of machine in state `OpState::error`.
  */
-void Op::state_error() {
+void Fsm::state_error() {
   if (m_nextState == OpState::init) {
     // exit error state
     digitalWrite(LED_PIN_A, LOW); // green LED off

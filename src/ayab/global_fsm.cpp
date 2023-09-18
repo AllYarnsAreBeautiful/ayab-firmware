@@ -20,46 +20,46 @@
  *    http://ayab-knitting.com
  */
 
-#include "op.h"
+#include "fsm.h"
 
 // static member functions
 
-void GlobalOp::init() {
+void GlobalFsm::init() {
   m_instance->init();
 }
 
-void GlobalOp::update() {
+void GlobalFsm::update() {
   m_instance->update();
 }
 
-void GlobalOp::cacheEncoders() {
+void GlobalFsm::cacheEncoders() {
   m_instance->cacheEncoders();
 }
 
-void GlobalOp::setState(OpState_t state) {
+void GlobalFsm::setState(OpState_t state) {
   m_instance->setState(state);
 }
 
-OpState_t GlobalOp::getState() {
+OpState_t GlobalFsm::getState() {
   return m_instance->getState();
 }
 
-BeltShift_t GlobalOp::getBeltShift() {
+BeltShift_t GlobalFsm::getBeltShift() {
   return m_instance->getBeltShift();
 }
 
-Carriage_t GlobalOp::getCarriage() {
+Carriage_t GlobalFsm::getCarriage() {
   return m_instance->getCarriage();
 }
 
-Direction_t GlobalOp::getDirection() {
+Direction_t GlobalFsm::getDirection() {
   return m_instance->getDirection();
 }
 
-Direction_t GlobalOp::getHallActive() {
+Direction_t GlobalFsm::getHallActive() {
   return m_instance->getHallActive();
 }
 
-uint8_t GlobalOp::getPosition() {
+uint8_t GlobalFsm::getPosition() {
   return m_instance->getPosition();
 }

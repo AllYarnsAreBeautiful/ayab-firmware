@@ -27,8 +27,8 @@
 #include "beeper.h"
 #include "com.h"
 #include "encoders.h"
+#include "fsm.h"
 #include "knitter.h"
-#include "op.h"
 #include "solenoids.h"
 #include "tester.h"
 
@@ -39,7 +39,7 @@ constexpr GlobalBeeper    *beeper;
 constexpr GlobalCom       *com;
 constexpr GlobalEncoders  *encoders;
 constexpr GlobalKnitter   *knitter;
-constexpr GlobalOp        *op;
+constexpr GlobalFsm        *op;
 constexpr GlobalSolenoids *solenoids;
 constexpr GlobalTester    *tester;
 
@@ -50,7 +50,7 @@ constexpr GlobalTester    *tester;
 BeeperInterface    *GlobalBeeper::m_instance    = new Beeper();
 ComInterface       *GlobalCom::m_instance       = new Com();
 EncodersInterface  *GlobalEncoders::m_instance  = new Encoders();
-OpInterface        *GlobalOp::m_instance        = new Op();
+FsmInterface       *GlobalFsm::m_instance       = new Fsm();
 KnitterInterface   *GlobalKnitter::m_instance   = new Knitter();
 SolenoidsInterface *GlobalSolenoids::m_instance = new Solenoids();
 TesterInterface    *GlobalTester::m_instance    = new Tester();
@@ -62,7 +62,7 @@ void setup() {
   // Objects running in async context
   GlobalBeeper::init(false);
   GlobalCom::init();
-  GlobalOp::init();
+  GlobalFsm::init();
   GlobalKnitter::init();
   GlobalSolenoids::init();
 }
@@ -73,7 +73,7 @@ void setup() {
 void loop() {
   // Non-blocking methods
   // Cooperative Round Robin scheduling
-  GlobalOp::update();
+  GlobalFsm::update();
   GlobalCom::update();
   if (GlobalTester::enabled()) {
     GlobalTester::update();

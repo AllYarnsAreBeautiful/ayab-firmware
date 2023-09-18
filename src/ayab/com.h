@@ -27,7 +27,7 @@
 #include <Arduino.h>
 #include <PacketSerial.h>
 
-#include "op.h"
+#include "fsm.h"
 
 #ifndef AYAB_TESTS
   #include "version.h"

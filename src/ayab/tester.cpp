@@ -26,8 +26,8 @@
 
 #include "beeper.h"
 #include "com.h"
+#include "fsm.h"
 #include "knitter.h"
-#include "op.h"
 #include "solenoids.h"
 #include "tester.h"
 
@@ -39,9 +39,9 @@
  * \return Error code (0 = success, other values = error).
  */
 Err_t Tester::startTest(Machine_t machineType) {
-  OpState_t currentState = GlobalOp::getState();
+  OpState_t currentState = GlobalFsm::getState();
   if (OpState::wait_for_machine == currentState || OpState::init == currentState || OpState::ready == currentState) {
-    GlobalOp::setState(OpState::test);
+    GlobalFsm::setState(OpState::test);
     GlobalKnitter::setMachineType(machineType);
     setUp();
     return ErrorCode::success;
@@ -193,7 +193,7 @@ void Tester::stopCmd() {
 void Tester::quitCmd() {
   m_autoReadOn = false;
   m_autoTestOn = false;
-  GlobalOp::setState(OpState::init);
+  GlobalFsm::setState(OpState::init);
   GlobalKnitter::init();
   GlobalEncoders::setUpInterrupt();
 }

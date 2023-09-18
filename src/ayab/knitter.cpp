@@ -30,7 +30,6 @@
 #include "com.h"
 #include "encoders.h"
 #include "knitter.h"
-#include "op.h"
 #include "solenoids.h"
 
 #ifdef CLANG_TIDY
@@ -51,8 +50,8 @@ void Knitter::init() {
   pinMode(ENC_PIN_C, INPUT);
   pinMode(LED_PIN_A, OUTPUT);
   pinMode(LED_PIN_B, OUTPUT);
-  digitalWrite(LED_PIN_A, 1);
-  digitalWrite(LED_PIN_B, 1);
+  digitalWrite(LED_PIN_A, HIGH); // green LED on
+  digitalWrite(LED_PIN_B, HIGH); // yellow LED on
 #if DBG_NOMACHINE
   pinMode(DBG_BTN_PIN, INPUT);
 #endif
@@ -87,7 +86,7 @@ void Knitter::init() {
  * \return Error code (0 = success, other values = error).
  */
 Err_t Knitter::initMachine(Machine_t machineType) {
-  if (GlobalOp::getState() != OpState::wait_for_machine) {
+  if (GlobalFsm::getState() != OpState::wait_for_machine) {
     return ErrorCode::wrong_machine_state;
   }
   if (machineType == Machine_t::NoMachine) {
@@ -96,9 +95,9 @@ Err_t Knitter::initMachine(Machine_t machineType) {
   m_machineType = machineType;
 
   GlobalEncoders::init(machineType);
-  GlobalOp::setState(OpState::init);
+  GlobalFsm::setState(OpState::init);
 
-  // Now that we have enough start state, we can set up interrupts
+  // Now that we have OpState::init, we can set up interrupts
   GlobalEncoders::setUpInterrupt();
 
   return ErrorCode::success;
@@ -115,7 +114,7 @@ Err_t Knitter::initMachine(Machine_t machineType) {
 Err_t Knitter::startKnitting(uint8_t startNeedle,
                              uint8_t stopNeedle, uint8_t *pattern_start,
                              bool continuousReportingEnabled) {
-  if (GlobalOp::getState() != OpState::ready) {
+  if (GlobalFsm::getState() != OpState::ready) {
     return ErrorCode::wrong_machine_state;
   }
   if (pattern_start == nullptr) {
@@ -138,7 +137,7 @@ Err_t Knitter::startKnitting(uint8_t startNeedle,
   m_lastLineFlag = false;
 
   // proceed to next state
-  GlobalOp::setState(OpState::knit);
+  GlobalFsm::setState(OpState::knit);
   GlobalBeeper::ready();
 
   // success
@@ -151,7 +150,7 @@ Err_t Knitter::startKnitting(uint8_t startNeedle,
  * Used in hardware test procedure.
  */
 void Knitter::encodePosition() {
-  auto position = GlobalOp::getPosition();
+  auto position = GlobalFsm::getPosition();
   if (m_sOldPosition != position) {
     // only act if there is an actual change of position
     // store current encoder position for next call of this function
@@ -176,13 +175,13 @@ bool Knitter::isReady() {
   // will be a second magnet passing the sensor.
   // Keep track of the last seen hall sensor because we may be making a decision
   // after it passes.
-  auto hallActive = GlobalOp::getHallActive();
+  auto hallActive = GlobalFsm::getHallActive();
   if (hallActive != Direction_t::NoDirection) {
     m_lastHall = hallActive;
   }
 
-  auto direction = GlobalOp::getDirection();
-  auto position = GlobalOp::getPosition();
+  auto direction = GlobalFsm::getDirection();
+  auto position = GlobalFsm::getPosition();
   bool passedLeft = (Direction_t::Right == direction) && (Direction_t::Left == m_lastHall) &&
         (position > (END_LEFT_PLUS_OFFSET[static_cast<uint8_t>(m_machineType)] + GARTER_SLOP));
   bool passedRight = (Direction_t::Left == direction) && (Direction_t::Right == m_lastHall) &&
@@ -227,7 +226,7 @@ void Knitter::knit() {
   }
   m_prevState = state;
 #else
-  auto position = GlobalOp::getPosition();
+  auto position = GlobalFsm::getPosition();
   // only act if there is an actual change of position
   if (m_sOldPosition == position) {
     return;
@@ -291,7 +290,7 @@ Machine_t Knitter::getMachineType() {
  * \return Start offset, or 0 if unobtainable.
  */
 uint8_t Knitter::getStartOffset(const Direction_t direction) {
-  auto carriage = GlobalOp::getCarriage();
+  auto carriage = GlobalFsm::getCarriage();
   if ((direction == Direction_t::NoDirection) ||
       (carriage == Carriage_t::NoCarriage) ||
       (m_machineType == Machine_t::NoMachine)) {
@@ -354,10 +353,10 @@ void Knitter::reqLine(uint8_t lineNumber) {
 bool Knitter::calculatePixelAndSolenoid() {
   uint8_t startOffset = 0;
 
-  auto direction = GlobalOp::getDirection();
-  auto position = GlobalOp::getPosition();
-  auto beltShift = GlobalOp::getBeltShift();
-  auto carriage = GlobalOp::getCarriage();
+  auto direction = GlobalFsm::getDirection();
+  auto position = GlobalFsm::getPosition();
+  auto beltShift = GlobalFsm::getBeltShift();
+  auto carriage = GlobalFsm::getCarriage();
   switch (direction) {
   // calculate the solenoid and pixel to be set
   // implemented according to machine manual
@@ -413,7 +412,7 @@ bool Knitter::calculatePixelAndSolenoid() {
  */
 void Knitter::stopKnitting() const {
   GlobalBeeper::endWork();
-  GlobalOp::setState(OpState::ready);
+  GlobalFsm::setState(OpState::ready);
 
   GlobalSolenoids::setSolenoids(SOLENOIDS_BITMASK);
   GlobalBeeper::finishedLine();

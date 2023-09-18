@@ -21,8 +21,8 @@
  *    http://ayab-knitting.com
  */
 
-#ifndef OP_H_
-#define OP_H_
+#ifndef FSM_H_
+#define FSM_H_
 
 #include "encoders.h"
 
@@ -82,9 +82,9 @@ using Err_t = enum ErrorCode;
 
 constexpr unsigned int FLASH_DELAY = 500; // ms
 
-class OpInterface {
+class FsmInterface {
 public:
-  virtual ~OpInterface() = default;
+  virtual ~FsmInterface() = default;
 
   // any methods that need to be mocked should go here
   virtual void init() = 0;
@@ -105,14 +105,14 @@ public:
 // both of which classes implement the pure virtual methods
 // of the `KnitterInterface` class.
 
-class GlobalOp final {
+class GlobalFsm final {
 private:
   // singleton class so private constructor is appropriate
-  GlobalOp() = default;
+  GlobalFsm() = default;
 
 public:
   // pointer to global instance whose methods are implemented
-  static OpInterface *m_instance;
+  static FsmInterface *m_instance;
 
   static void init();
   static void update();
@@ -126,7 +126,7 @@ public:
   static uint8_t getPosition();
 };
 
-class Op : public OpInterface {
+class Fsm : public FsmInterface {
 public:
   void init() final;
   void update() final;
@@ -166,4 +166,4 @@ private:
   uint8_t m_position;
 };
 
-#endif // OP_H_
+#endif // FSM_H_

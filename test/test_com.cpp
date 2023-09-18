@@ -27,8 +27,8 @@
 #include <com.h>
 #include <encoders.h>
 
+#include <fsm_mock.h>
 #include <knitter_mock.h>
-#include <op_mock.h>
 
 using ::testing::_;
 using ::testing::AtLeast;
@@ -38,7 +38,7 @@ using ::testing::Return;
 extern Com *com;
 extern Beeper *beeper;
 
-extern OpMock *op;
+extern FsmMock *fsm;
 extern KnitterMock *knitter;
 
 class ComTest : public ::testing::Test {
@@ -48,7 +48,7 @@ protected:
     serialMock = serialMockInstance();
 
     // pointer to global instance
-    opMock = op;
+    fsmMock = fsm;
     knitterMock = knitter;
 
     // The global instance does not get destroyed at the end of each test.
@@ -68,7 +68,7 @@ protected:
   }
 
   ArduinoMock *arduinoMock;
-  OpMock *opMock;
+  FsmMock *fsmMock;
   KnitterMock *knitterMock;
   SerialMock *serialMock;
 

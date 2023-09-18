@@ -1,5 +1,5 @@
 /*!`
- * \file op_mock.cpp
+ * \file fsm_mock.cpp
  *
  * This file is part of AYAB.
  *
@@ -21,46 +21,46 @@
  *    http://ayab-knitting.com
  */
 
-#include <op.h>
-#include <op_mock.h>
+#include <fsm.h>
+#include <fsm_mock.h>
 
-static OpMock *gOpMock = nullptr;
+static FsmMock *gFsmMock = nullptr;
 
-OpMock *opMockInstance() {
-  if (!gOpMock) {
-    gOpMock = new OpMock();
+FsmMock *fsmMockInstance() {
+  if (!gFsmMock) {
+    gFsmMock = new FsmMock();
   }
-  return gOpMock;
+  return gFsmMock;
 }
 
-void releaseOpMock() {
-  if (gOpMock) {
-    delete gOpMock;
-    gOpMock = nullptr;
+void releaseFsmMock() {
+  if (gFsmMock) {
+    delete gFsmMock;
+    gFsmMock = nullptr;
   }
 }
 
-void Op::init() {
-  assert(gOpMock != nullptr);
-  gOpMock->init();
+void Fsm::init() {
+  assert(gFsmMock != nullptr);
+  gFsmMock->init();
 }
 
-OpState_t Op::getState() {
-  assert(gOpMock != nullptr);
-  return gOpMock->getState();
+OpState_t Fsm::getState() {
+  assert(gFsmMock != nullptr);
+  return gFsmMock->getState();
 }
 
-void Op::setState(OpState_t state) {
-  assert(gOpMock != nullptr);
-  gOpMock->setState(state);
+void Fsm::setState(OpState_t state) {
+  assert(gFsmMock != nullptr);
+  gFsmMock->setState(state);
 }
 
-void Op::update() {
-  assert(gOpMock != nullptr);
-  gOpMock->update();
+void Fsm::update() {
+  assert(gFsmMock != nullptr);
+  gFsmMock->update();
 }
 
-void Op::cacheEncoders() {
-  assert(gOpMock != nullptr);
-  gOpMock->cacheEncoders();
+void Fsm::cacheEncoders() {
+  assert(gFsmMock != nullptr);
+  gFsmMock->cacheEncoders();
 }

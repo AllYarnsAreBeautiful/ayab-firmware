@@ -25,7 +25,7 @@
 #define KNITTER_H_
 
 #include "encoders.h"
-#include "op.h"
+#include "fsm.h"
 
 class KnitterInterface {
 public:

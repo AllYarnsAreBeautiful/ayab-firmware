@@ -25,7 +25,6 @@
 #include "beeper.h"
 #include "com.h"
 #include "knitter.h"
-#include "op.h"
 #include "tester.h"
 
 /*!
@@ -105,14 +104,14 @@ void Com::send_indState(Err_t error) const {
   uint8_t payload[INDSTATE_LEN] = {
       static_cast<uint8_t>(AYAB_API::indState),
       static_cast<uint8_t>(error),
-      static_cast<uint8_t>(GlobalOp::getState()),
+      static_cast<uint8_t>(GlobalFsm::getState()),
       highByte(leftHallValue),
       lowByte(leftHallValue),
       highByte(rightHallValue),
       lowByte(rightHallValue),
-      static_cast<uint8_t>(GlobalOp::getCarriage()),
-      GlobalOp::getPosition(),
-      static_cast<uint8_t>(GlobalOp::getDirection()),
+      static_cast<uint8_t>(GlobalFsm::getCarriage()),
+      GlobalFsm::getPosition(),
+      static_cast<uint8_t>(GlobalFsm::getDirection()),
   };
   send(static_cast<uint8_t *>(payload), INDSTATE_LEN);
 }

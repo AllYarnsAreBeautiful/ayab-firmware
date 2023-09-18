@@ -26,7 +26,7 @@
 #include <beeper.h>
 #include <tester.h>
 
-#include <op_mock.h>
+#include <fsm_mock.h>
 #include <knitter_mock.h>
 
 using ::testing::_;
@@ -38,8 +38,8 @@ using ::testing::Return;
 extern Beeper *beeper;
 extern Tester *tester;
 
+extern FsmMock *fsm;
 extern KnitterMock *knitter;
-extern OpMock *op;
 
 class TesterTest : public ::testing::Test {
 protected:
@@ -49,7 +49,7 @@ protected:
     // serialCommandMock = serialCommandMockInstance();
 
     // pointers to global instances
-    opMock = op;
+    fsmMock = fsm;
     knitterMock = knitter;
 
     // The global instances do not get destroyed at the end of each test.
@@ -67,7 +67,7 @@ protected:
   }
 
   ArduinoMock *arduinoMock;
-  OpMock *opMock;
+  FsmMock *fsmMock;
   KnitterMock *knitterMock;
   SerialMock *serialMock;
 

@@ -29,8 +29,8 @@
 #include <solenoids.h>
 #include <tester.h>
 
+#include <fsm.h>
 #include <knitter_mock.h>
-#include <op.h>
 
 // global definitions
 // references everywhere else must use `extern`
@@ -40,7 +40,7 @@ Encoders *encoders = new Encoders();
 Solenoids *solenoids = new Solenoids();
 Tester *tester = new Tester();
 
-OpMock *op = new OpMock();
+FsmMock *fsm = new FsmMock();
 KnitterMock *knitter = new KnitterMock();
 
 // initialize static members
@@ -50,7 +50,7 @@ EncodersInterface *GlobalEncoders::m_instance = encoders;
 SolenoidsInterface *GlobalSolenoids::m_instance = solenoids;
 TesterInterface *GlobalTester::m_instance = tester;
 
-OpInterface *GlobalOp::m_instance = op;
+FsmInterface *GlobalFsm::m_instance = fsm;
 KnitterInterface *GlobalKnitter::m_instance = knitter;
 
 int main(int argc, char *argv[]) {
