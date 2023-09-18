@@ -45,7 +45,7 @@ public:
   virtual void encodePosition() = 0;
   virtual bool isReady() = 0;
   virtual void knit() = 0;
-  virtual void indState(Err_t error = ErrorCode::SUCCESS) = 0;
+  virtual void indState(Err_t error = ErrorCode::success) = 0;
   virtual uint8_t getStartOffset(const Direction_t direction) = 0;
   virtual Machine_t getMachineType() = 0;
   virtual bool setNextLine(uint8_t lineNumber) = 0;
@@ -80,7 +80,7 @@ public:
   static void encodePosition();
   static bool isReady();
   static void knit();
-  static void indState(Err_t error = ErrorCode::SUCCESS);
+  static void indState(Err_t error = ErrorCode::success);
   static uint8_t getStartOffset(const Direction_t direction);
   static Machine_t getMachineType();
   static bool setNextLine(uint8_t lineNumber);
@@ -100,7 +100,7 @@ public:
   void encodePosition() final;
   bool isReady() final;
   void knit() final;
-  void indState(Err_t error = ErrorCode::SUCCESS) final;
+  void indState(Err_t error = ErrorCode::success) final;
   uint8_t getStartOffset(const Direction_t direction) final;
   Machine_t getMachineType() final;
   bool setNextLine(uint8_t lineNumber) final;

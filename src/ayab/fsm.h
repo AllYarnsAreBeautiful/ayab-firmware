@@ -35,46 +35,46 @@ enum class OpState : unsigned char {
 using OpState_t = enum OpState;
 
 // As of APIv6, the only important distinction
-// is between `SUCCESS` (0) and any other value.
+// is between `ErrorCode::success` (0) and any other value.
 // Informative error codes are provided for
 // diagnostic purposes (that is, for debugging).
 // Non-zero error codes are subject to change.
 // Such changes will be considered non-breaking.
 enum class ErrorCode : unsigned char {
-  SUCCESS = 0x00,
+  success = 0x00,
 
   // message not understood
-  ERR_EXPECTED_LONGER_MESSAGE = 0x01,
-  ERR_UNRECOGNIZED_MSGID = 0x02,
-  ERR_UNEXPECTED_MSGID = 0x03,
-  ERR_CHECKSUM_ERROR = 0x04,
+  expected_longer_message = 0x01,
+  unrecognized_msgid = 0x02,
+  unexpected_msgid = 0x03,
+  checksum_error = 0x04,
 
   // invalid arguments
-  ERR_MACHINE_TYPE_INVALID = 0x10,
-  ERR_NEEDLE_VALUE_INVALID = 0x11,
-  ERR_NULL_POINTER_ARGUMENT = 0x12,
-  ERR_ARGUMENT_INVALID = 0x13,
-  ERR_ARGUMENTS_INCOMPATIBLE = 0x13,
+  machine_type_invalid = 0x10,
+  needle_value_invalid = 0x11,
+  null_pointer_argument = 0x12,
+  argument_invalid = 0x13,
+  arguments_incompatible = 0x13,
 
   // device not initialized
-  ERR_NO_MACHINE_TYPE = 0x20,
-  ERR_NO_CARRIAGE = 0x21,
-  ERR_NO_DIRECTION = 0x22,
-  ERR_NO_BELTSHIFT = 0x23,
+  no_machine_type = 0x20,
+  no_carriage = 0x21,
+  no_direction = 0x22,
+  no_beltshift = 0x23,
 
   // machine in wrong FSM state
-  ERR_MACHINE_STATE_INIT = 0xE0,
-  ERR_MACHINE_STATE_READY = 0xE1,
-  ERR_MACHINE_STATE_KNIT = 0xE2,
-  ERR_MACHINE_STATE_TEST = 0xE3,
-  ERR_WRONG_MACHINE_STATE = 0xEF,
+  machine_state_init = 0xE0,
+  machine_state_ready = 0xE1,
+  machine_state_knit = 0xE2,
+  machine_state_test = 0xE3,
+  wrong_machine_state = 0xEF,
 
   // generic error codes
-  WARNING = 0xF0, // ignorable error
-  RECOVERABLE_ERROR = 0xF1,
-  CRITICAL_ERROR = 0xF2,
-  FATAL_ERROR = 0xF3,
-  UNSPECIFIED_FAILURE = 0xFF
+  warning = 0xF0, // ignorable error
+  recoverable_error = 0xF1,
+  critical_error = 0xF2,
+  fatal_error = 0xF3,
+  unspecified_failure = 0xFF
 };
 using Err_t = enum ErrorCode;
 
