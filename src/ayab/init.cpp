@@ -1,5 +1,6 @@
-/*!`
- * \file fsm_mock.h
+/*!
+ * \file init.cpp
+ * \brief Class containing methods for hardware testing.
  *
  * This file is part of AYAB.
  *
@@ -17,26 +18,48 @@
  *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
  *
  *    Original Work Copyright 2013 Christian Obersteiner, Andreas Müller
- *    Modified Work Copyright 2020 Sturla Lange, Tom Price
+ *    Modified Work Copyright 2020-3 Sturla Lange, Tom Price
  *    http://ayab-knitting.com
  */
 
-#ifndef FSM_MOCK_H_
-#define FSM_MOCK_H_
+#include <Arduino.h>
 
-#include <fsm.h>
-#include <gmock/gmock.h>
+#include "com.h"
+#include "init.h"
+#include "knit.h"
 
-class FsmMock : public FsmInterface {
-public:
-  MOCK_METHOD0(init, void());
-  MOCK_METHOD0(getState, OpState_t());
-  MOCK_METHOD1(setState, void(OpState_t state));
-  MOCK_METHOD0(update, void());
-  MOCK_METHOD0(cacheEncoders, void());
-};
+/*!
+ * \brief Initialize OpState::Init
+ */
+void Init::init() {
+}
 
-FsmMock *fsmMockInstance();
-void releaseFsmMock();
+/*!
+ * \brief Start OpState::Init
+ * \return Error code (0 = success, other values = error).
+ */
+Err_t Init::begin() {
+  return ErrorCode::success;
+}
 
-#endif // FSM_MOCK_H_
+/*!
+ * \brief Update method for OpState::Init
+ */
+void Init::update() {
+  digitalWrite(LED_PIN_A, LOW); // green LED off
+  if (GlobalKnit::isReady()) {
+    setState(OpState::ready);
+  }
+}
+
+/*!
+ * \brief Communication callback for OpState::Init
+ */
+void Init::com() {
+}
+
+/*!
+ * \brief Finish OpState::Init
+ */
+void Init::end() {
+}

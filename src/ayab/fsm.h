@@ -17,12 +17,14 @@
  *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
  *
  *    Original Work Copyright 2013 Christian Obersteiner, Andreas Müller
- *    Modified Work Copyright 2020 Sturla Lange, Tom Price
+ *    Modified Work Copyright 2020-3 Sturla Lange, Tom Price
  *    http://ayab-knitting.com
  */
 
 #ifndef FSM_H_
 #define FSM_H_
+
+#include <Arduino.h>
 
 #include "encoders.h"
 
@@ -80,7 +82,7 @@ enum class ErrorCode : unsigned char {
 };
 using Err_t = enum ErrorCode;
 
-constexpr unsigned int FLASH_DELAY = 500; // ms
+constexpr uint16_t FLASH_DELAY = 500; // ms
 
 class FsmInterface {
 public:
@@ -92,6 +94,8 @@ public:
   virtual void cacheEncoders() = 0;
   virtual void setState(OpState_t state) = 0;
   virtual OpState_t getState() = 0;
+  virtual void setMachineType(Machine_t) = 0;
+  virtual Machine_t getMachineType() = 0;
   virtual BeltShift_t getBeltShift() = 0;
   virtual Carriage_t getCarriage() = 0;
   virtual Direction_t getDirection() = 0;
@@ -101,9 +105,9 @@ public:
 
 // Singleton container class for static methods.
 // Dependency injection is enabled using a pointer
-// to a global instance of either `Knitter` or `KnitterMock`
+// to a global instance of either `Fsm` or `FsmMock`
 // both of which classes implement the pure virtual methods
-// of the `KnitterInterface` class.
+// of the `FsmInterface` class.
 
 class GlobalFsm final {
 private:
@@ -119,6 +123,8 @@ public:
   static void cacheEncoders();
   static void setState(OpState_t state);
   static OpState_t getState();
+  static void setMachineType(Machine_t);
+  static Machine_t getMachineType();
   static BeltShift_t getBeltShift();
   static Carriage_t getCarriage();
   static Direction_t getDirection();
@@ -133,30 +139,20 @@ public:
   void cacheEncoders() final;
   void setState(OpState_t state) final;
   OpState_t getState() final;
+  void setMachineType(Machine_t) final;
+  Machine_t getMachineType() final;
   BeltShift_t getBeltShift() final;
   Carriage_t getCarriage() final;
   Direction_t getDirection() final;
   Direction_t getHallActive() final;
   uint8_t getPosition() final;
 
-private:
-  void state_wait_for_machine() const;
-  void state_init();
-  void state_ready() const;
-  void state_knit() const;
-  void state_test() const;
-  void state_error();
-
   // machine state
   OpState_t m_currentState;
   OpState_t m_nextState;
 
-  // error state
-  Err_t m_error;
-
-  // flashing LEDs in error state
-  bool m_flash;
-  unsigned long m_flashTime;
+  // machine type
+  Machine_t m_machineType;
 
   // cached Encoder values
   BeltShift_t m_beltShift;

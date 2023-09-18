@@ -1,5 +1,5 @@
 /*!
- * \file tester.cpp
+ * \file test.cpp
  * \brief Class containing methods for hardware testing.
  *
  * This file is part of AYAB.
@@ -22,56 +22,104 @@
  *    http://ayab-knitting.com
  */
 
-#include <Arduino.h>
-
 #include "beeper.h"
 #include "com.h"
 #include "fsm.h"
-#include "knitter.h"
+#include "knit.h"
 #include "solenoids.h"
-#include "tester.h"
+#include "test.h"
 
 // public methods
+
+/*!
+ * \brief Initialization for hardware tests.
+ */
+void Test::init() {
+}
 
 /*!
  * \brief Start hardware test.
  * \param machineType Machine type.
  * \return Error code (0 = success, other values = error).
  */
-Err_t Tester::startTest(Machine_t machineType) {
+//Err_t Test::startTest(Machine_t machineType) {
+Err_t Test::begin() {
   OpState_t currentState = GlobalFsm::getState();
-  if (OpState::wait_for_machine == currentState || OpState::init == currentState || OpState::ready == currentState) {
-    GlobalFsm::setState(OpState::test);
-    GlobalKnitter::setMachineType(machineType);
-    setUp();
-    return ErrorCode::success;
+  if (OpState::ready != currentState) {
+    return ErrorCode::wrong_machine_state;
   }
-  return ErrorCode::wrong_machine_state;
+
+  GlobalFsm::setState(OpState::test);
+
+  // Print welcome message
+  GlobalCom::sendMsg(AYAB_API::testRes, "AYAB Hardware Test, ");
+  snprintf(buf, BUFFER_LEN, "Firmware v%hhu", FW_VERSION_MAJ);
+  GlobalCom::sendMsg(AYAB_API::testRes, buf);
+  snprintf(buf, BUFFER_LEN, ".%hhu", FW_VERSION_MIN);
+  GlobalCom::sendMsg(AYAB_API::testRes, buf);
+  snprintf(buf, BUFFER_LEN, " API v%hhu\n\n", API_VERSION);
+  GlobalCom::sendMsg(AYAB_API::testRes, buf);
+  helpCmd();
+
+  // attach interrupt for ENC_PIN_A(=2), interrupt #0
+  detachInterrupt(digitalPinToInterrupt(ENC_PIN_A));
+#ifndef AYAB_TESTS
+  // Attaching ENC_PIN_A, Interrupt #0
+  // This interrupt cannot be enabled until
+  // the machine type has been validated.
+  attachInterrupt(digitalPinToInterrupt(ENC_PIN_A), GlobalTest::encoderAChange, RISING);
+#endif // AYAB_TESTS
+
+  m_autoReadOn = false;
+  m_autoTestOn = false;
+  m_lastTime = millis();
+  m_timerEventOdd = false;
+
+  return ErrorCode::success;
 }
 
 /*!
  * \brief Main loop for hardware tests.
  */
-void Tester::update() {
-  GlobalKnitter::encodePosition();
-  unsigned long now = millis();
-  if (now - m_lastTime >= TEST_LOOP_DELAY) {
-    m_lastTime = now;
-    handleTimerEvent();
+void Test::update() {
+  if (enabled()) {
+    GlobalKnit::encodePosition();
+    uint32_t now = millis();
+    if (now - m_lastTime >= TEST_LOOP_DELAY) {
+      m_lastTime = now;
+      handleTimerEvent();
+    }
   }
+}
+
+/*!
+ * \brief Communication callback for hardware tests.
+ */
+void Test::com() {
+}
+
+/*!
+ * \brief Finish hardware tests.
+ */
+void Test::end() {
+  m_autoReadOn = false;
+  m_autoTestOn = false;
+  GlobalFsm::setState(OpState::init);
+  GlobalKnit::init();
+  GlobalEncoders::setUpInterrupt();
 }
 
 /*!
  * \brief Returns whether the hardware test loop is active.
  */
- bool Tester::enabled() {
+ bool Test::enabled() {
   return m_autoReadOn || m_autoTestOn;
 }
 
 /*!
  * \brief Help command handler.
  */
-void Tester::helpCmd() {
+void Test::helpCmd() {
   GlobalCom::sendMsg(AYAB_API::testRes, "The following commands are available:\n");
   GlobalCom::sendMsg(AYAB_API::testRes, "setSingle [0..15] [1/0]\n");
   GlobalCom::sendMsg(AYAB_API::testRes, "setAll [0..FFFF]\n");
@@ -89,7 +137,7 @@ void Tester::helpCmd() {
 /*!
  * \brief Send command handler.
  */
-void Tester::sendCmd() {
+void Test::sendCmd() {
   GlobalCom::sendMsg(AYAB_API::testRes, "Called send\n");
   uint8_t p[] = {0x31, 0x32, 0x33};
   GlobalCom::send(p, 3);
@@ -99,7 +147,7 @@ void Tester::sendCmd() {
 /*!
  * \brief Beep command handler.
  */
-void Tester::beepCmd() {
+void Test::beepCmd() {
   GlobalCom::sendMsg(AYAB_API::testRes, "Called beep\n");
   beep();
 }
@@ -109,7 +157,7 @@ void Tester::beepCmd() {
  * \param buffer Pointer to a data buffer.
  * \param size Number of bytes of data in the buffer.
  */
-void Tester::setSingleCmd(const uint8_t *buffer, size_t size) {
+void Test::setSingleCmd(const uint8_t *buffer, size_t size) {
   GlobalCom::sendMsg(AYAB_API::testRes, "Called setSingle\n");
   if (size < 3U) {
     GlobalCom::sendMsg(AYAB_API::testRes, "Error: invalid arguments\n");
@@ -135,7 +183,7 @@ void Tester::setSingleCmd(const uint8_t *buffer, size_t size) {
  * \param buffer Pointer to a data buffer.
  * \param size Number of bytes of data in the buffer.
  */
-void Tester::setAllCmd(const uint8_t *buffer, size_t size) {
+void Test::setAllCmd(const uint8_t *buffer, size_t size) {
   GlobalCom::sendMsg(AYAB_API::testRes, "Called setAll\n");
   if (size < 3U) {
     GlobalCom::sendMsg(AYAB_API::testRes, "Error: invalid arguments\n");
@@ -148,7 +196,7 @@ void Tester::setAllCmd(const uint8_t *buffer, size_t size) {
 /*!
  * \brief Read EOL sensors command handler.
  */
-void Tester::readEOLsensorsCmd() {
+void Test::readEOLsensorsCmd() {
   GlobalCom::sendMsg(AYAB_API::testRes, "Called readEOLsensors\n");
   readEOLsensors();
   GlobalCom::sendMsg(AYAB_API::testRes, "\n");
@@ -157,7 +205,7 @@ void Tester::readEOLsensorsCmd() {
 /*!
  * \brief Read encoders command handler.
  */
-void Tester::readEncodersCmd() {
+void Test::readEncodersCmd() {
   GlobalCom::sendMsg(AYAB_API::testRes, "Called readEncoders\n");
   readEncoders();
   GlobalCom::sendMsg(AYAB_API::testRes, "\n");
@@ -166,7 +214,7 @@ void Tester::readEncodersCmd() {
 /*!
  * \brief Auto read command handler.
  */
-void Tester::autoReadCmd() {
+void Test::autoReadCmd() {
   GlobalCom::sendMsg(AYAB_API::testRes, "Called autoRead, send stop to quit\n");
   m_autoReadOn = true;
 }
@@ -174,7 +222,7 @@ void Tester::autoReadCmd() {
 /*!
  * \brief Auto test command handler.
  */
-void Tester::autoTestCmd() {
+void Test::autoTestCmd() {
   GlobalCom::sendMsg(AYAB_API::testRes, "Called autoTest, send stop to quit\n");
   m_autoTestOn = true;
 }
@@ -182,27 +230,16 @@ void Tester::autoTestCmd() {
 /*!
  * \brief Stop command handler.
  */
-void Tester::stopCmd() {
+void Test::stopCmd() {
   m_autoReadOn = false;
   m_autoTestOn = false;
-}
-
-/*!
- * \brief Quit command handler.
- */
-void Tester::quitCmd() {
-  m_autoReadOn = false;
-  m_autoTestOn = false;
-  GlobalFsm::setState(OpState::init);
-  GlobalKnitter::init();
-  GlobalEncoders::setUpInterrupt();
 }
 
 #ifndef AYAB_TESTS
 /*!
  * \brief Interrupt service routine for encoder A.
  */
-void Tester::encoderAChange() {
+void Test::encoderAChange() {
   beep();
 }
 #endif // AYAB_TESTS
@@ -210,45 +247,16 @@ void Tester::encoderAChange() {
 // Private member functions
 
 /*!
- * \brief Setup for hardware tests.
- */
-void Tester::setUp() {
-  // Print welcome message
-  GlobalCom::sendMsg(AYAB_API::testRes, "AYAB Hardware Test, ");
-  snprintf(buf, BUFFER_LEN, "Firmware v%hhu", FW_VERSION_MAJ);
-  GlobalCom::sendMsg(AYAB_API::testRes, buf);
-  snprintf(buf, BUFFER_LEN, ".%hhu", FW_VERSION_MIN);
-  GlobalCom::sendMsg(AYAB_API::testRes, buf);
-  snprintf(buf, BUFFER_LEN, " API v%hhu\n\n", API_VERSION);
-  GlobalCom::sendMsg(AYAB_API::testRes, buf);
-  helpCmd();
-
-  // attach interrupt for ENC_PIN_A(=2), interrupt #0
-  detachInterrupt(digitalPinToInterrupt(ENC_PIN_A));
-#ifndef AYAB_TESTS
-  // Attaching ENC_PIN_A, Interrupt #0
-  // This interrupt cannot be enabled until
-  // the machine type has been validated.
-  attachInterrupt(digitalPinToInterrupt(ENC_PIN_A), GlobalTester::encoderAChange, RISING);
-#endif // AYAB_TESTS
-
-  m_autoReadOn = false;
-  m_autoTestOn = false;
-  m_lastTime = millis();
-  m_timerEventOdd = false;
-}
-
-/*!
  * \brief Make a beep.
  */
-void Tester::beep() const {
+void Test::beep() const {
   GlobalBeeper::ready();
 }
 
 /*!
  * \brief Read the Hall sensors that determine which carriage is in use.
  */
-void Tester::readEncoders() const {
+void Test::readEncoders() const {
   GlobalCom::sendMsg(AYAB_API::testRes, "  ENC_A: ");
   bool state = digitalRead(ENC_PIN_A);
   GlobalCom::sendMsg(AYAB_API::testRes, state ? "HIGH" : "LOW");
@@ -263,7 +271,7 @@ void Tester::readEncoders() const {
 /*!
  * \brief Read the End of Line sensors.
  */
-void Tester::readEOLsensors() {
+void Test::readEOLsensors() {
   auto hallSensor = static_cast<uint16_t>(analogRead(EOL_PIN_L));
   snprintf(buf, BUFFER_LEN, "  EOL_L: %hu", hallSensor);
   GlobalCom::sendMsg(AYAB_API::testRes, buf);
@@ -275,7 +283,7 @@ void Tester::readEOLsensors() {
 /*!
  * \brief Read both carriage sensors and End of Line sensors.
  */
-void Tester::autoRead() {
+void Test::autoRead() {
   GlobalCom::sendMsg(AYAB_API::testRes, "\n");
   readEOLsensors();
   readEncoders();
@@ -285,7 +293,7 @@ void Tester::autoRead() {
 /*!
  * \brief Set even-numbered solenoids.
  */
-void Tester::autoTestEven() const {
+void Test::autoTestEven() const {
   GlobalCom::sendMsg(AYAB_API::testRes, "Set even solenoids\n");
   digitalWrite(LED_PIN_A, HIGH);
   digitalWrite(LED_PIN_B, HIGH);
@@ -295,7 +303,7 @@ void Tester::autoTestEven() const {
 /*!
  * \brief Set odd-numbered solenoids.
  */
-void Tester::autoTestOdd() const {
+void Test::autoTestOdd() const {
   GlobalCom::sendMsg(AYAB_API::testRes, "Set odd solenoids\n");
   digitalWrite(LED_PIN_A, LOW);
   digitalWrite(LED_PIN_B, LOW);
@@ -305,7 +313,7 @@ void Tester::autoTestOdd() const {
 /*!
  * \brief Timer event every 500ms to handle auto functions.
  */
-void Tester::handleTimerEvent() {
+void Test::handleTimerEvent() {
   if (m_autoReadOn && m_timerEventOdd) {
     autoRead();
   }

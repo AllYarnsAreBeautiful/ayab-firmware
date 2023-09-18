@@ -1,5 +1,5 @@
 /*!`
- * \file knitter_mock.h
+ * \file test_mock.h
  *
  * This file is part of AYAB.
  *
@@ -21,30 +21,31 @@
  *    http://ayab-knitting.com
  */
 
-#ifndef KNITTER_MOCK_H_
-#define KNITTER_MOCK_H_
+#ifndef TEST_MOCK_H_
+#define TEST_MOCK_H_
 
 #include <gmock/gmock.h>
-#include <knitter.h>
+#include <test.h>
 
-class KnitterMock : public KnitterInterface {
+class TestMock : public TestInterface {
 public:
-  MOCK_METHOD0(init, void());
-  MOCK_METHOD4(startKnitting, Err_t(uint8_t startNeedle,
-                                    uint8_t stopNeedle, uint8_t *pattern_start,
-                                    bool continuousReportingEnabled));
-  MOCK_METHOD1(initMachine, Err_t(Machine_t machineType));
-  MOCK_METHOD0(encodePosition, void());
-  MOCK_METHOD0(isReady, bool());
-  MOCK_METHOD0(knit, void());
-  MOCK_METHOD1(getStartOffset, uint8_t(const Direction_t direction));
-  MOCK_METHOD0(getMachineType, Machine_t());
-  MOCK_METHOD1(setNextLine, bool(uint8_t lineNumber));
-  MOCK_METHOD0(setLastLine, void());
-  MOCK_METHOD1(setMachineType, void(Machine_t));
+  MOCK_METHOD1(startTest, Err_t(Machine_t machineType));
+  MOCK_METHOD0(update, void());
+  MOCK_METHOD0(enabled, bool());
+  MOCK_METHOD0(helpCmd, void());
+  MOCK_METHOD0(sendCmd, void());
+  MOCK_METHOD0(beepCmd, void());
+  MOCK_METHOD2(setSingleCmd, void(const uint8_t *, size_t));
+  MOCK_METHOD2(setAllCmd, void(const uint8_t *, size_t));
+  MOCK_METHOD0(readEOLsensorsCmd, void());
+  MOCK_METHOD0(readEncodersCmd, void());
+  MOCK_METHOD0(autoReadCmd, void());
+  MOCK_METHOD0(autoTestCmd, void());
+  MOCK_METHOD0(stopCmd, void());
+  MOCK_METHOD0(quitCmd, void());
 };
 
-KnitterMock *knitterMockInstance();
-void releaseKnitterMock();
+TestMock *testMockInstance();
+void releaseTestMock();
 
-#endif // KNITTER_MOCK_H_
+#endif // TEST_MOCK_H_

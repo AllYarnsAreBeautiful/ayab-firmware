@@ -1,5 +1,5 @@
 /*!`
- * \file test_op.cpp
+ * \file test_fsm.cpp
  *
  * This file is part of AYAB.
  *
@@ -25,13 +25,13 @@
 
 #include <encoders.h>
 #include <fsm.h>
-#include <knitter.h>
+#include <knit.h>
 
 #include <beeper_mock.h>
 #include <com_mock.h>
 #include <encoders_mock.h>
 #include <solenoids_mock.h>
-#include <tester_mock.h>
+#include <test_mock.h>
 
 using ::testing::_;
 using ::testing::AtLeast;
@@ -40,13 +40,13 @@ using ::testing::Return;
 using ::testing::Test;
 
 extern Fsm *fsm;
-extern Knitter *knitter;
+extern Knit *knit;
 
 extern BeeperMock *beeper;
 extern ComMock *com;
 extern EncodersMock *encoders;
 extern SolenoidsMock *solenoids;
-extern TesterMock *tester;
+extern TestMock *test;
 
 // Defaults for position
 const uint8_t positionPassedLeft = (END_LEFT_PLUS_OFFSET[static_cast<uint8_t>(Machine_t::Kh910)] + GARTER_SLOP) + 1;
@@ -63,7 +63,7 @@ protected:
     comMock = com;
     encodersMock = encoders;
     solenoidsMock = solenoids;
-    testerMock = tester;
+    testMock = test;
 
     // The global instance does not get destroyed at the end of each test.
     // Ordinarily the mock instance would be local and such behaviour would
@@ -72,7 +72,7 @@ protected:
     Mock::AllowLeak(comMock);
     Mock::AllowLeak(encodersMock);
     Mock::AllowLeak(solenoidsMock);
-    Mock::AllowLeak(testerMock);
+    Mock::AllowLeak(testMock);
 
     // start in state `OpState::init`
     EXPECT_CALL(*arduinoMock, millis);
@@ -83,9 +83,9 @@ protected:
     // EXPECT_CALL(*comMock, update);
     // fsm->dispatch();
     // ASSERT_TRUE(fsm->getState() == OpState::init);
-    expect_knitter_init();
-    knitter->init();
-    knitter->setMachineType(Machine_t::Kh910);
+    expect_knit_init();
+    knit->init();
+    fsm->setMachineType(Machine_t::Kh910);
     expected_isr(Direction_t::NoDirection, Direction_t::NoDirection, 0);
   }
 
@@ -100,9 +100,9 @@ protected:
   EncodersMock *encodersMock;
   SerialMock *serialMock;
   SolenoidsMock *solenoidsMock;
-  TesterMock *testerMock;
+  TestMock *testMock;
 
-  void expect_knitter_init() {
+  void expect_knit_init() {
     EXPECT_CALL(*arduinoMock, pinMode(ENC_PIN_A, INPUT));
     EXPECT_CALL(*arduinoMock, pinMode(ENC_PIN_B, INPUT));
     EXPECT_CALL(*arduinoMock, pinMode(ENC_PIN_C, INPUT));
@@ -120,7 +120,7 @@ protected:
     EXPECT_CALL(*encodersMock, getHallActive).WillRepeatedly(Return(hall));
     EXPECT_CALL(*encodersMock, getBeltShift).Times(AtLeast(1));
     EXPECT_CALL(*encodersMock, getCarriage).Times(AtLeast(1));
-    knitter->isr();
+    knit->isr();
 
     // test expectations without destroying instance
     ASSERT_TRUE(Mock::VerifyAndClear(encodersMock));
@@ -199,11 +199,11 @@ protected:
     // starts in state `OpState::test`
     ASSERT_EQ(fsm->getState(), OpState::test);
 
-    EXPECT_CALL(*testerMock, loop);
+    EXPECT_CALL(*testMock, loop);
     expected_dispatch();
 
     // test expectations without destroying instance
-    ASSERT_TRUE(Mock::VerifyAndClear(testerMock));
+    ASSERT_TRUE(Mock::VerifyAndClear(testMock));
   }
 
   void expected_dispatch_error(unsigned long t) {
@@ -274,7 +274,7 @@ TEST_F(FsmTest, test_dispatch_test) {
 
   // now quit test
   fsm->setState(OpState::init);
-  expect_knitter_init();
+  expect_knit_init();
   expected_dispatch_test();
   ASSERT_TRUE(fsm->getState() == OpState::init);
 
@@ -327,7 +327,7 @@ TEST_F(FsmTest, test_dispatch_error) {
 
   // get to state `OpState::init`
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_B, LOW));
-  expect_knitter_init();
+  expect_knit_init();
   expected_state(OpState::init);
 
   // test expectations without destroying instance

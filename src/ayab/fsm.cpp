@@ -28,12 +28,17 @@
 // statements in `test_fsm.cpp`.
 
 #include "board.h"
-#include <Arduino.h>
 #include <util/atomic.h>
 
 #include "com.h"
 #include "fsm.h"
-#include "knitter.h"
+
+#include "wait.h"
+#include "init.h"
+#include "ready.h"
+#include "knit.h"
+#include "test.h"
+#include "error.h"
 
 // Public methods
 
@@ -43,9 +48,6 @@
 void Fsm::init() {
   m_currentState = OpState::wait_for_machine;
   m_nextState = OpState::wait_for_machine;
-  m_flash = false;
-  m_flashTime = millis();
-  m_error = ErrorCode::success;
 }
 
 /*!
@@ -55,32 +57,96 @@ void Fsm::update() {
   cacheEncoders();
   switch (m_currentState) {
   case OpState::wait_for_machine:
-    state_wait_for_machine();
+    GlobalWait::update();
     break;
 
   case OpState::init:
-    state_init();
+    GlobalInit::update();
     break;
 
   case OpState::ready:
-    state_ready();
+    GlobalReady::update();
     break;
 
   case OpState::knit:
-    state_knit();
+    GlobalKnit::update();
     break;
 
   case OpState::test:
-    state_test();
+    GlobalTest::update();
     break;
 
   case OpState::error:
-    state_error();
+    GlobalError::update();
     break;
 
   default:
     break;
   }
+
+  if (m_currentState == m_nextState) {
+    return;
+  }
+
+  // else
+  switch (m_currentState) {
+  case OpState::wait_for_machine:
+    GlobalWait::end();
+    break;
+
+  case OpState::init:
+    GlobalInit::end();
+    break;
+
+  case OpState::ready:
+    GlobalReady::end();
+    break;
+
+  case OpState::knit:
+    GlobalKnit::end();
+    break;
+
+  case OpState::test:
+    GlobalTest::end();
+    break;
+
+  case OpState::error:
+    GlobalError::end();
+    break;
+
+  default:
+    break;
+  }
+
+  switch (m_nextState) {
+  case OpState::wait_for_machine:
+    GlobalWait::begin();
+    break;
+
+  case OpState::init:
+    GlobalInit::begin();
+    break;
+
+  case OpState::ready:
+    GlobalReady::begin();
+    break;
+
+  case OpState::knit:
+    GlobalKnit::begin();
+    break;
+
+  case OpState::test:
+    GlobalTest::begin();
+    break;
+
+  case OpState::error:
+    GlobalError::begin();
+    break;
+
+  default:
+    break;
+  }
+
   m_currentState = m_nextState;
 }
 // GCOVR_EXCL_STOP
@@ -115,6 +181,22 @@ void Fsm::setState(OpState_t state) {
  */
 OpState_t Fsm::getState() {
   return m_currentState;
+}
+
+/*!
+ * \brief Set machine type.
+ * \param Machine type.
+ */
+void Fsm::setMachineType(Machine_t machineType) {
+  m_machineType = machineType;
+}
+
+/*!
+ * \brief Get knitting machine type.
+ * \return Machine type.
+ */
+Machine_t Fsm::getMachineType() {
+  return m_machineType;
 }
 
 /*!
@@ -155,69 +237,4 @@ Direction_t Fsm::getHallActive() {
  */
 uint8_t Fsm::getPosition() {
   return m_position;
-}
-
-
-// Private methods
-
-/*!
- * \brief Action of machine in state `wait_for_machine`.
- */
-void Fsm::state_wait_for_machine() const {
-  digitalWrite(LED_PIN_A, LOW); // green LED off
-}
-
-/*!
- * \brief Action of machine in state `OpState::init`.
- */
-void Fsm::state_init() {
-  digitalWrite(LED_PIN_A, LOW); // green LED off
-  if (GlobalKnitter::isReady()) {
-    setState(OpState::ready);
-  }
-}
-
-/*!
- * \brief Action of machine in state `OpState::ready`.
- */
-void Fsm::state_ready() const {
-  digitalWrite(LED_PIN_A, LOW); // green LED off
-}
-
-/*!
- * \brief Action of machine in state `OpState::knit`.
- */
-void Fsm::state_knit() const {
-  digitalWrite(LED_PIN_A, HIGH); // green LED on
-  GlobalKnitter::knit();
-}
-
-/*!
- * \brief Action of machine in state `OpState::test`.
- */
-void Fsm::state_test() const {
-}
-
-/*!
- * \brief Action of machine in state `OpState::error`.
- */
-void Fsm::state_error() {
-  if (m_nextState == OpState::init) {
-    // exit error state
-    digitalWrite(LED_PIN_A, LOW); // green LED off
-    digitalWrite(LED_PIN_B, LOW); // yellow LED off
-    GlobalKnitter::init();
-    return;
-  }
-  // every 500ms
-  // send `indState` and flash LEDs
-  unsigned long now = millis();
-  if (now - m_flashTime >= FLASH_DELAY) {
-    digitalWrite(LED_PIN_A, m_flash);  // green LED
-    digitalWrite(LED_PIN_B, !m_flash); // yellow LED
-    m_flash = !m_flash;
-    m_flashTime = now;
-    // send error message
-    GlobalCom::send_indState(m_error);
-  }
 }

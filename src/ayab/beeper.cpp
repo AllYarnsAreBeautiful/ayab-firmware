@@ -23,8 +23,6 @@
  *    http://ayab-knitting.com
  */
 
-#include <Arduino.h>
-
 #include "beeper.h"
 #include "board.h"
 
@@ -81,7 +79,7 @@ void Beeper::endWork() {
  * Beep handler scheduled from main loop
  */
 void Beeper::update() {
-  long unsigned int now = millis();
+  uint32_t now = millis();
   switch (m_currentState) {
   case BeepState::On:
     analogWrite(PIEZO_PIN, BEEP_ON_DUTY);

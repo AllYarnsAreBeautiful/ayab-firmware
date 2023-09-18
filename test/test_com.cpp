@@ -28,7 +28,7 @@
 #include <encoders.h>
 
 #include <fsm_mock.h>
-#include <knitter_mock.h>
+#include <knit_mock.h>
 
 using ::testing::_;
 using ::testing::AtLeast;
@@ -39,7 +39,7 @@ extern Com *com;
 extern Beeper *beeper;
 
 extern FsmMock *fsm;
-extern KnitterMock *knitter;
+extern KnitMock *knit;
 
 class ComTest : public ::testing::Test {
 protected:
@@ -49,13 +49,13 @@ protected:
 
     // pointer to global instance
     fsmMock = fsm;
-    knitterMock = knitter;
+    knitMock = knit;
 
     // The global instance does not get destroyed at the end of each test.
     // Ordinarily the mock instance would be local and such behaviour would
     // cause a memory leak. We must notify the test that this is not the case.
-    Mock::AllowLeak(opMock);
-    Mock::AllowLeak(knitterMock);
+    Mock::AllowLeak(fsmMock);
+    Mock::AllowLeak(knitMock);
 
     beeper->init(true);
     expect_init();
@@ -69,7 +69,7 @@ protected:
 
   ArduinoMock *arduinoMock;
   FsmMock *fsmMock;
-  KnitterMock *knitterMock;
+  KnitMock *knitMock;
   SerialMock *serialMock;
 
   void expect_init() {
@@ -95,7 +95,7 @@ protected:
 
   void reqInit(Machine_t machine) {
     uint8_t buffer[] = {static_cast<uint8_t>(AYAB_API::reqInit), static_cast<uint8_t>(machine)};
-    EXPECT_CALL(*opMock, setState(OpState::init));
+    EXPECT_CALL(*fsmMock, setState(OpState::init));
     expected_write_onPacketReceived(buffer, sizeof(buffer), true);
   }
 };
@@ -111,11 +111,11 @@ TEST_F(ComTest, test_reqInit_too_short_error) {
   //EXPECT_CALL(*serialMock, write(static_cast<uint8_t>(AYAB_API::cnfInit)));
   //EXPECT_CALL(*serialMock, write(EXPECTED_LONGER_MESSAGE));
   //EXPECT_CALL(*serialMock, write(SLIP::END));
-  EXPECT_CALL(*opMock, setState(OpState::init)).Times(0);
+  EXPECT_CALL(*fsmMock, setState(OpState::init)).Times(0);
   com->onPacketReceived(buffer, sizeof(buffer));
 
   // test expectations without destroying instance
-  ASSERT_TRUE(Mock::VerifyAndClear(opMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(fsmMock));
 }
 
 TEST_F(ComTest, test_reqInit_checksum_error) {
@@ -123,73 +123,73 @@ TEST_F(ComTest, test_reqInit_checksum_error) {
   //EXPECT_CALL(*serialMock, write(static_cast<uint8_t>(AYAB_API::cnfInit)));
   //EXPECT_CALL(*serialMock, write(CHECKSUM_ERROR));
   //EXPECT_CALL(*serialMock, write(SLIP::END));
-  EXPECT_CALL(*opMock, setState(OpState::init)).Times(0);
+  EXPECT_CALL(*fsmMock, setState(OpState::init)).Times(0);
   com->onPacketReceived(buffer, sizeof(buffer));
 
   // test expectations without destroying instance
-  ASSERT_TRUE(Mock::VerifyAndClear(opMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(fsmMock));
 }
 
 TEST_F(ComTest, test_reqtest_fail) {
   // no machineType
   uint8_t buffer[] = {static_cast<uint8_t>(AYAB_API::reqTest)};
-  EXPECT_CALL(*opMock, setState(OpState::test)).Times(0);
+  EXPECT_CALL(*fsmMock, setState(OpState::test)).Times(0);
   expected_write_onPacketReceived(buffer, sizeof(buffer), true);
 
   // test expectations without destroying instance
-  ASSERT_TRUE(Mock::VerifyAndClear(opMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(fsmMock));
 }
 
 TEST_F(ComTest, test_reqtest_success_KH270) {
   uint8_t buffer[] = {static_cast<uint8_t>(AYAB_API::reqTest), static_cast<uint8_t>(Machine_t::Kh270)};
-  EXPECT_CALL(*opMock, setState(OpState::test));
-  EXPECT_CALL(*knitterMock, setMachineType(Machine_t::Kh270));
+  EXPECT_CALL(*fsmMock, setState(OpState::test));
+  EXPECT_CALL(*fsmMock, setMachineType(Machine_t::Kh270));
   EXPECT_CALL(*arduinoMock, millis);
   expected_write_onPacketReceived(buffer, sizeof(buffer), false);
 
   // test expectations without destroying instance
-  ASSERT_TRUE(Mock::VerifyAndClear(opMock));
-  ASSERT_TRUE(Mock::VerifyAndClear(knitterMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(fsmMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(knitMock));
 }
 
 TEST_F(ComTest, test_reqstart_fail1) {
   // checksum wrong
   uint8_t buffer[] = {static_cast<uint8_t>(AYAB_API::reqStart), 0, 10, 1, 0x73};
-  EXPECT_CALL(*knitterMock, startKnitting).Times(0);
+  EXPECT_CALL(*knitMock, startKnitting).Times(0);
   expected_write_onPacketReceived(buffer, sizeof(buffer), true);
 
   // test expectations without destroying instance
-  ASSERT_TRUE(Mock::VerifyAndClear(knitterMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(knitMock));
 }
 
 TEST_F(ComTest, test_reqstart_fail2) {
   // not enough bytes
   uint8_t buffer[] = {static_cast<uint8_t>(AYAB_API::reqStart), 0, 1, 0x74};
-  EXPECT_CALL(*knitterMock, startKnitting).Times(0);
+  EXPECT_CALL(*knitMock, startKnitting).Times(0);
   expected_write_onPacketReceived(buffer, sizeof(buffer) - 1, true);
 
   // test expectations without destroying instance
-  ASSERT_TRUE(Mock::VerifyAndClear(knitterMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(knitMock));
 }
 
 TEST_F(ComTest, test_reqstart_success_KH910) {
   reqInit(Machine_t::Kh910);
   uint8_t buffer[] = {static_cast<uint8_t>(AYAB_API::reqStart), 0, 10, 1, 0x36};
-  EXPECT_CALL(*knitterMock, startKnitting);
+  EXPECT_CALL(*knitMock, startKnitting);
   expected_write_onPacketReceived(buffer, sizeof(buffer), false);
 
   // test expectations without destroying instance
-  ASSERT_TRUE(Mock::VerifyAndClear(knitterMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(knitMock));
 }
 
 TEST_F(ComTest, test_reqstart_success_KH270) {
   reqInit(Machine_t::Kh270);
   uint8_t buffer[] = {static_cast<uint8_t>(AYAB_API::reqStart), 0, 10, 1, 0x36};
-  EXPECT_CALL(*knitterMock, startKnitting);
+  EXPECT_CALL(*knitMock, startKnitting);
   expected_write_onPacketReceived(buffer, sizeof(buffer), false);
 
   // test expectations without destroying instance
-  ASSERT_TRUE(Mock::VerifyAndClear(knitterMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(knitMock));
 }
 
 TEST_F(ComTest, test_reqinfo) {
@@ -259,13 +259,13 @@ TEST_F(ComTest, test_stopCmd) {
 
 TEST_F(ComTest, test_quitCmd) {
   uint8_t buffer[] = {static_cast<uint8_t>(AYAB_API::quitCmd)};
-  EXPECT_CALL(*knitterMock, setUpInterrupt);
-  EXPECT_CALL(*opMock, setState(OpState::init));
+  EXPECT_CALL(*knitMock, setUpInterrupt);
+  EXPECT_CALL(*fsmMock, setState(OpState::init));
   com->onPacketReceived(buffer, sizeof(buffer));
 
   // test expectations without destroying instance
-  ASSERT_TRUE(Mock::VerifyAndClear(knitterMock));
-  ASSERT_TRUE(Mock::VerifyAndClear(opMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(knitMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(fsmMock));
 }
 
 TEST_F(ComTest, test_unrecognized) {
@@ -310,37 +310,37 @@ TEST_F(ComTest, test_cnfline_kh910) {
                         0xA7}; // CRC8
 
   // start KH910 job
-  knitterMock->initMachine(Machine_t::Kh910);
-  knitterMock->startKnitting(0, 199, pattern, false);
+  knitMock->initMachine(Machine_t::Kh910);
+  knitMock->startKnitting(0, 199, pattern, false);
 
   // first call increments line number to zero, not accepted
-  EXPECT_CALL(*knitterMock, setNextLine).WillOnce(Return(false));
-  EXPECT_CALL(*knitterMock, setLastLine).Times(0);
+  EXPECT_CALL(*knitMock, setNextLine).WillOnce(Return(false));
+  EXPECT_CALL(*knitMock, setLastLine).Times(0);
   com->onPacketReceived(buffer, sizeof(buffer));
 
   // second call Line accepted, last line
-  EXPECT_CALL(*knitterMock, setNextLine).WillOnce(Return(true));
-  EXPECT_CALL(*knitterMock, setLastLine).Times(1);
+  EXPECT_CALL(*knitMock, setNextLine).WillOnce(Return(true));
+  EXPECT_CALL(*knitMock, setLastLine).Times(1);
   com->onPacketReceived(buffer, sizeof(buffer));
 
   // not last line
   buffer[3] = 0x00;
   buffer[29] = 0xC0;
-  EXPECT_CALL(*knitterMock, setNextLine).WillOnce(Return(true));
-  EXPECT_CALL(*knitterMock, setLastLine).Times(0);
+  EXPECT_CALL(*knitMock, setNextLine).WillOnce(Return(true));
+  EXPECT_CALL(*knitMock, setLastLine).Times(0);
   com->onPacketReceived(buffer, sizeof(buffer));
 
   // checksum wrong
-  EXPECT_CALL(*knitterMock, setNextLine).Times(0);
+  EXPECT_CALL(*knitMock, setNextLine).Times(0);
   buffer[29]--;
   com->onPacketReceived(buffer, sizeof(buffer));
 
   // not enough bytes in buffer
-  EXPECT_CALL(*knitterMock, setNextLine).Times(0);
+  EXPECT_CALL(*knitMock, setNextLine).Times(0);
   com->onPacketReceived(buffer, sizeof(buffer) - 1);
 
   // test expectations without destroying instance
-  ASSERT_TRUE(Mock::VerifyAndClear(knitterMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(knitMock));
 }
 
 /*
@@ -357,7 +357,7 @@ TEST_F(ComTest, test_cnfline_kh270) {
                         0x00, 0x00, 0x00, 0x00, 0x00,
                         0xab};  // CRC8
   // start KH270 job
-  knitterMock->startOperation(Kh270, 0, 113, pattern, false);
+  knitMock->startOperation(Kh270, 0, 113, pattern, false);
   com->onPacketReceived(buffer, sizeof(buffer));
 }
 */

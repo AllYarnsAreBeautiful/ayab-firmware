@@ -1,5 +1,6 @@
-/*!`
- * \file fsm_mock.cpp
+/*!
+ * \file ready.cpp
+ * \brief Class containing methods for hardware testing.
  *
  * This file is part of AYAB.
  *
@@ -21,46 +22,40 @@
  *    http://ayab-knitting.com
  */
 
-#include <fsm.h>
-#include <fsm_mock.h>
+#include <Arduino.h>
 
-static FsmMock *gFsmMock = nullptr;
+#include "com.h"
+#include "ready.h"
 
-FsmMock *fsmMockInstance() {
-  if (!gFsmMock) {
-    gFsmMock = new FsmMock();
-  }
-  return gFsmMock;
+/*!
+ * \brief Initialize OpState::Ready
+ */
+void Ready::init() {
 }
 
-void releaseFsmMock() {
-  if (gFsmMock) {
-    delete gFsmMock;
-    gFsmMock = nullptr;
-  }
+/*!
+ * \brief Start OpState::Ready
+ * \return Error code (0 = success, other values = error).
+ */
+Err_t Ready::begin() {
+  return ErrorCode::success;
 }
 
-void Fsm::init() {
-  assert(gFsmMock != nullptr);
-  gFsmMock->init();
+/*!
+ * \brief Update method for OpState::Ready
+ */
+void Ready::update() {
+  digitalWrite(LED_PIN_A, LOW); // green LED off
 }
 
-OpState_t Fsm::getState() {
-  assert(gFsmMock != nullptr);
-  return gFsmMock->getState();
+/*!
+ * \brief Communication callback for OpState::Ready
+ */
+void Ready::com() {
 }
 
-void Fsm::setState(OpState_t state) {
-  assert(gFsmMock != nullptr);
-  gFsmMock->setState(state);
-}
-
-void Fsm::update() {
-  assert(gFsmMock != nullptr);
-  gFsmMock->update();
-}
-
-void Fsm::cacheEncoders() {
-  assert(gFsmMock != nullptr);
-  gFsmMock->cacheEncoders();
+/*!
+ * \brief Finish OpState::Ready
+ */
+void Ready::end() {
 }

@@ -24,34 +24,34 @@
 #include "gtest/gtest.h"
 
 #include <fsm.h>
-#include <knitter.h>
+#include <knit.h>
 
 #include <beeper_mock.h>
 #include <com_mock.h>
 #include <encoders_mock.h>
 #include <solenoids_mock.h>
-#include <tester_mock.h>
+#include <test_mock.h>
 
 // global definitions
 // references everywhere else must use `extern`
 Fsm *fsm = new Fsm();
-Knitter *knitter = new Knitter();
+Knit *knit = new Knit();
 
 BeeperMock *beeper = new BeeperMock();
 ComMock *com = new ComMock();
 EncodersMock *encoders = new EncodersMock();
 SolenoidsMock *solenoids = new SolenoidsMock();
-TesterMock *tester = new TesterMock();
+TestMock *test = new TestMock();
 
 // instantiate singleton classes with mock objects
 FsmInterface *GlobalFsm::m_instance = fsm;
-KnitterInterface *GlobalKnitter::m_instance = knitter;
+KnitInterface *GlobalKnit::m_instance = knit;
 
 BeeperInterface *GlobalBeeper::m_instance = beeper;
 ComInterface *GlobalCom::m_instance = com;
 EncodersInterface *GlobalEncoders::m_instance = encoders;
 SolenoidsInterface *GlobalSolenoids::m_instance = solenoids;
-TesterInterface *GlobalTester::m_instance = tester;
+TestInterface *GlobalTest::m_instance = test;
 
 int main(int argc, char *argv[]) {
   ::testing::InitGoogleMock(&argc, argv);

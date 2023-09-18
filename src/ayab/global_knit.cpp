@@ -1,5 +1,5 @@
 /*!
- * \file global_knitter.cpp
+ * \file global_knit.cpp
  * \brief Singleton class containing methods for the finite state machine
  *    that co-ordinates the AYAB firmware.
  *
@@ -23,53 +23,58 @@
  *    http://ayab-knitting.com
  */
 
-#include "knitter.h"
+#include "knit.h"
 
 // static member functions
 
-void GlobalKnitter::init() {
+void GlobalKnit::init() {
   m_instance->init();
 }
 
-Err_t GlobalKnitter::initMachine(Machine_t machine) {
-  return m_instance->initMachine(machine);
+Err_t GlobalKnit::begin() {
+  return m_instance->begin();
 }
 
-Err_t GlobalKnitter::startKnitting(uint8_t startNeedle,
+void GlobalKnit::update() {
+  m_instance->update();
+}
+
+void GlobalKnit::com() {
+  m_instance->com();
+}
+
+void GlobalKnit::end() {
+  m_instance->end();
+}
+
+
+Err_t GlobalKnit::startKnitting(uint8_t startNeedle,
                                    uint8_t stopNeedle, uint8_t *pattern_start,
                                    bool continuousReportingEnabled) {
   return m_instance->startKnitting(startNeedle, stopNeedle,
                                    pattern_start, continuousReportingEnabled);
 }
 
-void GlobalKnitter::encodePosition() {
+void GlobalKnit::encodePosition() {
   m_instance->encodePosition();
 }
 
-bool GlobalKnitter::isReady() {
+bool GlobalKnit::isReady() {
   return m_instance->isReady();
 }
 
-void GlobalKnitter::knit() {
+void GlobalKnit::knit() {
   m_instance->knit();
 }
 
-uint8_t GlobalKnitter::getStartOffset(const Direction_t direction) {
+uint8_t GlobalKnit::getStartOffset(const Direction_t direction) {
   return m_instance->getStartOffset(direction);
 }
 
-Machine_t GlobalKnitter::getMachineType() {
-  return m_instance->getMachineType();
-}
-
-bool GlobalKnitter::setNextLine(uint8_t lineNumber) {
+bool GlobalKnit::setNextLine(uint8_t lineNumber) {
   return m_instance->setNextLine(lineNumber);
 }
 
-void GlobalKnitter::setLastLine() {
+void GlobalKnit::setLastLine() {
   m_instance->setLastLine();
-}
-
-void GlobalKnitter::setMachineType(Machine_t machineType) {
-  m_instance->setMachineType(machineType);
 }

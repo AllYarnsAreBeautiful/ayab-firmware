@@ -30,7 +30,7 @@ void GlobalEncoders::init(Machine_t machineType) {
 }
 
 /*!
- * \brief Initialize interrupt service routine for Knitter object.
+ * \brief Initialize interrupt service routine for Knit object.
  */
 void GlobalEncoders::setUpInterrupt() {
   // (re-)attach ENC_PIN_A(=2), interrupt #0

@@ -28,9 +28,14 @@
 #include "com.h"
 #include "encoders.h"
 #include "fsm.h"
-#include "knitter.h"
 #include "solenoids.h"
-#include "tester.h"
+
+#include "wait.h"
+#include "init.h"
+#include "ready.h"
+#include "knit.h"
+#include "test.h"
+#include "error.h"
 
 // Global definitions: references elsewhere must use `extern`.
 // Each of the following is a pointer to a singleton class
@@ -38,10 +43,15 @@
 constexpr GlobalBeeper    *beeper;
 constexpr GlobalCom       *com;
 constexpr GlobalEncoders  *encoders;
-constexpr GlobalKnitter   *knitter;
-constexpr GlobalFsm        *op;
+constexpr GlobalFsm       *fsm;
 constexpr GlobalSolenoids *solenoids;
-constexpr GlobalTester    *tester;
+
+constexpr GlobalWait      *opWait;
+constexpr GlobalInit      *opInit;
+constexpr GlobalReady     *opReady;
+constexpr GlobalKnit      *opKnit;
+constexpr GlobalTest      *opTest;
+constexpr GlobalError     *opError;
 
 // Initialize static members.
 // Each singleton class contains a pointer to a static instance
@@ -51,9 +61,14 @@ BeeperInterface    *GlobalBeeper::m_instance    = new Beeper();
 ComInterface       *GlobalCom::m_instance       = new Com();
 EncodersInterface  *GlobalEncoders::m_instance  = new Encoders();
 FsmInterface       *GlobalFsm::m_instance       = new Fsm();
-KnitterInterface   *GlobalKnitter::m_instance   = new Knitter();
 SolenoidsInterface *GlobalSolenoids::m_instance = new Solenoids();
-TesterInterface    *GlobalTester::m_instance    = new Tester();
+
+WaitInterface      *GlobalWait::m_instance      = new Wait();
+InitInterface      *GlobalInit::m_instance      = new Init();
+ReadyInterface     *GlobalReady::m_instance     = new Ready();
+KnitInterface      *GlobalKnit::m_instance      = new Knit();
+TestInterface      *GlobalTest::m_instance      = new Test();
+ErrorInterface     *GlobalError::m_instance     = new Error();
 
 /*!
  * Setup - do once before going to the main loop.
@@ -63,7 +78,7 @@ void setup() {
   GlobalBeeper::init(false);
   GlobalCom::init();
   GlobalFsm::init();
-  GlobalKnitter::init();
+  GlobalKnit::init();
   GlobalSolenoids::init();
 }
 
@@ -75,9 +90,6 @@ void loop() {
   // Cooperative Round Robin scheduling
   GlobalFsm::update();
   GlobalCom::update();
-  if (GlobalTester::enabled()) {
-    GlobalTester::update();
-  }
   if (GlobalBeeper::enabled()) {
     GlobalBeeper::update();
   }

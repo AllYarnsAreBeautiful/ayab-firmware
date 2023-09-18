@@ -1,5 +1,5 @@
 /*!
- * \file tester.h
+ * \file test.h
  * This file is part of AYAB.
  *
  *    AYAB is free software: you can redistribute it and/or modify
@@ -20,25 +20,24 @@
  *    http://ayab-knitting.com
  */
 
-#ifndef TESTER_H_
-#define TESTER_H_
+#ifndef TEST_H_
+#define TEST_H_
 
 #include <Arduino.h>
 
 #include "beeper.h"
 #include "com.h"
 #include "encoders.h"
+#include "op.h"
 
 constexpr uint8_t BUFFER_LEN = 40;
-constexpr unsigned int TEST_LOOP_DELAY = 500; // ms
+constexpr uint16_t TEST_LOOP_DELAY = 500; // ms
 
-class TesterInterface {
+class TestInterface : public OpInterface {
 public:
-  virtual ~TesterInterface() = default;
+  virtual ~TestInterface() = default;
 
   // any methods that need to be mocked should go here
-  virtual Err_t startTest(Machine_t machineType) = 0;
-  virtual void update() = 0;
   virtual bool enabled() = 0;
   virtual void helpCmd() = 0;
   virtual void sendCmd() = 0;
@@ -50,29 +49,31 @@ public:
   virtual void autoReadCmd() = 0;
   virtual void autoTestCmd() = 0;
   virtual void stopCmd() = 0;
-  virtual void quitCmd() = 0;
 #ifndef AYAB_TESTS
   virtual void encoderAChange();
 #endif
 };
 
 // Container class for the static methods that implement the hardware test
-// commands. Originally these methods were called back by `SerialCommand`.
-// Dependency injection is enabled using a pointer to a global instance of
-// either `Tester` or `TesterMock`, both of which classes implement the
-// pure virtual methods of `TesterInterface`.
+// commands. Dependency injection is enabled using a pointer to a global
+// instance of either `Test` or `TestMock`, both of which classes
+// implement the pure virtual methods of the `TestInterface` class.
 
-class GlobalTester final {
+class GlobalTest final {
 private:
   // singleton class so private constructor is appropriate
-  GlobalTester() = default;
+  GlobalTest() = default;
 
 public:
   // pointer to global instance whose methods are implemented
-  static TesterInterface *m_instance;
+  static TestInterface *m_instance;
 
-  static Err_t startTest(Machine_t machineType);
+  static void init();
+  static Err_t begin();
   static void update();
+  static void com();
+  static void end();
+
   static bool enabled();
   static void helpCmd();
   static void sendCmd();
@@ -84,16 +85,19 @@ public:
   static void autoReadCmd();
   static void autoTestCmd();
   static void stopCmd();
-  static void quitCmd();
 #ifndef AYAB_TESTS
   static void encoderAChange();
 #endif
 };
 
-class Tester : public TesterInterface {
+class Test : public TestInterface {
 public:
-  Err_t startTest(Machine_t machineType) final;
+  void init() final;
+  Err_t begin() final;
   void update() final;
+  void com() final;
+  void end() final;
+
   bool enabled() final;
   void helpCmd() final;
   void sendCmd() final;
@@ -105,13 +109,11 @@ public:
   void autoReadCmd() final;
   void autoTestCmd() final;
   void stopCmd() final;
-  void quitCmd() final;
 #ifndef AYAB_TESTS
   void encoderAChange() final;
 #endif
 
 private:
-  void setUp();
   void beep() const;
   void readEOLsensors();
   void readEncoders() const;
@@ -122,10 +124,10 @@ private:
 
   bool m_autoReadOn = false;
   bool m_autoTestOn = false;
-  unsigned long m_lastTime = 0U;
+  uint32_t m_lastTime = 0U;
   bool m_timerEventOdd = false;
 
   char buf[BUFFER_LEN] = {0};
 };
 
-#endif // TESTER_H_
+#endif // TEST_H_

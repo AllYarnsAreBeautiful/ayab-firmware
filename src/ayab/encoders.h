@@ -29,7 +29,6 @@
 
 // Enumerated constants
 
-
 enum class Direction : unsigned char {
   NoDirection = 0xFF,
   Left = 0,

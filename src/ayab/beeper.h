@@ -28,7 +28,7 @@
 
 enum class BeepState : unsigned char {Idle, Wait, On, Off};
 
-constexpr unsigned int BEEP_DELAY = 50U; // ms
+constexpr uint16_t BEEP_DELAY = 50U; // ms
 
 constexpr uint8_t BEEP_NUM_READY = 5U;
 constexpr uint8_t BEEP_NUM_FINISHEDLINE = 3U;
@@ -93,7 +93,7 @@ private:
 
   BeepState m_currentState;
   BeepState m_nextState;
-  unsigned long m_nextTime;
+  uint32_t m_nextTime;
   uint8_t m_repeat;
   bool m_enabled;
 };

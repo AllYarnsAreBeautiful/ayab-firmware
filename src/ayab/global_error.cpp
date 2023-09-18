@@ -1,5 +1,7 @@
 /*!
- * \file global_op.cpp
+ * \file global_error.cpp
+ * \brief Singleton class containing methods for hardware testing.
+ *
  * This file is part of AYAB.
  *
  *    AYAB is free software: you can redistribute it and/or modify
@@ -20,54 +22,26 @@
  *    http://ayab-knitting.com
  */
 
-#include "fsm.h"
+#include "error.h"
 
 // static member functions
 
-void GlobalFsm::init() {
+void GlobalError::init() {
   m_instance->init();
 }
 
-void GlobalFsm::update() {
+Err_t GlobalError::begin() {
+  return m_instance->begin();
+}
+
+void GlobalError::update() {
   m_instance->update();
 }
 
-void GlobalFsm::cacheEncoders() {
-  m_instance->cacheEncoders();
+void GlobalError::com() {
+  m_instance->com();
 }
 
-void GlobalFsm::setState(OpState_t state) {
-  m_instance->setState(state);
-}
-
-OpState_t GlobalFsm::getState() {
-  return m_instance->getState();
-}
-
-void GlobalFsm::setMachineType(Machine_t machineType) {
-  m_instance->setMachineType(machineType);
-}
-
-Machine_t GlobalFsm::getMachineType() {
-  return m_instance->getMachineType();
-}
-
-BeltShift_t GlobalFsm::getBeltShift() {
-  return m_instance->getBeltShift();
-}
-
-Carriage_t GlobalFsm::getCarriage() {
-  return m_instance->getCarriage();
-}
-
-Direction_t GlobalFsm::getDirection() {
-  return m_instance->getDirection();
-}
-
-Direction_t GlobalFsm::getHallActive() {
-  return m_instance->getHallActive();
-}
-
-uint8_t GlobalFsm::getPosition() {
-  return m_instance->getPosition();
+void GlobalError::end() {
+  m_instance->end();
 }

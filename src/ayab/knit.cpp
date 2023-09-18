@@ -1,5 +1,5 @@
 /*!
- * \file knitter.cpp
+ * \file knit.cpp
  * \brief Class containing methods for the finite state machine
  *    that co-ordinates the AYAB firmware.
  *
@@ -29,7 +29,7 @@
 #include "beeper.h"
 #include "com.h"
 #include "encoders.h"
-#include "knitter.h"
+#include "knit.h"
 #include "solenoids.h"
 
 #ifdef CLANG_TIDY
@@ -40,11 +40,11 @@ constexpr uint16_t UINT16_MAX = 0xFFFFU;
 #endif
 
 /*!
- * \brief Initialize Knitter object.
+ * \brief Initialize Knit object.
  *
  * Initialize the solenoids as well as pins and interrupts.
  */
-void Knitter::init() {
+void Knit::init() {
   pinMode(ENC_PIN_A, INPUT);
   pinMode(ENC_PIN_B, INPUT);
   pinMode(ENC_PIN_C, INPUT);
@@ -61,7 +61,6 @@ void Knitter::init() {
   // explicitly initialize members
 
   // job parameters
-  m_machineType = Machine_t::NoMachine;
   m_startNeedle = 0U;
   m_stopNeedle = 0U;
   m_lineBuffer = nullptr;
@@ -85,22 +84,50 @@ void Knitter::init() {
  * \param machineType Machine type.
  * \return Error code (0 = success, other values = error).
  */
-Err_t Knitter::initMachine(Machine_t machineType) {
+// Err_t Knit::initMachine(Machine_t machineType) {
+Err_t Knit::begin() {
   if (GlobalFsm::getState() != OpState::wait_for_machine) {
     return ErrorCode::wrong_machine_state;
   }
+
+  auto machineType = GlobalFsm::getMachineType();
   if (machineType == Machine_t::NoMachine) {
     return ErrorCode::no_machine_type;
   }
-  m_machineType = machineType;
 
   GlobalEncoders::init(machineType);
   GlobalFsm::setState(OpState::init);
-
-  // Now that we have OpState::init, we can set up interrupts
   GlobalEncoders::setUpInterrupt();
-
   return ErrorCode::success;
+}
+
+/*!
+ * \brief Update knitting procedure.
+ */
+void Knit::update() {
+  digitalWrite(LED_PIN_A, HIGH); // green LED on
+  knit();
+}
+
+/*!
+ * \brief Communication callback for knitting procedure.
+ */
+void Knit::com() {
+}
+
+/*!
+ * \brief Finish knitting procedure.
+ */
+// void Knit::stopKnitting() const {
+void Knit::end() {
+  GlobalBeeper::endWork();
+  GlobalFsm::setState(OpState::ready);
+
+  GlobalSolenoids::setSolenoids(SOLENOIDS_BITMASK);
+  GlobalBeeper::finishedLine();
+
+  // detaching ENC_PIN_A, Interrupt #0
+  /* detachInterrupt(digitalPinToInterrupt(ENC_PIN_A)); */
 }
 
 /*!
@@ -111,16 +138,19 @@ Err_t Knitter::initMachine(Machine_t machineType) {
  * \param continuousReportingEnabled Flag variable indicating whether the device continuously reports its status to the host.
  * \return Error code (0 = success, other values = error).
  */
-Err_t Knitter::startKnitting(uint8_t startNeedle,
+Err_t Knit::startKnitting(uint8_t startNeedle,
                              uint8_t stopNeedle, uint8_t *pattern_start,
                              bool continuousReportingEnabled) {
   if (GlobalFsm::getState() != OpState::ready) {
     return ErrorCode::wrong_machine_state;
   }
+
   if (pattern_start == nullptr) {
     return ErrorCode::null_pointer_argument;
   }
-  if ((startNeedle >= stopNeedle) || (stopNeedle >= NUM_NEEDLES[static_cast<uint8_t>(m_machineType)])) {
+
+  auto machineType = static_cast<uint8_t>(GlobalFsm::getMachineType());
+  if ((startNeedle >= stopNeedle) || (stopNeedle >= NUM_NEEDLES[machineType])) {
     return ErrorCode::needle_value_invalid;
   }
 
@@ -149,7 +179,7 @@ Err_t Knitter::startKnitting(uint8_t startNeedle,
  *
  * Used in hardware test procedure.
  */
-void Knitter::encodePosition() {
+void Knit::encodePosition() {
   auto position = GlobalFsm::getPosition();
   if (m_sOldPosition != position) {
     // only act if there is an actual change of position
@@ -164,7 +194,7 @@ void Knitter::encodePosition() {
  * \brief Assess whether the Finite State Machine is ready to move from state `OpState::init` to `OpState::ready`.
  * \return `true` if ready to move from state `OpState::init` to `OpState::ready`, false otherwise.
  */
-bool Knitter::isReady() {
+bool Knit::isReady() {
 #ifdef DBG_NOMACHINE
   // TODO(who?): check if debounce is needed
   bool state = digitalRead(DBG_BTN_PIN);
@@ -182,10 +212,11 @@ bool Knitter::isReady() {
 
   auto direction = GlobalFsm::getDirection();
   auto position = GlobalFsm::getPosition();
+  auto machineType = static_cast<uint8_t>(GlobalFsm::getMachineType());
   bool passedLeft = (Direction_t::Right == direction) && (Direction_t::Left == m_lastHall) &&
-        (position > (END_LEFT_PLUS_OFFSET[static_cast<uint8_t>(m_machineType)] + GARTER_SLOP));
+        (position > (END_LEFT_PLUS_OFFSET[machineType] + GARTER_SLOP));
   bool passedRight = (Direction_t::Left == direction) && (Direction_t::Right == m_lastHall) &&
-        (position < (END_RIGHT_MINUS_OFFSET[static_cast<uint8_t>(m_machineType)] - GARTER_SLOP));
+        (position < (END_RIGHT_MINUS_OFFSET[machineType] - GARTER_SLOP));
   // Machine is initialized when left Hall sensor is passed in Right direction
   // New feature (August 2020): the machine is also initialized
   // when the right Hall sensor is passed in Left direction.
@@ -206,7 +237,7 @@ bool Knitter::isReady() {
 /*!
  * \brief Function that is repeatedly called during state `OpState::knit`
  */
-void Knitter::knit() {
+void Knit::knit() {
   if (m_firstRun) {
     m_firstRun = false;
     // TODO(who?): optimize delay for various Arduino models
@@ -259,8 +290,9 @@ void Knitter::knit() {
     m_workedOnLine = true;
   }
 
-  if (((m_pixelToSet < m_startNeedle - END_OF_LINE_OFFSET_L[static_cast<uint8_t>(m_machineType)]) ||
-       (m_pixelToSet > m_stopNeedle + END_OF_LINE_OFFSET_R[static_cast<uint8_t>(m_machineType)])) &&
+  auto machineType = static_cast<uint8_t>(GlobalFsm::getMachineType());
+  if (((m_pixelToSet < m_startNeedle - END_OF_LINE_OFFSET_L[machineType]) ||
+       (m_pixelToSet > m_stopNeedle + END_OF_LINE_OFFSET_R[machineType])) &&
       m_workedOnLine) {
     // outside of the active needles and
     // already worked on the current line -> finished the line
@@ -271,32 +303,25 @@ void Knitter::knit() {
       ++m_currentLineNumber;
       reqLine(m_currentLineNumber);
     } else if (m_lastLineFlag) {
-      stopKnitting();
+      end(); // stopKnitting();
     }
   }
 #endif // DBG_NOMACHINE
 }
 
 /*!
- * \brief Get knitting machine type.
- * \return Machine type.
- */
-Machine_t Knitter::getMachineType() {
-  return m_machineType;
-}
-
-/*!
  * \brief Get start offset.
  * \return Start offset, or 0 if unobtainable.
  */
-uint8_t Knitter::getStartOffset(const Direction_t direction) {
+uint8_t Knit::getStartOffset(const Direction_t direction) {
   auto carriage = GlobalFsm::getCarriage();
+  auto machineType = GlobalFsm::getMachineType();
   if ((direction == Direction_t::NoDirection) ||
       (carriage == Carriage_t::NoCarriage) ||
-      (m_machineType == Machine_t::NoMachine)) {
+      (machineType == Machine_t::NoMachine)) {
     return 0U;
   }
-  return START_OFFSET[static_cast<uint8_t>(m_machineType)][static_cast<uint8_t>(direction)][static_cast<uint8_t>(carriage)];
+  return START_OFFSET[static_cast<uint8_t>(machineType)][static_cast<uint8_t>(direction)][static_cast<uint8_t>(carriage)];
 }
 
 /*!
@@ -304,7 +329,7 @@ uint8_t Knitter::getStartOffset(const Direction_t direction) {
  * \param lineNumber Line number (0-indexed and modulo 256).
  * \return `true` if successful, `false` otherwise.
  */
-bool Knitter::setNextLine(uint8_t lineNumber) {
+bool Knit::setNextLine(uint8_t lineNumber) {
   if (m_lineRequested) {
     // Is there even a need for a new line?
     if (lineNumber == m_currentLineNumber) {
@@ -323,16 +348,8 @@ bool Knitter::setNextLine(uint8_t lineNumber) {
  * \brief Get value of last line flag.
  * \param `true` if current line is the last line in the pattern, `false` otherwise.
  */
-void Knitter::setLastLine() {
+void Knit::setLastLine() {
   m_lastLineFlag = true;
-}
-
-/*!
- * \brief Set machine type.
- * \param Machine type.
- */
-void Knitter::setMachineType(Machine_t machineType) {
-  m_machineType = machineType;
 }
 
 // private methods
@@ -341,7 +358,7 @@ void Knitter::setMachineType(Machine_t machineType) {
  * \brief Send `reqLine` message.
  * \param lineNumber Line number requested.
  */
-void Knitter::reqLine(uint8_t lineNumber) {
+void Knit::reqLine(uint8_t lineNumber) {
   GlobalCom::send_reqLine(lineNumber, ErrorCode::success);
   m_lineRequested = true;
 }
@@ -350,13 +367,14 @@ void Knitter::reqLine(uint8_t lineNumber) {
  * \brief Calculate the solenoid and pixel to be set.
  * \return `true` if successful, `false` otherwise.
  */
-bool Knitter::calculatePixelAndSolenoid() {
+bool Knit::calculatePixelAndSolenoid() {
   uint8_t startOffset = 0;
 
   auto direction = GlobalFsm::getDirection();
   auto position = GlobalFsm::getPosition();
   auto beltShift = GlobalFsm::getBeltShift();
   auto carriage = GlobalFsm::getCarriage();
+  auto machineType = GlobalFsm::getMachineType();
   switch (direction) {
   // calculate the solenoid and pixel to be set
   // implemented according to machine manual
@@ -366,13 +384,13 @@ bool Knitter::calculatePixelAndSolenoid() {
     if (position >= startOffset) {
       m_pixelToSet = position - startOffset;
 
-      if ((BeltShift::Regular == beltShift) || (m_machineType == Machine_t::Kh270)) {
-        m_solenoidToSet = position % SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];
+      if ((BeltShift::Regular == beltShift) || (machineType == Machine_t::Kh270)) {
+        m_solenoidToSet = position % SOLENOIDS_NUM[static_cast<uint8_t>(machineType)];
       } else if (BeltShift::Shifted == beltShift) {
-        m_solenoidToSet = (position - HALF_SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)]) % SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];
+        m_solenoidToSet = (position - HALF_SOLENOIDS_NUM[static_cast<uint8_t>(machineType)]) % SOLENOIDS_NUM[static_cast<uint8_t>(machineType)];
       }
       if (Carriage_t::Lace == carriage) {
-        m_pixelToSet = m_pixelToSet + HALF_SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];
+        m_pixelToSet = m_pixelToSet + HALF_SOLENOIDS_NUM[static_cast<uint8_t>(machineType)];
       }
     } else {
       return false;
@@ -381,16 +399,16 @@ bool Knitter::calculatePixelAndSolenoid() {
 
   case Direction_t::Left:
     startOffset = getStartOffset(Direction_t::Right);
-    if (position <= (END_RIGHT[static_cast<uint8_t>(m_machineType)] - startOffset)) {
+    if (position <= (END_RIGHT[static_cast<uint8_t>(machineType)] - startOffset)) {
       m_pixelToSet = position - startOffset;
 
-      if ((BeltShift::Regular == beltShift) || (m_machineType == Machine_t::Kh270)) {
-        m_solenoidToSet = (position + HALF_SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)]) % SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];
+      if ((BeltShift::Regular == beltShift) || (machineType == Machine_t::Kh270)) {
+        m_solenoidToSet = (position + HALF_SOLENOIDS_NUM[static_cast<uint8_t>(machineType)]) % SOLENOIDS_NUM[static_cast<uint8_t>(machineType)];
       } else if (BeltShift::Shifted == beltShift) {
-        m_solenoidToSet = position % SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];
+        m_solenoidToSet = position % SOLENOIDS_NUM[static_cast<uint8_t>(machineType)];
       }
       if (Carriage_t::Lace == carriage) {
-        m_pixelToSet = m_pixelToSet - SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];
+        m_pixelToSet = m_pixelToSet - SOLENOIDS_NUM[static_cast<uint8_t>(machineType)];
       }
     } else {
       return false;
@@ -401,22 +419,8 @@ bool Knitter::calculatePixelAndSolenoid() {
     return false;
   }
   // The 270 has 12 solenoids but they get shifted over 3 bits
-  if (m_machineType == Machine_t::Kh270) {
+  if (machineType == Machine_t::Kh270) {
     m_solenoidToSet = m_solenoidToSet + 3;
   }
   return true;
-}
-
-/*!
- * \brief Finish knitting procedure.
- */
-void Knitter::stopKnitting() const {
-  GlobalBeeper::endWork();
-  GlobalFsm::setState(OpState::ready);
-
-  GlobalSolenoids::setSolenoids(SOLENOIDS_BITMASK);
-  GlobalBeeper::finishedLine();
-
-  // detaching ENC_PIN_A, Interrupt #0
-  /* detachInterrupt(digitalPinToInterrupt(ENC_PIN_A)); */
 }

@@ -24,8 +24,8 @@
 
 #include "beeper.h"
 #include "com.h"
-#include "knitter.h"
-#include "tester.h"
+#include "knit.h"
+#include "test.h"
 
 /*!
  * \brief Initialize serial communication.
@@ -144,47 +144,47 @@ void Com::onPacketReceived(const uint8_t *buffer, size_t size) {
     break;
 
   case static_cast<uint8_t>(AYAB_API::helpCmd):
-    GlobalTester::helpCmd();
+    GlobalTest::helpCmd();
     break;
 
   case static_cast<uint8_t>(AYAB_API::sendCmd):
-    GlobalTester::sendCmd();
+    GlobalTest::sendCmd();
     break;
 
   case static_cast<uint8_t>(AYAB_API::beepCmd):
-    GlobalTester::beepCmd();
+    GlobalTest::beepCmd();
     break;
 
   case static_cast<uint8_t>(AYAB_API::setSingleCmd):
-    GlobalTester::setSingleCmd(buffer, size);
+    GlobalTest::setSingleCmd(buffer, size);
     break;
 
   case static_cast<uint8_t>(AYAB_API::setAllCmd):
-    GlobalTester::setAllCmd(buffer, size);
+    GlobalTest::setAllCmd(buffer, size);
     break;
 
   case static_cast<uint8_t>(AYAB_API::readEOLsensorsCmd):
-    GlobalTester::readEOLsensorsCmd();
+    GlobalTest::readEOLsensorsCmd();
     break;
 
   case static_cast<uint8_t>(AYAB_API::readEncodersCmd):
-    GlobalTester::readEncodersCmd();
+    GlobalTest::readEncodersCmd();
     break;
 
   case static_cast<uint8_t>(AYAB_API::autoReadCmd):
-    GlobalTester::autoReadCmd();
+    GlobalTest::autoReadCmd();
     break;
 
   case static_cast<uint8_t>(AYAB_API::autoTestCmd):
-    GlobalTester::autoTestCmd();
+    GlobalTest::autoTestCmd();
     break;
 
   case static_cast<uint8_t>(AYAB_API::stopCmd):
-    GlobalTester::stopCmd();
+    GlobalTest::stopCmd();
     break;
 
-   case static_cast<uint8_t>(AYAB_API::quitCmd):
-    GlobalTester::quitCmd();
+  case static_cast<uint8_t>(AYAB_API::quitCmd):
+    GlobalTest::end();
     break;
 
   default:
@@ -207,8 +207,6 @@ void Com::h_reqInit(const uint8_t *buffer, size_t size) {
     return;
   }
 
-  auto machineType = static_cast<Machine_t>(buffer[1]);
-
   uint8_t crc8 = buffer[2];
   // Check crc on bytes 0-4 of buffer.
   if (crc8 != CRC8(buffer, 2)) {
@@ -218,7 +216,9 @@ void Com::h_reqInit(const uint8_t *buffer, size_t size) {
 
   memset(lineBuffer, 0xFF, MAX_LINE_BUFFER_LEN);
 
-  Err_t error = GlobalKnitter::initMachine(machineType);
+  //auto machineType = static_cast<Machine_t>(buffer[1]);
+  //Err_t error = GlobalKnit::initMachine(machineType);
+  Err_t error = GlobalKnit::begin();
   send_cnfInit(error);
 }
 
@@ -253,7 +253,7 @@ void Com::h_reqStart(const uint8_t *buffer, size_t size) {
   // Previously, it returned `true` for success and `false` for failure.
   // Now, it returns `0` for success and an informative error code otherwise.
   Err_t error =
-      GlobalKnitter::startKnitting(startNeedle, stopNeedle,
+      GlobalKnit::startKnitting(startNeedle, stopNeedle,
                                    lineBuffer, continuousReportingEnabled);
   send_cnfStart(error);
 }
@@ -267,7 +267,7 @@ void Com::h_reqStart(const uint8_t *buffer, size_t size) {
  * \todo sl: Assert size? Handle error?
  */
 void Com::h_cnfLine(const uint8_t *buffer, size_t size) {
-  auto machineType = static_cast<uint8_t>(GlobalKnitter::getMachineType());
+  auto machineType = static_cast<uint8_t>(GlobalFsm::getMachineType());
   uint8_t lenLineBuffer = LINE_BUFFER_LEN[machineType];
   if (size < lenLineBuffer + 5U) {
     // message is too short
@@ -293,11 +293,11 @@ void Com::h_cnfLine(const uint8_t *buffer, size_t size) {
     return;
   }
 
-  if (GlobalKnitter::setNextLine(lineNumber)) {
+  if (GlobalKnit::setNextLine(lineNumber)) {
     // Line was accepted
     bool flagLastLine = bitRead(flags, 0U);
     if (flagLastLine) {
-      GlobalKnitter::setLastLine();
+      GlobalKnit::setLastLine();
     }
   }
 }
@@ -323,12 +323,13 @@ void Com::h_reqTest(const uint8_t *buffer, size_t size) const {
     return;
   }
 
-  auto machineType = static_cast<Machine_t>(buffer[1]);
+  //auto machineType = static_cast<Machine_t>(buffer[1]);
 
   // Note (August 2020): the return value of this function has changed.
   // Previously, it returned `true` for success and `false` for failure.
   // Now, it returns `0` for success and an informative error code otherwise.
-  Err_t error = GlobalTester::startTest(machineType);
+  //Err_t error = GlobalTest::startTest(machineType);
+  Err_t error = GlobalTest::begin();
   send_cnfTest(error);
 }
 
@@ -426,4 +427,3 @@ uint8_t Com::CRC8(const uint8_t *buffer, size_t len) const {
   }
   return crc;
 }
-

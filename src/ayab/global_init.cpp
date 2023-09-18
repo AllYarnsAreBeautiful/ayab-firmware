@@ -1,5 +1,6 @@
-/*!`
- * \file tester_mock.h
+/*!
+ * \file global_init.cpp
+ * \brief Singleton class containing methods for hardware testing.
  *
  * This file is part of AYAB.
  *
@@ -21,31 +22,26 @@
  *    http://ayab-knitting.com
  */
 
-#ifndef TESTER_MOCK_H_
-#define TESTER_MOCK_H_
+#include "init.h"
 
-#include <gmock/gmock.h>
-#include <tester.h>
+// static member functions
 
-class TesterMock : public TesterInterface {
-public:
-  MOCK_METHOD1(startTest, Err_t(Machine_t machineType));
-  MOCK_METHOD0(update, void());
-  MOCK_METHOD0(enabled, bool());
-  MOCK_METHOD0(helpCmd, void());
-  MOCK_METHOD0(sendCmd, void());
-  MOCK_METHOD0(beepCmd, void());
-  MOCK_METHOD2(setSingleCmd, void(const uint8_t *, size_t));
-  MOCK_METHOD2(setAllCmd, void(const uint8_t *, size_t));
-  MOCK_METHOD0(readEOLsensorsCmd, void());
-  MOCK_METHOD0(readEncodersCmd, void());
-  MOCK_METHOD0(autoReadCmd, void());
-  MOCK_METHOD0(autoTestCmd, void());
-  MOCK_METHOD0(stopCmd, void());
-  MOCK_METHOD0(quitCmd, void());
-};
+void GlobalInit::init() {
+  m_instance->init();
+}
 
-TesterMock *testerMockInstance();
-void releaseTesterMock();
+Err_t GlobalInit::begin() {
+  return m_instance->begin();
+}
 
-#endif // TESTER_MOCK_H_
+void GlobalInit::update() {
+  m_instance->update();
+}
+
+void GlobalInit::com() {
+  m_instance->com();
+}
+
+void GlobalInit::end() {
+  m_instance->end();
+}

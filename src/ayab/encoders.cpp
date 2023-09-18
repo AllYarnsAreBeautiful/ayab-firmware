@@ -24,6 +24,7 @@
  */
 
 #include <Arduino.h>
+//#include <util/assert.h>
 
 #include "encoders.h"
 
@@ -32,6 +33,8 @@
  * \param machineType Machine type.
  */
 void Encoders::init(Machine_t machineType) {
+  //assert(machineType != Machine_t::NoMachine);
+
   m_machineType = machineType;
   m_position = 0U;
   m_direction = Direction_t::NoDirection;
