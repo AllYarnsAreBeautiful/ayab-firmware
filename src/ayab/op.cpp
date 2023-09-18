@@ -45,7 +45,7 @@ void Op::init() {
   m_nextState = OpState::wait_for_machine;
   m_flash = false;
   m_flashTime = millis();
-  m_error = ErrorCode::SUCCESS;
+  m_error = ErrorCode::success;
 }
 
 /*!
