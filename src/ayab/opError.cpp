@@ -65,6 +65,9 @@ void OpError::update() {
  * \brief Communication callback for state OpError
  */
 void OpError::com(const uint8_t *buffer, size_t size) {
+  // to avoid warning about unused parameters
+  (void) buffer;
+  (void) size;
 }
 
 /*!

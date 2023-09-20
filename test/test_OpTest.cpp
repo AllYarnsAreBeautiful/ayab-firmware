@@ -24,7 +24,6 @@
 #include <gtest/gtest.h>
 
 #include <beeper.h>
-#include <encoders.h>
 
 #include <opInit.h>
 #include <opReady.h>
@@ -40,7 +39,6 @@ using ::testing::Mock;
 using ::testing::Return;
 
 extern Beeper *beeper;
-extern Encoders *encoders;
 
 extern OpInit *opInit;
 extern OpReady *opReady;
@@ -85,10 +83,9 @@ protected:
     EXPECT_CALL(*fsmMock, setMachineType(Machine_t::Kh930));
     expect_write(false);
 
-    // `setUp()` must have been called to reach `millis()`
     EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(t));
 
-    ASSERT_TRUE(opTest->startTest(Machine_t::Kh930) == ErrorCode::success);
+    ASSERT_TRUE(opTest->begin() == ErrorCode::success);
   }
 
   void expect_write(bool once) {
@@ -131,10 +128,10 @@ TEST_F(TestOpTest, test_beepCmd) {
   expect_write(true);
   opTest->beepCmd();
   EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(0U));
-  beeper->schedule();
+  beeper->update();
   EXPECT_CALL(*arduinoMock, analogWrite(PIEZO_PIN, BEEP_ON_DUTY));
   EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(1U));
-  beeper->schedule();
+  beeper->update();
 }
 
 TEST_F(TestOpTest, test_setSingleCmd_fail1) {
@@ -202,9 +199,8 @@ TEST_F(TestOpTest, test_autoTestCmd) {
 }
 
 TEST_F(TestOpTest, test_quitCmd) {
-  EXPECT_CALL(*encoders, setUpInterrupt());
-  EXPECT_CALL(*fsmMock, setState(info->m_instance));
-  opTest->quitCmd();
+  EXPECT_CALL(*fsmMock, setState(opInit));
+  opTest->end();
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(opKnitMock));
@@ -214,13 +210,13 @@ TEST_F(TestOpTest, test_quitCmd) {
 TEST_F(TestOpTest, test_loop_default) {
   expect_startTest(0);
   EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(TEST_LOOP_DELAY - 1));
-  opTest->loop();
+  opTest->update();
 }
 
 TEST_F(TestOpTest, test_loop_null) {
   expect_startTest(0);
   EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(TEST_LOOP_DELAY));
-  opTest->loop();
+  opTest->update();
 }
 
 TEST_F(TestOpTest, test_loop_autoTest) {
@@ -235,7 +231,7 @@ TEST_F(TestOpTest, test_loop_autoTest) {
   expect_readEncoders(false);
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, HIGH));
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_B, HIGH));
-  opTest->loop();
+  opTest->update();
 
   // m_timerEventOdd = false
   EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(2 * TEST_LOOP_DELAY));
@@ -244,7 +240,7 @@ TEST_F(TestOpTest, test_loop_autoTest) {
   expect_readEncoders(true);
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, LOW));
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_B, LOW));
-  opTest->loop();
+  opTest->update();
 
   // after `stopCmd()`
   opTest->stopCmd();
@@ -253,13 +249,13 @@ TEST_F(TestOpTest, test_loop_autoTest) {
   expect_readEncoders(false);
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, _)).Times(0);
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_B, _)).Times(0);
-  opTest->loop();
+  opTest->update();
 }
 
 TEST_F(TestOpTest, test_startTest_fail) {
-  // can't start test from state `knit`
+  // can't start test from state `OpKnit`
   EXPECT_CALL(*fsmMock, getState).WillOnce(Return(opKnitMock));
-  ASSERT_TRUE(opTest->startTest(Machine_t::Kh910) != ErrorCode::success);
+  ASSERT_TRUE(opTest->begin() != ErrorCode::success);
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(fsmMock));

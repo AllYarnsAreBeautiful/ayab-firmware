@@ -107,6 +107,10 @@ public:
   Direction_t m_direction;
   Direction_t m_hallActive;
   uint8_t m_position;
+
+#if AYAB_TESTS
+  FRIEND_TEST(TestOpKnit, test_getStartOffset);
+#endif
 };
 
 #endif // FSM_H_

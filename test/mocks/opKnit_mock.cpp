@@ -1,5 +1,5 @@
 /*!`
- * \file op_knit_mock.cpp
+ * \file opKnit_mock.cpp
  *
  * This file is part of AYAB.
  *
@@ -21,8 +21,7 @@
  *    http://ayab-knitting.com
  */
 
-#include <op_knit.h>
-#include <op_knit_mock.h>
+#include <opKnit_mock.h>
 
 static OpKnitMock *gOpKnitMock = nullptr;
 OpKnitMock *OpKnitMockInstance() {
@@ -64,11 +63,11 @@ void OpKnit::end() {
   gOpKnitMock->end();
 }
 
-Err_t OpKnit::startOpKnitting(uint8_t startNeedle,
+Err_t OpKnit::startKnitting(uint8_t startNeedle,
                              uint8_t stopNeedle, uint8_t *pattern_start,
                              bool continuousReportingEnabled) {
   assert(gOpKnitMock != nullptr);
-  return gOpKnitMock->startOpKnitting(startNeedle, stopNeedle,
+  return gOpKnitMock->startKnitting(startNeedle, stopNeedle,
                                      pattern_start, continuousReportingEnabled);
 }
 
@@ -82,9 +81,9 @@ bool OpKnit::isReady() {
   return gOpKnitMock->isReady();
 }
 
-void OpKnit::doOpKnitting() {
+void OpKnit::doKnitting() {
   assert(gOpKnitMock != nullptr);
-  gOpKnitMock->doOpKnitting();
+  gOpKnitMock->doKnitting();
 }
 
 uint8_t OpKnit::getStartOffset(const Direction_t direction) {

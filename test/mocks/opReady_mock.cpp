@@ -1,5 +1,5 @@
 /*!`
- * \file op_ready_mock.cpp
+ * \file opReady_mock.cpp
  *
  * This file is part of AYAB.
  *
@@ -21,7 +21,7 @@
  *    http://ayab-knitting.com
  */
 
-#include <op_ready_mock.h>
+#include <opReady_mock.h>
 
 static OpReadyMock *gOpReadyMock = nullptr;
 

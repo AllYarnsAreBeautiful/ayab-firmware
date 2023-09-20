@@ -1,5 +1,5 @@
 /*!`
- * \file op_error_mock.cpp
+ * \file opError_mock.cpp
  *
  * This file is part of AYAB.
  *
@@ -21,7 +21,7 @@
  *    http://ayab-knitting.com
  */
 
-#include <op_error_mock.h>
+#include <opError_mock.h>
 
 static OpErrorMock *gOpErrorMock = nullptr;
 

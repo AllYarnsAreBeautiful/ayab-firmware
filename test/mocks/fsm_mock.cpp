@@ -50,9 +50,9 @@ void Fsm::update() {
   gFsmMock->update();
 }
 
-void Fsm::cacheFsm() {
+void Fsm::cacheEncoders() {
   assert(gFsmMock != nullptr);
-  gFsmMock->cacheFsm();
+  gFsmMock->cacheEncoders();
 }
 
 void Fsm::setState(OpInterface *state) {

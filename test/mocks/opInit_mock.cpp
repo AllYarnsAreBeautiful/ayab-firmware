@@ -1,5 +1,5 @@
 /*!`
- * \file op_init_mock.cpp
+ * \file opInit_mock.cpp
  *
  * This file is part of AYAB.
  *
@@ -21,7 +21,7 @@
  *    http://ayab-knitting.com
  */
 
-#include <op_init_mock.h>
+#include <opInit_mock.h>
 
 static OpInitMock *gOpInitMock = nullptr;
 

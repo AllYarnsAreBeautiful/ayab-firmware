@@ -122,8 +122,7 @@ private:
   uint8_t m_pixelToSet;
 
 #if AYAB_TESTS
-  FRIEND_TEST(OpKnitTest, test_getStartOffset);
-  FRIEND_TEST(OpKnitTest, test_knit_lastLine_and_no_req);
+  FRIEND_TEST(TestOpKnit, test_knit_lastLine_and_no_req);
 #endif
 };
 

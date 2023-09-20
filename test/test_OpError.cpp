@@ -63,16 +63,16 @@ protected:
   }
 
   ArduinoMock *arduinoMock;
-  FsmMock *fsmMock;
   SerialMock *serialMock;
-  KnitMock *opKnitMock;
+  FsmMock *fsmMock;
+  OpKnitMock *opKnitMock;
 };
 
-TEST_F(TestError, test_begin) {
+TEST_F(TestOpError, test_begin) {
   ASSERT_TRUE(opError->begin() == ErrorCode::success);
 }
 
-TEST_F(TestError, test_end) {
+TEST_F(TestOpError, test_end) {
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, LOW));
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_B, LOW));
   EXPECT_CALL(*opKnitMock, init());

@@ -25,7 +25,7 @@
 #define OP_TEST_MOCK_H_
 
 #include <gmock/gmock.h>
-#include <op_test.h>
+#include <opTest.h>
 
 class OpTestMock : public OpTestInterface {
 public:

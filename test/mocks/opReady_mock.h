@@ -25,7 +25,7 @@
 #define OP_READY_MOCK_H_
 
 #include <gmock/gmock.h>
-#include <op_ready.h>
+#include <opReady.h>
 
 class OpReadyMock : public OpReadyInterface {
 public:

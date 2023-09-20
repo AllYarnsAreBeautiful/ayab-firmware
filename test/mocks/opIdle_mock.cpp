@@ -1,5 +1,5 @@
 /*!`
- * \file op_idle_mock.cpp
+ * \file opIdle_mock.cpp
  *
  * This file is part of AYAB.
  *
@@ -21,7 +21,7 @@
  *    http://ayab-knitting.com
  */
 
-#include <op_idle_mock.h>
+#include <opIdle_mock.h>
 
 static OpIdleMock *gOpIdleMock = nullptr;
 

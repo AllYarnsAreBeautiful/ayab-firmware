@@ -23,7 +23,7 @@
 
 #include <gtest/gtest.h>
 
-#include <OpIdle.h>
+#include <opIdle.h>
 
 #include <fsm_mock.h>
 #include <opKnit_mock.h>

@@ -36,7 +36,6 @@ using ::testing::AtLeast;
 using ::testing::Mock;
 using ::testing::Return;
 
-extern Encoders *encoders;
 extern OpInit *opInit;
 extern OpReady *opReady;
 
@@ -74,14 +73,12 @@ protected:
 
 TEST_F(TestOpInit, test_begin910) {
   EXPECT_CALL(*fsmMock, getMachineType());
-  EXPECT_CALL(*encoders, init(Machine_t::Kh910));
-  EXPECT_CALL(*encoders, setUpInterrupt());
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, LOW));
   ASSERT_TRUE(opInit->begin() == ErrorCode::success);
 }
 
 TEST_F(TestOpInit, test_update) {
-  EXPECT_CALL(*opKnitMock, isReady()).WillReturn(true);
-  EXPECT_CALL(*fsmMock, setState(ready->m_instance));
+  EXPECT_CALL(*opKnitMock, isReady()).WillOnce(Return(true));
+  EXPECT_CALL(*fsmMock, setState(opReady));
   opInit->update();
 }
