@@ -19,7 +19,7 @@
  *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
  *
  *    Original Work Copyright 2013-2015 Christian Obersteiner, Andreas Müller
- *    Modified Work Copyright 2020 Sturla Lange, Tom Price
+ *    Modified Work Copyright 2020-3 Sturla Lange, Tom Price
  *    http://ayab-knitting.com
  */
 
@@ -42,13 +42,12 @@ void Encoders::init(Machine_t machineType) {
 }
 
 /*!
- * \brief Interrupt service routine.
+ * \brief Service encoder A interrupt routine.
  *
- * Update machine state data.
- * Must execute as fast as possible.
+ * Determines edge of signal and dispatches to private rising/falling functions.
  * Machine type assumed valid.
  */
-void Encoders::isr() {
+void Encoders::encA_interrupt() {
   m_hallActive = Direction_t::NoDirection;
 
   auto currentState = static_cast<bool>(digitalRead(ENC_PIN_A));

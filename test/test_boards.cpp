@@ -17,7 +17,7 @@
  *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
  *
  *    Original Work Copyright 2013 Christian Obersteiner, Andreas Müller
- *    Modified Work Copyright 2020 Sturla Lange, Tom Price
+ *    Modified Work Copyright 2020-3 Sturla Lange, Tom Price
  *    http://ayab-knitting.com
  */
 
@@ -27,31 +27,46 @@
 #include <com.h>
 #include <encoders.h>
 #include <solenoids.h>
-#include <tester.h>
 
-#include <knitter_mock.h>
-#include <op.h>
+#include <opIdle.h>
+#include <opInit.h>
+#include <opReady.h>
+#include <opTest.h>
+#include <opError.h>
+
+#include <opKnit_mock.h>
+#include <fsm_mock.h>
 
 // global definitions
 // references everywhere else must use `extern`
-Beeper *beeper = new Beeper();
-Com *com = new Com();
-Encoders *encoders = new Encoders();
+Beeper    *beeper    = new Beeper();
+Com       *com       = new Com();
+Encoders  *encoders  = new Encoders();
 Solenoids *solenoids = new Solenoids();
-Tester *tester = new Tester();
 
-OpMock *op = new OpMock();
-KnitterMock *knitter = new KnitterMock();
+OpIdle    *opIdle    = new OpIdle();
+OpInit    *opInit    = new OpInit();
+OpReady   *opReady   = new OpReady();
+OpTest    *opTest    = new OpTest();
+OpError   *opError   = new OpError();
+
+FsmMock    *fsm    = new FsmMock();
+OpKnitMock *opKnit = new OpKnitMock();
 
 // initialize static members
-BeeperInterface *GlobalBeeper::m_instance = beeper;
-ComInterface *GlobalCom::m_instance = com;
-EncodersInterface *GlobalEncoders::m_instance = encoders;
+BeeperInterface    *GlobalBeeper::m_instance    = beeper;
+ComInterface       *GlobalCom::m_instance       = com;
+EncodersInterface  *GlobalEncoders::m_instance  = encoders;
 SolenoidsInterface *GlobalSolenoids::m_instance = solenoids;
-TesterInterface *GlobalTester::m_instance = tester;
 
-OpInterface *GlobalOp::m_instance = op;
-KnitterInterface *GlobalKnitter::m_instance = knitter;
+OpIdleInterface    *GlobalOpIdle::m_instance    = opIdle;
+OpInitInterface    *GlobalOpInit::m_instance    = opInit;
+OpReadyInterface   *GlobalOpReady::m_instance   = opReady;
+OpTestInterface    *GlobalOpTest::m_instance    = opTest;
+OpErrorInterface   *GlobalOpError::m_instance   = opError;
+
+FsmInterface    *GlobalFsm::m_instance    = fsm;
+OpKnitInterface *GlobalOpKnit::m_instance = opKnit;
 
 int main(int argc, char *argv[]) {
   ::testing::InitGoogleMock(&argc, argv);

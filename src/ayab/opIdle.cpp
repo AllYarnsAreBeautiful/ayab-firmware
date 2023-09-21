@@ -1,7 +1,6 @@
 /*!
- * \file global_solenoids.cpp
- * \brief Singleton class containing methods that control the needles
- *    via solenoids connected to IO expanders on the device.
+ * \file opIdle.cpp
+ * \brief Class containing methods for hardware testing.
  *
  * This file is part of AYAB.
  *
@@ -23,18 +22,54 @@
  *    http://ayab-knitting.com
  */
 
-#include "solenoids.h"
+#include <Arduino.h>
+#include "board.h"
 
-// static member functions
+#include "com.h"
+#include "opIdle.h"
 
-void GlobalSolenoids::init() {
-  m_instance->init();
+/*!
+ * \brief enum OpState
+ * \return OpState_t::Idle
+ */
+OpState_t OpIdle::state() {
+  return OpState_t::Idle;
 }
 
-void GlobalSolenoids::setSolenoid(uint8_t solenoid, bool state) {
-  m_instance->setSolenoid(solenoid, state);
+/*!
+ * \brief Initialize state OpIdle
+ */
+void OpIdle::init() {
 }
 
-void GlobalSolenoids::setSolenoids(uint16_t state) {
-  m_instance->setSolenoids(state);
+/*!
+ * \brief Start state OpIdle
+ */
+void OpIdle::begin() {
+  digitalWrite(LED_PIN_A, LOW); // green LED off
+}
+
+/*!
+ * \brief Update method for state OpIdle
+ */
+void OpIdle::update() {
+}
+
+/*!
+ * \brief Communication callback for state OpIdle
+ */
+void OpIdle::com(const uint8_t *buffer, size_t size) {
+  switch (buffer[0]) {
+  case static_cast<uint8_t>(API_t::reqInit):
+    GlobalCom::h_reqInit(buffer, size);
+    break;
+  default:
+    break;
+  }
+}
+
+/*!
+ * \brief Finish state OpIdle
+ */
+void OpIdle::end() {
 }

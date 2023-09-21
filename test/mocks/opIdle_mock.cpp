@@ -1,5 +1,5 @@
 /*!`
- * \file op_mock.cpp
+ * \file opIdle_mock.cpp
  *
  * This file is part of AYAB.
  *
@@ -21,46 +21,50 @@
  *    http://ayab-knitting.com
  */
 
-#include <op.h>
-#include <op_mock.h>
+#include <opIdle_mock.h>
 
-static OpMock *gOpMock = nullptr;
+static OpIdleMock *gOpIdleMock = nullptr;
 
-OpMock *opMockInstance() {
-  if (!gOpMock) {
-    gOpMock = new OpMock();
+OpIdleMock *OpIdleMockInstance() {
+  if (!gOpIdleMock) {
+    gOpIdleMock = new OpIdleMock();
   }
-  return gOpMock;
+  return gOpIdleMock;
 }
 
-void releaseOpMock() {
-  if (gOpMock) {
-    delete gOpMock;
-    gOpMock = nullptr;
+void releaseOpIdleMock() {
+  if (gOpIdleMock) {
+    delete gOpIdleMock;
+    gOpIdleMock = nullptr;
   }
 }
 
-void Op::init() {
-  assert(gOpMock != nullptr);
-  gOpMock->init();
+OpState_t OpIdle::state() {
+  assert(gOpIdleMock != nullptr);
+  return gOpIdleMock->state();
 }
 
-OpState_t Op::getState() {
-  assert(gOpMock != nullptr);
-  return gOpMock->getState();
+void OpIdle::init() {
+  assert(gOpIdleMock != nullptr);
+  gOpIdleMock->init();
 }
 
-void Op::setState(OpState_t state) {
-  assert(gOpMock != nullptr);
-  gOpMock->setState(state);
+void OpIdle::begin() {
+  assert(gOpIdleMock != nullptr);
+  gOpIdleMock->begin();
 }
 
-void Op::update() {
-  assert(gOpMock != nullptr);
-  gOpMock->update();
+void OpIdle::update() {
+  assert(gOpIdleMock != nullptr);
+  gOpIdleMock->update();
 }
 
-void Op::cacheEncoders() {
-  assert(gOpMock != nullptr);
-  gOpMock->cacheEncoders();
+void OpIdle::com(const uint8_t *buffer, size_t size) {
+  assert(gOpIdleMock != nullptr);
+  gOpIdleMock->com(buffer, size);
+}
+
+void OpIdle::end() {
+  assert(gOpIdleMock != nullptr);
+  gOpIdleMock->end();
 }

@@ -1,7 +1,5 @@
-/*!
- * \file global_solenoids.cpp
- * \brief Singleton class containing methods that control the needles
- *    via solenoids connected to IO expanders on the device.
+/*!`
+ * \file opInit_mock.cpp
  *
  * This file is part of AYAB.
  *
@@ -23,18 +21,50 @@
  *    http://ayab-knitting.com
  */
 
-#include "solenoids.h"
+#include <opInit_mock.h>
 
-// static member functions
+static OpInitMock *gOpInitMock = nullptr;
 
-void GlobalSolenoids::init() {
-  m_instance->init();
+OpInitMock *OpInitMockInstance() {
+  if (!gOpInitMock) {
+    gOpInitMock = new OpInitMock();
+  }
+  return gOpInitMock;
 }
 
-void GlobalSolenoids::setSolenoid(uint8_t solenoid, bool state) {
-  m_instance->setSolenoid(solenoid, state);
+void releaseOpInitMock() {
+  if (gOpInitMock) {
+    delete gOpInitMock;
+    gOpInitMock = nullptr;
+  }
 }
 
-void GlobalSolenoids::setSolenoids(uint16_t state) {
-  m_instance->setSolenoids(state);
+OpState_t OpInit::state() {
+  assert(gOpInitMock != nullptr);
+  return gOpInitMock->state();
+}
+
+void OpInit::init() {
+  assert(gOpInitMock != nullptr);
+  gOpInitMock->init();
+}
+
+void OpInit::begin() {
+  assert(gOpInitMock != nullptr);
+  gOpInitMock->begin();
+}
+
+void OpInit::update() {
+  assert(gOpInitMock != nullptr);
+  gOpInitMock->update();
+}
+
+void OpInit::com(const uint8_t *buffer, size_t size) {
+  assert(gOpInitMock != nullptr);
+  gOpInitMock->com(buffer, size);
+}
+
+void OpInit::end() {
+  assert(gOpInitMock != nullptr);
+  gOpInitMock->end();
 }

@@ -1,8 +1,5 @@
 /*!
- * \file global_solenoids.cpp
- * \brief Singleton class containing methods that control the needles
- *    via solenoids connected to IO expanders on the device.
- *
+ * \file global_fsm.cpp
  * This file is part of AYAB.
  *
  *    AYAB is free software: you can redistribute it and/or modify
@@ -23,18 +20,54 @@
  *    http://ayab-knitting.com
  */
 
-#include "solenoids.h"
+#include "fsm.h"
 
 // static member functions
 
-void GlobalSolenoids::init() {
+void GlobalFsm::init() {
   m_instance->init();
 }
 
-void GlobalSolenoids::setSolenoid(uint8_t solenoid, bool state) {
-  m_instance->setSolenoid(solenoid, state);
+void GlobalFsm::update() {
+  m_instance->update();
 }
 
-void GlobalSolenoids::setSolenoids(uint16_t state) {
-  m_instance->setSolenoids(state);
+void GlobalFsm::cacheEncoders() {
+  m_instance->cacheEncoders();
+}
+
+void GlobalFsm::setState(OpInterface* state) {
+  m_instance->setState(state);
+}
+
+OpInterface *GlobalFsm::getState() {
+  return m_instance->getState();
+}
+
+void GlobalFsm::setMachineType(Machine_t machineType) {
+  m_instance->setMachineType(machineType);
+}
+
+Machine_t GlobalFsm::getMachineType() {
+  return m_instance->getMachineType();
+}
+
+BeltShift_t GlobalFsm::getBeltShift() {
+  return m_instance->getBeltShift();
+}
+
+Carriage_t GlobalFsm::getCarriage() {
+  return m_instance->getCarriage();
+}
+
+Direction_t GlobalFsm::getDirection() {
+  return m_instance->getDirection();
+}
+
+Direction_t GlobalFsm::getHallActive() {
+  return m_instance->getHallActive();
+}
+
+uint8_t GlobalFsm::getPosition() {
+  return m_instance->getPosition();
 }

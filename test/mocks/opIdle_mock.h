@@ -1,7 +1,5 @@
-/*!
- * \file global_solenoids.cpp
- * \brief Singleton class containing methods that control the needles
- *    via solenoids connected to IO expanders on the device.
+/*!`
+ * \file opIdle_mock.h
  *
  * This file is part of AYAB.
  *
@@ -23,18 +21,23 @@
  *    http://ayab-knitting.com
  */
 
-#include "solenoids.h"
+#ifndef OP_IDLE_MOCK_H_
+#define OP_IDLE_MOCK_H_
 
-// static member functions
+#include <gmock/gmock.h>
+#include <opIdle.h>
 
-void GlobalSolenoids::init() {
-  m_instance->init();
-}
+class OpIdleMock : public OpIdleInterface {
+public:
+  MOCK_METHOD0(state, OpState_t());
+  MOCK_METHOD0(init, void());
+  MOCK_METHOD0(begin, void());
+  MOCK_METHOD0(update, void());
+  MOCK_METHOD2(com, void(const uint8_t *buffer, size_t size));
+  MOCK_METHOD0(end, void());
+};
 
-void GlobalSolenoids::setSolenoid(uint8_t solenoid, bool state) {
-  m_instance->setSolenoid(solenoid, state);
-}
+OpIdleMock *OpIdleMockInstance();
+void releaseOpIdleMock();
 
-void GlobalSolenoids::setSolenoids(uint16_t state) {
-  m_instance->setSolenoids(state);
-}
+#endif // OP_IDLE_MOCK_H_

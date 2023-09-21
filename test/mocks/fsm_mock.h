@@ -1,5 +1,5 @@
 /*!`
- * \file op_mock.h
+ * \file fsm_mock.h
  *
  * This file is part of AYAB.
  *
@@ -21,22 +21,31 @@
  *    http://ayab-knitting.com
  */
 
-#ifndef OP_MOCK_H_
-#define OP_MOCK_H_
+#ifndef FSM_MOCK_H_
+#define FSM_MOCK_H_
 
-#include <op.h>
 #include <gmock/gmock.h>
 
-class OpMock : public OpInterface {
+#include <encoders.h>
+#include <fsm.h>
+
+class FsmMock : public FsmInterface {
 public:
   MOCK_METHOD0(init, void());
-  MOCK_METHOD0(getState, OpState_t());
-  MOCK_METHOD1(setState, void(OpState_t state));
   MOCK_METHOD0(update, void());
   MOCK_METHOD0(cacheEncoders, void());
+  MOCK_METHOD1(setState, void(OpInterface *state));
+  MOCK_METHOD0(getState, OpInterface*());
+  MOCK_METHOD1(setMachineType, void(Machine_t machineType));
+  MOCK_METHOD0(getMachineType, Machine_t());
+  MOCK_METHOD0(getBeltShift, BeltShift_t());
+  MOCK_METHOD0(getCarriage, Carriage_t());
+  MOCK_METHOD0(getDirection, Direction_t());
+  MOCK_METHOD0(getHallActive, Direction_t());
+  MOCK_METHOD0(getPosition, uint8_t());
 };
 
-OpMock *opMockInstance();
-void releaseOpMock();
+FsmMock *fmsMockInstance();
+void releaseFsmMock();
 
-#endif // OP_MOCK_H_
+#endif // FSM_MOCK_H_

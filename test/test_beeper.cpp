@@ -17,7 +17,7 @@
  *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
  *
  *    Original Work Copyright 2013 Christian Obersteiner, Andreas Müller
- *    Modified Work Copyright 2020 Sturla Lange, Tom Price
+ *    Modified Work Copyright 2020-3 Sturla Lange, Tom Price
  *    http://ayab-knitting.com
  */
 
@@ -44,7 +44,7 @@ protected:
 
   void expectedBeepSchedule(unsigned long t) {
     EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(t));
-    beeper->schedule();
+    beeper->update();
   }
 
   void expectedBeepRepeats(uint8_t repeats, bool enabled) {

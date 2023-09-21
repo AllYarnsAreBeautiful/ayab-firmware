@@ -17,7 +17,7 @@
  *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
  *
  *    Original Work Copyright 2013 Christian Obersteiner, Andreas Müller
- *    Modified Work Copyright 2020 Sturla Lange, Tom Price
+ *    Modified Work Copyright 2020-3 Sturla Lange, Tom Price
  *    http://ayab-knitting.com
  */
 
@@ -124,7 +124,7 @@ public:
 
   // any methods that need to be mocked should go here
   virtual void init(Machine_t machineType) = 0;
-  virtual void isr() = 0;
+  virtual void encA_interrupt() = 0;
   virtual uint16_t getHallValue(Direction_t pSensor) = 0;
   virtual Machine_t getMachineType() = 0;
   virtual BeltShift_t getBeltShift() = 0;
@@ -149,10 +149,7 @@ public:
   static EncodersInterface *m_instance;
 
   static void init(Machine_t machineType);
-  static void setUpInterrupt();
-#ifndef AYAB_TESTS
-  static void isr();
-#endif
+  static void encA_interrupt();
   static uint16_t getHallValue(Direction_t pSensor);
   static Machine_t getMachineType();
   static BeltShift_t getBeltShift();
@@ -167,7 +164,7 @@ public:
   Encoders() = default;
 
   void init(Machine_t machineType) final;
-  void isr() final;
+  void encA_interrupt() final;
   uint16_t getHallValue(Direction_t pSensor) final;
   Machine_t getMachineType() final;
   BeltShift_t getBeltShift() final;

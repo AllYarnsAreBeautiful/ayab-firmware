@@ -44,9 +44,9 @@ void Encoders::init(Machine_t machineType) {
   return gEncodersMock->init(machineType);
 }
 
-void Encoders::isr() {
+void Encoders::encA_interrupt() {
   assert(gEncodersMock != nullptr);
-  gEncodersMock->isr();
+  gEncodersMock->encA_interrupt();
 }
 
 uint16_t Encoders::getHallValue(Direction_t dir) {

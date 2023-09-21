@@ -18,7 +18,7 @@
  *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
  *
  *    Original Work Copyright 2013 Christian Obersteiner, Andreas Müller
- *    Modified Work Copyright 2020 Sturla Lange, Tom Price
+ *    Modified Work Copyright 2020-3 Sturla Lange, Tom Price
  *    http://ayab-knitting.com
  */
 
@@ -27,10 +27,15 @@
 #include "beeper.h"
 #include "com.h"
 #include "encoders.h"
-#include "knitter.h"
-#include "op.h"
+#include "fsm.h"
 #include "solenoids.h"
-#include "tester.h"
+
+#include "opIdle.h"
+#include "opInit.h"
+#include "opReady.h"
+#include "opKnit.h"
+#include "opTest.h"
+#include "opError.h"
 
 // Global definitions: references elsewhere must use `extern`.
 // Each of the following is a pointer to a singleton class
@@ -38,10 +43,15 @@
 constexpr GlobalBeeper    *beeper;
 constexpr GlobalCom       *com;
 constexpr GlobalEncoders  *encoders;
-constexpr GlobalKnitter   *knitter;
-constexpr GlobalOp        *op;
+constexpr GlobalFsm       *fsm;
 constexpr GlobalSolenoids *solenoids;
-constexpr GlobalTester    *tester;
+
+constexpr GlobalOpIdle    *opIdle;
+constexpr GlobalOpInit    *opInit;
+constexpr GlobalOpReady   *opReady;
+constexpr GlobalOpKnit    *opKnit;
+constexpr GlobalOpTest    *opTest;
+constexpr GlobalOpError   *opError;
 
 // Initialize static members.
 // Each singleton class contains a pointer to a static instance
@@ -50,10 +60,15 @@ constexpr GlobalTester    *tester;
 BeeperInterface    *GlobalBeeper::m_instance    = new Beeper();
 ComInterface       *GlobalCom::m_instance       = new Com();
 EncodersInterface  *GlobalEncoders::m_instance  = new Encoders();
-OpInterface        *GlobalOp::m_instance        = new Op();
-KnitterInterface   *GlobalKnitter::m_instance   = new Knitter();
+FsmInterface       *GlobalFsm::m_instance       = new Fsm();
 SolenoidsInterface *GlobalSolenoids::m_instance = new Solenoids();
-TesterInterface    *GlobalTester::m_instance    = new Tester();
+
+OpIdleInterface    *GlobalOpIdle::m_instance    = new OpIdle();
+OpInitInterface    *GlobalOpInit::m_instance    = new OpInit();
+OpReadyInterface   *GlobalOpReady::m_instance   = new OpReady();
+OpKnitInterface    *GlobalOpKnit::m_instance    = new OpKnit();
+OpTestInterface    *GlobalOpTest::m_instance    = new OpTest();
+OpErrorInterface   *GlobalOpError::m_instance   = new OpError();
 
 /*!
  * Setup - do once before going to the main loop.
@@ -62,9 +77,10 @@ void setup() {
   // Objects running in async context
   GlobalBeeper::init(false);
   GlobalCom::init();
-  GlobalOp::init();
-  GlobalKnitter::init();
+  GlobalFsm::init();
   GlobalSolenoids::init();
+
+  GlobalOpKnit::init();
 }
 
 /*!
@@ -73,11 +89,8 @@ void setup() {
 void loop() {
   // Non-blocking methods
   // Cooperative Round Robin scheduling
-  GlobalOp::update();
+  GlobalFsm::update();
   GlobalCom::update();
-  if (GlobalTester::enabled()) {
-    GlobalTester::update();
-  }
   if (GlobalBeeper::enabled()) {
     GlobalBeeper::update();
   }

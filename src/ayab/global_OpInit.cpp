@@ -1,7 +1,6 @@
 /*!
- * \file global_solenoids.cpp
- * \brief Singleton class containing methods that control the needles
- *    via solenoids connected to IO expanders on the device.
+ * \file global_OpInit.cpp
+ * \brief Singleton class containing methods for hardware testing.
  *
  * This file is part of AYAB.
  *
@@ -23,18 +22,30 @@
  *    http://ayab-knitting.com
  */
 
-#include "solenoids.h"
+#include "opInit.h"
 
 // static member functions
 
-void GlobalSolenoids::init() {
+OpState_t GlobalOpInit::state() {
+  return m_instance->state();
+}
+
+void GlobalOpInit::init() {
   m_instance->init();
 }
 
-void GlobalSolenoids::setSolenoid(uint8_t solenoid, bool state) {
-  m_instance->setSolenoid(solenoid, state);
+void GlobalOpInit::begin() {
+  m_instance->begin();
 }
 
-void GlobalSolenoids::setSolenoids(uint16_t state) {
-  m_instance->setSolenoids(state);
+void GlobalOpInit::update() {
+  m_instance->update();
+}
+
+void GlobalOpInit::com(const uint8_t *buffer, size_t size) {
+  m_instance->com(buffer, size);
+}
+
+void GlobalOpInit::end() {
+  m_instance->end();
 }

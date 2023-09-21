@@ -1,5 +1,5 @@
 /*!
- * \file global_knitter.cpp
+ * \file global_OpKnit.cpp
  * \brief Singleton class containing methods for the finite state machine
  *    that co-ordinates the AYAB firmware.
  *
@@ -19,57 +19,86 @@
  *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
  *
  *    Original Work Copyright 2013 Christian Obersteiner, Andreas Müller
- *    Modified Work Copyright 2020 Sturla Lange, Tom Price
+ *    Modified Work Copyright 2020-3 Sturla Lange, Tom Price
  *    http://ayab-knitting.com
  */
 
-#include "knitter.h"
+#include "opKnit.h"
 
 // static member functions
 
-void GlobalKnitter::init() {
+/*!
+ * \brief Initialize interrupt service routine for OpKnit object.
+ */
+void GlobalOpKnit::setUpInterrupt() {
+  // (re-)attach ENC_PIN_A(=2), interrupt #0
+  detachInterrupt(digitalPinToInterrupt(ENC_PIN_A));
+  // Attaching ENC_PIN_A, Interrupt #0
+  // This interrupt cannot be enabled until
+  // the machine type has been validated.
+#ifndef AYAB_TESTS
+  attachInterrupt(digitalPinToInterrupt(ENC_PIN_A), GlobalOpKnit::isr, CHANGE);
+#endif // AYAB_TESTS
+}
+
+void GlobalOpKnit::isr() {
+#ifndef AYAB_TESTS
+  m_instance->isr();
+#endif // AYAB_TESTS
+}
+
+OpState_t GlobalOpKnit::state() {
+  return m_instance->state();
+}
+
+void GlobalOpKnit::init() {
   m_instance->init();
 }
 
-Err_t GlobalKnitter::initMachine(Machine_t machine) {
-  return m_instance->initMachine(machine);
+void GlobalOpKnit::begin() {
+  m_instance->begin();
 }
 
-Err_t GlobalKnitter::startKnitting(uint8_t startNeedle,
+void GlobalOpKnit::update() {
+  m_instance->update();
+}
+
+void GlobalOpKnit::com(const uint8_t *buffer, size_t size) {
+  m_instance->com(buffer, size);
+}
+
+void GlobalOpKnit::end() {
+  m_instance->end();
+}
+
+
+Err_t GlobalOpKnit::startKnitting(uint8_t startNeedle,
                                    uint8_t stopNeedle, uint8_t *pattern_start,
                                    bool continuousReportingEnabled) {
   return m_instance->startKnitting(startNeedle, stopNeedle,
                                    pattern_start, continuousReportingEnabled);
 }
 
-void GlobalKnitter::encodePosition() {
+void GlobalOpKnit::encodePosition() {
   m_instance->encodePosition();
 }
 
-bool GlobalKnitter::isReady() {
+bool GlobalOpKnit::isReady() {
   return m_instance->isReady();
 }
 
-void GlobalKnitter::knit() {
+void GlobalOpKnit::knit() {
   m_instance->knit();
 }
 
-uint8_t GlobalKnitter::getStartOffset(const Direction_t direction) {
+uint8_t GlobalOpKnit::getStartOffset(const Direction_t direction) {
   return m_instance->getStartOffset(direction);
 }
 
-Machine_t GlobalKnitter::getMachineType() {
-  return m_instance->getMachineType();
-}
-
-bool GlobalKnitter::setNextLine(uint8_t lineNumber) {
+bool GlobalOpKnit::setNextLine(uint8_t lineNumber) {
   return m_instance->setNextLine(lineNumber);
 }
 
-void GlobalKnitter::setLastLine() {
+void GlobalOpKnit::setLastLine() {
   m_instance->setLastLine();
-}
-
-void GlobalKnitter::setMachineType(Machine_t machineType) {
-  m_instance->setMachineType(machineType);
 }
