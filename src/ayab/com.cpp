@@ -24,9 +24,10 @@
 
 #include "beeper.h"
 #include "com.h"
-#include "knitter.h"
-#include "op.h"
-#include "tester.h"
+#include "fsm.h"
+
+#include "opKnit.h"
+#include "opTest.h"
 
 /*!
  * \brief Initialize serial communication.
@@ -105,14 +106,14 @@ void Com::send_indState(Err_t error) const {
   uint8_t payload[INDSTATE_LEN] = {
       static_cast<uint8_t>(AYAB_API::indState),
       static_cast<uint8_t>(error),
-      static_cast<uint8_t>(GlobalOp::getState()),
+      static_cast<uint8_t>(GlobalFsm::getState()),
       highByte(leftHallValue),
       lowByte(leftHallValue),
       highByte(rightHallValue),
       lowByte(rightHallValue),
-      static_cast<uint8_t>(GlobalOp::getCarriage()),
-      GlobalOp::getPosition(),
-      static_cast<uint8_t>(GlobalOp::getDirection()),
+      static_cast<uint8_t>(GlobalFsm::getCarriage()),
+      GlobalFsm::getPosition(),
+      static_cast<uint8_t>(GlobalFsm::getDirection()),
   };
   send(static_cast<uint8_t *>(payload), INDSTATE_LEN);
 }
@@ -123,75 +124,7 @@ void Com::send_indState(Err_t error) const {
  * \param size The number of bytes in the data buffer.
  */
 void Com::onPacketReceived(const uint8_t *buffer, size_t size) {
-  switch (buffer[0]) {
-  case static_cast<uint8_t>(AYAB_API::reqInit):
-    h_reqInit(buffer, size);
-    break;
-
-  case static_cast<uint8_t>(AYAB_API::reqStart):
-    h_reqStart(buffer, size);
-    break;
-
-  case static_cast<uint8_t>(AYAB_API::cnfLine):
-    h_cnfLine(buffer, size);
-    break;
-
-  case static_cast<uint8_t>(AYAB_API::reqInfo):
-    h_reqInfo();
-    break;
-
-  case static_cast<uint8_t>(AYAB_API::reqTest):
-    h_reqTest(buffer, size);
-    break;
-
-  case static_cast<uint8_t>(AYAB_API::helpCmd):
-    GlobalTester::helpCmd();
-    break;
-
-  case static_cast<uint8_t>(AYAB_API::sendCmd):
-    GlobalTester::sendCmd();
-    break;
-
-  case static_cast<uint8_t>(AYAB_API::beepCmd):
-    GlobalTester::beepCmd();
-    break;
-
-  case static_cast<uint8_t>(AYAB_API::setSingleCmd):
-    GlobalTester::setSingleCmd(buffer, size);
-    break;
-
-  case static_cast<uint8_t>(AYAB_API::setAllCmd):
-    GlobalTester::setAllCmd(buffer, size);
-    break;
-
-  case static_cast<uint8_t>(AYAB_API::readEOLsensorsCmd):
-    GlobalTester::readEOLsensorsCmd();
-    break;
-
-  case static_cast<uint8_t>(AYAB_API::readEncodersCmd):
-    GlobalTester::readEncodersCmd();
-    break;
-
-  case static_cast<uint8_t>(AYAB_API::autoReadCmd):
-    GlobalTester::autoReadCmd();
-    break;
-
-  case static_cast<uint8_t>(AYAB_API::autoTestCmd):
-    GlobalTester::autoTestCmd();
-    break;
-
-  case static_cast<uint8_t>(AYAB_API::stopCmd):
-    GlobalTester::stopCmd();
-    break;
-
-   case static_cast<uint8_t>(AYAB_API::quitCmd):
-    GlobalTester::quitCmd();
-    break;
-
-  default:
-    h_unrecognized();
-    break;
-  }
+  GlobalFsm::getState()->com(buffer, size);
 }
 
 // Serial command handling
@@ -329,7 +262,7 @@ void Com::h_reqTest(const uint8_t *buffer, size_t size) const {
   // Note (August 2020): the return value of this function has changed.
   // Previously, it returned `true` for success and `false` for failure.
   // Now, it returns `0` for success and an informative error code otherwise.
-  Err_t error = GlobalTester::startTest(machineType);
+  Err_t error = GlobalOpTest::startTest(machineType);
   send_cnfTest(error);
 }
 

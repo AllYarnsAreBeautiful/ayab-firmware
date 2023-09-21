@@ -1,5 +1,7 @@
 /*!
- * \file global_op.cpp
+ * \file global_OpReady.cpp
+ * \brief Singleton class containing methods for hardware testing.
+ *
  * This file is part of AYAB.
  *
  *    AYAB is free software: you can redistribute it and/or modify
@@ -16,50 +18,30 @@
  *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
  *
  *    Original Work Copyright 2013 Christian Obersteiner, Andreas Müller
- *    Modified Work Copyright 2020 Sturla Lange, Tom Price
+ *    Modified Work Copyright 2020-3 Sturla Lange, Tom Price
  *    http://ayab-knitting.com
  */
 
-#include "op.h"
+#include "opReady.h"
 
 // static member functions
 
-void GlobalOp::init() {
+void GlobalOpReady::init() {
   m_instance->init();
 }
 
-void GlobalOp::update() {
+Err_t GlobalOpReady::begin() {
+  return m_instance->begin();
+}
+
+void GlobalOpReady::update() {
   m_instance->update();
 }
 
-void GlobalOp::cacheEncoders() {
-  m_instance->cacheEncoders();
+void GlobalOpReady::com(const uint8_t *buffer, size_t size) {
+  m_instance->com(buffer, size);
 }
 
-void GlobalOp::setState(OpState_t state) {
-  m_instance->setState(state);
-}
-
-OpState_t GlobalOp::getState() {
-  return m_instance->getState();
-}
-
-BeltShift_t GlobalOp::getBeltShift() {
-  return m_instance->getBeltShift();
-}
-
-Carriage_t GlobalOp::getCarriage() {
-  return m_instance->getCarriage();
-}
-
-Direction_t GlobalOp::getDirection() {
-  return m_instance->getDirection();
-}
-
-Direction_t GlobalOp::getHallActive() {
-  return m_instance->getHallActive();
-}
-
-uint8_t GlobalOp::getPosition() {
-  return m_instance->getPosition();
+void GlobalOpReady::end() {
+  m_instance->end();
 }

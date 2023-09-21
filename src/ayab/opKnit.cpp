@@ -1,5 +1,5 @@
 /*!
- * \file knitter.cpp
+ * \file opKnit.cpp
  * \brief Class containing methods for the finite state machine
  *    that co-ordinates the AYAB firmware.
  *
@@ -29,9 +29,10 @@
 #include "beeper.h"
 #include "com.h"
 #include "encoders.h"
-#include "knitter.h"
-#include "op.h"
+#include "fsm.h"
 #include "solenoids.h"
+
+#include "opKnit.h"
 
 #ifdef CLANG_TIDY
 // clang-tidy doesn't find these macros for some reason,
@@ -41,11 +42,11 @@ constexpr uint16_t UINT16_MAX = 0xFFFFU;
 #endif
 
 /*!
- * \brief Initialize Knitter object.
+ * \brief Initialize OpKnit object.
  *
  * Initialize the solenoids as well as pins and interrupts.
  */
-void Knitter::init() {
+void OpKnit::init() {
   pinMode(ENC_PIN_A, INPUT);
   pinMode(ENC_PIN_B, INPUT);
   pinMode(ENC_PIN_C, INPUT);
@@ -82,21 +83,12 @@ void Knitter::init() {
 }
 
 /*!
- * \brief Initialize machine type.
- * \param machineType Machine type.
+ * \brief Start `OpKnit` operation.
  * \return Error code (0 = success, other values = error).
  */
-Err_t Knitter::initMachine(Machine_t machineType) {
-  if (GlobalOp::getState() != OpState::wait_for_machine) {
-    return ErrorCode::wrong_machine_state;
-  }
-  if (machineType == Machine_t::NoMachine) {
-    return ErrorCode::no_machine_type;
-  }
-  m_machineType = machineType;
-
-  GlobalEncoders::init(machineType);
-  GlobalOp::setState(OpState::init);
+Err_t OpKnit::begin() {
+  GlobalEncoders::init(GlobalFsm::getMachineType());
+  GlobalFsm::setState(OpState::init);
 
   // Now that we have enough start state, we can set up interrupts
   GlobalEncoders::setUpInterrupt();
@@ -105,17 +97,51 @@ Err_t Knitter::initMachine(Machine_t machineType) {
 }
 
 /*!
- * \brief Enter `OpState::knit` machine state.
+ * \brief Update knitting procedure.
+ */
+void OpKnit::update() {
+  knit();
+}
+
+/*!
+ * \brief Communication callback for knitting procedure.
+ */
+void OpKnit::com(const uint8_t *buffer, size_t size) {
+  switch (buffer[0]) {
+  case static_cast<uint8_t>(AYAB_API::cnfLine):
+    GlobalCom::h_cnfLine(buffer, size);
+    break;
+  default:
+    GlobalCom::h_unrecognized();
+    break;
+  }
+}
+
+/*!
+ * \brief Finish knitting operation.
+ */
+void OpKnit::end() {
+  GlobalBeeper::endWork();
+  GlobalFsm::setState(GlobalOpReady::m_instance);
+
+  GlobalSolenoids::setSolenoids(SOLENOIDS_BITMASK);
+  GlobalBeeper::finishedLine();
+
+  // detaching ENC_PIN_A, Interrupt #0
+  /* detachInterrupt(digitalPinToInterrupt(ENC_PIN_A)); */
+}
+/*!
+ * \brief Obtain parameters of knitting pattern.
  * \param startNeedle Position of first needle in the pattern.
  * \param stopNeedle Position of last needle in the pattern.
  * \param patternStart Pointer to buffer containing pattern data.
  * \param continuousReportingEnabled Flag variable indicating whether the device continuously reports its status to the host.
  * \return Error code (0 = success, other values = error).
  */
-Err_t Knitter::startKnitting(uint8_t startNeedle,
+Err_t OpKnit::startKnitting(uint8_t startNeedle,
                              uint8_t stopNeedle, uint8_t *pattern_start,
                              bool continuousReportingEnabled) {
-  if (GlobalOp::getState() != OpState::ready) {
+  if (GlobalFsm::getState() != OpState::ready) {
     return ErrorCode::wrong_machine_state;
   }
   if (pattern_start == nullptr) {
@@ -138,7 +164,7 @@ Err_t Knitter::startKnitting(uint8_t startNeedle,
   m_lastLineFlag = false;
 
   // proceed to next state
-  GlobalOp::setState(OpState::knit);
+  GlobalFsm::setState(OpState::knit);
   GlobalBeeper::ready();
 
   // success
@@ -150,8 +176,8 @@ Err_t Knitter::startKnitting(uint8_t startNeedle,
  *
  * Used in hardware test procedure.
  */
-void Knitter::encodePosition() {
-  auto position = GlobalOp::getPosition();
+void OpKnit::encodePosition() {
+  auto position = GlobalFsm::getPosition();
   if (m_sOldPosition != position) {
     // only act if there is an actual change of position
     // store current encoder position for next call of this function
@@ -165,7 +191,7 @@ void Knitter::encodePosition() {
  * \brief Assess whether the Finite State Machine is ready to move from state `OpState::init` to `OpState::ready`.
  * \return `true` if ready to move from state `OpState::init` to `OpState::ready`, false otherwise.
  */
-bool Knitter::isReady() {
+bool OpKnit::isReady() {
 #ifdef DBG_NOMACHINE
   // TODO(who?): check if debounce is needed
   bool state = digitalRead(DBG_BTN_PIN);
@@ -176,13 +202,13 @@ bool Knitter::isReady() {
   // will be a second magnet passing the sensor.
   // Keep track of the last seen hall sensor because we may be making a decision
   // after it passes.
-  auto hallActive = GlobalOp::getHallActive();
+  auto hallActive = GlobalFsm::getHallActive();
   if (hallActive != Direction_t::NoDirection) {
     m_lastHall = hallActive;
   }
 
-  auto direction = GlobalOp::getDirection();
-  auto position = GlobalOp::getPosition();
+  auto direction = GlobalFsm::getDirection();
+  auto position = GlobalFsm::getPosition();
   bool passedLeft = (Direction_t::Right == direction) && (Direction_t::Left == m_lastHall) &&
         (position > (END_LEFT_PLUS_OFFSET[static_cast<uint8_t>(m_machineType)] + GARTER_SLOP));
   bool passedRight = (Direction_t::Left == direction) && (Direction_t::Right == m_lastHall) &&
@@ -207,7 +233,7 @@ bool Knitter::isReady() {
 /*!
  * \brief Function that is repeatedly called during state `OpState::knit`
  */
-void Knitter::knit() {
+void OpKnit::knit() {
   if (m_firstRun) {
     m_firstRun = false;
     // TODO(who?): optimize delay for various Arduino models
@@ -227,7 +253,7 @@ void Knitter::knit() {
   }
   m_prevState = state;
 #else
-  auto position = GlobalOp::getPosition();
+  auto position = GlobalFsm::getPosition();
   // only act if there is an actual change of position
   if (m_sOldPosition == position) {
     return;
@@ -279,19 +305,11 @@ void Knitter::knit() {
 }
 
 /*!
- * \brief Get knitting machine type.
- * \return Machine type.
- */
-Machine_t Knitter::getMachineType() {
-  return m_machineType;
-}
-
-/*!
  * \brief Get start offset.
  * \return Start offset, or 0 if unobtainable.
  */
-uint8_t Knitter::getStartOffset(const Direction_t direction) {
-  auto carriage = GlobalOp::getCarriage();
+uint8_t OpKnit::getStartOffset(const Direction_t direction) {
+  auto carriage = GlobalFsm::getCarriage();
   if ((direction == Direction_t::NoDirection) ||
       (carriage == Carriage_t::NoCarriage) ||
       (m_machineType == Machine_t::NoMachine)) {
@@ -305,7 +323,7 @@ uint8_t Knitter::getStartOffset(const Direction_t direction) {
  * \param lineNumber Line number (0-indexed and modulo 256).
  * \return `true` if successful, `false` otherwise.
  */
-bool Knitter::setNextLine(uint8_t lineNumber) {
+bool OpKnit::setNextLine(uint8_t lineNumber) {
   if (m_lineRequested) {
     // Is there even a need for a new line?
     if (lineNumber == m_currentLineNumber) {
@@ -324,16 +342,8 @@ bool Knitter::setNextLine(uint8_t lineNumber) {
  * \brief Get value of last line flag.
  * \param `true` if current line is the last line in the pattern, `false` otherwise.
  */
-void Knitter::setLastLine() {
+void OpKnit::setLastLine() {
   m_lastLineFlag = true;
-}
-
-/*!
- * \brief Set machine type.
- * \param Machine type.
- */
-void Knitter::setMachineType(Machine_t machineType) {
-  m_machineType = machineType;
 }
 
 // private methods
@@ -342,7 +352,7 @@ void Knitter::setMachineType(Machine_t machineType) {
  * \brief Send `reqLine` message.
  * \param lineNumber Line number requested.
  */
-void Knitter::reqLine(uint8_t lineNumber) {
+void OpKnit::reqLine(uint8_t lineNumber) {
   GlobalCom::send_reqLine(lineNumber, ErrorCode::success);
   m_lineRequested = true;
 }
@@ -351,13 +361,13 @@ void Knitter::reqLine(uint8_t lineNumber) {
  * \brief Calculate the solenoid and pixel to be set.
  * \return `true` if successful, `false` otherwise.
  */
-bool Knitter::calculatePixelAndSolenoid() {
+bool OpKnit::calculatePixelAndSolenoid() {
   uint8_t startOffset = 0;
 
-  auto direction = GlobalOp::getDirection();
-  auto position = GlobalOp::getPosition();
-  auto beltShift = GlobalOp::getBeltShift();
-  auto carriage = GlobalOp::getCarriage();
+  auto direction = GlobalFsm::getDirection();
+  auto position = GlobalFsm::getPosition();
+  auto beltShift = GlobalFsm::getBeltShift();
+  auto carriage = GlobalFsm::getCarriage();
   switch (direction) {
   // calculate the solenoid and pixel to be set
   // implemented according to machine manual
@@ -406,18 +416,4 @@ bool Knitter::calculatePixelAndSolenoid() {
     m_solenoidToSet = m_solenoidToSet + 3;
   }
   return true;
-}
-
-/*!
- * \brief Finish knitting procedure.
- */
-void Knitter::stopKnitting() const {
-  GlobalBeeper::endWork();
-  GlobalOp::setState(OpState::ready);
-
-  GlobalSolenoids::setSolenoids(SOLENOIDS_BITMASK);
-  GlobalBeeper::finishedLine();
-
-  // detaching ENC_PIN_A, Interrupt #0
-  /* detachInterrupt(digitalPinToInterrupt(ENC_PIN_A)); */
 }
