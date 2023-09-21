@@ -110,6 +110,7 @@ public:
 
 #if AYAB_TESTS
   FRIEND_TEST(TestOpKnit, test_getStartOffset);
+  FRIEND_TEST(TestFsm, test_update_init);
 #endif
 };
 

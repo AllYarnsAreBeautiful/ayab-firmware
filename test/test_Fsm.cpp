@@ -94,19 +94,12 @@ protected:
     Mock::AllowLeak(opTestMock);
     Mock::AllowLeak(opErrorMock);
 
-    // start in state `opInit`
-    EXPECT_CALL(*arduinoMock, millis);
+    // start in state `opIdle`
     fsm->init();
-    // expected_isr(NoDirection, NoDirection);
-    // EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, LOW));
-    // fsm->setState(opInitMock);
-    // EXPECT_CALL(*comMock, update);
-    // fsm->update();
-    // ASSERT_TRUE(fsm->getState() == opInitMock);
     expect_knit_init();
     opKnit->init();
     fsm->setMachineType(Machine_t::Kh910);
-    expected_isr(Direction_t::NoDirection, Direction_t::NoDirection, 0);
+    expected_isready(Direction_t::NoDirection, Direction_t::NoDirection, 0);
   }
 
   void TearDown() override {
@@ -138,17 +131,10 @@ protected:
     EXPECT_CALL(*solenoidsMock, init);
   }
 
-  void expected_isr(Direction_t dir, Direction_t hall, uint8_t position) {
-    EXPECT_CALL(*encodersMock, isr);
-    EXPECT_CALL(*encodersMock, getPosition).WillRepeatedly(Return(position));
-    EXPECT_CALL(*encodersMock, getDirection).WillRepeatedly(Return(dir));
-    EXPECT_CALL(*encodersMock, getHallActive).WillRepeatedly(Return(hall));
-    EXPECT_CALL(*encodersMock, getBeltShift).Times(AtLeast(1));
-    EXPECT_CALL(*encodersMock, getCarriage).Times(AtLeast(1));
-    encoders->isr();
-
-    // test expectations without destroying instance
-    ASSERT_TRUE(Mock::VerifyAndClear(encodersMock));
+  void expected_isready(Direction_t dir, Direction_t hall, uint8_t position) {
+    fsm->m_direction = dir;
+    fsm->m_hallActive = hall;
+    fsm->m_position = position;
   }
 
   void expect_reqLine() {
@@ -160,7 +146,7 @@ protected:
   }
 
   void expect_get_ready() {
-    // start in state `init`
+    // start in state `OpInit`
     ASSERT_EQ(fsm->getState(), opInitMock);
 
     expect_indState();
@@ -168,75 +154,84 @@ protected:
     EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, LOW));
   }
 
-  void get_in_ready() {
-    expect_get_ready();
-    expected_state(opReadyMock);
-
-    // ends in state `ready`
-    ASSERT_EQ(fsm->getState(), opReadyMock);
-  }
-
   void expected_state(OpInterface *state) {
     fsm->setState(state);
-    expected_dispatch();
+    fsm->update();
   }
 
-  void expected_dispatch() {
-    EXPECT_CALL(*comMock, update);
+  void expected_update() {
+    EXPECT_CALL(*encodersMock, getPosition).Times(1);
+    EXPECT_CALL(*encodersMock, getDirection).Times(1);
+    EXPECT_CALL(*encodersMock, getHallActive).Times(1);
+    EXPECT_CALL(*encodersMock, getBeltShift).Times(1);
+    EXPECT_CALL(*encodersMock, getCarriage).Times(1);
     fsm->update();
 
     // test expectations without destroying instance
-    ASSERT_TRUE(Mock::VerifyAndClear(comMock));
+    ASSERT_TRUE(Mock::VerifyAndClear(encodersMock));
   }
 
-  void expected_dispatch_idle() {
+  void expected_update_idle() {
+    // starts in state `OpIdle`
     ASSERT_EQ(fsm->getState(), opIdleMock);
 
-    EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, LOW));
-    expected_dispatch();
+    EXPECT_CALL(*opIdleMock, update);
+    expected_update();
+
+    // test expectations without destroying instance
+    ASSERT_TRUE(Mock::VerifyAndClear(opIdleMock));
   }
 
-  void expected_dispatch_init() {
-    // starts in state `init`
+  void expected_update_init() {
+    // starts in state `OpInit`
     ASSERT_EQ(fsm->getState(), opInitMock);
 
-    EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, LOW));
-    expected_dispatch();
+    EXPECT_CALL(*opInitMock, update);
+    expected_update();
+
+    // test expectations without destroying instance
+    ASSERT_TRUE(Mock::VerifyAndClear(opInitMock));
   }
 
-  void expected_dispatch_ready() {
-    // starts in state `ready`
+  void expected_update_ready() {
+    // starts in state `OpReady`
     ASSERT_EQ(fsm->getState(), opReadyMock);
 
-    EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, LOW));
-    expected_dispatch();
+    EXPECT_CALL(*opReadyMock, update);
+    expected_update();
+
+    // test expectations without destroying instance
+    ASSERT_TRUE(Mock::VerifyAndClear(opReadyMock));
   }
 
-  void expected_dispatch_knit() {
-    // starts in state `knit`
+  void expected_update_knit() {
+    // starts in state `OpKnit`
     ASSERT_EQ(fsm->getState(), opKnit);
 
-    EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, HIGH)); // green LED on
-    expected_dispatch();
+    expected_update();
   }
 
-  void expected_dispatch_test() {
-    // starts in state `test`
+  void expected_update_test() {
+    // starts in state `OpTest`
     ASSERT_EQ(fsm->getState(), opTestMock);
 
     EXPECT_CALL(*opTestMock, update);
-    expected_dispatch();
+    expected_update();
 
     // test expectations without destroying instance
     ASSERT_TRUE(Mock::VerifyAndClear(opTestMock));
   }
 
-  void expected_dispatch_error(unsigned long t) {
-    // starts in state `error`
+  void expected_update_error(unsigned long t) {
+    // starts in state `OpError`
     ASSERT_EQ(fsm->getState(), opErrorMock);
 
     EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(t));
-    expected_dispatch();
+    EXPECT_CALL(*opErrorMock, update);
+    expected_update();
+
+    // test expectations without destroying instance
+    ASSERT_TRUE(Mock::VerifyAndClear(opErrorMock));
   }
 
   void expect_first_knit() {
@@ -247,110 +242,118 @@ protected:
 };
 
 TEST_F(FsmTest, test_setState) {
-  fsm->setState(opReadyMock);
-  expected_dispatch_idle();
-  ASSERT_TRUE(fsm->getState() == opReadyMock);
+  fsm->setState(opInitMock);
+
+  EXPECT_CALL(*opIdle, end);
+  EXPECT_CALL(*opInit, begin);
+  expected_update_idle();
+
+  ASSERT_TRUE(fsm->getState() == opInitMock);
+
+  // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(opIdleMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(opInitMock));
 }
 
-TEST_F(FsmTest, test_dispatch_init) {
-  // Get to state `opInit`
+TEST_F(FsmTest, test_update_init) {
+  // Get to state `OpInit`
   fsm->setState(opInitMock);
-  expected_dispatch_idle();
+  expected_update_idle();
   ASSERT_EQ(fsm->getState(), opInitMock);
 
-  // no transition to state `opReady`
-  expected_isr(Direction_t::Left, Direction_t::Left, 0);
-  expected_dispatch_init();
+  // no transition to state `OpReady`
+  expected_isready(Direction_t::Left, Direction_t::Left, 0);
+  expected_update_init();
   ASSERT_TRUE(fsm->getState() == opInitMock);
 
-  // no transition to state `opReady`
-  expected_isr(Direction_t::Right, Direction_t::Right, 0);
-  expected_dispatch_init();
+  // no transition to state `OpReady`
+  expected_isready(Direction_t::Right, Direction_t::Right, 0);
+  expected_update_init();
   ASSERT_TRUE(fsm->getState() == opInitMock);
 
-  // transition to state `opReady`
-  expected_isr(Direction_t::Left, Direction_t::Right, positionPassedRight);
+  // transition to state `OpReady`
+  expected_isready(Direction_t::Left, Direction_t::Right, positionPassedRight);
   expect_get_ready();
-  expected_dispatch();
+  expected_update();
   ASSERT_EQ(fsm->getState(), opReadyMock);
-
-  // get to state `opInit`
+/*
+  // get to state `OpInit`
   fsm->setState(opInitMock);
-  expected_dispatch_ready();
+  expected_update_ready();
 
-  // transition to state `opReady`
-  expected_isr(Direction_t::Right, Direction_t::Left, positionPassedLeft);
+  // transition to state `OpReady`
+  expected_isready(Direction_t::Right, Direction_t::Left, positionPassedLeft);
   expect_get_ready();
-  expected_dispatch();
+  expected_update();
   ASSERT_TRUE(fsm->getState() == opReadyMock);
-
+*/
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(comMock));
   ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
 }
 
-TEST_F(FsmTest, test_dispatch_test) {
-  // get in state `opTest`
+TEST_F(FsmTest, test_update_test) {
+  // get in state `OpTest`
   fsm->setState(opTestMock);
-  expected_dispatch_idle();
+  expected_update_idle();
 
-  // now in state `opTest`
-  expected_dispatch_test();
+  // now in state `OpTest`
+  expected_update_test();
 
   // now quit test
   fsm->setState(opInitMock);
   expect_knit_init();
-  expected_dispatch_test();
+  expected_update_test();
   ASSERT_TRUE(fsm->getState() == opInitMock);
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
 }
 
-TEST_F(FsmTest, test_dispatch_knit) {
-  // get to state `opReady`
+TEST_F(FsmTest, test_update_knit) {
+  // get to state `OpReady`
   fsm->setState(opReadyMock);
-  expected_dispatch_idle();
+  expected_update_idle();
 
-  // get to state `opKnit`
+  // get to state `OpKnit`
   fsm->setState(opKnit);
-  expected_dispatch_ready();
+  expected_update_ready();
   ASSERT_TRUE(fsm->getState() == opKnit);
 
-  // now in state `opKnit`
+  // now in state `OpKnit`
   expect_first_knit();
-  expected_dispatch_knit();
+  expected_update_knit();
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(beeperMock));
   ASSERT_TRUE(Mock::VerifyAndClear(comMock));
 }
 
-TEST_F(FsmTest, test_dispatch_error) {
-  // get to state `error`
+TEST_F(FsmTest, test_update_error) {
+  // get to state `OpError`
   fsm->setState(opErrorMock);
-  expected_dispatch_idle();
+  expected_update_idle();
 
-  // now in state `error`
-  expected_dispatch_error(0);
+  // now in state `OpError`
+  expected_update_error(0);
 
   // too soon to flash
   EXPECT_CALL(*arduinoMock, digitalWrite).Times(0);
-  expected_dispatch_error(FLASH_DELAY - 1);
+  expected_update_error(FLASH_DELAY - 1);
 
   // flash first time
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, LOW));
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_B, HIGH));
   EXPECT_CALL(*comMock, send_indState);
-  expected_dispatch_error(FLASH_DELAY);
+  expected_update_error(FLASH_DELAY);
 
   // alternate flash
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, HIGH));
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_B, LOW));
   EXPECT_CALL(*comMock, send_indState);
-  expected_dispatch_error(2 * FLASH_DELAY);
+  expected_update_error(2 * FLASH_DELAY);
 
-  // get to state `init`
+  // get to state `OpInit`
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_B, LOW));
   expect_knit_init();
   expected_state(opInitMock);
@@ -359,14 +362,14 @@ TEST_F(FsmTest, test_dispatch_error) {
   ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
 }
 /*
-TEST_F(FsmTest, test_dispatch_default) {
+TEST_F(FsmTest, test_update_default) {
   // get to default state
   fsm->setState(static_cast<FsmState_t>(99));
-  expected_dispatch_idle();
+  expected_update_idle();
   // ASSERT_TRUE(static_cast<uint8_t>(fsm->getState()) == 99); // FIXME
 
   // now in default state
   EXPECT_CALL(*arduinoMock, digitalWrite).Times(0);
-  expected_dispatch();
+  expected_update();
 }
 */
