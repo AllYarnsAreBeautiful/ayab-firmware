@@ -68,7 +68,32 @@ protected:
   OpKnitMock *opKnitMock;
 };
 
+TEST_F(OpIdleTest, test_state) {
+  ASSERT_EQ(opIdle->state(), OpState_t::Idle);
+}
+
 TEST_F(OpIdleTest, test_begin) {
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, LOW));
   opIdle->begin();
+}
+
+TEST_F(OpIdleTest, test_init) {
+  // nothing
+  opIdle->init();
+}
+
+TEST_F(OpIdleTest, test_unrecognized) {
+  // nothing
+  const uint8_t buffer[] = {0xFF};
+  opIdle->com(buffer, 1);
+}
+
+TEST_F(OpIdleTest, test_update) {
+  // nothing
+  opIdle->update();
+}
+
+TEST_F(OpIdleTest, test_end) {
+  // nothing
+  opIdle->end();
 }

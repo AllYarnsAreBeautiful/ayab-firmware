@@ -48,6 +48,39 @@ void Com::update() {
 }
 
 /*!
+ * \brief Calculate CRC8 of a buffer.
+ * \param buffer A pointer to a data buffer.
+ * \param len The number of bytes of data in the data buffer.
+ *
+ * Based on
+ * https://www.leonardomiliani.com/en/2013/un-semplice-crc8-per-arduino/
+ *
+ * CRC-8 - based on the CRC8 formulas by Dallas/Maxim
+ * code released under the therms of the GNU GPL 3.0 license
+ *
+ * Faster code using a lookup table is available, if needed.
+ */
+uint8_t Com::CRC8(const uint8_t *buffer, size_t len) const {
+  uint8_t crc = 0x00U;
+
+  while (len--) {
+    uint8_t extract = *buffer;
+    buffer++;
+
+    for (uint8_t tempI = 8U; tempI; tempI--) {
+      uint8_t sum = (crc ^ extract) & 0x01U;
+      crc >>= 1U;
+
+      if (sum) {
+        crc ^= 0x8CU;
+      }
+      extract >>= 1U;
+    }
+  }
+  return crc;
+}
+
+/*!
  * \brief Send a packet of data.
  * \param payload A pointer to a data buffer.
  * \param length The number of bytes in the data buffer.
@@ -119,7 +152,8 @@ void Com::send_indState(Err_t error) const {
   send(static_cast<uint8_t *>(payload), INDSTATE_LEN);
 }
 
-/*!
+/*! GCOVR_EXCL_START
+ *
  * \brief Callback for PacketSerial.
  * \param buffer A pointer to a data buffer.
  * \param size The number of bytes in the data buffer.
@@ -127,6 +161,7 @@ void Com::send_indState(Err_t error) const {
 void Com::onPacketReceived(const uint8_t *buffer, size_t size) {
   GlobalFsm::getState()->com(buffer, size);
 }
+// GCOVR_EXCL_STOP
 
 // Serial command handling
 
@@ -257,14 +292,12 @@ void Com::h_reqTest() const {
   send_cnfTest(Err_t::Success);
 }
 
-// GCOVR_EXCL_START
 /*!
  * \brief Handle unrecognized command.
  */
 void Com::h_unrecognized() const {
   // do nothing
 }
-// GCOVR_EXCL_STOP
 
 /*!
  * \brief Send `cnfInfo` message.
@@ -318,37 +351,3 @@ void Com::send_cnfTest(Err_t error) const {
   payload[1] = static_cast<uint8_t>(error);
   send(payload, 2);
 }
-
-/*!
- * \brief Calculate CRC8 of a buffer.
- * \param buffer A pointer to a data buffer.
- * \param len The number of bytes of data in the data buffer.
- *
- * Based on
- * https://www.leonardomiliani.com/en/2013/un-semplice-crc8-per-arduino/
- *
- * CRC-8 - based on the CRC8 formulas by Dallas/Maxim
- * code released under the therms of the GNU GPL 3.0 license
- *
- * Faster code using a lookup table is available, if needed.
- */
-uint8_t Com::CRC8(const uint8_t *buffer, size_t len) const {
-  uint8_t crc = 0x00U;
-
-  while (len--) {
-    uint8_t extract = *buffer;
-    buffer++;
-
-    for (uint8_t tempI = 8U; tempI; tempI--) {
-      uint8_t sum = (crc ^ extract) & 0x01U;
-      crc >>= 1U;
-
-      if (sum) {
-        crc ^= 0x8CU;
-      }
-      extract >>= 1U;
-    }
-  }
-  return crc;
-}
-

@@ -17,7 +17,7 @@
  *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
  *
  *    Original Work Copyright 2013 Christian Obersteiner, Andreas Müller
- *    Modified Work Copyright 2020 Sturla Lange, Tom Price
+ *    Modified Work Copyright 2020-3 Sturla Lange, Tom Price
  *    http://ayab-knitting.com
  */
 
@@ -30,7 +30,8 @@
 class EncodersMock : public EncodersInterface {
 public:
   MOCK_METHOD1(init, void(Machine_t));
-  MOCK_METHOD0(encA_interrupt, void());
+  MOCK_METHOD0(setUpInterrupt, void());
+  MOCK_METHOD0(isr, void());
   MOCK_METHOD1(getHallValue, uint16_t(Direction_t));
   MOCK_METHOD0(getBeltShift, BeltShift_t());
   MOCK_METHOD0(getDirection, Direction_t());

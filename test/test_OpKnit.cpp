@@ -293,6 +293,32 @@ TEST_F(OpKnitTest, test_send) {
   ASSERT_TRUE(Mock::VerifyAndClear(comMock));
 }
 
+TEST_F(OpKnitTest, test_com) {
+  const uint8_t cnf[] = {static_cast<uint8_t>(API_t::cnfLine)};
+  EXPECT_CALL(*comMock, h_cnfLine);
+  opKnit->com(cnf, 1);
+
+  const uint8_t unrec[] = {0xFF};
+  EXPECT_CALL(*comMock, h_unrecognized);
+  opKnit->com(unrec, 1);
+
+  // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(comMock));
+}
+
+TEST_F(OpKnitTest, test_encodePosition) {
+  opKnit->m_sOldPosition = fsm->getPosition();
+  EXPECT_CALL(*comMock, send_indState).Times(0);
+  opKnit->encodePosition();
+
+  opKnit->m_sOldPosition += 1;
+  EXPECT_CALL(*comMock, send_indState).Times(1);
+  opKnit->encodePosition();
+
+  // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(comMock));
+}
+
 TEST_F(OpKnitTest, test_cacheISR) {
   expected_cacheISR();
 
@@ -538,13 +564,15 @@ TEST_F(OpKnitTest, test_knit_lastLine) {
   ASSERT_TRUE(Mock::VerifyAndClear(comMock));
 }
 
-/* FIXME - fails
+/* FIXME - This test fails for some reason TP 2023-09-22
 TEST_F(OpKnitTest, test_knit_lastLine_and_no_req) {
   get_to_knit(Machine_t::Kh910);
 
   // Note: probing private data and methods to get full branch coverage.
-  opKnit->m_stopNeedle = 100;
-  uint8_t wanted_pixel = opKnit->m_stopNeedle + END_OF_LINE_OFFSET_R[static_cast<uint8_t>(Machine_t::Kh910)] + 1;
+  //opKnit->m_stopNeedle = 100;
+  //uint8_t wanted_pixel = opKnit->m_stopNeedle + END_OF_LINE_OFFSET_R[static_cast<uint8_t>(Machine_t::Kh910)] + 1;
+  opKnit->m_startNeedle = 100;
+  uint8_t wanted_pixel = opKnit->m_startNeedle - END_OF_LINE_OFFSET_L[static_cast<uint8_t>(Machine_t::Kh910)] - 1;
   fsm->m_direction = Direction_t::Left;
   fsm->m_position = wanted_pixel + opKnit->getStartOffset(Direction_t::Right);
   opKnit->m_firstRun = false;
@@ -690,9 +718,6 @@ TEST_F(OpKnitTest, test_getStartOffset) {
   fsm->m_machineType = Machine_t::NoMachine;
   ASSERT_EQ(opKnit->getStartOffset(Direction_t::Left), 0);
   ASSERT_EQ(opKnit->getStartOffset(Direction_t::Right), 0);
-
-  // test expectations without destroying instance
-  ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
 }
 
 TEST_F(OpKnitTest, test_op_init_LL) {
@@ -751,3 +776,50 @@ TEST_F(OpKnitTest, test_op_init_LR) {
   ASSERT_TRUE(Mock::VerifyAndClear(comMock));
   ASSERT_TRUE(Mock::VerifyAndClear(encodersMock));
 }
+/*
+  void expected_isready(Direction_t dir, Direction_t hall, uint8_t position) {
+    fsm->m_direction = dir;
+    fsm->m_hallActive = hall;
+    fsm->m_position = position;
+  }
+
+TEST_F(FsmTest, test_update_init) {
+  // Get to state `OpInit`
+  fsm->setState(opInitMock);
+  EXPECT_CALL(*opInit, begin);
+  expected_update_idle();
+  ASSERT_EQ(fsm->getState(), opInitMock);
+
+  // no transition to state `OpReady`
+  expected_isready(Direction_t::Left, Direction_t::Left, 0);
+  expected_update_init();
+  ASSERT_TRUE(fsm->getState() == opInitMock);
+
+  // no transition to state `OpReady`
+  expected_isready(Direction_t::Right, Direction_t::Right, 0);
+  expected_update_init();
+  ASSERT_TRUE(fsm->getState() == opInitMock);
+
+  // transition to state `OpReady`
+  expected_isready(Direction_t::Left, Direction_t::Right, positionPassedRight);
+  expect_get_ready();
+  expected_update();
+  ASSERT_EQ(fsm->getState(), opReadyMock);
+
+  // get to state `OpInit`
+  fsm->setState(opInitMock);
+  expected_update_ready();
+
+  // transition to state `OpReady`
+  expected_isready(Direction_t::Right, Direction_t::Left, positionPassedLeft);
+  expect_get_ready();
+  expected_update();
+  ASSERT_TRUE(fsm->getState() == opReadyMock);
+
+  // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(comMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(opIdleMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(opInitMock));
+}
+*/

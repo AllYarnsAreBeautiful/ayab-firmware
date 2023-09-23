@@ -22,11 +22,6 @@
  *    http://ayab-knitting.com
  */
 
-// GCOVR _EXCL_START
-// There are some odd gaps in the `gcovr` coverage for this file.
-// Maybe this could happen if there were missing `Mock::VerifyAndClear`
-// statements in `test_fsm.cpp`.
-
 #include "board.h"
 /* #include <util/atomic.h> */ // FIXME need <avr/io>, <avr/interrupt>
 
@@ -67,7 +62,6 @@ void Fsm::update() {
   m_nextState->begin();
   m_currentState = m_nextState;
 }
-// GCOVR _EXCL_STOP
 
 /*!
  * \brief Cache Encoder values

@@ -29,7 +29,6 @@
 
 // Enumerated constants
 
-
 enum class Direction : unsigned char {
   NoDirection = 0xFF,
   Left = 0,
@@ -124,7 +123,8 @@ public:
 
   // any methods that need to be mocked should go here
   virtual void init(Machine_t machineType) = 0;
-  virtual void encA_interrupt() = 0;
+  virtual void setUpInterrupt() = 0;
+  virtual void isr() = 0;
   virtual uint16_t getHallValue(Direction_t pSensor) = 0;
   virtual Machine_t getMachineType() = 0;
   virtual BeltShift_t getBeltShift() = 0;
@@ -149,7 +149,10 @@ public:
   static EncodersInterface *m_instance;
 
   static void init(Machine_t machineType);
-  static void encA_interrupt();
+  static void setUpInterrupt();
+//#ifndef AYAB_TESTS
+  static void isr();
+//#endif
   static uint16_t getHallValue(Direction_t pSensor);
   static Machine_t getMachineType();
   static BeltShift_t getBeltShift();
@@ -164,7 +167,8 @@ public:
   Encoders() = default;
 
   void init(Machine_t machineType) final;
-  void encA_interrupt() final;
+  void setUpInterrupt() final;
+  void isr() final;
   uint16_t getHallValue(Direction_t pSensor) final;
   Machine_t getMachineType() final;
   BeltShift_t getBeltShift() final;
@@ -185,6 +189,11 @@ private:
 
   void encA_rising();
   void encA_falling();
+
+#if AYAB_TESTS
+  // Note: ideally tests would only rely on the public interface.
+  FRIEND_TEST(EncodersTest, test_encA_rising_in_front_G_carriage);
+#endif
 };
 
 #endif // ENCODERS_H_

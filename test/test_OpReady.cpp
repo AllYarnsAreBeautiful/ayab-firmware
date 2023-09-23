@@ -23,7 +23,10 @@
 
 #include <gtest/gtest.h>
 
+#include <com.h>
+
 #include <opReady.h>
+#include <opTest.h>
 
 #include <fsm_mock.h>
 #include <opKnit_mock.h>
@@ -35,6 +38,7 @@ using ::testing::Mock;
 using ::testing::Return;
 
 extern OpReady *opReady;
+extern OpTest *opTest;
 
 extern FsmMock *fsm;
 extern OpKnitMock *opKnit;
@@ -68,7 +72,44 @@ protected:
   OpKnitMock *opKnitMock;
 };
 
+TEST_F(OpReadyTest, test_state) {
+  ASSERT_EQ(opReady->state(), OpState_t::Ready);
+}
+
 TEST_F(OpReadyTest, test_begin) {
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, LOW));
   opReady->begin();
+}
+
+TEST_F(OpReadyTest, test_init) {
+  // nothing
+  opReady->init();
+}
+
+TEST_F(OpReadyTest, test_reqStart) {
+  EXPECT_CALL(*opKnitMock, startKnitting);
+  const uint8_t buffer[] = {static_cast<uint8_t>(API_t::reqStart), 0, 10, 1, 0x36};
+  opReady->com(buffer, 5);
+}
+
+TEST_F(OpReadyTest, test_reqTest) {
+  EXPECT_CALL(*fsmMock, setState(opTest));
+  const uint8_t buffer[] = {static_cast<uint8_t>(API_t::reqTest)};
+  opReady->com(buffer, 1);
+}
+
+TEST_F(OpReadyTest, test_unrecognized) {
+  // nothing
+  const uint8_t buffer[] = {0xFF};
+  opReady->com(buffer, 1);
+}
+
+TEST_F(OpReadyTest, test_update) {
+  // nothing
+  opReady->update();
+}
+
+TEST_F(OpReadyTest, test_end) {
+  // nothing
+  opReady->end();
 }

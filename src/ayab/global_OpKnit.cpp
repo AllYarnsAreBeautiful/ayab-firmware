@@ -27,26 +27,6 @@
 
 // static member functions
 
-/*!
- * \brief Initialize interrupt service routine for OpKnit object.
- */
-void GlobalOpKnit::setUpInterrupt() {
-  // (re-)attach ENC_PIN_A(=2), interrupt #0
-  detachInterrupt(digitalPinToInterrupt(ENC_PIN_A));
-  // Attaching ENC_PIN_A, Interrupt #0
-  // This interrupt cannot be enabled until
-  // the machine type has been validated.
-#ifndef AYAB_TESTS
-  attachInterrupt(digitalPinToInterrupt(ENC_PIN_A), GlobalOpKnit::isr, CHANGE);
-#endif // AYAB_TESTS
-}
-
-void GlobalOpKnit::isr() {
-#ifndef AYAB_TESTS
-  m_instance->isr();
-#endif // AYAB_TESTS
-}
-
 OpState_t GlobalOpKnit::state() {
   return m_instance->state();
 }

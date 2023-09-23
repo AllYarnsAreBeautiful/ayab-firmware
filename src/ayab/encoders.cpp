@@ -42,12 +42,27 @@ void Encoders::init(Machine_t machineType) {
 }
 
 /*!
- * \brief Service encoder A interrupt routine.
+ * \brief Initialize interrupt service routine for Encoders object.
+ */
+void Encoders::setUpInterrupt() {
+  // (re-)attach ENC_PIN_A(=2), interrupt #0
+  detachInterrupt(digitalPinToInterrupt(ENC_PIN_A));
+  // Attaching ENC_PIN_A, Interrupt #0
+  // This interrupt cannot be enabled until
+  // the machine type has been validated.
+#ifndef AYAB_TESTS
+  attachInterrupt(digitalPinToInterrupt(ENC_PIN_A), GlobalEncoders::isr, CHANGE);
+#endif // AYAB_TESTS
+}
+
+/*!
+ * \brief Interrupt service routine.
  *
+ * Update machine state data. Must execute as fast as possible.
  * Determines edge of signal and dispatches to private rising/falling functions.
  * Machine type assumed valid.
  */
-void Encoders::encA_interrupt() {
+void Encoders::isr() {
   m_hallActive = Direction_t::NoDirection;
 
   auto currentState = static_cast<bool>(digitalRead(ENC_PIN_A));
@@ -156,7 +171,7 @@ void Encoders::encA_rising() {
     Carriage detected_carriage = Carriage_t::NoCarriage;
     uint8_t start_position = END_LEFT_PLUS_OFFSET[static_cast<uint8_t>(m_machineType)];
 
-    if (hallValue >= FILTER_L_MIN[static_cast<uint8_t>(m_machineType)]) {
+    if (hallValue >= (FILTER_L_MIN[static_cast<uint8_t>(m_machineType)])) {
       detected_carriage = Carriage_t::Knit;
     } else {
       detected_carriage = Carriage_t::Lace;
@@ -171,7 +186,7 @@ void Encoders::encA_rising() {
       }
     } else if (m_carriage == Carriage_t::NoCarriage) {
       m_carriage = detected_carriage;
-    } else if (m_carriage != detected_carriage && m_position > start_position) {
+    } else if ((m_carriage != detected_carriage) && (m_position > start_position)) {
       m_carriage = Carriage_t::Garter;
 
       // Belt shift and start position were set when the first magnet passed
@@ -214,7 +229,7 @@ void Encoders::encA_falling() {
 
   hallValueSmall = (hallValue < FILTER_R_MIN[static_cast<uint8_t>(m_machineType)]);
 
-  if (hallValueSmall || hallValue > FILTER_R_MAX[static_cast<uint8_t>(m_machineType)]) {
+  if (hallValueSmall || (hallValue > FILTER_R_MAX[static_cast<uint8_t>(m_machineType)])) {
     m_hallActive = Direction_t::Right;
 
     // The garter carriage has a second set of magnets that are going to

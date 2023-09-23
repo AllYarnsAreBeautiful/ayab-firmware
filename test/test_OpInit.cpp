@@ -70,6 +70,26 @@ protected:
   OpKnitMock *opKnitMock;
 };
 
+TEST_F(OpInitTest, test_state) {
+  ASSERT_EQ(opInit->state(), OpState_t::Init);
+}
+
+TEST_F(OpInitTest, test_init) {
+  // nothing
+  opInit->init();
+}
+
+TEST_F(OpInitTest, test_com) {
+  // nothing
+  const uint8_t *buffer = {};
+  opInit->com(buffer, 0);
+}
+
+TEST_F(OpInitTest, test_end) {
+  // nothing
+  opInit->end();
+}
+
 TEST_F(OpInitTest, test_begin910) {
   EXPECT_CALL(*fsmMock, getMachineType());
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, LOW));
@@ -95,50 +115,3 @@ TEST_F(OpInitTest, test_update_ready) {
   ASSERT_TRUE(Mock::VerifyAndClear(fsmMock));
   ASSERT_TRUE(Mock::VerifyAndClear(opKnitMock));
 }
-/*
-  void expected_isready(Direction_t dir, Direction_t hall, uint8_t position) {
-    fsm->m_direction = dir;
-    fsm->m_hallActive = hall;
-    fsm->m_position = position;
-  }
-
-TEST_F(FsmTest, test_update_init) {
-  // Get to state `OpInit`
-  fsm->setState(opInitMock);
-  EXPECT_CALL(*opInit, begin);
-  expected_update_idle();
-  ASSERT_EQ(fsm->getState(), opInitMock);
-
-  // no transition to state `OpReady`
-  expected_isready(Direction_t::Left, Direction_t::Left, 0);
-  expected_update_init();
-  ASSERT_TRUE(fsm->getState() == opInitMock);
-
-  // no transition to state `OpReady`
-  expected_isready(Direction_t::Right, Direction_t::Right, 0);
-  expected_update_init();
-  ASSERT_TRUE(fsm->getState() == opInitMock);
-
-  // transition to state `OpReady`
-  expected_isready(Direction_t::Left, Direction_t::Right, positionPassedRight);
-  expect_get_ready();
-  expected_update();
-  ASSERT_EQ(fsm->getState(), opReadyMock);
-
-  // get to state `OpInit`
-  fsm->setState(opInitMock);
-  expected_update_ready();
-
-  // transition to state `OpReady`
-  expected_isready(Direction_t::Right, Direction_t::Left, positionPassedLeft);
-  expect_get_ready();
-  expected_update();
-  ASSERT_TRUE(fsm->getState() == opReadyMock);
-
-  // test expectations without destroying instance
-  ASSERT_TRUE(Mock::VerifyAndClear(comMock));
-  ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
-  ASSERT_TRUE(Mock::VerifyAndClear(opIdleMock));
-  ASSERT_TRUE(Mock::VerifyAndClear(opInitMock));
-}
-*/

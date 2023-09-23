@@ -26,6 +26,7 @@
 
 #include "beeper.h"
 #include "com.h"
+#include "encoders.h"
 #include "fsm.h"
 #include "solenoids.h"
 
@@ -156,7 +157,7 @@ void OpTest::end() {
   m_autoTestOn = false;
   GlobalFsm::setState(GlobalOpInit::m_instance);
   GlobalOpKnit::init();
-  GlobalOpKnit::setUpInterrupt();
+  GlobalEncoders::setUpInterrupt();
 }
 
 /*!

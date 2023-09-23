@@ -103,12 +103,36 @@ protected:
   }
 
   void reqInit(Machine_t machine) {
-    uint8_t buffer[] = {static_cast<uint8_t>(API_t::reqInit), static_cast<uint8_t>(machine)}; // FIXME needs CRC8 byte
+    uint8_t buffer[] = {static_cast<uint8_t>(API_t::reqInit), static_cast<uint8_t>(machine), 0};
+    buffer[2] = com->CRC8(buffer, 2);
     EXPECT_CALL(*fsmMock, setState(opInit));
     expect_write(true);
     opIdle->com(buffer, sizeof(buffer));
   }
 };
+
+TEST_F(ComTest, test_reqInit_fail1) {
+  uint8_t buffer[] = {static_cast<uint8_t>(API_t::reqInit), static_cast<uint8_t>(Machine_t::Kh930)};
+  EXPECT_CALL(*fsmMock, setState(opInit)).Times(0);
+  expect_write(true);
+  opIdle->com(buffer, sizeof(buffer));
+}
+
+TEST_F(ComTest, test_reqInit_fail2) {
+  uint8_t buffer[] = {static_cast<uint8_t>(API_t::reqInit), static_cast<uint8_t>(Machine_t::Kh930), 0};
+  buffer[2] = com->CRC8(buffer, 2) ^ 1;
+  EXPECT_CALL(*fsmMock, setState(opInit)).Times(0);
+  expect_write(true);
+  opIdle->com(buffer, sizeof(buffer));
+}
+
+TEST_F(ComTest, test_reqInit_fail3) {
+  uint8_t buffer[] = {static_cast<uint8_t>(API_t::reqInit), static_cast<uint8_t>(Machine_t::NoMachine), 0};
+  buffer[2] = com->CRC8(buffer, 2);
+  EXPECT_CALL(*fsmMock, setState(opInit)).Times(0);
+  expect_write(true);
+  opIdle->com(buffer, sizeof(buffer));
+}
 
 /*
 TEST_F(ComTest, test_API) {
@@ -252,19 +276,11 @@ TEST_F(ComTest, test_stopCmd) {
 TEST_F(ComTest, test_quitCmd) {
   EXPECT_CALL(*fsmMock, setState(opInit));
   EXPECT_CALL(*opKnitMock, init);
-  EXPECT_CALL(*opKnitMock, setUpInterrupt);
   com->h_quitCmd();
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(opKnitMock));
   ASSERT_TRUE(Mock::VerifyAndClear(fsmMock));
-}
-*/
-
-/*
-TEST_F(ComTest, test_unrecognized) {
-  uint8_t buffer[] = {0xFF};
-  com->onPacketReceived(buffer, sizeof(buffer));
 }
 */
 
@@ -274,34 +290,12 @@ TEST_F(ComTest, test_cnfline_kh910) {
 
   // message for machine with 200 needles
   uint8_t buffer[30] = {static_cast<uint8_t>(API_t::cnfLine) /* 0x42 */,
-                        0,
-                        0,
-                        1,
-                        0xDE,
-                        0xAD,
-                        0xBE,
-                        0xEF,
-                        0x00,
-                        0x00,
-                        0x00,
-                        0x00,
-                        0x00,
-                        0x00,
-                        0x00,
-                        0x00,
-                        0x00,
-                        0x00,
-                        0x00,
-                        0x00,
-                        0x00,
-                        0x00,
-                        0x00,
-                        0x00,
-                        0x00,
-                        0x00,
-                        0x00,
-                        0x00,
-                        0x00,
+                        0, 0, 1,
+                        0xDE, 0xAD, 0xBE, 0xEF, 0x00,
+                        0x00, 0x00, 0x00, 0x00, 0x00,
+                        0x00, 0x00, 0x00, 0x00, 0x00,
+                        0x00, 0x00, 0x00, 0x00, 0x00,
+                        0x00, 0x00, 0x00, 0x00, 0x00,
                         0xA7}; // CRC8
 
   // start job
@@ -333,7 +327,7 @@ TEST_F(ComTest, test_cnfline_kh910) {
 
   // not enough bytes in buffer
   EXPECT_CALL(*opKnitMock, setNextLine).Times(0);
-  com->h_cnfLine(buffer, sizeof(buffer));
+  com->h_cnfLine(buffer, sizeof(buffer) - 1);
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(opKnitMock));
@@ -347,14 +341,22 @@ TEST_F(ComTest, test_cnfline_kh270) {
   // message for KH270
   // CRC8 calculated with
   // http://tomeko.net/online_tools/crc8.php?lang=en
-  uint8_t buffer[20] = {static_cast<uint8_t>(API_t::cnfLine), 0, 0, 1,
+  uint8_t buffer[20] = {static_cast<uint8_t>(API_t::cnfLine),
+                        0, 0, 1,
                         0xDE, 0xAD, 0xBE, 0xEF, 0x00,
                         0x00, 0x00, 0x00, 0x00, 0x00,
                         0x00, 0x00, 0x00, 0x00, 0x00,
-                        0xab};  // CRC8
-  // start KH270 job
-  opKnitMock->startOperation(Kh270, 0, 113, pattern, false);
-  com->onPacketReceived(buffer, sizeof(buffer));
+                        0xA7}; // CRC8
+
+  // start job
+  reqInit(Machine_t::Kh270);
+  opKnitMock->begin();
+  opKnitMock->startKnitting(0, 113, pattern, false);
+
+  // Last line accepted
+  EXPECT_CALL(*opKnitMock, setNextLine).WillOnce(Return(true));
+  EXPECT_CALL(*opKnitMock, setLastLine).Times(1);
+  com->h_cnfLine(buffer, sizeof(buffer));
 }
 */
 

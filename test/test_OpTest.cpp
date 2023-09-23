@@ -109,6 +109,30 @@ protected:
   }
 };
 
+TEST_F(OpTestTest, test_state) {
+  ASSERT_EQ(opTest->state(), OpState_t::Test);
+}
+
+TEST_F(OpTestTest, test_init) {
+  // nothing
+  opTest->init();
+}
+
+TEST_F(OpTestTest, test_enabled) {
+  const uint8_t stopCmd[] = {static_cast<uint8_t>(API_t::stopCmd)};
+  const uint8_t autoReadCmd[] = {static_cast<uint8_t>(API_t::autoReadCmd)};
+  const uint8_t autoTestCmd[] = {static_cast<uint8_t>(API_t::autoTestCmd)};
+  opTest->com(stopCmd, 1);
+  ASSERT_EQ(opTest->enabled(), false);
+  opTest->com(autoReadCmd, 1);
+  ASSERT_EQ(opTest->enabled(), true);
+  opTest->com(autoTestCmd, 1);
+  ASSERT_EQ(opTest->enabled(), true);
+  opTest->com(stopCmd, 1);
+  opTest->com(autoTestCmd, 1);
+  ASSERT_EQ(opTest->enabled(), true);
+}
+
 TEST_F(OpTestTest, test_helpCmd) {
   expect_write(false);
   opTest->helpCmd();
@@ -160,7 +184,7 @@ TEST_F(OpTestTest, test_setAllCmd_fail1) {
 }
 
 TEST_F(OpTestTest, test_setAllCmd_success) {
-  const uint8_t buf[] = {static_cast<uint8_t>(API_t::setAllCmd), 0xff, 0xff};
+  const uint8_t buf[] = {static_cast<uint8_t>(API_t::setAllCmd), 0xFF, 0xFF};
   expect_write(true);
   opTest->setAllCmd(buf, 3);
 }
@@ -184,20 +208,22 @@ TEST_F(OpTestTest, test_readEncodersCmd_high) {
 }
 
 TEST_F(OpTestTest, test_autoReadCmd) {
+  const uint8_t buf[] = {static_cast<uint8_t>(API_t::autoReadCmd)};
   expect_write(true);
-  opTest->autoReadCmd();
+  opTest->com(buf, 1);
 }
 
 TEST_F(OpTestTest, test_autoTestCmd) {
+  const uint8_t buf[] = {static_cast<uint8_t>(API_t::autoTestCmd)};
   expect_write(true);
-  opTest->autoTestCmd();
+  opTest->com(buf, 1);
 }
 
 TEST_F(OpTestTest, test_quitCmd) {
+  const uint8_t buf[] = {static_cast<uint8_t>(API_t::quitCmd)};
   EXPECT_CALL(*opKnitMock, init);
-  /* EXPECT_CALL(*opKnitMock, setUpInterrupt); */ // FIXME is not called for some reason
   EXPECT_CALL(*fsmMock, setState(opInit));
-  opTest->end();
+  opTest->com(buf, 1);
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(opKnitMock));
@@ -210,10 +236,9 @@ TEST_F(OpTestTest, test_loop_null) {
   opTest->update();
 }
 
-TEST_F(OpTestTest, test_loop_autoTest) {
+TEST_F(OpTestTest, test_autoRead) {
   expect_startTest(0U);
   opTest->autoReadCmd();
-  opTest->autoTestCmd();
 
   // nothing has happened yet
   EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(TEST_LOOP_DELAY - 1));
@@ -221,8 +246,6 @@ TEST_F(OpTestTest, test_loop_autoTest) {
   expect_write(false);
   expect_readEOLsensors(false);
   expect_readEncoders(false);
-  EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, HIGH)).Times(0);
-  EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_B, HIGH)).Times(0);
   opTest->update();
 
   // m_timerEventOdd = false
@@ -231,8 +254,6 @@ TEST_F(OpTestTest, test_loop_autoTest) {
   expect_write(true);
   expect_readEOLsensors(false);
   expect_readEncoders(false);
-  EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, HIGH));
-  EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_B, HIGH));
   opTest->update();
 
   // m_timerEventOdd = false
@@ -241,8 +262,6 @@ TEST_F(OpTestTest, test_loop_autoTest) {
   expect_write(false);
   expect_readEOLsensors(true);
   expect_readEncoders(true);
-  EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, LOW));
-  EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_B, LOW));
   opTest->update();
 
   // after `stopCmd()`
@@ -252,6 +271,45 @@ TEST_F(OpTestTest, test_loop_autoTest) {
   expect_write(false);
   expect_readEOLsensors(false);
   expect_readEncoders(false);
+  opTest->update();
+
+  // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(opKnitMock));
+}
+
+TEST_F(OpTestTest, test_autoTest) {
+  expect_startTest(0U);
+  opTest->autoTestCmd();
+
+  // nothing has happened yet
+  EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(TEST_LOOP_DELAY - 1));
+  EXPECT_CALL(*opKnitMock, encodePosition);
+  expect_write(false);
+  EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, HIGH)).Times(0);
+  EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_B, HIGH)).Times(0);
+  opTest->update();
+
+  // m_timerEventOdd = false
+  EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(TEST_LOOP_DELAY));
+  EXPECT_CALL(*opKnitMock, encodePosition);
+  expect_write(true);
+  EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, HIGH));
+  EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_B, HIGH));
+  opTest->update();
+
+  // m_timerEventOdd = false
+  EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(2 * TEST_LOOP_DELAY));
+  EXPECT_CALL(*opKnitMock, encodePosition);
+  expect_write(false);
+  EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, LOW));
+  EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_B, LOW));
+  opTest->update();
+
+  // after `stopCmd()`
+  opTest->stopCmd();
+  EXPECT_CALL(*arduinoMock, millis).Times(0);
+  EXPECT_CALL(*opKnitMock, encodePosition).Times(0);
+  expect_write(false);
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, _)).Times(0);
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_B, _)).Times(0);
   opTest->update();
@@ -263,3 +321,10 @@ TEST_F(OpTestTest, test_loop_autoTest) {
 TEST_F(OpTestTest, test_startTest_success) {
   expect_startTest(0U);
 }
+
+TEST_F(OpTestTest, test_unrecognized) {
+  // nothing
+  const uint8_t buffer[] = {0xFF};
+  opTest->com(buffer, 1);
+}
+

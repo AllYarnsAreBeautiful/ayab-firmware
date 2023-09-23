@@ -37,8 +37,6 @@ public:
   MOCK_METHOD2(com, void(const uint8_t *buffer, size_t size));
   MOCK_METHOD0(end, void());
 
-  MOCK_METHOD0(setUpInterrupt, void());
-  MOCK_METHOD0(isr, void());
   MOCK_METHOD4(startKnitting, Err_t(uint8_t startNeedle,
                                     uint8_t stopNeedle, uint8_t *pattern_start,
                                     bool continuousReportingEnabled));

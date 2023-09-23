@@ -50,6 +50,11 @@ void Com::update() {
   gComMock->update();
 }
 
+uint8_t Com::CRC8(const uint8_t *buffer, size_t len) const {
+  assert(gComMock != nullptr);
+  return gComMock->CRC8(buffer, len);
+}
+
 void Com::send(uint8_t *payload, size_t length) const {
   assert(gComMock != nullptr);
   gComMock->send(payload, length);

@@ -97,7 +97,7 @@ void OpKnit::init() {
  */
 void OpKnit::begin() {
   GlobalEncoders::init(GlobalFsm::getMachineType());
-  setUpInterrupt();
+  GlobalEncoders::setUpInterrupt();
 }
 
 /*!
@@ -130,29 +130,6 @@ void OpKnit::end() {
 
   // detaching ENC_PIN_A, Interrupt #0
   /* detachInterrupt(digitalPinToInterrupt(ENC_PIN_A)); */
-}
-
-/*!
- * \brief Initialize interrupt service routine for OpKnit object.
- */
-void OpKnit::setUpInterrupt() {
-  // (re-)attach ENC_PIN_A(=2), interrupt #0
-  detachInterrupt(digitalPinToInterrupt(ENC_PIN_A));
-  // Attaching ENC_PIN_A, Interrupt #0
-  // This interrupt cannot be enabled until
-  // the machine type has been validated.
-  attachInterrupt(digitalPinToInterrupt(ENC_PIN_A), GlobalOpKnit::isr, CHANGE);
-}
-
-/*!
- * \brief Interrupt service routine.
- *
- * Update machine state data.
- * Must execute as fast as possible.
- * Machine type assumed valid.
- */
-void OpKnit::isr() {
-  GlobalEncoders::encA_interrupt();
 }
 
 /*!
@@ -214,7 +191,7 @@ void OpKnit::encodePosition() {
     // store current encoder position for next call of this function
     m_sOldPosition = position;
     calculatePixelAndSolenoid();
-    GlobalCom::send_indState(Err_t::Unspecified_failure);
+    GlobalCom::send_indState(Err_t::Unspecified_failure); // FIXME is this the right error code?
   }
 }
 

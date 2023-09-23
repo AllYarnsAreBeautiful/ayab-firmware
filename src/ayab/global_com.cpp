@@ -36,6 +36,10 @@ void GlobalCom::update() {
   m_instance->update();
 }
 
+uint8_t GlobalCom::CRC8(const uint8_t *buffer, size_t len) {
+  return m_instance->CRC8(buffer, len);
+}
+
 void GlobalCom::send(uint8_t *payload, size_t length) {
   m_instance->send(payload, length);
 }

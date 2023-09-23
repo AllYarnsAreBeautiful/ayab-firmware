@@ -32,8 +32,6 @@ public:
   virtual ~OpKnitInterface() = default;
 
   // any methods that need to be mocked should go here
-  virtual void setUpInterrupt() = 0;
-  virtual void isr() = 0;
   virtual Err_t startKnitting(uint8_t startNeedle,
                               uint8_t stopNeedle, uint8_t *pattern_start,
                               bool continuousReportingEnabled) = 0;
@@ -67,10 +65,6 @@ public:
   static void com(const uint8_t *buffer, size_t size);
   static void end();
 
-  static void setUpInterrupt();
-//#ifndef AYAB_TESTS
-  static void isr();
-//#endif
   static Err_t startKnitting(uint8_t startNeedle,
                              uint8_t stopNeedle, uint8_t *pattern_start,
                              bool continuousReportingEnabled);
@@ -91,8 +85,6 @@ public:
   void com(const uint8_t *buffer, size_t size) final;
   void end() final;
 
-  void setUpInterrupt() final;
-  void isr() final;
   Err_t startKnitting(uint8_t startNeedle,
                       uint8_t stopNeedle, uint8_t *pattern_start,
                       bool continuousReportingEnabled) final;
@@ -132,6 +124,7 @@ private:
 
 #if AYAB_TESTS
   // Note: ideally tests would only rely on the public interface.
+  FRIEND_TEST(OpKnitTest, test_encodePosition); 
   FRIEND_TEST(OpKnitTest, test_getStartOffset);
   FRIEND_TEST(OpKnitTest, test_knit_lastLine_and_no_req);
 #endif

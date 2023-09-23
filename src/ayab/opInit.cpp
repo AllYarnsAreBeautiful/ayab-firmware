@@ -26,6 +26,7 @@
 #include "board.h"
 
 #include "com.h"
+#include "encoders.h"
 #include "fsm.h"
 
 #include "opInit.h"
@@ -51,7 +52,7 @@ void OpInit::init() {
  */
 void OpInit::begin() {
   GlobalEncoders::init(GlobalFsm::getMachineType());
-  GlobalOpKnit::setUpInterrupt();
+  GlobalEncoders::setUpInterrupt();
   digitalWrite(LED_PIN_A, LOW); // green LED off
 }
 

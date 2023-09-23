@@ -68,16 +68,6 @@ void OpKnit::end() {
   gOpKnitMock->end();
 }
 
-void OpKnit::setUpInterrupt() {
-  assert(gOpKnitMock != nullptr);
-  gOpKnitMock->setUpInterrupt();
-}
-
-void OpKnit::isr() {
-  assert(gOpKnitMock != nullptr);
-  gOpKnitMock->isr();
-}
-
 Err_t OpKnit::startKnitting(uint8_t startNeedle,
                              uint8_t stopNeedle, uint8_t *pattern_start,
                              bool continuousReportingEnabled) {

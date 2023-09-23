@@ -84,6 +84,7 @@ public:
   // any methods that need to be mocked should go here
   virtual void init() = 0;
   virtual void update() = 0;
+  virtual uint8_t CRC8(const uint8_t *buffer, size_t len) const = 0;
   virtual void send(uint8_t *payload, size_t length) const = 0;
   virtual void sendMsg(API_t id, const char *msg) = 0;
   virtual void sendMsg(API_t id, char *msg) = 0;
@@ -115,6 +116,7 @@ public:
 
   static void init();
   static void update();
+  static uint8_t CRC8(const uint8_t *buffer, size_t len);
   static void send(uint8_t *payload, size_t length);
   static void sendMsg(API_t id, const char *msg);
   static void sendMsg(API_t id, char *msg);
@@ -137,6 +139,7 @@ class Com : public ComInterface {
 public:
   void init() final;
   void update() final;
+  uint8_t CRC8(const uint8_t *buffer, size_t len) const;
   void send(uint8_t *payload, size_t length) const final;
   void sendMsg(API_t id, const char *msg) final;
   void sendMsg(API_t id, char *msg) final;
@@ -160,7 +163,6 @@ private:
   void send_cnfInit(Err_t error) const;
   void send_cnfStart(Err_t error) const;
   void send_cnfTest(Err_t error) const;
-  uint8_t CRC8(const uint8_t *buffer, size_t len) const;
 };
 
 #endif // COM_H_
