@@ -564,33 +564,31 @@ TEST_F(OpKnitTest, test_knit_lastLine) {
   ASSERT_TRUE(Mock::VerifyAndClear(comMock));
 }
 
-/* FIXME - This test fails for some reason TP 2023-09-22
 TEST_F(OpKnitTest, test_knit_lastLine_and_no_req) {
-  get_to_knit(Machine_t::Kh910);
+  expected_dispatch_knit(true);
+
+  // Run one knit inside the working needles.
+  EXPECT_CALL(*solenoidsMock, setSolenoid);
+  expected_cacheISR(opKnit->getStartOffset(Direction_t::Left) + 20);
+  // `m_workedOnLine` is set to true
+  expected_dispatch_knit(false);
+
+  // Position has changed since last call to operate function
+  // `m_pixelToSet` is above `m_stopNeedle` + END_OF_LINE_OFFSET_R
+  expected_cacheISR(NUM_NEEDLES[static_cast<uint8_t>(Machine_t::Kh910)] + END_OF_LINE_OFFSET_R[static_cast<uint8_t>(Machine_t::Kh910)] + 1 + opKnit->getStartOffset(Direction_t::Left));
+
+  // `m_lastLineFlag` is `true`
+  opKnit->setLastLine();
 
   // Note: probing private data and methods to get full branch coverage.
-  //opKnit->m_stopNeedle = 100;
-  //uint8_t wanted_pixel = opKnit->m_stopNeedle + END_OF_LINE_OFFSET_R[static_cast<uint8_t>(Machine_t::Kh910)] + 1;
-  opKnit->m_startNeedle = 100;
-  uint8_t wanted_pixel = opKnit->m_startNeedle - END_OF_LINE_OFFSET_L[static_cast<uint8_t>(Machine_t::Kh910)] - 1;
-  fsm->m_direction = Direction_t::Left;
-  fsm->m_position = wanted_pixel + opKnit->getStartOffset(Direction_t::Right);
-  opKnit->m_firstRun = false;
-  opKnit->m_workedOnLine = true;
   opKnit->m_lineRequested = false;
-  opKnit->m_lastLineFlag = true;
 
   // EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, 1));
   EXPECT_CALL(*solenoidsMock, setSolenoid);
   EXPECT_CALL(*beeperMock, endWork);
   EXPECT_CALL(*solenoidsMock, setSolenoids(SOLENOIDS_BITMASK));
   //EXPECT_CALL(*beeperMock, finishedLine);
-  opKnit->knit();
-
-  ASSERT_EQ(opKnit->getStartOffset(Direction_t::NoDirection), 0);
-
-  fsm->m_carriage = Carriage_t::NoCarriage;
-  ASSERT_EQ(opKnit->getStartOffset(Direction_t::Right), 0);
+  expected_dispatch_knit(false);
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
@@ -598,7 +596,6 @@ TEST_F(OpKnitTest, test_knit_lastLine_and_no_req) {
   ASSERT_TRUE(Mock::VerifyAndClear(beeperMock));
   ASSERT_TRUE(Mock::VerifyAndClear(comMock));
 }
-*/
 
 TEST_F(OpKnitTest, test_knit_same_position) {
   expected_dispatch_knit(true);

@@ -23,7 +23,7 @@
  */
 
 #include "board.h"
-/* #include <util/atomic.h> */ // FIXME need <avr/io>, <avr/interrupt>
+#include <util/atomic.h>
 
 #include "encoders.h"
 #include "fsm.h"
@@ -68,7 +68,7 @@ void Fsm::update() {
  */
 void Fsm::cacheEncoders() {
   // update machine state data
-  /* ATOMIC_BLOCK(ATOMIC_RESTORESTATE) { */ // FIXME need <avr/io>, <avr/interrupt>
+  /* ATOMIC_BLOCK(ATOMIC_RESTORESTATE) { */ // FIXME tests SEGFAULT
     m_beltShift  = GlobalEncoders::getBeltShift();
     m_carriage   = GlobalEncoders::getCarriage();
     m_direction  = GlobalEncoders::getDirection();

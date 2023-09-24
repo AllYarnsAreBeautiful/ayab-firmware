@@ -192,7 +192,7 @@ private:
 
 #if AYAB_TESTS
   // Note: ideally tests would only rely on the public interface.
-  FRIEND_TEST(EncodersTest, test_encA_rising_in_front_G_carriage);
+  FRIEND_TEST(EncodersTest, test_encA_falling_not_in_front);
 #endif
 };
 

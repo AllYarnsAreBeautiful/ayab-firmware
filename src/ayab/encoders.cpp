@@ -143,7 +143,7 @@ Machine_t Encoders::getMachineType() {
  */
 void Encoders::encA_rising() {
   // Update direction
-  m_direction = digitalRead(ENC_PIN_B) != 0 ? Direction_t::Right : Direction_t::Left;
+  m_direction = digitalRead(ENC_PIN_B) ? Direction_t::Right : Direction_t::Left;
 
   // Update carriage position
   if ((Direction_t::Right == m_direction) && (m_position < END_RIGHT[static_cast<uint8_t>(m_machineType)])) {
@@ -171,7 +171,7 @@ void Encoders::encA_rising() {
     Carriage detected_carriage = Carriage_t::NoCarriage;
     uint8_t start_position = END_LEFT_PLUS_OFFSET[static_cast<uint8_t>(m_machineType)];
 
-    if (hallValue >= (FILTER_L_MIN[static_cast<uint8_t>(m_machineType)])) {
+    if (hallValue >= FILTER_L_MIN[static_cast<uint8_t>(m_machineType)]) {
       detected_carriage = Carriage_t::Knit;
     } else {
       detected_carriage = Carriage_t::Lace;
@@ -184,9 +184,7 @@ void Encoders::encA_rising() {
       if (detected_carriage == Carriage_t::Knit) {
         start_position = start_position + MAGNET_DISTANCE_270;
       }
-    } else if (m_carriage == Carriage_t::NoCarriage) {
-      m_carriage = detected_carriage;
-    } else if ((m_carriage != detected_carriage) && (m_position > start_position)) {
+    } else if ((m_carriage != Carriage_t::NoCarriage) && (m_carriage != detected_carriage) && (m_position > start_position)) {
       m_carriage = Carriage_t::Garter;
 
       // Belt shift and start position were set when the first magnet passed

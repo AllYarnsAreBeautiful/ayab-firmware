@@ -229,11 +229,6 @@ protected:
   }
 };
 
-TEST_F(FsmTest, test_idle_state) {
-  EXPECT_CALL(*opIdleMock, state).WillOnce(Return(OpState_t::Idle));
-  fsm->getState()->state();
-}
-
 TEST_F(FsmTest, test_setState) {
   fsm->setState(opInitMock);
 

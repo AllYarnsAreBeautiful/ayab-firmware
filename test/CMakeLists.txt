@@ -33,6 +33,7 @@ set(COMMON_INCLUDES
     )
 set(EXTERNAL_LIB_INCLUDES
     ${LIBRARY_DIRECTORY}/Adafruit_MCP23008
+    ${LIBRARY_DIRECTORY}/avr-libc/include
     )
 set(COMMON_SOURCES
     ${PROJECT_SOURCE_DIR}/test_boards.cpp

@@ -68,9 +68,24 @@ protected:
   OpKnitMock *opKnitMock;
 };
 
+TEST_F(OpErrorTest, test_state) {
+  ASSERT_EQ(opError->state(), OpState_t::Error);
+}
+
 TEST_F(OpErrorTest, test_begin) {
   EXPECT_CALL(*arduinoMock, millis);
   opError->begin();
+}
+
+TEST_F(OpErrorTest, test_init) {
+  // nothing
+  opError->init();
+}
+
+TEST_F(OpErrorTest, test_com) {
+  // nothing
+  const uint8_t *buffer = {};
+  opError->com(buffer, 0);
 }
 
 TEST_F(OpErrorTest, test_end) {
