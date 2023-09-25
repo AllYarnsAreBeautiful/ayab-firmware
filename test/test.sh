@@ -45,7 +45,9 @@ GTEST_COLOR=1 ctest $ctest_verbose --output-on-failure .
 
 cd ../..
 
-GCOVR_ARGS="--exclude-unreachable-branches --exclude-throw-branches \
+GCOVR_ARGS="--exclude-unreachable-branches \
+            --exclude-throw-branches \
+            --decisions \
             --exclude-directories 'test/build/arduino_mock$' \
 	    -e test_* -e lib* \
 	    -e src/ayab/global_OpIdle.cpp \

@@ -195,7 +195,7 @@ void Encoders::encA_rising() {
     }
 
     // Belt shift signal only decided in front of hall sensor
-    m_beltShift = digitalRead(ENC_PIN_C) != 0 ? BeltShift::Regular : BeltShift::Shifted;
+    m_beltShift = digitalRead(ENC_PIN_C) ? BeltShift::Regular : BeltShift::Shifted;
 
     // Known position of the carriage -> overwrite position
     m_position = start_position;
@@ -238,7 +238,7 @@ void Encoders::encA_falling() {
     }
 
     // Belt shift signal only decided in front of hall sensor
-    m_beltShift = digitalRead(ENC_PIN_C) != 0 ? BeltShift::Shifted : BeltShift::Regular;
+    m_beltShift = digitalRead(ENC_PIN_C) ? BeltShift::Shifted : BeltShift::Regular;
 
     // Known position of the carriage -> overwrite position
     m_position = END_RIGHT_MINUS_OFFSET[static_cast<uint8_t>(m_machineType)];

@@ -58,10 +58,6 @@ extern OpReadyMock *opReady;
 extern OpTestMock  *opTest;
 extern OpErrorMock *opError;
 
-// Defaults for position
-const uint8_t positionPassedLeft = (END_LEFT_PLUS_OFFSET[static_cast<uint8_t>(Machine_t::Kh910)] + GARTER_SLOP) + 1;
-const uint8_t positionPassedRight = (END_RIGHT_MINUS_OFFSET[static_cast<uint8_t>(Machine_t::Kh910)] - GARTER_SLOP) - 1;
-
 class ControllerTest : public ::testing::Test {
 protected:
   void SetUp() override {
@@ -137,15 +133,6 @@ protected:
 
   void expect_indState() {
     EXPECT_CALL(*comMock, send_indState);
-  }
-
-  void expect_get_ready() {
-    // start in state `OpInit`
-    ASSERT_EQ(controller->getState(), opInitMock);
-
-    expect_indState();
-    EXPECT_CALL(*solenoidsMock, setSolenoids(SOLENOIDS_BITMASK));
-    EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, LOW));
   }
 
   void expected_isready(Direction_t dir, Direction_t hall, uint8_t position) {

@@ -42,7 +42,7 @@ OpState_t OpInit::state() {
 }
 
 /*!
- * \brief OpInitialize state OpInit
+ * \brief Initialize state OpInit
  */
 void OpInit::init() {
 }

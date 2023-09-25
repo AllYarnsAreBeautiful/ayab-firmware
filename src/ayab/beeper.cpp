@@ -107,7 +107,7 @@ void Beeper::update() {
     }
     break;
   case BeepState::Idle:
-  default: // GCOVR_EXCL_LINE (can't reach default)
+  default: // GCOVR_EXCL_LINE cannot reach default
     break;
   }
 }
