@@ -35,7 +35,7 @@
 #include <opError.h>
 
 #include <opKnit_mock.h>
-#include <fsm_mock.h>
+#include <controller_mock.h>
 
 // global definitions
 // references everywhere else must use `extern`
@@ -50,23 +50,23 @@ OpReady   *opReady   = new OpReady();
 OpTest    *opTest    = new OpTest();
 OpError   *opError   = new OpError();
 
-FsmMock    *fsm    = new FsmMock();
-OpKnitMock *opKnit = new OpKnitMock();
+ControllerMock *controller = new ControllerMock();
+OpKnitMock     *opKnit     = new OpKnitMock();
 
 // initialize static members
-BeeperInterface    *GlobalBeeper::m_instance    = beeper;
-ComInterface       *GlobalCom::m_instance       = com;
-EncodersInterface  *GlobalEncoders::m_instance  = encoders;
-SolenoidsInterface *GlobalSolenoids::m_instance = solenoids;
+BeeperInterface     *GlobalBeeper::m_instance     = beeper;
+ComInterface        *GlobalCom::m_instance        = com;
+EncodersInterface   *GlobalEncoders::m_instance   = encoders;
+SolenoidsInterface  *GlobalSolenoids::m_instance  = solenoids;
 
-OpIdleInterface    *GlobalOpIdle::m_instance    = opIdle;
-OpInitInterface    *GlobalOpInit::m_instance    = opInit;
-OpReadyInterface   *GlobalOpReady::m_instance   = opReady;
-OpTestInterface    *GlobalOpTest::m_instance    = opTest;
-OpErrorInterface   *GlobalOpError::m_instance   = opError;
+OpIdleInterface     *GlobalOpIdle::m_instance     = opIdle;
+OpInitInterface     *GlobalOpInit::m_instance     = opInit;
+OpReadyInterface    *GlobalOpReady::m_instance    = opReady;
+OpTestInterface     *GlobalOpTest::m_instance     = opTest;
+OpErrorInterface    *GlobalOpError::m_instance    = opError;
 
-FsmInterface    *GlobalFsm::m_instance    = fsm;
-OpKnitInterface *GlobalOpKnit::m_instance = opKnit;
+ControllerInterface *GlobalController::m_instance = controller;
+OpKnitInterface     *GlobalOpKnit::m_instance     = opKnit;
 
 int main(int argc, char *argv[]) {
   ::testing::InitGoogleMock(&argc, argv);

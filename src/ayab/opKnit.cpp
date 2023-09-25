@@ -23,13 +23,13 @@
  *    http://ayab-knitting.com
  */
 
-#include "board.h"
 #include <Arduino.h>
+#include "board.h"
 
 #include "beeper.h"
 #include "com.h"
+#include "controller.h"
 #include "encoders.h"
-#include "fsm.h"
 #include "solenoids.h"
 
 #include "opKnit.h"
@@ -96,7 +96,7 @@ void OpKnit::init() {
  * \brief Start `OpKnit` operation.
  */
 void OpKnit::begin() {
-  GlobalEncoders::init(GlobalFsm::getMachineType());
+  GlobalEncoders::init(GlobalController::getMachineType());
   GlobalEncoders::setUpInterrupt();
 }
 
@@ -144,11 +144,11 @@ Err_t OpKnit::startKnitting(uint8_t startNeedle,
                              uint8_t stopNeedle, uint8_t *pattern_start,
                              bool continuousReportingEnabled) {
   /*
-  if (GlobalFsm::getState() != GlobalOpReady::m_instance) {
+  if (GlobalController::getState() != GlobalOpReady::m_instance) {
     return Err_t::Wrong_machine_state;
   }
   */
-  Machine_t machineType = GlobalFsm::getMachineType();
+  Machine_t machineType = GlobalController::getMachineType();
   if (machineType == Machine_t::NoMachine) {
     return Err_t::No_machine_type;
   }
@@ -172,7 +172,7 @@ Err_t OpKnit::startKnitting(uint8_t startNeedle,
   m_lastLineFlag = false;
 
   // proceed to next state
-  GlobalFsm::setState(GlobalOpKnit::m_instance);
+  GlobalController::setState(GlobalOpKnit::m_instance);
   GlobalBeeper::ready();
 
   // success
@@ -185,7 +185,7 @@ Err_t OpKnit::startKnitting(uint8_t startNeedle,
  * Used in hardware test procedure.
  */
 void OpKnit::encodePosition() {
-  auto position = GlobalFsm::getPosition();
+  auto position = GlobalController::getPosition();
   if (m_sOldPosition != position) {
     // only act if there is an actual change of position
     // store current encoder position for next call of this function
@@ -210,14 +210,14 @@ bool OpKnit::isReady() {
   // will be a second magnet passing the sensor.
   // Keep track of the last seen hall sensor because we may be making a decision
   // after it passes.
-  auto hallActive = GlobalFsm::getHallActive();
+  auto hallActive = GlobalController::getHallActive();
   if (hallActive != Direction_t::NoDirection) {
     m_lastHall = hallActive;
   }
 
-  auto direction = GlobalFsm::getDirection();
-  auto position = GlobalFsm::getPosition();
-  auto machineType = static_cast<uint8_t>(GlobalFsm::getMachineType());
+  auto direction = GlobalController::getDirection();
+  auto position = GlobalController::getPosition();
+  auto machineType = static_cast<uint8_t>(GlobalController::getMachineType());
   bool passedLeft = (Direction_t::Right == direction) && (Direction_t::Left == m_lastHall) &&
         (position > (END_LEFT_PLUS_OFFSET[machineType] + GARTER_SLOP));
   bool passedRight = (Direction_t::Left == direction) && (Direction_t::Right == m_lastHall) &&
@@ -262,7 +262,7 @@ void OpKnit::knit() {
   }
   m_prevState = state;
 #else
-  auto position = GlobalFsm::getPosition();
+  auto position = GlobalController::getPosition();
   // only act if there is an actual change of position
   if (m_sOldPosition == position) {
     return;
@@ -295,7 +295,7 @@ void OpKnit::knit() {
     m_workedOnLine = true;
   }
 
-  auto machineType = static_cast<uint8_t>(GlobalFsm::getMachineType());
+  auto machineType = static_cast<uint8_t>(GlobalController::getMachineType());
   if (((m_pixelToSet < m_startNeedle - END_OF_LINE_OFFSET_L[machineType]) ||
        (m_pixelToSet > m_stopNeedle + END_OF_LINE_OFFSET_R[machineType])) &&
       m_workedOnLine) {
@@ -308,7 +308,7 @@ void OpKnit::knit() {
       ++m_currentLineNumber;
       reqLine(m_currentLineNumber);
     } else if (m_lastLineFlag) {
-      GlobalFsm::setState(GlobalOpReady::m_instance);
+      GlobalController::setState(GlobalOpReady::m_instance);
     }
   }
 #endif // DBG_NOMACHINE
@@ -319,8 +319,8 @@ void OpKnit::knit() {
  * \return Start offset, or 0 if unobtainable.
  */
 uint8_t OpKnit::getStartOffset(const Direction_t direction) {
-  auto carriage = GlobalFsm::getCarriage();
-  auto machineType = GlobalFsm::getMachineType();
+  auto carriage = GlobalController::getCarriage();
+  auto machineType = GlobalController::getMachineType();
   if ((direction == Direction_t::NoDirection) ||
       (carriage == Carriage_t::NoCarriage) ||
       (machineType == Machine_t::NoMachine)) {
@@ -375,11 +375,11 @@ void OpKnit::reqLine(uint8_t lineNumber) {
 bool OpKnit::calculatePixelAndSolenoid() {
   uint8_t startOffset = 0;
 
-  auto direction = GlobalFsm::getDirection();
-  auto position = GlobalFsm::getPosition();
-  auto beltShift = GlobalFsm::getBeltShift();
-  auto carriage = GlobalFsm::getCarriage();
-  auto machineType = GlobalFsm::getMachineType();
+  auto direction = GlobalController::getDirection();
+  auto position = GlobalController::getPosition();
+  auto beltShift = GlobalController::getBeltShift();
+  auto carriage = GlobalController::getCarriage();
+  auto machineType = GlobalController::getMachineType();
   switch (direction) {
   // calculate the solenoid and pixel to be set
   // implemented according to machine manual

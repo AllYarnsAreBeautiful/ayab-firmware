@@ -1,5 +1,5 @@
 /*!`
- * \file fsm.h
+ * \file op.h
  *
  * This file is part of AYAB.
  *

@@ -28,7 +28,7 @@
 #include <opReady.h>
 #include <opTest.h>
 
-#include <fsm_mock.h>
+#include <controller_mock.h>
 #include <opKnit_mock.h>
 
 using ::testing::_;
@@ -40,7 +40,7 @@ using ::testing::Return;
 extern OpReady *opReady;
 extern OpTest *opTest;
 
-extern FsmMock *fsm;
+extern ControllerMock *controller;
 extern OpKnitMock *opKnit;
 
 class OpReadyTest : public ::testing::Test {
@@ -51,13 +51,13 @@ protected:
     // serialCommandMock = serialCommandMockInstance();
 
     // pointers to global instances
-    fsmMock = fsm;
+    controllerMock = controller;
     opKnitMock = opKnit;
 
     // The global instances do not get destroyed at the end of each test.
     // Ordinarily the mock instance would be local and such behaviour would
     // cause a memory leak. We must notify the test that this is not the case.
-    Mock::AllowLeak(fsmMock);
+    Mock::AllowLeak(controllerMock);
     Mock::AllowLeak(opKnitMock);
   }
 
@@ -67,7 +67,7 @@ protected:
   }
 
   ArduinoMock *arduinoMock;
-  FsmMock *fsmMock;
+  ControllerMock *controllerMock;
   SerialMock *serialMock;
   OpKnitMock *opKnitMock;
 };
@@ -93,7 +93,7 @@ TEST_F(OpReadyTest, test_reqStart) {
 }
 
 TEST_F(OpReadyTest, test_reqTest) {
-  EXPECT_CALL(*fsmMock, setState(opTest));
+  EXPECT_CALL(*controllerMock, setState(opTest));
   const uint8_t buffer[] = {static_cast<uint8_t>(API_t::reqTest)};
   opReady->com(buffer, 1);
 }

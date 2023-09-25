@@ -26,8 +26,8 @@
 
 #include "beeper.h"
 #include "com.h"
+#include "controller.h"
 #include "encoders.h"
-#include "fsm.h"
 #include "solenoids.h"
 
 #include "opIdle.h"
@@ -42,8 +42,8 @@
 // containing static methods.
 constexpr GlobalBeeper    *beeper;
 constexpr GlobalCom       *com;
+constexpr GlobalController       *controller;
 constexpr GlobalEncoders  *encoders;
-constexpr GlobalFsm       *fsm;
 constexpr GlobalSolenoids *solenoids;
 
 constexpr GlobalOpIdle    *opIdle;
@@ -60,7 +60,7 @@ constexpr GlobalOpError   *opError;
 BeeperInterface    *GlobalBeeper::m_instance    = new Beeper();
 ComInterface       *GlobalCom::m_instance       = new Com();
 EncodersInterface  *GlobalEncoders::m_instance  = new Encoders();
-FsmInterface       *GlobalFsm::m_instance       = new Fsm();
+ControllerInterface       *GlobalController::m_instance       = new Controller();
 SolenoidsInterface *GlobalSolenoids::m_instance = new Solenoids();
 
 OpIdleInterface    *GlobalOpIdle::m_instance    = new OpIdle();
@@ -77,7 +77,7 @@ void setup() {
   // Objects running in async context
   GlobalBeeper::init(false);
   GlobalCom::init();
-  GlobalFsm::init();
+  GlobalController::init();
   GlobalSolenoids::init();
 
   GlobalOpKnit::init();
@@ -89,7 +89,7 @@ void setup() {
 void loop() {
   // Non-blocking methods
   // Cooperative Round Robin scheduling
-  GlobalFsm::update();
+  GlobalController::update();
   GlobalCom::update();
   if (GlobalBeeper::enabled()) {
     GlobalBeeper::update();

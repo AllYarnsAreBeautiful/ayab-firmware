@@ -1,5 +1,5 @@
 /*!
- * \file global_fsm.cpp
+ * \file global_controller.cpp
  * This file is part of AYAB.
  *
  *    AYAB is free software: you can redistribute it and/or modify
@@ -20,54 +20,54 @@
  *    http://ayab-knitting.com
  */
 
-#include "fsm.h"
+#include "controller.h"
 
 // static member functions
 
-void GlobalFsm::init() {
+void GlobalController::init() {
   m_instance->init();
 }
 
-void GlobalFsm::update() {
+void GlobalController::update() {
   m_instance->update();
 }
 
-void GlobalFsm::cacheEncoders() {
+void GlobalController::cacheEncoders() {
   m_instance->cacheEncoders();
 }
 
-void GlobalFsm::setState(OpInterface* state) {
+void GlobalController::setState(OpInterface* state) {
   m_instance->setState(state);
 }
 
-OpInterface *GlobalFsm::getState() {
+OpInterface *GlobalController::getState() {
   return m_instance->getState();
 }
 
-void GlobalFsm::setMachineType(Machine_t machineType) {
+void GlobalController::setMachineType(Machine_t machineType) {
   m_instance->setMachineType(machineType);
 }
 
-Machine_t GlobalFsm::getMachineType() {
+Machine_t GlobalController::getMachineType() {
   return m_instance->getMachineType();
 }
 
-BeltShift_t GlobalFsm::getBeltShift() {
+BeltShift_t GlobalController::getBeltShift() {
   return m_instance->getBeltShift();
 }
 
-Carriage_t GlobalFsm::getCarriage() {
+Carriage_t GlobalController::getCarriage() {
   return m_instance->getCarriage();
 }
 
-Direction_t GlobalFsm::getDirection() {
+Direction_t GlobalController::getDirection() {
   return m_instance->getDirection();
 }
 
-Direction_t GlobalFsm::getHallActive() {
+Direction_t GlobalController::getHallActive() {
   return m_instance->getHallActive();
 }
 
-uint8_t GlobalFsm::getPosition() {
+uint8_t GlobalController::getPosition() {
   return m_instance->getPosition();
 }

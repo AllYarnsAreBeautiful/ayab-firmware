@@ -25,8 +25,9 @@
 #define OP_KNIT_MOCK_H_
 
 #include <gmock/gmock.h>
+
+#include <controller.h>
 #include <opKnit.h>
-#include <fsm.h>
 
 class OpKnitMock : public OpKnitInterface {
 public:

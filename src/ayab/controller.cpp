@@ -1,5 +1,5 @@
 /*!
- * \file fsm.cpp
+ * \file controller.cpp
  * \brief Class containing methods for knit and test operations.
  *
  * This file is part of AYAB.
@@ -26,7 +26,7 @@
 #include <util/atomic.h>
 
 #include "encoders.h"
-#include "fsm.h"
+#include "controller.h"
 
 #include "opIdle.h"
 
@@ -35,7 +35,7 @@
 /*!
  * \brief Initialize Finite State Machine.
  */
-void Fsm::init() {
+void Controller::init() {
   m_machineType = Machine_t::NoMachine;
   m_carriage = Carriage_t::NoCarriage;
   m_direction = Direction_t::NoDirection;
@@ -49,7 +49,7 @@ void Fsm::init() {
 /*!
  * \brief Dispatch on machine state; update machine state
  */
-void Fsm::update() {
+void Controller::update() {
   cacheEncoders();
   m_currentState->update();
 
@@ -66,7 +66,7 @@ void Fsm::update() {
 /*!
  * \brief Cache Encoder values
  */
-void Fsm::cacheEncoders() {
+void Controller::cacheEncoders() {
   // update machine state data
   /* ATOMIC_BLOCK(ATOMIC_RESTORESTATE) { */ // FIXME tests SEGFAULT
     m_beltShift  = GlobalEncoders::getBeltShift();
@@ -83,7 +83,7 @@ void Fsm::cacheEncoders() {
  *
  * Does not take effect until next `update()`
  */
-void Fsm::setState(OpInterface *state) {
+void Controller::setState(OpInterface *state) {
   m_nextState = state;
 }
 
@@ -91,7 +91,7 @@ void Fsm::setState(OpInterface *state) {
  * \brief Get machine state.
  * \return Current state of Finite State Machine.
  */
-OpInterface *Fsm::getState() {
+OpInterface *Controller::getState() {
   return m_currentState;
 }
 
@@ -99,7 +99,7 @@ OpInterface *Fsm::getState() {
  * \brief Set machine type.
  * \param Machine type.
  */
-void Fsm::setMachineType(Machine_t machineType) {
+void Controller::setMachineType(Machine_t machineType) {
   m_machineType = machineType;
 }
 
@@ -107,7 +107,7 @@ void Fsm::setMachineType(Machine_t machineType) {
  * \brief Get knitting machine type.
  * \return Machine type.
  */
-Machine_t Fsm::getMachineType() {
+Machine_t Controller::getMachineType() {
   return m_machineType;
 }
 
@@ -115,7 +115,7 @@ Machine_t Fsm::getMachineType() {
  * \brief Get cached beltShift value.
  * \return Cached beltShift value.
  */
-BeltShift_t Fsm::getBeltShift() {
+BeltShift_t Controller::getBeltShift() {
   return m_beltShift;
 }
 
@@ -123,7 +123,7 @@ BeltShift_t Fsm::getBeltShift() {
  * \brief Get cached carriage value.
  * \return Cached carriage value.
  */
-Carriage_t Fsm::getCarriage() {
+Carriage_t Controller::getCarriage() {
   return m_carriage;
 }
 
@@ -131,7 +131,7 @@ Carriage_t Fsm::getCarriage() {
  * \brief Get cached direction value.
  * \return Cached direction value.
  */
-Direction_t Fsm::getDirection() {
+Direction_t Controller::getDirection() {
   return m_direction;
 }
 
@@ -139,7 +139,7 @@ Direction_t Fsm::getDirection() {
  * \brief Get cached hallActive value.
  * \return Cached hallActive value.
  */
-Direction_t Fsm::getHallActive() {
+Direction_t Controller::getHallActive() {
   return m_hallActive;
 }
 
@@ -147,6 +147,6 @@ Direction_t Fsm::getHallActive() {
  * \brief Get cached position value.
  * \return Cached position value.
  */
-uint8_t Fsm::getPosition() {
+uint8_t Controller::getPosition() {
   return m_position;
 }

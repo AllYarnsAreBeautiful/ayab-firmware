@@ -28,8 +28,8 @@
 
 #include <beeper_mock.h>
 #include <com_mock.h>
+#include <controller_mock.h>
 #include <encoders_mock.h>
-#include <fsm_mock.h>
 #include <solenoids_mock.h>
 
 #include <opIdle_mock.h>
@@ -44,7 +44,7 @@ using ::testing::Return;
 using ::testing::TypedEq;
 
 extern OpKnit *opKnit;
-extern Fsm *fsm;
+extern Controller *controller;
 
 extern BeeperMock *beeper;
 extern ComMock *com;
@@ -86,7 +86,7 @@ protected:
     Mock::AllowLeak(opTestMock);
 
     // start in state `OpIdle`
-    fsm->init();
+    controller->init();
     opIdle->init();
     opInit->init();
     expect_opKnit_init();
@@ -143,7 +143,7 @@ protected:
   void expected_cacheISR(uint16_t pos, Direction_t dir, Direction_t hall,
                     BeltShift_t belt, Carriage_t carriage) {
     expect_cacheISR(pos, dir, hall, belt, carriage);
-    fsm->cacheEncoders();
+    controller->cacheEncoders();
   }
 
   void expect_cacheISR(Direction_t dir, Direction_t hall) {
@@ -152,12 +152,12 @@ protected:
 
   void expected_cacheISR(uint8_t pos, Direction_t dir, Direction_t hall) {
     expect_cacheISR(pos, dir, hall, BeltShift::Regular, Carriage_t::Knit);
-    fsm->cacheEncoders();
+    controller->cacheEncoders();
   }
 
   void expected_cacheISR(Direction_t dir, Direction_t hall) {
     expect_cacheISR(dir, hall);
-    fsm->cacheEncoders();
+    controller->cacheEncoders();
   }
 
   void expect_cacheISR(uint16_t pos) {
@@ -166,7 +166,7 @@ protected:
 
   void expected_cacheISR(uint16_t pos) {
     expect_cacheISR(pos);
-    fsm->cacheEncoders();
+    controller->cacheEncoders();
   }
 
   void expected_cacheISR() {
@@ -182,32 +182,32 @@ protected:
   }
 
   void expected_dispatch() {
-    fsm->update();
+    controller->update();
   }
 
   void expected_get_ready() {
     // start in state `OpInit`
-    ASSERT_EQ(fsm->getState(), opInit);
+    ASSERT_EQ(controller->getState(), opInit);
 
     EXPECT_CALL(*solenoidsMock, setSolenoids(SOLENOIDS_BITMASK));
     expect_indState();
     ASSERT_EQ(opKnit->isReady(), true);
-    fsm->setState(opReady);
+    controller->setState(opReady);
 
     // transition to state `OpReady`
     expected_dispatch_init();
-    ASSERT_EQ(fsm->getState(), opReady);
+    ASSERT_EQ(controller->getState(), opReady);
   }
 
   void expected_init_machine(Machine_t m) {
     // starts in state `OpIdle`
-    fsm->setMachineType(m);
-    fsm->setState(opInitMock);
+    controller->setMachineType(m);
+    controller->setState(opInitMock);
     EXPECT_CALL(*opIdleMock, end);
     EXPECT_CALL(*opInitMock, begin);
     expected_dispatch_idle();
 
-    ASSERT_EQ(fsm->getState(), opInit);
+    ASSERT_EQ(controller->getState(), opInit);
   }
 
   void get_to_ready(Machine_t m) {
@@ -228,7 +228,7 @@ protected:
     expected_dispatch_ready();
 
     // ends in state `OpKnit`
-    ASSERT_TRUE(fsm->getState() == opKnit);
+    ASSERT_TRUE(controller->getState() == opKnit);
   }
 
   void expected_dispatch_knit(bool first) {
@@ -239,14 +239,14 @@ protected:
       expected_dispatch();
       return;
     }
-    ASSERT_TRUE(fsm->getState() == opKnit);
+    ASSERT_TRUE(controller->getState() == opKnit);
     //EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, HIGH)); // green LED on
     expected_dispatch();
   }
 
   void expected_dispatch_idle() {
     // starts in state `OpIdle`
-    ASSERT_EQ(fsm->getState(), opIdle);
+    ASSERT_EQ(controller->getState(), opIdle);
 
     //EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, LOW));
     expected_dispatch();
@@ -254,7 +254,7 @@ protected:
 
   void expected_dispatch_init() {
     // starts in state `OpInit`
-    ASSERT_EQ(fsm->getState(), opInit);
+    ASSERT_EQ(controller->getState(), opInit);
 
     //EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, LOW));
     expected_dispatch();
@@ -262,7 +262,7 @@ protected:
 
   void expected_dispatch_ready() {
     // starts in state `OpReady`
-    ASSERT_TRUE(fsm->getState() == opReady);
+    ASSERT_TRUE(controller->getState() == opReady);
 
     //EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, LOW));
     expected_dispatch();
@@ -270,7 +270,7 @@ protected:
 
   void expected_dispatch_test() {
     // starts in state `OpTest`
-    ASSERT_EQ(fsm->getState(), opTest);
+    ASSERT_EQ(controller->getState(), opTest);
 
     //expect_indState();
     EXPECT_CALL(*opTestMock, update);
@@ -307,7 +307,7 @@ TEST_F(OpKnitTest, test_com) {
 }
 
 TEST_F(OpKnitTest, test_encodePosition) {
-  opKnit->m_sOldPosition = fsm->getPosition();
+  opKnit->m_sOldPosition = controller->getPosition();
   EXPECT_CALL(*comMock, send_indState).Times(0);
   opKnit->encodePosition();
 
@@ -336,7 +336,7 @@ TEST_F(OpKnitTest, test_init_machine) {
 
 TEST_F(OpKnitTest, test_startKnitting_NoMachine) {
   uint8_t pattern[] = {1};
-  Machine_t m = fsm->getMachineType();
+  Machine_t m = controller->getMachineType();
   ASSERT_EQ(m, Machine_t::NoMachine);
 
   opKnit->begin();
@@ -645,7 +645,7 @@ TEST_F(OpKnitTest, test_knit_new_line) {
 TEST_F(OpKnitTest, test_calculatePixelAndSolenoid) {
   // initialize
   expected_init_machine(Machine_t::Kh910);
-  fsm->setState(opTest);
+  controller->setState(opTest);
   expected_dispatch_init();
 
   // new position, different beltShift and active hall
@@ -685,7 +685,7 @@ TEST_F(OpKnitTest, test_calculatePixelAndSolenoid) {
   expected_dispatch_test();
 
   // KH270
-  fsm->setMachineType(Machine_t::Kh270);
+  controller->setMachineType(Machine_t::Kh270);
 
   // K carriage direction left
   expected_cacheISR(0, Direction_t::Left, Direction_t::Right, BeltShift::Regular, Carriage_t::Knit);
@@ -704,15 +704,15 @@ TEST_F(OpKnitTest, test_calculatePixelAndSolenoid) {
 
 TEST_F(OpKnitTest, test_getStartOffset) {
   // out of range values
-  fsm->m_carriage = Carriage_t::Knit;
+  controller->m_carriage = Carriage_t::Knit;
   ASSERT_EQ(opKnit->getStartOffset(Direction_t::NoDirection), 0);
 
-  fsm->m_carriage = Carriage_t::NoCarriage;
+  controller->m_carriage = Carriage_t::NoCarriage;
   ASSERT_EQ(opKnit->getStartOffset(Direction_t::Left), 0);
   ASSERT_EQ(opKnit->getStartOffset(Direction_t::Right), 0);
 
-  fsm->m_carriage = Carriage_t::Lace;
-  fsm->m_machineType = Machine_t::NoMachine;
+  controller->m_carriage = Carriage_t::Lace;
+  controller->m_machineType = Machine_t::NoMachine;
   ASSERT_EQ(opKnit->getStartOffset(Direction_t::Left), 0);
   ASSERT_EQ(opKnit->getStartOffset(Direction_t::Right), 0);
 }
@@ -723,7 +723,7 @@ TEST_F(OpKnitTest, test_op_init_LL) {
   // not ready
   expected_cacheISR(get_position_past_right(), Direction_t::Left, Direction_t::Left);
   expected_dispatch_init();
-  ASSERT_EQ(fsm->getState(), opInit);
+  ASSERT_EQ(controller->getState(), opInit);
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
@@ -737,7 +737,7 @@ TEST_F(OpKnitTest, test_op_init_RR) {
   // still not ready
   expected_cacheISR(get_position_past_left(), Direction_t::Right, Direction_t::Right);
   expected_dispatch_init();
-  ASSERT_EQ(fsm->getState(), opInit);
+  ASSERT_EQ(controller->getState(), opInit);
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
@@ -766,7 +766,7 @@ TEST_F(OpKnitTest, test_op_init_LR) {
   // when the right Hall sensor is passed in the Left direction.
   expected_cacheISR(get_position_past_right(), Direction_t::Left, Direction_t::Right);
   expected_get_ready();
-  ASSERT_EQ(fsm->getState(), opReady);
+  ASSERT_EQ(controller->getState(), opReady);
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
@@ -775,43 +775,43 @@ TEST_F(OpKnitTest, test_op_init_LR) {
 }
 /*
   void expected_isready(Direction_t dir, Direction_t hall, uint8_t position) {
-    fsm->m_direction = dir;
-    fsm->m_hallActive = hall;
-    fsm->m_position = position;
+    controller->m_direction = dir;
+    controller->m_hallActive = hall;
+    controller->m_position = position;
   }
 
-TEST_F(FsmTest, test_update_init) {
+TEST_F(ControllerTest, test_update_init) {
   // Get to state `OpInit`
-  fsm->setState(opInitMock);
+  controller->setState(opInitMock);
   EXPECT_CALL(*opInit, begin);
   expected_update_idle();
-  ASSERT_EQ(fsm->getState(), opInitMock);
+  ASSERT_EQ(controller->getState(), opInitMock);
 
   // no transition to state `OpReady`
   expected_isready(Direction_t::Left, Direction_t::Left, 0);
   expected_update_init();
-  ASSERT_TRUE(fsm->getState() == opInitMock);
+  ASSERT_TRUE(controller->getState() == opInitMock);
 
   // no transition to state `OpReady`
   expected_isready(Direction_t::Right, Direction_t::Right, 0);
   expected_update_init();
-  ASSERT_TRUE(fsm->getState() == opInitMock);
+  ASSERT_TRUE(controller->getState() == opInitMock);
 
   // transition to state `OpReady`
   expected_isready(Direction_t::Left, Direction_t::Right, positionPassedRight);
   expect_get_ready();
   expected_update();
-  ASSERT_EQ(fsm->getState(), opReadyMock);
+  ASSERT_EQ(controller->getState(), opReadyMock);
 
   // get to state `OpInit`
-  fsm->setState(opInitMock);
+  controller->setState(opInitMock);
   expected_update_ready();
 
   // transition to state `OpReady`
   expected_isready(Direction_t::Right, Direction_t::Left, positionPassedLeft);
   expect_get_ready();
   expected_update();
-  ASSERT_TRUE(fsm->getState() == opReadyMock);
+  ASSERT_TRUE(controller->getState() == opReadyMock);
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(comMock));

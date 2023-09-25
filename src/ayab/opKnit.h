@@ -24,8 +24,8 @@
 #ifndef OP_KNIT_H_
 #define OP_KNIT_H_
 
+#include "controller.h"
 #include "encoders.h"
-#include "fsm.h"
 
 class OpKnitInterface : public OpInterface {
 public:

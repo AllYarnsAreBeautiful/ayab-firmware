@@ -33,7 +33,7 @@ set(COMMON_INCLUDES
     )
 set(EXTERNAL_LIB_INCLUDES
     ${LIBRARY_DIRECTORY}/Adafruit_MCP23008
-    ${LIBRARY_DIRECTORY}/avr-libc/include
+    #${LIBRARY_DIRECTORY}/avr-libc/include
     )
 set(COMMON_SOURCES
     ${PROJECT_SOURCE_DIR}/test_boards.cpp
@@ -77,8 +77,8 @@ set(COMMON_SOURCES
     ${SOURCE_DIRECTORY}/global_OpKnit.cpp
     ${PROJECT_SOURCE_DIR}/mocks/opKnit_mock.cpp
 
-    ${SOURCE_DIRECTORY}/global_fsm.cpp
-    ${PROJECT_SOURCE_DIR}/mocks/fsm_mock.cpp
+    ${SOURCE_DIRECTORY}/global_controller.cpp
+    ${PROJECT_SOURCE_DIR}/mocks/controller_mock.cpp
     )
 set(COMMON_DEFINES
     ARDUINO=1819
@@ -169,9 +169,9 @@ add_executable(${PROJECT_NAME}_knit
     ${SOURCE_DIRECTORY}/global_OpError.cpp
     ${PROJECT_SOURCE_DIR}/mocks/opError_mock.cpp
 
-    ${SOURCE_DIRECTORY}/fsm.cpp
-    ${SOURCE_DIRECTORY}/global_fsm.cpp
-    ${PROJECT_SOURCE_DIR}/test_fsm.cpp
+    ${SOURCE_DIRECTORY}/controller.cpp
+    ${SOURCE_DIRECTORY}/global_controller.cpp
+    ${PROJECT_SOURCE_DIR}/test_controller.cpp
 
     ${SOURCE_DIRECTORY}/opKnit.cpp
     ${SOURCE_DIRECTORY}/global_OpKnit.cpp

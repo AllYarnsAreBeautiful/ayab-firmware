@@ -26,8 +26,8 @@
 
 #include "beeper.h"
 #include "com.h"
+#include "controller.h"
 #include "encoders.h"
-#include "fsm.h"
 #include "solenoids.h"
 
 #include "opInit.h"
@@ -155,7 +155,7 @@ void OpTest::com(const uint8_t *buffer, size_t size) {
 void OpTest::end() {
   m_autoReadOn = false;
   m_autoTestOn = false;
-  GlobalFsm::setState(GlobalOpInit::m_instance);
+  GlobalController::setState(GlobalOpInit::m_instance);
   GlobalOpKnit::init();
   GlobalEncoders::setUpInterrupt();
 }

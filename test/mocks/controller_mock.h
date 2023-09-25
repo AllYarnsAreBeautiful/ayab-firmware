@@ -1,5 +1,5 @@
 /*!`
- * \file fsm_mock.h
+ * \file controller_mock.h
  *
  * This file is part of AYAB.
  *
@@ -21,15 +21,15 @@
  *    http://ayab-knitting.com
  */
 
-#ifndef FSM_MOCK_H_
-#define FSM_MOCK_H_
+#ifndef CONTROLLER_MOCK_H_
+#define CONTROLLER_MOCK_H_
 
 #include <gmock/gmock.h>
 
+#include <controller.h>
 #include <encoders.h>
-#include <fsm.h>
 
-class FsmMock : public FsmInterface {
+class ControllerMock : public ControllerInterface {
 public:
   MOCK_METHOD0(init, void());
   MOCK_METHOD0(update, void());
@@ -45,7 +45,7 @@ public:
   MOCK_METHOD0(getPosition, uint8_t());
 };
 
-FsmMock *fmsMockInstance();
-void releaseFsmMock();
+ControllerMock *controllerMockInstance();
+void releaseControllerMock();
 
-#endif // FSM_MOCK_H_
+#endif // CONTROLLER_MOCK_H_

@@ -24,7 +24,7 @@
 
 #include "beeper.h"
 #include "com.h"
-#include "fsm.h"
+#include "controller.h"
 
 #include "opInit.h"
 #include "opKnit.h"
@@ -140,14 +140,14 @@ void Com::send_indState(Err_t error) const {
   uint8_t payload[INDSTATE_LEN] = {
       static_cast<uint8_t>(API_t::indState),
       static_cast<uint8_t>(error),
-      static_cast<uint8_t>(GlobalFsm::getState()->state()),
+      static_cast<uint8_t>(GlobalController::getState()->state()),
       highByte(leftHallValue),
       lowByte(leftHallValue),
       highByte(rightHallValue),
       lowByte(rightHallValue),
-      static_cast<uint8_t>(GlobalFsm::getCarriage()),
-      GlobalFsm::getPosition(),
-      static_cast<uint8_t>(GlobalFsm::getDirection()),
+      static_cast<uint8_t>(GlobalController::getCarriage()),
+      GlobalController::getPosition(),
+      static_cast<uint8_t>(GlobalController::getDirection()),
   };
   send(static_cast<uint8_t *>(payload), INDSTATE_LEN);
 }
@@ -159,7 +159,7 @@ void Com::send_indState(Err_t error) const {
  * \param size The number of bytes in the data buffer.
  */
 void Com::onPacketReceived(const uint8_t *buffer, size_t size) {
-  GlobalFsm::getState()->com(buffer, size);
+  GlobalController::getState()->com(buffer, size);
 }
 // GCOVR_EXCL_STOP
 
@@ -190,8 +190,8 @@ void Com::h_reqInit(const uint8_t *buffer, size_t size) {
     return;
   }
 
-  GlobalFsm::setMachineType(machineType);
-  GlobalFsm::setState(GlobalOpInit::m_instance);
+  GlobalController::setMachineType(machineType);
+  GlobalController::setState(GlobalOpInit::m_instance);
   send_cnfInit(Err_t::Success);
 }
 
@@ -240,7 +240,7 @@ void Com::h_reqStart(const uint8_t *buffer, size_t size) {
  * \todo sl: Assert size? Handle error?
  */
 void Com::h_cnfLine(const uint8_t *buffer, size_t size) {
-  auto machineType = static_cast<uint8_t>(GlobalFsm::getMachineType());
+  auto machineType = static_cast<uint8_t>(GlobalController::getMachineType());
   uint8_t lenLineBuffer = LINE_BUFFER_LEN[machineType];
   if (size < lenLineBuffer + 5U) {
     // message is too short
@@ -288,7 +288,7 @@ void Com::h_reqInfo() const {
  * \brief Handle `reqTest` (request hardware test) command.
  */
 void Com::h_reqTest() const {
-  GlobalFsm::setState(GlobalOpTest::m_instance);
+  GlobalController::setState(GlobalOpTest::m_instance);
   send_cnfTest(Err_t::Success);
 }
 

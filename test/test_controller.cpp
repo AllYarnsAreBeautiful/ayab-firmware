@@ -1,5 +1,5 @@
 /*!`
- * \file test_fsm.cpp
+ * \file test_controller.cpp
  *
  * This file is part of AYAB.
  *
@@ -23,8 +23,8 @@
 
 #include <gtest/gtest.h>
 
+#include <controller.h>
 #include <encoders.h>
-#include <fsm.h>
 #include <opKnit.h>
 
 #include <beeper_mock.h>
@@ -44,7 +44,7 @@ using ::testing::Mock;
 using ::testing::Return;
 using ::testing::Test;
 
-extern Fsm *fsm;
+extern Controller *controller;
 extern OpKnit *opKnit;
 
 extern BeeperMock *beeper;
@@ -62,7 +62,7 @@ extern OpErrorMock *opError;
 const uint8_t positionPassedLeft = (END_LEFT_PLUS_OFFSET[static_cast<uint8_t>(Machine_t::Kh910)] + GARTER_SLOP) + 1;
 const uint8_t positionPassedRight = (END_RIGHT_MINUS_OFFSET[static_cast<uint8_t>(Machine_t::Kh910)] - GARTER_SLOP) - 1;
 
-class FsmTest : public ::testing::Test {
+class ControllerTest : public ::testing::Test {
 protected:
   void SetUp() override {
     arduinoMock = arduinoMockInstance();
@@ -95,10 +95,10 @@ protected:
     Mock::AllowLeak(opErrorMock);
 
     // start in state `OpIdle`
-    fsm->init();
+    controller->init();
     expect_knit_init();
     opKnit->init();
-    fsm->setMachineType(Machine_t::Kh910);
+    controller->setMachineType(Machine_t::Kh910);
     expected_isready(Direction_t::NoDirection, Direction_t::NoDirection, 0);
   }
 
@@ -141,7 +141,7 @@ protected:
 
   void expect_get_ready() {
     // start in state `OpInit`
-    ASSERT_EQ(fsm->getState(), opInitMock);
+    ASSERT_EQ(controller->getState(), opInitMock);
 
     expect_indState();
     EXPECT_CALL(*solenoidsMock, setSolenoids(SOLENOIDS_BITMASK));
@@ -149,14 +149,14 @@ protected:
   }
 
   void expected_isready(Direction_t dir, Direction_t hall, uint8_t position) {
-    fsm->m_direction = dir;
-    fsm->m_hallActive = hall;
-    fsm->m_position = position;
+    controller->m_direction = dir;
+    controller->m_hallActive = hall;
+    controller->m_position = position;
   }
 
   void expected_state(OpInterface *state) {
-    fsm->setState(state);
-    fsm->update();
+    controller->setState(state);
+    controller->update();
   }
 
   void expected_update() {
@@ -165,7 +165,7 @@ protected:
     EXPECT_CALL(*encodersMock, getHallActive).Times(1);
     EXPECT_CALL(*encodersMock, getBeltShift).Times(1);
     EXPECT_CALL(*encodersMock, getCarriage).Times(1);
-    fsm->update();
+    controller->update();
 
     // test expectations without destroying instance
     ASSERT_TRUE(Mock::VerifyAndClear(encodersMock));
@@ -173,7 +173,7 @@ protected:
 
   void expected_update_idle() {
     // starts in state `OpIdle`
-    ASSERT_EQ(fsm->getState(), opIdleMock);
+    ASSERT_EQ(controller->getState(), opIdleMock);
 
     EXPECT_CALL(*opIdleMock, update);
     expected_update();
@@ -184,7 +184,7 @@ protected:
 
   void expected_update_init() {
     // starts in state `OpInit`
-    ASSERT_EQ(fsm->getState(), opInitMock);
+    ASSERT_EQ(controller->getState(), opInitMock);
 
     EXPECT_CALL(*opInitMock, update);
     expected_update();
@@ -195,7 +195,7 @@ protected:
 
   void expected_update_ready() {
     // starts in state `OpReady`
-    ASSERT_EQ(fsm->getState(), opReadyMock);
+    ASSERT_EQ(controller->getState(), opReadyMock);
 
     EXPECT_CALL(*opReadyMock, update);
     expected_update();
@@ -206,14 +206,14 @@ protected:
 
   void expected_update_knit() {
     // starts in state `OpKnit`
-    ASSERT_EQ(fsm->getState(), opKnit);
+    ASSERT_EQ(controller->getState(), opKnit);
 
     expected_update();
   }
 
   void expected_update_test() {
     // starts in state `OpTest`
-    ASSERT_EQ(fsm->getState(), opTestMock);
+    ASSERT_EQ(controller->getState(), opTestMock);
 
     EXPECT_CALL(*opTestMock, update);
     expected_update();
@@ -229,40 +229,40 @@ protected:
   }
 };
 
-TEST_F(FsmTest, test_setState) {
-  fsm->setState(opInitMock);
+TEST_F(ControllerTest, test_setState) {
+  controller->setState(opInitMock);
 
   EXPECT_CALL(*opIdle, end);
   EXPECT_CALL(*opInit, begin);
   expected_update_idle();
-  ASSERT_TRUE(fsm->getState() == opInitMock);
+  ASSERT_TRUE(controller->getState() == opInitMock);
 
   EXPECT_CALL(*opInitMock, state).WillOnce(Return(OpState_t::Init));
-  fsm->getState()->state();
+  controller->getState()->state();
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(opIdleMock));
   ASSERT_TRUE(Mock::VerifyAndClear(opInitMock));
 }
 
-TEST_F(FsmTest, test_ready_state) {
-  fsm->setState(opReadyMock);
+TEST_F(ControllerTest, test_ready_state) {
+  controller->setState(opReadyMock);
   expected_update_idle();
-  ASSERT_TRUE(fsm->getState() == opReadyMock);
+  ASSERT_TRUE(controller->getState() == opReadyMock);
 
   EXPECT_CALL(*opReadyMock, state).WillOnce(Return(OpState_t::Ready));
-  fsm->getState()->state();
+  controller->getState()->state();
 }
 
-TEST_F(FsmTest, test_update_knit) {
+TEST_F(ControllerTest, test_update_knit) {
   // get to state `OpReady`
-  fsm->setState(opReadyMock);
+  controller->setState(opReadyMock);
   expected_update_idle();
 
   // get to state `OpKnit`
-  fsm->setState(opKnit);
+  controller->setState(opKnit);
   expected_update_ready();
-  ASSERT_TRUE(fsm->getState() == opKnit);
+  ASSERT_TRUE(controller->getState() == opKnit);
 
   // now in state `OpKnit`
   expect_first_knit();
@@ -273,33 +273,33 @@ TEST_F(FsmTest, test_update_knit) {
   ASSERT_TRUE(Mock::VerifyAndClear(comMock));
 }
 
-TEST_F(FsmTest, test_update_test) {
+TEST_F(ControllerTest, test_update_test) {
   // get in state `OpTest`
-  fsm->setState(opTestMock);
+  controller->setState(opTestMock);
   expected_update_idle();
 
   // now in state `OpTest`
   expected_update_test();
   EXPECT_CALL(*opTestMock, state).WillOnce(Return(OpState_t::Test));
-  fsm->getState()->state();
+  controller->getState()->state();
 
   // now quit test
-  fsm->setState(opInitMock);
+  controller->setState(opInitMock);
   EXPECT_CALL(*opTestMock, end);
   EXPECT_CALL(*opInitMock, begin);
   expected_update_test();
-  ASSERT_TRUE(fsm->getState() == opInitMock);
+  ASSERT_TRUE(controller->getState() == opInitMock);
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(opInitMock));
   ASSERT_TRUE(Mock::VerifyAndClear(opTestMock));
 }
 
-TEST_F(FsmTest, test_error_state) {
-  fsm->setState(opErrorMock);
+TEST_F(ControllerTest, test_error_state) {
+  controller->setState(opErrorMock);
   expected_update_idle();
-  ASSERT_TRUE(fsm->getState() == opErrorMock);
+  ASSERT_TRUE(controller->getState() == opErrorMock);
 
   EXPECT_CALL(*opErrorMock, state).WillOnce(Return(OpState_t::Error));
-  fsm->getState()->state();
+  controller->getState()->state();
 }

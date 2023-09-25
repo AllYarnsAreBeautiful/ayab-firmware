@@ -31,7 +31,7 @@
 #include <opTest.h>
 
 #include <opKnit_mock.h>
-#include <fsm_mock.h>
+#include <controller_mock.h>
 
 using ::testing::_;
 using ::testing::AtLeast;
@@ -45,7 +45,7 @@ extern OpIdle *opIdle;
 extern OpInit *opInit;
 extern OpTest *opTest;
 
-extern FsmMock *fsm;
+extern ControllerMock *controller;
 extern OpKnitMock *opKnit;
 
 class ComTest : public ::testing::Test {
@@ -55,19 +55,19 @@ protected:
     serialMock = serialMockInstance();
 
     // pointer to global instance
-    fsmMock = fsm;
+    controllerMock = controller;
     opKnitMock = opKnit;
 
     // The global instance does not get destroyed at the end of each test.
     // Ordinarily the mock instance would be local and such behaviour would
     // cause a memory leak. We must notify the test that this is not the case.
-    Mock::AllowLeak(fsmMock);
+    Mock::AllowLeak(controllerMock);
     Mock::AllowLeak(opKnitMock);
 
     beeper->init(true);
     expect_init();
     com->init();
-    fsmMock->init();
+    controllerMock->init();
   }
 
   void TearDown() override {
@@ -77,7 +77,7 @@ protected:
 
   ArduinoMock *arduinoMock;
   SerialMock *serialMock;
-  FsmMock *fsmMock;
+  ControllerMock *controllerMock;
   OpKnitMock *opKnitMock;
 
   void expect_init() {
@@ -105,7 +105,7 @@ protected:
   void reqInit(Machine_t machine) {
     uint8_t buffer[] = {static_cast<uint8_t>(API_t::reqInit), static_cast<uint8_t>(machine), 0};
     buffer[2] = com->CRC8(buffer, 2);
-    EXPECT_CALL(*fsmMock, setState(opInit));
+    EXPECT_CALL(*controllerMock, setState(opInit));
     expect_write(true);
     opIdle->com(buffer, sizeof(buffer));
   }
@@ -113,7 +113,7 @@ protected:
 
 TEST_F(ComTest, test_reqInit_fail1) {
   uint8_t buffer[] = {static_cast<uint8_t>(API_t::reqInit), static_cast<uint8_t>(Machine_t::Kh930)};
-  EXPECT_CALL(*fsmMock, setState(opInit)).Times(0);
+  EXPECT_CALL(*controllerMock, setState(opInit)).Times(0);
   expect_write(true);
   opIdle->com(buffer, sizeof(buffer));
 }
@@ -121,7 +121,7 @@ TEST_F(ComTest, test_reqInit_fail1) {
 TEST_F(ComTest, test_reqInit_fail2) {
   uint8_t buffer[] = {static_cast<uint8_t>(API_t::reqInit), static_cast<uint8_t>(Machine_t::Kh930), 0};
   buffer[2] = com->CRC8(buffer, 2) ^ 1;
-  EXPECT_CALL(*fsmMock, setState(opInit)).Times(0);
+  EXPECT_CALL(*controllerMock, setState(opInit)).Times(0);
   expect_write(true);
   opIdle->com(buffer, sizeof(buffer));
 }
@@ -129,7 +129,7 @@ TEST_F(ComTest, test_reqInit_fail2) {
 TEST_F(ComTest, test_reqInit_fail3) {
   uint8_t buffer[] = {static_cast<uint8_t>(API_t::reqInit), static_cast<uint8_t>(Machine_t::NoMachine), 0};
   buffer[2] = com->CRC8(buffer, 2);
-  EXPECT_CALL(*fsmMock, setState(opInit)).Times(0);
+  EXPECT_CALL(*controllerMock, setState(opInit)).Times(0);
   expect_write(true);
   opIdle->com(buffer, sizeof(buffer));
 }
@@ -144,21 +144,21 @@ TEST_F(ComTest, test_API) {
 TEST_F(ComTest, test_reqtest_fail) {
   // no machineType
   uint8_t buffer[] = {static_cast<uint8_t>(API_t::reqTest)};
-  EXPECT_CALL(*fsmMock, setState(opTest)).Times(0);
+  EXPECT_CALL(*controllerMock, setState(opTest)).Times(0);
   expected_write_onPacketReceived(buffer, sizeof(buffer), true);
 
   // test expectations without destroying instance
-  ASSERT_TRUE(Mock::VerifyAndClear(fsmMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(controllerMock));
 }
 */
 
 TEST_F(ComTest, test_reqtest) {
-  EXPECT_CALL(*fsmMock, setState(opTest));
+  EXPECT_CALL(*controllerMock, setState(opTest));
   expect_write(true);
   com->h_reqTest();
 
   // test expectations without destroying instance
-  ASSERT_TRUE(Mock::VerifyAndClear(fsmMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(controllerMock));
 }
 
 TEST_F(ComTest, test_reqstart_fail1) {
@@ -274,13 +274,13 @@ TEST_F(ComTest, test_stopCmd) {
 
 /*
 TEST_F(ComTest, test_quitCmd) {
-  EXPECT_CALL(*fsmMock, setState(opInit));
+  EXPECT_CALL(*controllerMock, setState(opInit));
   EXPECT_CALL(*opKnitMock, init);
   com->h_quitCmd();
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(opKnitMock));
-  ASSERT_TRUE(Mock::VerifyAndClear(fsmMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(controllerMock));
 }
 */
 
@@ -397,13 +397,13 @@ TEST_F(ComTest, test_send_reqLine) {
 TEST_F(ComTest, test_send_indState) {
   EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_L));
   EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_R));
-  EXPECT_CALL(*fsmMock, getState).WillOnce(Return(opInit));
-  EXPECT_CALL(*fsmMock, getCarriage);
-  EXPECT_CALL(*fsmMock, getPosition);
-  EXPECT_CALL(*fsmMock, getDirection);
+  EXPECT_CALL(*controllerMock, getState).WillOnce(Return(opInit));
+  EXPECT_CALL(*controllerMock, getCarriage);
+  EXPECT_CALL(*controllerMock, getPosition);
+  EXPECT_CALL(*controllerMock, getDirection);
   expect_write(true);
   com->send_indState(Err_t::Success);
 
   // test expectations without destroying instance
-  ASSERT_TRUE(Mock::VerifyAndClear(fsmMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(controllerMock));
 }

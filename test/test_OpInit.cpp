@@ -26,7 +26,7 @@
 #include <opInit.h>
 #include <opReady.h>
 
-#include <fsm_mock.h>
+#include <controller_mock.h>
 #include <opKnit_mock.h>
 
 using ::testing::_;
@@ -38,7 +38,7 @@ using ::testing::Return;
 extern OpInit *opInit;
 extern OpReady *opReady;
 
-extern FsmMock *fsm;
+extern ControllerMock *controller;
 extern OpKnitMock *opKnit;
 
 class OpInitTest : public ::testing::Test {
@@ -49,13 +49,13 @@ protected:
     // serialCommandMock = serialCommandMockInstance();
 
     // pointers to global instances
-    fsmMock = fsm;
+    controllerMock = controller;
     opKnitMock = opKnit;
 
     // The global instances do not get destroyed at the end of each test.
     // Ordinarily the mock instance would be local and such behaviour would
     // cause a memory leak. We must notify the test that this is not the case.
-    Mock::AllowLeak(fsmMock);
+    Mock::AllowLeak(controllerMock);
     Mock::AllowLeak(opKnitMock);
   }
 
@@ -66,7 +66,7 @@ protected:
 
   ArduinoMock *arduinoMock;
   SerialMock *serialMock;
-  FsmMock *fsmMock;
+  ControllerMock *controllerMock;
   OpKnitMock *opKnitMock;
 };
 
@@ -91,27 +91,27 @@ TEST_F(OpInitTest, test_end) {
 }
 
 TEST_F(OpInitTest, test_begin910) {
-  EXPECT_CALL(*fsmMock, getMachineType());
+  EXPECT_CALL(*controllerMock, getMachineType());
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, LOW));
   opInit->begin();
 }
 
 TEST_F(OpInitTest, test_update_not_ready) {
   EXPECT_CALL(*opKnitMock, isReady()).WillOnce(Return(false));
-  EXPECT_CALL(*fsmMock, setState(opReady)).Times(0);
+  EXPECT_CALL(*controllerMock, setState(opReady)).Times(0);
   opInit->update();
 
   // test expectations without destroying instance
-  ASSERT_TRUE(Mock::VerifyAndClear(fsmMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(controllerMock));
   ASSERT_TRUE(Mock::VerifyAndClear(opKnitMock));
 }
 
 TEST_F(OpInitTest, test_update_ready) {
   EXPECT_CALL(*opKnitMock, isReady()).WillOnce(Return(true));
-  EXPECT_CALL(*fsmMock, setState(opReady));
+  EXPECT_CALL(*controllerMock, setState(opReady));
   opInit->update();
 
   // test expectations without destroying instance
-  ASSERT_TRUE(Mock::VerifyAndClear(fsmMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(controllerMock));
   ASSERT_TRUE(Mock::VerifyAndClear(opKnitMock));
 }

@@ -25,7 +25,7 @@
 
 #include <opIdle.h>
 
-#include <fsm_mock.h>
+#include <controller_mock.h>
 #include <opKnit_mock.h>
 
 using ::testing::_;
@@ -36,7 +36,7 @@ using ::testing::Return;
 
 extern OpIdle *opIdle;
 
-extern FsmMock *fsm;
+extern ControllerMock *controller;
 extern OpKnitMock *opKnit;
 
 class OpIdleTest : public ::testing::Test {
@@ -47,13 +47,13 @@ protected:
     // serialCommandMock = serialCommandMockInstance();
 
     // pointers to global instances
-    fsmMock = fsm;
+    controllerMock = controller;
     opKnitMock = opKnit;
 
     // The global instances do not get destroyed at the end of each test.
     // Ordinarily the mock instance would be local and such behaviour would
     // cause a memory leak. We must notify the test that this is not the case.
-    Mock::AllowLeak(fsmMock);
+    Mock::AllowLeak(controllerMock);
     Mock::AllowLeak(opKnitMock);
   }
 
@@ -63,7 +63,7 @@ protected:
   }
 
   ArduinoMock *arduinoMock;
-  FsmMock *fsmMock;
+  ControllerMock *controllerMock;
   SerialMock *serialMock;
   OpKnitMock *opKnitMock;
 };

@@ -1,5 +1,5 @@
 /*!`
- * \file fsm.h
+ * \file controller.h
  *
  * This file is part of AYAB.
  *
@@ -21,17 +21,17 @@
  *    http://ayab-knitting.com
  */
 
-#ifndef FSM_H_
-#define FSM_H_
+#ifndef CONTROLLER_H_
+#define CONTROLLER_H_
 
 #include <Arduino.h>
 
 #include "encoders.h"
 #include "op.h"
 
-class FsmInterface {
+class ControllerInterface {
 public:
-  virtual ~FsmInterface() = default;
+  virtual ~ControllerInterface() = default;
 
   // any methods that need to be mocked should go here
   virtual void init() = 0;
@@ -50,18 +50,18 @@ public:
 
 // Singleton container class for static methods.
 // Dependency injection is enabled using a pointer
-// to a global instance of either `Fsm` or `FsmMock`
+// to a global instance of either `Controller` or `ControllerMock`
 // both of which classes implement the pure virtual methods
-// of the `FsmInterface` class.
+// of the `ControllerInterface` class.
 
-class GlobalFsm final {
+class GlobalController final {
 private:
   // singleton class so private constructor is appropriate
-  GlobalFsm() = default;
+  GlobalController() = default;
 
 public:
   // pointer to global instance whose methods are implemented
-  static FsmInterface *m_instance;
+  static ControllerInterface *m_instance;
 
   static void init();
   static void update();
@@ -77,7 +77,7 @@ public:
   static uint8_t getPosition();
 };
 
-class Fsm : public FsmInterface {
+class Controller : public ControllerInterface {
 public:
   void init() final;
   void update() final;
@@ -109,8 +109,8 @@ public:
 #if AYAB_TESTS
   // Note: ideally tests would only rely on the public interface.
   FRIEND_TEST(TestOpKnit, test_getStartOffset);
-  FRIEND_TEST(TestFsm, test_update_init);
+  FRIEND_TEST(TestController, test_update_init);
 #endif
 };
 
-#endif // FSM_H_
+#endif // CONTROLLER_H_

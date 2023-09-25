@@ -25,7 +25,7 @@
 
 #include <opError.h>
 
-#include <fsm_mock.h>
+#include <controller_mock.h>
 #include <opKnit_mock.h>
 
 using ::testing::_;
@@ -36,7 +36,7 @@ using ::testing::Return;
 
 extern OpError *opError;
 
-extern FsmMock *fsm;
+extern ControllerMock *controller;
 extern OpKnitMock *opKnit;
 
 class OpErrorTest : public ::testing::Test {
@@ -47,13 +47,13 @@ protected:
     // serialCommandMock = serialCommandMockInstance();
 
     // pointers to global instances
-    fsmMock = fsm;
+    controllerMock = controller;
     opKnitMock = opKnit;
 
     // The global instances do not get destroyed at the end of each test.
     // Ordinarily the mock instance would be local and such behaviour would
     // cause a memory leak. We must notify the test that this is not the case.
-    Mock::AllowLeak(fsmMock);
+    Mock::AllowLeak(controllerMock);
     Mock::AllowLeak(opKnitMock);
   }
 
@@ -64,7 +64,7 @@ protected:
 
   ArduinoMock *arduinoMock;
   SerialMock *serialMock;
-  FsmMock *fsmMock;
+  ControllerMock *controllerMock;
   OpKnitMock *opKnitMock;
 };
 
@@ -109,10 +109,10 @@ TEST_F(OpErrorTest, test_update) {
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, LOW));
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_B, HIGH));
   // send_indState
-  EXPECT_CALL(*fsmMock, getState).WillOnce(Return(opError));
-  EXPECT_CALL(*fsmMock, getCarriage);
-  EXPECT_CALL(*fsmMock, getPosition);
-  EXPECT_CALL(*fsmMock, getDirection);
+  EXPECT_CALL(*controllerMock, getState).WillOnce(Return(opError));
+  EXPECT_CALL(*controllerMock, getCarriage);
+  EXPECT_CALL(*controllerMock, getPosition);
+  EXPECT_CALL(*controllerMock, getDirection);
   opError->update();
 
   // alternate flash
@@ -120,12 +120,12 @@ TEST_F(OpErrorTest, test_update) {
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, HIGH));
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_B, LOW));
   // send_indState
-  EXPECT_CALL(*fsmMock, getState).WillOnce(Return(opError));
-  EXPECT_CALL(*fsmMock, getCarriage);
-  EXPECT_CALL(*fsmMock, getPosition);
-  EXPECT_CALL(*fsmMock, getDirection);
+  EXPECT_CALL(*controllerMock, getState).WillOnce(Return(opError));
+  EXPECT_CALL(*controllerMock, getCarriage);
+  EXPECT_CALL(*controllerMock, getPosition);
+  EXPECT_CALL(*controllerMock, getDirection);
   opError->update();
 
   // test expectations without destroying instance
-  ASSERT_TRUE(Mock::VerifyAndClear(fsmMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(controllerMock));
 }

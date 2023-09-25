@@ -29,7 +29,7 @@
 #include <opReady.h>
 #include <opTest.h>
 
-#include <fsm_mock.h>
+#include <controller_mock.h>
 #include <opKnit_mock.h>
 
 using ::testing::_;
@@ -45,7 +45,7 @@ extern OpReady *opReady;
 extern OpTest *opTest;
 
 extern OpKnitMock *opKnit;
-extern FsmMock *fsm;
+extern ControllerMock *controller;
 
 class OpTestTest : public ::testing::Test {
 protected:
@@ -55,13 +55,13 @@ protected:
     // serialCommandMock = serialCommandMockInstance();
 
     // pointers to global instances
-    fsmMock = fsm;
+    controllerMock = controller;
     opKnitMock = opKnit;
 
     // The global instances do not get destroyed at the end of each test.
     // Ordinarily the mock instance would be local and such behaviour would
     // cause a memory leak. We must notify the test that this is not the case.
-    Mock::AllowLeak(fsmMock);
+    Mock::AllowLeak(controllerMock);
     Mock::AllowLeak(opKnitMock);
 
     beeper->init(true);
@@ -74,7 +74,7 @@ protected:
 
   ArduinoMock *arduinoMock;
   SerialMock *serialMock;
-  FsmMock *fsmMock;
+  ControllerMock *controllerMock;
   OpKnitMock *opKnitMock;
 
   void expect_startTest(uint32_t t) {
@@ -222,12 +222,12 @@ TEST_F(OpTestTest, test_autoTestCmd) {
 TEST_F(OpTestTest, test_quitCmd) {
   const uint8_t buf[] = {static_cast<uint8_t>(API_t::quitCmd)};
   EXPECT_CALL(*opKnitMock, init);
-  EXPECT_CALL(*fsmMock, setState(opInit));
+  EXPECT_CALL(*controllerMock, setState(opInit));
   opTest->com(buf, 1);
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(opKnitMock));
-  ASSERT_TRUE(Mock::VerifyAndClear(fsmMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(controllerMock));
 }
 
 TEST_F(OpTestTest, test_loop_null) {
