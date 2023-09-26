@@ -32,6 +32,7 @@
 #include "encoders.h"
 #include "solenoids.h"
 
+#include "opInit.h"
 #include "opKnit.h"
 #include "opReady.h"
 
@@ -143,11 +144,6 @@ void OpKnit::end() {
 Err_t OpKnit::startKnitting(uint8_t startNeedle,
                              uint8_t stopNeedle, uint8_t *pattern_start,
                              bool continuousReportingEnabled) {
-  /*
-  if (GlobalController::getState() != GlobalOpReady::m_instance) {
-    return Err_t::Wrong_machine_state;
-  }
-  */
   Machine_t machineType = GlobalController::getMachineType();
   if (machineType == Machine_t::NoMachine) {
     return Err_t::No_machine_type;
@@ -222,7 +218,7 @@ bool OpKnit::isReady() {
         (position > (END_LEFT_PLUS_OFFSET[machineType] + GARTER_SLOP));
   bool passedRight = (Direction_t::Left == direction) && (Direction_t::Right == m_lastHall) &&
         (position < (END_RIGHT_MINUS_OFFSET[machineType] - GARTER_SLOP));
-        
+
   // Machine is initialized when left Hall sensor is passed in Right direction
   // New feature (August 2020): the machine is also initialized
   // when the right Hall sensor is passed in Left direction.
@@ -309,7 +305,8 @@ void OpKnit::knit() {
       ++m_currentLineNumber;
       reqLine(m_currentLineNumber);
     } else if (m_lastLineFlag) {
-      GlobalController::setState(GlobalOpReady::m_instance);
+      // move to state `OpInit`
+      GlobalController::setState(GlobalOpInit::m_instance);
     }
   }
 #endif // DBG_NOMACHINE

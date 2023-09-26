@@ -19,5 +19,5 @@ A tabular representation of state transitions follows.
  `Init  -> Ready` | `OpKnit::isReady()`
  `Ready -> Knit`  | `OpKnit::startKnitting()`
  `Ready -> Test`  | `OpTest::startTest()`
- `Knit  -> Ready` | `m_workedOnLine && m_lastLineFlag`
+ `Knit  -> Init`  | `m_workedOnLine && m_lastLineFlag`
  `Test  -> Init`  | `OpTest::end()`

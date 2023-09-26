@@ -75,18 +75,18 @@ TEST_F(OpInitTest, test_state) {
 }
 
 TEST_F(OpInitTest, test_init) {
-  // nothing
+  // no calls expected
   opInit->init();
 }
 
 TEST_F(OpInitTest, test_com) {
-  // nothing
+  // no calls expected
   const uint8_t *buffer = {};
   opInit->com(buffer, 0);
 }
 
 TEST_F(OpInitTest, test_end) {
-  // nothing
+  // no calls expected
   opInit->end();
 }
 
