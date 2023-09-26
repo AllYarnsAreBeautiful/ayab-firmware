@@ -55,7 +55,12 @@ GCOVR_ARGS="--exclude-unreachable-branches \
 	    -e src/ayab/global_OpTest.cpp \
 	    -e src/ayab/global_OpReady.cpp \
 	    -e src/ayab/global_OpError.cpp \
-	    -e src/ayab/global_OpKnit.cpp"
+	    -e src/ayab/global_OpKnit.cpp \
+            -e src/ayab/global_beeper.cpp \
+            -e src/ayab/global_com.cpp \
+            -e src/ayab/global_controller.cpp \
+            -e src/ayab/global_encoders.cpp \
+            -e src/ayab/global_solenoids.cpp"
 
 if [[ $sonar -eq 1 ]]; then
   gcovr -r . $GCOVR_ARGS --sonarqube ./test/build/coverage.xml

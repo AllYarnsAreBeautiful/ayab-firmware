@@ -35,6 +35,7 @@ public:
   MOCK_METHOD0(update, void());
   MOCK_METHOD2(com, void(const uint8_t *buffer, size_t size));
   MOCK_METHOD0(end, void());
+  MOCK_METHOD0(isReady, bool());
 };
 
 OpInitMock *OpInitMockInstance();

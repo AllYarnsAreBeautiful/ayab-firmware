@@ -141,7 +141,7 @@ TEST_F(EncodersTest, test_encA_rising_in_front_notKH270) {
 
 TEST_F(EncodersTest, test_encA_rising_in_front_KH270) {
   encoders->init(Machine_t::Kh270);
-  ASSERT_TRUE(encoders->getMachineType() == Machine_t::Kh270);
+  ASSERT_EQ(encoders->getMachineType(), Machine_t::Kh270);
 
   // Create a rising edge
   EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_A)).WillOnce(Return(false));
@@ -179,7 +179,7 @@ TEST_F(EncodersTest, test_encA_rising_in_front_KH270) {
 
 TEST_F(EncodersTest, test_encA_rising_after_KH270) {
   encoders->init(Machine_t::Kh270);
-  ASSERT_TRUE(encoders->getMachineType() == Machine_t::Kh270);
+  ASSERT_EQ(encoders->getMachineType(), Machine_t::Kh270);
 
   // Create a falling edge
   EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_A)).WillOnce(Return(false));
@@ -364,7 +364,7 @@ TEST_F(EncodersTest, test_encA_falling_at_end) {
 
 // requires FILTER_R_MIN != 0
 TEST_F(EncodersTest, test_encA_falling_set_K_carriage_KH910) {
-  ASSERT_TRUE(encoders->getMachineType() == Machine_t::Kh910);
+  ASSERT_EQ(encoders->getMachineType(), Machine_t::Kh910);
 
   // Rising edge
   EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_A)).WillOnce(Return(true));

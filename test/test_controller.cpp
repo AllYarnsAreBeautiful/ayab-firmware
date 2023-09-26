@@ -222,7 +222,7 @@ TEST_F(ControllerTest, test_setState) {
   EXPECT_CALL(*opIdle, end);
   EXPECT_CALL(*opInit, begin);
   expected_update_idle();
-  ASSERT_TRUE(controller->getState() == opInitMock);
+  ASSERT_EQ(controller->getState(), opInitMock);
 
   EXPECT_CALL(*opInitMock, state).WillOnce(Return(OpState_t::Init));
   controller->getState()->state();
@@ -232,10 +232,15 @@ TEST_F(ControllerTest, test_setState) {
   ASSERT_TRUE(Mock::VerifyAndClear(opInitMock));
 }
 
+TEST_F(ControllerTest, test_getHallActive) {
+  controller->init();
+  ASSERT_EQ(controller->getHallActive(), Direction_t::NoDirection);
+}
+
 TEST_F(ControllerTest, test_ready_state) {
   controller->setState(opReadyMock);
   expected_update_idle();
-  ASSERT_TRUE(controller->getState() == opReadyMock);
+  ASSERT_EQ(controller->getState(), opReadyMock);
 
   EXPECT_CALL(*opReadyMock, state).WillOnce(Return(OpState_t::Ready));
   controller->getState()->state();
@@ -249,7 +254,7 @@ TEST_F(ControllerTest, test_update_knit) {
   // get to state `OpKnit`
   controller->setState(opKnit);
   expected_update_ready();
-  ASSERT_TRUE(controller->getState() == opKnit);
+  ASSERT_EQ(controller->getState(), opKnit);
 
   // now in state `OpKnit`
   expect_first_knit();
@@ -275,7 +280,7 @@ TEST_F(ControllerTest, test_update_test) {
   EXPECT_CALL(*opTestMock, end);
   EXPECT_CALL(*opInitMock, begin);
   expected_update_test();
-  ASSERT_TRUE(controller->getState() == opInitMock);
+  ASSERT_EQ(controller->getState(), opInitMock);
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(opInitMock));
@@ -285,7 +290,7 @@ TEST_F(ControllerTest, test_update_test) {
 TEST_F(ControllerTest, test_error_state) {
   controller->setState(opErrorMock);
   expected_update_idle();
-  ASSERT_TRUE(controller->getState() == opErrorMock);
+  ASSERT_EQ(controller->getState(), opErrorMock);
 
   EXPECT_CALL(*opErrorMock, state).WillOnce(Return(OpState_t::Error));
   controller->getState()->state();

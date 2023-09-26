@@ -48,4 +48,9 @@ void GlobalOpInit::com(const uint8_t *buffer, size_t size) {
 
 void GlobalOpInit::end() {
   m_instance->end();
+
+}
+
+bool GlobalOpInit::isReady() {
+  return m_instance->isReady();
 }

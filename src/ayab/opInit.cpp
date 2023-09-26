@@ -65,6 +65,16 @@ void OpInit::begin() {
  * Assess whether the Finite State Machine is ready to move from state `OpInit` to `OpReady`.
  */
 void OpInit::update() {
+  if (isReady()) {
+    GlobalController::setState(GlobalOpReady::m_instance);
+  }
+}
+
+/*!
+ * \brief Assess whether the Finite State Machine is ready to move from state `OpInit` to `OpReady`.
+ * \return `true` if ready to move from state `OpInit` to `OpReady`, false otherwise.
+ */
+bool OpInit::isReady() {
 #ifdef DBG_NOMACHINE
   // TODO(who?): check if debounce is needed
   bool state = digitalRead(DBG_BTN_PIN);
@@ -97,15 +107,14 @@ void OpInit::update() {
     GlobalSolenoids::setSolenoids(SOLENOIDS_BITMASK);
     GlobalCom::send_indState(Err_t::Success);
     // move to `OpReady`
-    GlobalController::setState(GlobalOpReady::m_instance);
-    return;
+    return true;
   }
 
 #ifdef DBG_NOMACHINE
   m_prevState = state;
 #endif
   // stay in `OpInit`
-  return;
+  return false;
 }
 
 /*!

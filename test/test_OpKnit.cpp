@@ -177,51 +177,47 @@ protected:
     EXPECT_CALL(*comMock, send_indState);
   }
 
-  void expected_update() {
-    controller->update();
+  void expected_init_machine(Machine_t m) {
+    // starts in state `OpIdle`
+    ASSERT_EQ(controller->getState(), opIdle);
+
+    controller->setMachineType(m);
+    controller->setState(opInit);
+    expected_update_idle();
+
+    // transition to state `OpInit`
+    ASSERT_EQ(controller->getState(), opInit);
   }
 
   void expected_get_ready() {
-    // start in state `OpInit`
-    ASSERT_EQ(controller->getState(), opInit);
-
-    EXPECT_CALL(*solenoidsMock, setSolenoids(SOLENOIDS_BITMASK));
-    expect_indState();
     controller->setState(opReady);
-
-    // transition to state `OpReady`
     expected_update_init();
-    ASSERT_EQ(controller->getState(), opReady);
-  }
-
-  void expected_init_machine(Machine_t m) {
-    // starts in state `OpIdle`
-    controller->setMachineType(m);
-    controller->setState(opInitMock);
-    expected_update_idle();
-
-    ASSERT_EQ(controller->getState(), opInit);
   }
 
   void get_to_ready(Machine_t m) {
     expected_init_machine(m);
-    // Machine is initialized when Left hall sensor
-    // is passed in Right direction inside active needles.
-    uint8_t position = get_position_past_left(m);
-    expected_cacheISR(position, Direction_t::Right, Direction_t::Left);
     expected_get_ready();
+    ASSERT_EQ(controller->getState(), opReady);
   }
 
   void get_to_knit(Machine_t m) {
-    EXPECT_CALL(*encodersMock, init);
     get_to_ready(m);
+
     uint8_t pattern[] = {1};
     EXPECT_CALL(*beeperMock, ready);
     ASSERT_EQ(opKnit->startKnitting(0, NUM_NEEDLES[static_cast<uint8_t>(m)] - 1, pattern, false), Err_t::Success);
+    ASSERT_EQ(controller->getState(), opReady);
+
+    EXPECT_CALL(*encodersMock, init);
+    EXPECT_CALL(*encodersMock, setUpInterrupt);
     expected_update_ready();
 
     // ends in state `OpKnit`
-    ASSERT_TRUE(controller->getState() == opKnit);
+    ASSERT_EQ(controller->getState(), opKnit);
+  }
+
+  void expected_update() {
+    controller->update();
   }
 
   void expected_update_knit(bool first) {
@@ -232,7 +228,7 @@ protected:
       expected_update();
       return;
     }
-    ASSERT_TRUE(controller->getState() == opKnit);
+    ASSERT_EQ(controller->getState(), opKnit);
     //EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, HIGH)); // green LED on
     expected_update();
   }
@@ -255,7 +251,7 @@ protected:
 
   void expected_update_ready() {
     // starts in state `OpReady`
-    ASSERT_TRUE(controller->getState() == opReady);
+    ASSERT_EQ(controller->getState(), opReady);
 
     //EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, LOW));
     expected_update();
@@ -274,15 +270,6 @@ protected:
     EXPECT_CALL(*arduinoMock, delay(START_KNITTING_DELAY));
     EXPECT_CALL(*beeperMock, finishedLine);
     expect_reqLine();
-  }
-
-  void expect_get_ready() {
-    // start in state `OpInit`
-    ASSERT_EQ(controller->getState(), opInitMock);
-
-    expect_indState();
-    EXPECT_CALL(*solenoidsMock, setSolenoids(SOLENOIDS_BITMASK));
-    //EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, LOW));
   }
 };
 
@@ -358,9 +345,7 @@ TEST_F(OpKnitTest, test_startKnitting_Kh910) {
   ASSERT_TRUE(Mock::VerifyAndClear(comMock));
   ASSERT_TRUE(Mock::VerifyAndClear(encodersMock));
   ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
-  ASSERT_TRUE(Mock::VerifyAndClear(opIdleMock));
   ASSERT_TRUE(Mock::VerifyAndClear(opInitMock));
-  ASSERT_TRUE(Mock::VerifyAndClear(opReadyMock));
 }
 
 TEST_F(OpKnitTest, test_startKnitting_Kh270) {

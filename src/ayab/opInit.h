@@ -29,6 +29,8 @@
 class OpInitInterface : public OpInterface {
 public:
   virtual ~OpInitInterface() = default;
+
+  virtual bool isReady() = 0;
 };
 
 // Container class for the static methods that implement the hardware test
@@ -51,6 +53,8 @@ public:
   static void update();
   static void com(const uint8_t *buffer, size_t size);
   static void end();
+
+  static bool isReady();
 };
 
 class OpInit : public OpInitInterface {
@@ -61,6 +65,8 @@ public:
   void update() final;
   void com(const uint8_t *buffer, size_t size) final;
   void end() final;
+
+  bool isReady() final;
 
 private:
   Direction_t m_lastHall;

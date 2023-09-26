@@ -68,3 +68,8 @@ void OpInit::end() {
   assert(gOpInitMock != nullptr);
   gOpInitMock->end();
 }
+
+bool OpInit::isReady() {
+  assert(gOpInitMock != nullptr);
+  return gOpInitMock->isReady();
+}
