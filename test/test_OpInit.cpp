@@ -94,18 +94,19 @@ TEST_F(OpInitTest, test_state) {
 }
 
 TEST_F(OpInitTest, test_init) {
+  // no calls expected
   opInit->init();
   ASSERT_EQ(opInit->m_lastHall, Direction_t::NoDirection);
 }
 
 TEST_F(OpInitTest, test_com) {
-  // no expected calls
+  // no calls expected
   const uint8_t *buffer = {};
   opInit->com(buffer, 0);
 }
 
 TEST_F(OpInitTest, test_end) {
-  // no expected calls
+  // no calls expected
   opInit->end();
 }
 

@@ -259,6 +259,7 @@ void OpKnit::knit() {
       ++m_currentLineNumber;
       reqLine(m_currentLineNumber);
     } else if (m_lastLineFlag) {
+      // move to state `OpInit`
       GlobalController::setState(GlobalOpInit::m_instance);
     }
   }

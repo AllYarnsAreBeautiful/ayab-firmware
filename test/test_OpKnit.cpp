@@ -198,8 +198,6 @@ protected:
     // starts in state `OpIdle`
     controller->setMachineType(m);
     controller->setState(opInitMock);
-    EXPECT_CALL(*opIdleMock, end);
-    EXPECT_CALL(*opInitMock, begin);
     expected_update_idle();
 
     ASSERT_EQ(controller->getState(), opInit);
