@@ -78,12 +78,12 @@ TEST_F(OpErrorTest, test_begin) {
 }
 
 TEST_F(OpErrorTest, test_init) {
-  // nothing
+  // no expected calls
   opError->init();
 }
 
 TEST_F(OpErrorTest, test_com) {
-  // nothing
+  // no expected calls
   const uint8_t *buffer = {};
   opError->com(buffer, 0);
 }

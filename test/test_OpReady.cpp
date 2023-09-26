@@ -82,7 +82,7 @@ TEST_F(OpReadyTest, test_begin) {
 }
 
 TEST_F(OpReadyTest, test_init) {
-  // nothing
+  // no expected calls
   opReady->init();
 }
 
@@ -99,17 +99,17 @@ TEST_F(OpReadyTest, test_reqTest) {
 }
 
 TEST_F(OpReadyTest, test_unrecognized) {
-  // nothing
+  // no expected calls
   const uint8_t buffer[] = {0xFF};
   opReady->com(buffer, 1);
 }
 
 TEST_F(OpReadyTest, test_update) {
-  // nothing
+  // no expected calls
   opReady->update();
 }
 
 TEST_F(OpReadyTest, test_end) {
-  // nothing
+  // no expected calls
   opReady->end();
 }

@@ -1,5 +1,5 @@
 /*!`
- * \file test_opKnit.cpp
+ * \file test_OpKnit.cpp
  *
  * This file is part of AYAB.
  *
@@ -109,12 +109,8 @@ protected:
   OpReadyMock *opReadyMock;
   OpTestMock *opTestMock;
 
-  uint8_t get_position_past_left() {
-    return (END_LEFT_PLUS_OFFSET[static_cast<uint8_t>(controller->getMachineType())] + GARTER_SLOP) + 1;
-  }
-
-  uint8_t get_position_past_right() {
-    return (END_RIGHT_MINUS_OFFSET[static_cast<uint8_t>(controller->getMachineType())] - GARTER_SLOP) - 1;
+  uint8_t get_position_past_left(Machine_t m) {
+    return (END_LEFT_PLUS_OFFSET[static_cast<uint8_t>(m)] + GARTER_SLOP) + 1;
   }
 
   void expect_opKnit_init() {
@@ -191,7 +187,6 @@ protected:
 
     EXPECT_CALL(*solenoidsMock, setSolenoids(SOLENOIDS_BITMASK));
     expect_indState();
-    ASSERT_EQ(opKnit->isReady(), true);
     controller->setState(opReady);
 
     // transition to state `OpReady`
@@ -214,7 +209,7 @@ protected:
     expected_init_machine(m);
     // Machine is initialized when Left hall sensor
     // is passed in Right direction inside active needles.
-    uint8_t position = get_position_past_left();
+    uint8_t position = get_position_past_left(m);
     expected_cacheISR(position, Direction_t::Right, Direction_t::Left);
     expected_get_ready();
   }
@@ -281,12 +276,6 @@ protected:
     EXPECT_CALL(*arduinoMock, delay(START_KNITTING_DELAY));
     EXPECT_CALL(*beeperMock, finishedLine);
     expect_reqLine();
-  }
-
-  void expected_isready(Direction_t dir, Direction_t hall, uint8_t position) {
-    controller->m_direction = dir;
-    controller->m_hallActive = hall;
-    controller->m_position = position;
   }
 
   void expect_get_ready() {
@@ -734,106 +723,4 @@ TEST_F(OpKnitTest, test_getStartOffset) {
   controller->m_machineType = Machine_t::NoMachine;
   ASSERT_EQ(opKnit->getStartOffset(Direction_t::Left), 0);
   ASSERT_EQ(opKnit->getStartOffset(Direction_t::Right), 0);
-}
-
-TEST_F(OpKnitTest, test_op_init_RLL) {
-  expected_init_machine(Machine_t::Kh910);
-
-  // not ready
-  expected_cacheISR(get_position_past_right(), Direction_t::Left, Direction_t::Left);
-  ASSERT_EQ(controller->getHallActive(), Direction_t::Left);
-  expected_update_init();
-  ASSERT_EQ(controller->getState(), opInit);
-
-  // test expectations without destroying instance
-  ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
-  ASSERT_TRUE(Mock::VerifyAndClear(encodersMock));
-}
-
-TEST_F(OpKnitTest, test_op_init_LRR) {
-  expected_init_machine(Machine_t::Kh910);
-
-  // still not ready
-  expected_cacheISR(get_position_past_left(), Direction_t::Right, Direction_t::Right);
-  ASSERT_EQ(controller->getHallActive(), Direction_t::Right);
-  expected_update_init();
-  ASSERT_EQ(controller->getState(), opInit);
-
-  // test expectations without destroying instance
-  ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
-  ASSERT_TRUE(Mock::VerifyAndClear(encodersMock));
-}
-
-TEST_F(OpKnitTest, test_op_init_LRL) {
-  expected_init_machine(Machine_t::Kh910);
-
-  // Machine is initialized when Left hall sensor
-  // is passed in Right direction inside active needles.
-  expected_cacheISR(get_position_past_left(), Direction_t::Right, Direction_t::Left);
-  ASSERT_EQ(controller->getHallActive(), Direction_t::Left);
-  expected_get_ready();
-  ASSERT_EQ(controller->getState(), opReady);
-
-  // test expectations without destroying instance
-  ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
-  ASSERT_TRUE(Mock::VerifyAndClear(encodersMock));
-}
-
-TEST_F(OpKnitTest, test_op_init_XRL) {
-  expected_init_machine(Machine_t::Kh910);
-
-  // Machine is initialized when Left hall sensor
-  // is passed in Right direction inside active needles.
-  expected_cacheISR(get_position_past_left() - 2, Direction_t::Right, Direction_t::Left);
-  ASSERT_EQ(controller->getHallActive(), Direction_t::Left);
-  expected_update_init();
-  ASSERT_EQ(controller->getState(), opInit);
-
-  // test expectations without destroying instance
-  ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
-  ASSERT_TRUE(Mock::VerifyAndClear(encodersMock));
-}
-
-TEST_F(OpKnitTest, test_op_init_XLR) {
-  expected_init_machine(Machine_t::Kh910);
-
-  // New feature (August 2020): the machine is also initialized
-  // when the right Hall sensor is passed in the Left direction.
-  expected_cacheISR(get_position_past_right() + 2, Direction_t::Left, Direction_t::Right);
-  ASSERT_EQ(controller->getHallActive(), Direction_t::Right);
-  expected_update_init();
-  ASSERT_EQ(controller->getState(), opInit);
-
-  // test expectations without destroying instance
-  ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
-  ASSERT_TRUE(Mock::VerifyAndClear(encodersMock));
-}
-
-TEST_F(OpKnitTest, test_op_init_RLR) {
-  expected_init_machine(Machine_t::Kh910);
-
-  // New feature (August 2020): the machine is also initialized
-  // when the right Hall sensor is passed in the Left direction.
-  expected_cacheISR(get_position_past_right(), Direction_t::Left, Direction_t::Right);
-  ASSERT_EQ(controller->getHallActive(), Direction_t::Right);
-  expected_get_ready();
-  ASSERT_EQ(controller->getState(), opReady);
-
-  // test expectations without destroying instance
-  ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
-  ASSERT_TRUE(Mock::VerifyAndClear(encodersMock));
-}
-
-TEST_F(OpKnitTest, test_op_init_RLN) {
-  expected_init_machine(Machine_t::Kh910);
-
-  // not ready
-  expected_cacheISR(get_position_past_right(), Direction_t::Left, Direction_t::NoDirection);
-  ASSERT_EQ(controller->getHallActive(), Direction_t::NoDirection);
-  expected_update_init();
-  ASSERT_EQ(controller->getState(), opInit);
-
-  // test expectations without destroying instance
-  ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
-  ASSERT_TRUE(Mock::VerifyAndClear(encodersMock));
 }

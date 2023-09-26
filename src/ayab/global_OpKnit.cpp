@@ -63,10 +63,6 @@ void GlobalOpKnit::encodePosition() {
   m_instance->encodePosition();
 }
 
-bool GlobalOpKnit::isReady() {
-  return m_instance->isReady();
-}
-
 void GlobalOpKnit::knit() {
   m_instance->knit();
 }

@@ -24,6 +24,7 @@
 #define OP_INIT_H_
 
 #include "op.h"
+#include "encoders.h"
 
 class OpInitInterface : public OpInterface {
 public:
@@ -60,6 +61,17 @@ public:
   void update() final;
   void com(const uint8_t *buffer, size_t size) final;
   void end() final;
+
+private:
+  Direction_t m_lastHall;
+#ifdef DBG_NOMACHINE
+  bool m_prevState;
+#endif
+
+#if AYAB_TESTS
+  // Note: ideally tests would only rely on the public interface.
+  FRIEND_TEST(OpInitTest, test_init);
+#endif
 };
 
 #endif // OP_INIT_H_

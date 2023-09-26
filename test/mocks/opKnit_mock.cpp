@@ -81,11 +81,6 @@ void OpKnit::encodePosition() {
   gOpKnitMock->encodePosition();
 }
 
-bool OpKnit::isReady() {
-  assert(gOpKnitMock != nullptr);
-  return gOpKnitMock->isReady();
-}
-
 void OpKnit::knit() {
   assert(gOpKnitMock != nullptr);
   gOpKnitMock->knit();

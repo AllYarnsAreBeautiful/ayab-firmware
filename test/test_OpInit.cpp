@@ -68,6 +68,25 @@ protected:
   SerialMock *serialMock;
   ControllerMock *controllerMock;
   OpKnitMock *opKnitMock;
+
+  uint8_t get_position_past_left(Machine_t m) {
+    return (END_LEFT_PLUS_OFFSET[static_cast<uint8_t>(m)] + GARTER_SLOP) + 1;
+  }
+
+  uint8_t get_position_past_right(Machine_t m) {
+    return (END_RIGHT_MINUS_OFFSET[static_cast<uint8_t>(m)] - GARTER_SLOP) - 1;
+  }
+
+  void expect_update(uint16_t pos, Direction_t dir, Direction_t hall) {
+    EXPECT_CALL(*controllerMock, getPosition).WillRepeatedly(Return(pos));
+    EXPECT_CALL(*controllerMock, getDirection).WillRepeatedly(Return(dir));
+    EXPECT_CALL(*controllerMock, getHallActive).WillRepeatedly(Return(hall));
+    EXPECT_CALL(*controllerMock, getMachineType).WillRepeatedly(Return(Machine_t::Kh910));
+  }
+
+  void expect_ready(bool ready) {
+    EXPECT_CALL(*controllerMock, setState).Times(ready ? 1 : 0);
+  }
 };
 
 TEST_F(OpInitTest, test_state) {
@@ -75,18 +94,18 @@ TEST_F(OpInitTest, test_state) {
 }
 
 TEST_F(OpInitTest, test_init) {
-  // nothing
   opInit->init();
+  ASSERT_EQ(opInit->m_lastHall, Direction_t::NoDirection);
 }
 
 TEST_F(OpInitTest, test_com) {
-  // nothing
+  // no expected calls
   const uint8_t *buffer = {};
   opInit->com(buffer, 0);
 }
 
 TEST_F(OpInitTest, test_end) {
-  // nothing
+  // no expected calls
   opInit->end();
 }
 
@@ -96,22 +115,76 @@ TEST_F(OpInitTest, test_begin910) {
   opInit->begin();
 }
 
-TEST_F(OpInitTest, test_update_not_ready) {
-  EXPECT_CALL(*opKnitMock, isReady()).WillOnce(Return(false));
-  EXPECT_CALL(*controllerMock, setState(opReady)).Times(0);
+TEST_F(OpInitTest, test_op_init_RLL) {
+  // not ready
+  expect_update(get_position_past_right(Machine_t::Kh910), Direction_t::Left, Direction_t::Left);
+  expect_ready(false);
   opInit->update();
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(controllerMock));
-  ASSERT_TRUE(Mock::VerifyAndClear(opKnitMock));
 }
 
-TEST_F(OpInitTest, test_update_ready) {
-  EXPECT_CALL(*opKnitMock, isReady()).WillOnce(Return(true));
-  EXPECT_CALL(*controllerMock, setState(opReady));
+TEST_F(OpInitTest, test_op_init_LRR) {
+  // not ready
+  expect_update(get_position_past_left(Machine_t::Kh910), Direction_t::Right, Direction_t::Right);
+  expect_ready(false);
   opInit->update();
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(controllerMock));
-  ASSERT_TRUE(Mock::VerifyAndClear(opKnitMock));
+}
+
+TEST_F(OpInitTest, test_op_init_LRL) {
+  // Machine is initialized when Left hall sensor
+  // is passed in Right direction inside active needles.
+  expect_update(get_position_past_left(Machine_t::Kh910), Direction_t::Right, Direction_t::Left);
+  expect_ready(true);
+  opInit->update();
+
+  // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(controllerMock));
+}
+
+TEST_F(OpInitTest, test_op_init_XRL) {
+  // Machine is initialized when Left hall sensor
+  // is passed in Right direction inside active needles.
+  expect_update(get_position_past_left(Machine_t::Kh910) - 2, Direction_t::Right, Direction_t::Left);
+  expect_ready(false);
+  opInit->update();
+
+  // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(controllerMock));
+}
+
+TEST_F(OpInitTest, test_op_init_XLR) {
+  // New feature (August 2020): the machine is also initialized
+  // when the right Hall sensor is passed in the Left direction.
+  expect_update(get_position_past_right(Machine_t::Kh910) + 2, Direction_t::Left, Direction_t::Right);
+  expect_ready(false);
+  opInit->update();
+
+  // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(controllerMock));
+}
+
+TEST_F(OpInitTest, test_op_init_RLR) {
+  // New feature (August 2020): the machine is also initialized
+  // when the right Hall sensor is passed in the Left direction.
+  expect_update(get_position_past_right(Machine_t::Kh910), Direction_t::Left, Direction_t::Right);
+  expect_ready(true);
+  opInit->update();
+
+  // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(controllerMock));
+}
+
+TEST_F(OpInitTest, test_op_init_RLN) {
+  // not ready
+  expect_update(get_position_past_right(Machine_t::Kh910), Direction_t::Left, Direction_t::NoDirection);
+  expect_ready(false);
+  opInit->update();
+
+  // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(controllerMock));
 }

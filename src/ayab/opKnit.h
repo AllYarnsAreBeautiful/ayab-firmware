@@ -36,7 +36,6 @@ public:
                               uint8_t stopNeedle, uint8_t *pattern_start,
                               bool continuousReportingEnabled) = 0;
   virtual void encodePosition() = 0;
-  virtual bool isReady() = 0;
   virtual void knit() = 0;
   virtual uint8_t getStartOffset(const Direction_t direction) = 0;
   virtual bool setNextLine(uint8_t lineNumber) = 0;
@@ -69,7 +68,6 @@ public:
                              uint8_t stopNeedle, uint8_t *pattern_start,
                              bool continuousReportingEnabled);
   static void encodePosition();
-  static bool isReady();
   static void knit();
   static uint8_t getStartOffset(const Direction_t direction);
   static bool setNextLine(uint8_t lineNumber);
@@ -89,7 +87,6 @@ public:
                       uint8_t stopNeedle, uint8_t *pattern_start,
                       bool continuousReportingEnabled) final;
   void encodePosition() final;
-  bool isReady() final;
   void knit() final;
   uint8_t getStartOffset(const Direction_t direction) final;
   bool setNextLine(uint8_t lineNumber) final;
@@ -113,7 +110,6 @@ private:
   uint8_t m_sOldPosition;
   bool m_firstRun;
   bool m_workedOnLine;
-  Direction_t m_lastHall;
 #ifdef DBG_NOMACHINE
   bool m_prevState;
 #endif

@@ -78,22 +78,22 @@ TEST_F(OpIdleTest, test_begin) {
 }
 
 TEST_F(OpIdleTest, test_init) {
-  // nothing
+  // no expected calls
   opIdle->init();
 }
 
 TEST_F(OpIdleTest, test_unrecognized) {
-  // nothing
+  // no expected calls
   const uint8_t buffer[] = {0xFF};
   opIdle->com(buffer, 1);
 }
 
 TEST_F(OpIdleTest, test_update) {
-  // nothing
+  // no expected calls
   opIdle->update();
 }
 
 TEST_F(OpIdleTest, test_end) {
-  // nothing
+  // no expected calls
   opIdle->end();
 }

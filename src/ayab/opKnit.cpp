@@ -32,8 +32,9 @@
 #include "encoders.h"
 #include "solenoids.h"
 
-#include "opKnit.h"
+#include "opInit.h"
 #include "opReady.h"
+#include "opKnit.h"
 
 #ifdef CLANG_TIDY
 // clang-tidy doesn't find these macros for some reason,
@@ -83,7 +84,6 @@ void OpKnit::init() {
   m_sOldPosition = 0U;
   m_firstRun = true;
   m_workedOnLine = false;
-  m_lastHall = Direction_t::NoDirection;
 #ifdef DBG_NOMACHINE
   m_prevState = false;
 #endif
@@ -143,11 +143,6 @@ void OpKnit::end() {
 Err_t OpKnit::startKnitting(uint8_t startNeedle,
                              uint8_t stopNeedle, uint8_t *pattern_start,
                              bool continuousReportingEnabled) {
-  /*
-  if (GlobalController::getState() != GlobalOpReady::m_instance) {
-    return Err_t::Wrong_machine_state;
-  }
-  */
   Machine_t machineType = GlobalController::getMachineType();
   if (machineType == Machine_t::NoMachine) {
     return Err_t::No_machine_type;
@@ -193,51 +188,6 @@ void OpKnit::encodePosition() {
     calculatePixelAndSolenoid();
     GlobalCom::send_indState(Err_t::Unspecified_failure); // FIXME is this the right error code?
   }
-}
-
-/*!
- * \brief Assess whether the Finite State Machine is ready to move from state `OpInit` to `OpReady`.
- * \return `true` if ready to move from state `OpInit` to `OpReady`, false otherwise.
- */
-bool OpKnit::isReady() {
-#ifdef DBG_NOMACHINE
-  // TODO(who?): check if debounce is needed
-  bool state = digitalRead(DBG_BTN_PIN);
-
-  if (m_prevState && !state) {
-#else
-  // In order to support the garter carriage, we need to wait and see if there
-  // will be a second magnet passing the sensor.
-  // Keep track of the last seen hall sensor because we may be making a decision
-  // after it passes.
-  auto hallActive = GlobalController::getHallActive();
-  if (hallActive != Direction_t::NoDirection) {
-    m_lastHall = hallActive;
-  }
-
-  auto direction = GlobalController::getDirection();
-  auto position = GlobalController::getPosition();
-  auto machineType = static_cast<uint8_t>(GlobalController::getMachineType());
-  bool passedLeft = (Direction_t::Right == direction) && (Direction_t::Left == m_lastHall) &&
-        (position > (END_LEFT_PLUS_OFFSET[machineType] + GARTER_SLOP));
-  bool passedRight = (Direction_t::Left == direction) && (Direction_t::Right == m_lastHall) &&
-        (position < (END_RIGHT_MINUS_OFFSET[machineType] - GARTER_SLOP));
-        
-  // Machine is initialized when left Hall sensor is passed in Right direction
-  // New feature (August 2020): the machine is also initialized
-  // when the right Hall sensor is passed in Left direction.
-  if (passedLeft || passedRight) {
-
-#endif // DBG_NOMACHINE
-    GlobalSolenoids::setSolenoids(SOLENOIDS_BITMASK);
-    GlobalCom::send_indState(Err_t::Success);
-    return true; // move to `OpReady`
-  }
-
-#ifdef DBG_NOMACHINE
-  m_prevState = state;
-#endif
-  return false; // stay in `OpInit`
 }
 
 /*!
@@ -309,7 +259,7 @@ void OpKnit::knit() {
       ++m_currentLineNumber;
       reqLine(m_currentLineNumber);
     } else if (m_lastLineFlag) {
-      GlobalController::setState(GlobalOpReady::m_instance);
+      GlobalController::setState(GlobalOpInit::m_instance);
     }
   }
 #endif // DBG_NOMACHINE

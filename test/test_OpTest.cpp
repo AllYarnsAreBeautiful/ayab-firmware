@@ -114,7 +114,7 @@ TEST_F(OpTestTest, test_state) {
 }
 
 TEST_F(OpTestTest, test_init) {
-  // nothing
+  // no expected calls
   opTest->init();
 }
 
@@ -323,7 +323,7 @@ TEST_F(OpTestTest, test_startTest_success) {
 }
 
 TEST_F(OpTestTest, test_unrecognized) {
-  // nothing
+  // no expected calls
   const uint8_t buffer[] = {0xFF};
   opTest->com(buffer, 1);
 }
