@@ -5,7 +5,7 @@ import re
 Import("env")
 print("Pre build script")
 
-# Reads the current git tag of the repo and returns the version number 
+# Reads the current git tag of the repo and returns the version number
 # elements
 # In case there are changes since the last tag, the dirty flag is set
 # In case the git tag does not match the x.y.z format, 0.0.0 is used as fallback

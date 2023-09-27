@@ -26,6 +26,7 @@
 
 #include <arduino-mock/Arduino.h>
 #include <arduino-mock/Serial.h>
+#include <util/AtomicBlock.h>
 
 #define digitalPinToBitMask(x) (x)
 #define digitalPinToPort(x) (x)

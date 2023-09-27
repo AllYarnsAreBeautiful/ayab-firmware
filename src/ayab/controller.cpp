@@ -23,7 +23,7 @@
  */
 
 #include "board.h"
-#include <util/atomic.h>
+#include "AtomicBlock.h"
 
 #include "encoders.h"
 #include "controller.h"
@@ -67,14 +67,17 @@ void Controller::update() {
  * \brief Cache Encoder values
  */
 void Controller::cacheEncoders() {
-  // update machine state data
-  /* ATOMIC_BLOCK(ATOMIC_RESTORESTATE) { */ // FIXME tests SEGFAULT
+  // the following syntax is an alternative to ATOMIC_BLOCK(ATOMIC_RESTORESTATE), tested on 8-bit AVRs: see
+  // https://forum.arduino.cc/t/replacement-for-avr-libc-atomic_block-macros-now-for-due-and-other-platforms/122678
+
+  AtomicBlock< Atomic_RestoreState > block;
+  {
     m_beltShift  = GlobalEncoders::getBeltShift();
     m_carriage   = GlobalEncoders::getCarriage();
     m_direction  = GlobalEncoders::getDirection();
     m_hallActive = GlobalEncoders::getHallActive();
     m_position   = GlobalEncoders::getPosition();
-  /* } */
+  }
 }
 
 /*!
