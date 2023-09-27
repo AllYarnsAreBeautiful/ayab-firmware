@@ -23,6 +23,7 @@
 
 #include <gtest/gtest.h>
 
+#include <com.h>
 #include <opIdle.h>
 
 #include <controller_mock.h>
@@ -80,6 +81,13 @@ TEST_F(OpIdleTest, test_begin) {
 TEST_F(OpIdleTest, test_init) {
   // no calls expected
   opIdle->init();
+}
+
+TEST_F(OpIdleTest, test_reqTest) {
+  // no calls expected
+  // can't enter state `OpTest` from state `OpIdle`
+  const uint8_t buffer[] = {static_cast<uint8_t>(API_t::reqTest)};
+  opIdle->com(buffer, 1);
 }
 
 TEST_F(OpIdleTest, test_unrecognized) {

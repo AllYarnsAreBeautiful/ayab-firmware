@@ -18,6 +18,8 @@ A tabular representation of state transitions follows.
  `Idle  -> Init`  | `Com::h_reqInit()`
  `Init  -> Ready` | `OpInit::update()`
  `Ready -> Knit`  | `OpKnit::startKnitting()`
+ `Init -> Test`   | `OpTest::startTest()`
  `Ready -> Test`  | `OpTest::startTest()`
+ `Knit -> Test`   | `OpTest::startTest()`
  `Knit  -> Init`  | `m_workedOnLine && m_lastLineFlag`
  `Test  -> Init`  | `OpTest::end()`

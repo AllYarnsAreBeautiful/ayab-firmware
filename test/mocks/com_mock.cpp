@@ -110,6 +110,11 @@ void Com::h_reqTest() const {
   gComMock->h_reqTest();
 }
 
+void Com::h_quitCmd() const {
+  assert(gComMock != nullptr);
+  gComMock->h_quitCmd();
+}
+
 void Com::h_unrecognized() const {
   assert(gComMock != nullptr);
   gComMock->h_unrecognized();

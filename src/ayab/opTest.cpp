@@ -140,7 +140,7 @@ void OpTest::com(const uint8_t *buffer, size_t size) {
     break;
 
   case static_cast<uint8_t>(API_t::quitCmd):
-    end();
+    GlobalCom::h_quitCmd();
     break;
 
   default:
@@ -155,7 +155,6 @@ void OpTest::com(const uint8_t *buffer, size_t size) {
 void OpTest::end() {
   m_autoReadOn = false;
   m_autoTestOn = false;
-  GlobalController::setState(GlobalOpInit::m_instance);
   GlobalOpKnit::init();
   GlobalEncoders::setUpInterrupt();
 }

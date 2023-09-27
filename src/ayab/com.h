@@ -97,6 +97,7 @@ public:
   virtual void h_cnfLine(const uint8_t *buffer, size_t size) = 0;
   virtual void h_reqInfo() const = 0;
   virtual void h_reqTest() const = 0;
+  virtual void h_quitCmd() const = 0;
   virtual void h_unrecognized() const = 0;
 };
 
@@ -129,6 +130,7 @@ public:
   static void h_cnfLine(const uint8_t *buffer, size_t size);
   static void h_reqInfo();
   static void h_reqTest();
+  static void h_quitCmd();
   static void h_unrecognized();
 
 private:
@@ -152,6 +154,7 @@ public:
   void h_cnfLine(const uint8_t *buffer, size_t size) final;
   void h_reqInfo() const final;
   void h_reqTest() const final;
+  void h_quitCmd() const final;
   void h_unrecognized() const final;
 
 private:

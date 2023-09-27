@@ -63,10 +63,13 @@ void OpReady::com(const uint8_t *buffer, size_t size) {
   case static_cast<uint8_t>(API_t::reqStart):
     GlobalCom::h_reqStart(buffer, size);
     break;
+
   case static_cast<uint8_t>(API_t::reqTest):
     GlobalCom::h_reqTest();
     break;
+
   default:
+    GlobalCom::h_unrecognized();
     break;
   }
 }

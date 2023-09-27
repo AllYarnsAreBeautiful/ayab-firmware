@@ -24,6 +24,7 @@
 #include <gtest/gtest.h>
 
 #include <board.h>
+#include <com.h>
 #include <opKnit.h>
 
 #include <beeper_mock.h>
@@ -290,6 +291,10 @@ TEST_F(OpKnitTest, test_com) {
   const uint8_t cnf[] = {static_cast<uint8_t>(API_t::cnfLine)};
   EXPECT_CALL(*comMock, h_cnfLine);
   opKnit->com(cnf, 1);
+
+  const uint8_t reqTest[] = {static_cast<uint8_t>(API_t::reqTest)};
+  EXPECT_CALL(*comMock, h_reqTest);
+  opKnit->com(reqTest, 1);
 
   const uint8_t unrec[] = {0xFF};
   EXPECT_CALL(*comMock, h_unrecognized);

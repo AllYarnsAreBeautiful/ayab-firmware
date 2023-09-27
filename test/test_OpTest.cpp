@@ -221,13 +221,19 @@ TEST_F(OpTestTest, test_autoTestCmd) {
 
 TEST_F(OpTestTest, test_quitCmd) {
   const uint8_t buf[] = {static_cast<uint8_t>(API_t::quitCmd)};
-  EXPECT_CALL(*opKnitMock, init);
   EXPECT_CALL(*controllerMock, setState(opInit));
   opTest->com(buf, 1);
 
   // test expectations without destroying instance
-  ASSERT_TRUE(Mock::VerifyAndClear(opKnitMock));
   ASSERT_TRUE(Mock::VerifyAndClear(controllerMock));
+}
+
+TEST_F(OpTestTest, test_end) {
+  EXPECT_CALL(*opKnitMock, init);
+  opTest->end();
+
+  // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(opKnitMock));
 }
 
 TEST_F(OpTestTest, test_loop_null) {

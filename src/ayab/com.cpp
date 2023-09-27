@@ -293,6 +293,13 @@ void Com::h_reqTest() const {
 }
 
 /*!
+ * \brief Handle `quitCmd` (cancel) command.
+ */
+void Com::h_quitCmd() const {
+  GlobalController::setState(GlobalOpInit::m_instance);
+}
+
+/*!
  * \brief Handle unrecognized command.
  */
 void Com::h_unrecognized() const {

@@ -25,6 +25,7 @@
 
 #include <opInit.h>
 #include <opReady.h>
+#include <opTest.h>
 
 #include <controller_mock.h>
 #include <opKnit_mock.h>
@@ -37,6 +38,7 @@ using ::testing::Return;
 
 extern OpInit *opInit;
 extern OpReady *opReady;
+extern OpTest *opTest;
 
 extern ControllerMock *controller;
 extern OpKnitMock *opKnit;
@@ -103,10 +105,19 @@ TEST_F(OpInitTest, test_init) {
   ASSERT_EQ(opInit->m_lastHall, Direction_t::NoDirection);
 }
 
-TEST_F(OpInitTest, test_com) {
+TEST_F(OpInitTest, test_reqTest) {
+  EXPECT_CALL(*controllerMock, setState(opTest));
+  const uint8_t buffer[] = {static_cast<uint8_t>(API_t::reqTest)};
+  opInit->com(buffer, 1);
+
+  // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(controllerMock));
+}
+
+TEST_F(OpInitTest, test_com_unrecognized) {
   // no calls expected
-  const uint8_t *buffer = {};
-  opInit->com(buffer, 0);
+  const uint8_t buffer[] = {0xFF};
+  opInit->com(buffer, 1);
 }
 
 TEST_F(OpInitTest, test_end) {
@@ -118,14 +129,20 @@ TEST_F(OpInitTest, test_begin910) {
   EXPECT_CALL(*controllerMock, getMachineType());
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, LOW));
   opInit->begin();
+
+  // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(controllerMock));
 }
 
 TEST_F(OpInitTest, test_updateF) {
   // isReady() == false
   expect_update(get_position_past_right(Machine_t::Kh910), Direction_t::Left, Direction_t::Left);
-  EXPECT_CALL(*controllerMock, getState).WillOnce(Return(opInit));
+  EXPECT_CALL(*controllerMock, getState).Times(0);
   EXPECT_CALL(*controllerMock, setState(opReady)).Times(0);
   opInit->update();
+
+  // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(controllerMock));
 }
 
 TEST_F(OpInitTest, test_updateT) {
@@ -134,6 +151,9 @@ TEST_F(OpInitTest, test_updateT) {
   EXPECT_CALL(*controllerMock, getState).WillOnce(Return(opInit));
   EXPECT_CALL(*controllerMock, setState(opReady));
   opInit->update();
+
+  // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(controllerMock));
 }
 
 TEST_F(OpInitTest, test_op_init_RLL) {

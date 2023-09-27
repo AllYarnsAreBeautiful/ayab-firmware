@@ -121,8 +121,16 @@ bool OpInit::isReady() {
  * \brief Communication callback for state OpInit
  */
 void OpInit::com(const uint8_t *buffer, size_t size) {
-  (void) buffer;
-  (void) size;
+  switch (buffer[0]) {
+  case static_cast<uint8_t>(API_t::reqTest):
+    GlobalCom::h_reqTest();
+    break;
+
+  default:
+    GlobalCom::h_unrecognized();
+    break;
+  }
+  (void) size; // unused
 }
 
 /*!

@@ -86,6 +86,10 @@ void GlobalCom::h_reqTest() {
   m_instance->h_reqTest();
 }
 
+void GlobalCom::h_quitCmd() {
+  m_instance->h_quitCmd();
+}
+
 void GlobalCom::h_unrecognized() {
   m_instance->h_unrecognized();
 }

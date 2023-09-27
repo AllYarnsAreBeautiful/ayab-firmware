@@ -101,20 +101,26 @@ void OpKnit::begin() {
 }
 
 /*!
- * \brief Update knitting procedure.
+ * \brief Update knitting operation.
  */
 void OpKnit::update() {
   knit();
 }
 
 /*!
- * \brief Communication callback for knitting procedure.
+ * \brief Communication callback for knitting operation.
  */
 void OpKnit::com(const uint8_t *buffer, size_t size) {
   switch (buffer[0]) {
   case static_cast<uint8_t>(API_t::cnfLine):
     GlobalCom::h_cnfLine(buffer, size);
     break;
+
+  case static_cast<uint8_t>(API_t::reqTest):
+    GlobalCom::h_reqTest();
+    break;
+
+  // FIXME needs to be a `Cancel` command in the API that resets state from `OpKnit` to `OpInit`
   default:
     GlobalCom::h_unrecognized();
     break;

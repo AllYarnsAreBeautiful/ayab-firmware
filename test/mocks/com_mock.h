@@ -45,6 +45,7 @@ public:
   MOCK_METHOD2(h_cnfLine, void(const uint8_t *buffer, size_t size));
   MOCK_CONST_METHOD0(h_reqInfo, void());
   MOCK_CONST_METHOD0(h_reqTest, void());
+  MOCK_CONST_METHOD0(h_quitCmd, void());
   MOCK_CONST_METHOD0(h_unrecognized, void());
 };
 

@@ -63,7 +63,9 @@ void OpIdle::com(const uint8_t *buffer, size_t size) {
   case static_cast<uint8_t>(API_t::reqInit):
     GlobalCom::h_reqInit(buffer, size);
     break;
+
   default:
+    GlobalCom::h_unrecognized();
     break;
   }
 }
