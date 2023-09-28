@@ -68,6 +68,7 @@ protected:
       expectedBeepSchedule(BEEP_DELAY * (2 * repeats));
     }
     ASSERT_EQ(beeper->getState(), BeepState::Idle);
+    expectedBeepSchedule(BEEP_DELAY * (2 * repeats) + 1);
   }
 };
 
