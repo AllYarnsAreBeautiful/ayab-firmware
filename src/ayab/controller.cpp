@@ -65,6 +65,8 @@ void Controller::update() {
 
 /*!
  * \brief Cache Encoder values
+ * The code that saves the Encoder values is wrapped in an `ATOMIC_BLOCK` macro.
+ * This ensures that interrupts are disabled while the code executes.
  */
 void Controller::cacheEncoders() {
 #ifndef AYAB_TESTS
