@@ -23,7 +23,7 @@
  */
 
 #include "board.h"
-#include <util/atomic.h>
+#include "atomic.h"
 
 #include "encoders.h"
 #include "controller.h"
@@ -65,21 +65,22 @@ void Controller::update() {
 
 /*!
  * \brief Cache Encoder values
- * The code that saves the Encoder values is wrapped in an `ATOMIC_BLOCK` macro.
- * This ensures that interrupts are disabled while the code executes.
+ * The code that saves the Encoder values is bookended by macros
+ * ensuring that interrupts are disabled while the code executes.
  */
 void Controller::cacheEncoders() {
 #ifndef AYAB_TESTS
-  ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
-  {
+  /* ATOMIC_BLOCK(ATOMIC_RESTORESTATE) { */
+  ENTER_CRITICAL();
 #endif
-    m_beltShift  = GlobalEncoders::getBeltShift();
-    m_carriage   = GlobalEncoders::getCarriage();
-    m_direction  = GlobalEncoders::getDirection();
-    m_hallActive = GlobalEncoders::getHallActive();
-    m_position   = GlobalEncoders::getPosition();
+  m_beltShift  = GlobalEncoders::getBeltShift();
+  m_carriage   = GlobalEncoders::getCarriage();
+  m_direction  = GlobalEncoders::getDirection();
+  m_hallActive = GlobalEncoders::getHallActive();
+  m_position   = GlobalEncoders::getPosition();
 #ifndef AYAB_TESTS
-  }
+  /* } */
+  EXIT_CRITICAL();
 #endif
 }
 
