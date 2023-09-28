@@ -65,9 +65,9 @@ void OpTest::begin() {
   GlobalCom::sendMsg(API_t::testRes, buf);
   helpCmd();
 
+#ifndef AYAB_TESTS
   // attach interrupt for ENC_PIN_A(=2), interrupt #0
   detachInterrupt(digitalPinToInterrupt(ENC_PIN_A));
-#ifndef AYAB_TESTS
   // Attaching ENC_PIN_A, Interrupt #0
   // This interrupt cannot be enabled until
   // the machine type has been validated.
