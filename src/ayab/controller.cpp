@@ -69,18 +69,19 @@ void Controller::update() {
  * This ensures that interrupts are disabled while the code executes.
  */
 void Controller::cacheEncoders() {
-#ifndef AYAB_TESTS
-  ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
-  {
-#endif
-    m_beltShift  = GlobalEncoders::getBeltShift();
-    m_carriage   = GlobalEncoders::getCarriage();
-    m_direction  = GlobalEncoders::getDirection();
-    m_hallActive = GlobalEncoders::getHallActive();
-    m_position   = GlobalEncoders::getPosition();
-#ifndef AYAB_TESTS
-  }
-#endif
+//#ifndef AYAB_TESTS
+  /* ATOMIC_BLOCK(ATOMIC_RESTORESTATE) { */
+  ENTER_CRITICAL();
+//#endif
+  m_beltShift  = GlobalEncoders::getBeltShift();
+  m_carriage   = GlobalEncoders::getCarriage();
+  m_direction  = GlobalEncoders::getDirection();
+  m_hallActive = GlobalEncoders::getHallActive();
+  m_position   = GlobalEncoders::getPosition();
+//#ifndef AYAB_TESTS
+  /* } */
+  EXIT_CRITICAL();
+//#endif
 }
 
 /*!
