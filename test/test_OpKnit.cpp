@@ -639,62 +639,68 @@ TEST_F(OpKnitTest, test_knit_new_line) {
 }
 
 TEST_F(OpKnitTest, test_calculatePixelAndSolenoid) {
-  // initialize
+  // Initialize KH910
   expected_init_machine(Machine_t::Kh910);
-  controller->setState(opTest);
+  controller->setState(opKnit);
   expected_update_init();
 
-  // new position, different beltShift and active hall
-  expected_cacheISR(100, Direction_t::Right, Direction_t::Right, BeltShift::Shifted, Carriage_t::Lace);
-  expected_update_test();
+  // No direction
+  // Lace carriage, no direction, need to change position to enter test
+  expected_cacheISR(100, Direction_t::NoDirection, Direction_t::Right, BeltShift::Shifted, Carriage_t::Lace);
+  ASSERT_FALSE(opKnit->calculatePixelAndSolenoid());
 
-  // no direction, need to change position to enter test
-  expected_cacheISR(101, Direction_t::NoDirection, Direction_t::Right, BeltShift::Shifted, Carriage_t::Lace);
-  expected_update_test();
-
-  // no belt, need to change position to enter test
-  expected_cacheISR(100, Direction_t::Right, Direction_t::Right, BeltShift::Unknown, Carriage_t::Lace);
-  expected_update_test();
-
-  // no belt on left side, need to change position to enter test
-  expected_cacheISR(101, Direction_t::Left, Direction_t::Right, BeltShift::Unknown, Carriage_t::Garter);
-  expected_update_test();
-
-  // left Lace carriage
-  expected_cacheISR(100, Direction_t::Left, Direction_t::Right, BeltShift::Unknown, Carriage_t::Lace);
-  expected_update_test();
-
-  // regular belt on left, need to change position to enter test
-  expected_cacheISR(101, Direction_t::Left, Direction_t::Right, BeltShift::Regular, Carriage_t::Garter);
-  expected_update_test();
-
-  // shifted belt on left, need to change position to enter test
-  expected_cacheISR(100, Direction_t::Left, Direction_t::Right, BeltShift::Shifted, Carriage_t::Garter);
-  expected_update_test();
-
-  // off of right end, position is changed
-  expected_cacheISR(END_RIGHT[static_cast<uint8_t>(Machine_t::Kh910)], Direction_t::Left, Direction_t::Right, BeltShift::Unknown, Carriage_t::Lace);
-  expected_update_test();
-
-  // direction right, have not reached offset
+  // Right direction
+  // Lace carriage, no belt on Right, have not reached offset
   expected_cacheISR(39, Direction_t::Right, Direction_t::Left, BeltShift::Unknown, Carriage_t::Lace);
-  expected_update_test();
+  ASSERT_FALSE(opKnit->calculatePixelAndSolenoid());
+
+  // Lace carriage, no belt on Right, need to change position to enter test
+  expected_cacheISR(100, Direction_t::Right, Direction_t::Right, BeltShift::Unknown, Carriage_t::Lace);
+  ASSERT_TRUE(opKnit->calculatePixelAndSolenoid());
+
+  // Lace carriage, regular belt on Right
+  expected_cacheISR(100, Direction_t::Right, Direction_t::Right, BeltShift::Regular, Carriage_t::Lace);
+  ASSERT_TRUE(opKnit->calculatePixelAndSolenoid());
+
+  // Lace carriage, shifted belt on Right, new position, active Hall
+  expected_cacheISR(100, Direction_t::Right, Direction_t::Right, BeltShift::Shifted, Carriage_t::Lace);
+  ASSERT_TRUE(opKnit->calculatePixelAndSolenoid());
+
+  // Left direction
+  // Lace carriage, no belt on Left, off of Right end, position is changed
+  expected_cacheISR(END_RIGHT[static_cast<uint8_t>(Machine_t::Kh910)] - 15, Direction_t::Left, Direction_t::Right, BeltShift::Unknown, Carriage_t::Lace);
+  ASSERT_FALSE(opKnit->calculatePixelAndSolenoid());
+
+  // Lace carriage, no belt on Left
+  expected_cacheISR(100, Direction_t::Left, Direction_t::Right, BeltShift::Unknown, Carriage_t::Lace);
+  ASSERT_TRUE(opKnit->calculatePixelAndSolenoid());
+
+  // Garter Carriage, no belt on Left, need to change position to enter test
+  expected_cacheISR(101, Direction_t::Left, Direction_t::Right, BeltShift::Unknown, Carriage_t::Garter);
+  ASSERT_TRUE(opKnit->calculatePixelAndSolenoid());
+
+  // Garter carriage, regular belt on Left, need to change position to enter test
+  expected_cacheISR(101, Direction_t::Left, Direction_t::Right, BeltShift::Regular, Carriage_t::Garter);
+  ASSERT_TRUE(opKnit->calculatePixelAndSolenoid());
+
+  // Garter carriage, shifted belt on Left, need to change position to enter test
+  expected_cacheISR(100, Direction_t::Left, Direction_t::Right, BeltShift::Shifted, Carriage_t::Garter);
+  ASSERT_TRUE(opKnit->calculatePixelAndSolenoid());
 
   // KH270
   controller->setMachineType(Machine_t::Kh270);
 
-  // K carriage direction left
-  expected_cacheISR(0, Direction_t::Left, Direction_t::Right, BeltShift::Regular, Carriage_t::Knit);
-  expected_update_test();
+  // K carriage, no belt on Left
+  expected_cacheISR(0, Direction_t::Left, Direction_t::Right, BeltShift::Unknown, Carriage_t::Knit);
+  ASSERT_TRUE(opKnit->calculatePixelAndSolenoid());
 
-  // K carriage direction right
-  expected_cacheISR(END_RIGHT[static_cast<uint8_t>(Machine_t::Kh270)], Direction_t::Right, Direction_t::Left, BeltShift::Regular, Carriage_t::Knit);
-  expected_update_test();
+  // K carriage, no belt on Right
+  expected_cacheISR(END_RIGHT[static_cast<uint8_t>(Machine_t::Kh270)], Direction_t::Right, Direction_t::Left, BeltShift::Unknown, Carriage_t::Knit);
+  ASSERT_TRUE(opKnit->calculatePixelAndSolenoid());
 
-  // test expectations without destroying instance
+  // Test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
   ASSERT_TRUE(Mock::VerifyAndClear(encodersMock));
-  ASSERT_TRUE(Mock::VerifyAndClear(opTestMock));
   ASSERT_TRUE(Mock::VerifyAndClear(comMock));
 }
 

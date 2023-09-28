@@ -338,6 +338,7 @@ bool OpKnit::calculatePixelAndSolenoid() {
   auto beltShift = GlobalController::getBeltShift();
   auto carriage = GlobalController::getCarriage();
   auto machineType = GlobalController::getMachineType();
+
   switch (direction) {
   // calculate the solenoid and pixel to be set
   // implemented according to machine manual
@@ -378,6 +379,7 @@ bool OpKnit::calculatePixelAndSolenoid() {
     }
     break;
 
+  case Direction_t::NoDirection:
   default:
     return false;
   }

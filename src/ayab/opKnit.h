@@ -120,9 +120,10 @@ private:
 
 #if AYAB_TESTS
   // Note: ideally tests would only rely on the public interface.
-  FRIEND_TEST(OpKnitTest, test_encodePosition); 
+  FRIEND_TEST(OpKnitTest, test_encodePosition);
   FRIEND_TEST(OpKnitTest, test_getStartOffset);
   FRIEND_TEST(OpKnitTest, test_knit_lastLine_and_no_req);
+  FRIEND_TEST(OpKnitTest, test_calculatePixelAndSolenoid);
 #endif
 };
 
