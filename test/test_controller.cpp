@@ -272,6 +272,8 @@ TEST_F(ControllerTest, test_update_test) {
 
   // now in state `OpTest`
   expected_update_test();
+  ASSERT_EQ(controller->getState(), opTestMock);
+
   EXPECT_CALL(*opTestMock, state).WillOnce(Return(OpState_t::Test));
   controller->getState()->state();
 
