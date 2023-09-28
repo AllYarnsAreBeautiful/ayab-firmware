@@ -23,7 +23,7 @@
  */
 
 #include "board.h"
-#include "AtomicBlock.h"
+#include <util/atomic.h>
 
 #include "encoders.h"
 #include "controller.h"
@@ -67,17 +67,18 @@ void Controller::update() {
  * \brief Cache Encoder values
  */
 void Controller::cacheEncoders() {
-  // the following syntax is an alternative to ATOMIC_BLOCK(ATOMIC_RESTORESTATE), tested on 8-bit AVRs: see
-  // https://forum.arduino.cc/t/replacement-for-avr-libc-atomic_block-macros-now-for-due-and-other-platforms/122678
-
-  AtomicBlock< Atomic_RestoreState > block;
+#ifndef AYAB_TESTS
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
   {
+#endif
     m_beltShift  = GlobalEncoders::getBeltShift();
     m_carriage   = GlobalEncoders::getCarriage();
     m_direction  = GlobalEncoders::getDirection();
     m_hallActive = GlobalEncoders::getHallActive();
     m_position   = GlobalEncoders::getPosition();
+#ifndef AYAB_TESTS
   }
+#endif
 }
 
 /*!
