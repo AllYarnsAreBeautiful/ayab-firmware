@@ -191,7 +191,7 @@ void OpKnit::encodePosition() {
     // only act if there is an actual change of position
     // store current encoder position for next call of this function
     m_sOldPosition = position;
-    calculatePixelAndSolenoid();
+    (void) calculatePixelAndSolenoid();
     GlobalCom::send_indState(Err_t::Unspecified_failure); // FIXME is this the right error code?
   }
 }
@@ -333,8 +333,8 @@ void OpKnit::reqLine(uint8_t lineNumber) {
 bool OpKnit::calculatePixelAndSolenoid() {
   uint8_t startOffset = 0;
 
-  auto direction = GlobalController::getDirection();
   auto position = GlobalController::getPosition();
+  auto direction = GlobalController::getDirection();
   auto beltShift = GlobalController::getBeltShift();
   auto carriage = GlobalController::getCarriage();
   auto machineType = GlobalController::getMachineType();
