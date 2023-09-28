@@ -162,10 +162,12 @@ void Encoders::encA_rising() {
     return;
   }
 
-  // In front of Left Hall Sensor?
+  // Hall value is used to detect whether carriage is in front of Left Hall sensor
   uint16_t hallValue = analogRead(EOL_PIN_L);
+
   if ((hallValue < FILTER_L_MIN[static_cast<uint8_t>(m_machineType)]) ||
       (hallValue > FILTER_L_MAX[static_cast<uint8_t>(m_machineType)])) {
+    // In front of Left Hall Sensor
     m_hallActive = Direction_t::Left;
 
     Carriage detected_carriage = Carriage_t::NoCarriage;
@@ -192,10 +194,11 @@ void Encoders::encA_rising() {
       return;
     } else {
       m_carriage = detected_carriage;
-    }
 
-    // Belt shift signal only decided in front of hall sensor
-    m_beltShift = digitalRead(ENC_PIN_C) ? BeltShift::Regular : BeltShift::Shifted;
+      // Belt shift signal only decided in front of Hall sensor
+      // Belt shift is ignored for KH270
+      m_beltShift = digitalRead(ENC_PIN_C) ? BeltShift::Regular : BeltShift::Shifted;
+    }
 
     // Known position of the carriage -> overwrite position
     m_position = start_position;
@@ -218,27 +221,30 @@ void Encoders::encA_falling() {
     m_position = m_position - 1;
   }
 
-  // In front of Right Hall Sensor?
+  // Hall value is used to detect whether carriage is in front of Right Hall sensor
   uint16_t hallValue = analogRead(EOL_PIN_R);
 
   // Avoid 'comparison of unsigned expression < 0 is always false'
   // by being explicit about that behaviour being expected.
   bool hallValueSmall = false;
-
   hallValueSmall = (hallValue < FILTER_R_MIN[static_cast<uint8_t>(m_machineType)]);
 
   if (hallValueSmall || (hallValue > FILTER_R_MAX[static_cast<uint8_t>(m_machineType)])) {
+    // In front of Right Hall Sensor
     m_hallActive = Direction_t::Right;
 
-    // The garter carriage has a second set of magnets that are going to
+    // The Garter carriage has a second set of magnets that are going to
     // pass the sensor and will reset state incorrectly if allowed to
     // continue.
     if (hallValueSmall && (m_carriage != Carriage_t::Garter)) {
       m_carriage = Carriage_t::Knit;
     }
 
-    // Belt shift signal only decided in front of hall sensor
-    m_beltShift = digitalRead(ENC_PIN_C) ? BeltShift::Shifted : BeltShift::Regular;
+    // Belt shift is ignored for KH270
+    if (m_machineType != Machine_t::Kh270) {
+      // Belt shift signal only decided in front of Hall sensor
+      m_beltShift = digitalRead(ENC_PIN_C) ? BeltShift::Shifted : BeltShift::Regular;
+    }
 
     // Known position of the carriage -> overwrite position
     m_position = END_RIGHT_MINUS_OFFSET[static_cast<uint8_t>(m_machineType)];

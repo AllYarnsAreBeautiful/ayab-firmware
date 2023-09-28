@@ -36,6 +36,7 @@ constexpr uint8_t SOLENOIDS_NUM[NUM_MACHINES] = {16U, 16U, 12U};
 constexpr uint8_t HALF_SOLENOIDS_NUM[NUM_MACHINES] = {8U, 8U, 6U};
 constexpr uint8_t SOLENOIDS_I2C_ADDRESS_MASK = 0x20U;
 constexpr uint8_t SOLENOID_BUFFER_SIZE = 16U;
+constexpr uint16_t SOLENOIDS_BITMASK = 0xFFFFU;
 
 class SolenoidsInterface {
 public:

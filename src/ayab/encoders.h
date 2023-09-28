@@ -84,19 +84,19 @@ constexpr uint8_t START_OFFSET[NUM_MACHINES][NUM_DIRECTIONS][NUM_CARRIAGES] = {
     {
         // K,   L,   G
         {40U, 40U, 32U}, // Left
-        {16U, 16U, 56U} // Right
+        {16U, 16U, 56U}  // Right
     },
     // KH930
     {
         // K,   L,   G
         {40U, 40U,  8U}, // Left
-        {16U, 16U, 32U} // Right
+        {16U, 16U, 32U}  // Right
     },
     // KH270
     {
         // K
         {28U, 0U, 0U}, // Left: x % 12 == 4
-        {16U, 0U, 0U}   // Right: (x + 6) % 12 == 10
+        {16U, 0U, 0U}  // Right: (x + 6) % 12 == 10
     }};
 
 // Should be calibrated to each device
@@ -107,8 +107,6 @@ constexpr uint16_t FILTER_L_MIN[NUM_MACHINES] = { 200U, 200U, 200U};
 constexpr uint16_t FILTER_L_MAX[NUM_MACHINES] = { 600U, 600U, 600U};
 constexpr uint16_t FILTER_R_MIN[NUM_MACHINES] = { 200U,   0U,   0U};
 constexpr uint16_t FILTER_R_MAX[NUM_MACHINES] = {1023U, 600U, 600U};
-
-constexpr uint16_t SOLENOIDS_BITMASK = 0xFFFFU;
 
 constexpr uint8_t MAGNET_DISTANCE_270 = 12U;
 
