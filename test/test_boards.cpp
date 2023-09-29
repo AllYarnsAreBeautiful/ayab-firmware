@@ -1,5 +1,5 @@
 /*!`
- * \file test_all.cpp
+ * \file test_boards.cpp
  *
  * This file is part of AYAB.
  *
@@ -34,8 +34,9 @@
 #include <opTest.h>
 #include <opError.h>
 
-#include <opKnit_mock.h>
+#include <analogReadAsyncWrapper_mock.h>
 #include <controller_mock.h>
+#include <opKnit_mock.h>
 
 // global definitions
 // references everywhere else must use `extern`
@@ -50,8 +51,9 @@ OpReady   *opReady   = new OpReady();
 OpTest    *opTest    = new OpTest();
 OpError   *opError   = new OpError();
 
+AnalogReadAsyncWrapperMock *analogReadAsyncWrapper = new AnalogReadAsyncWrapperMock();
 ControllerMock *controller = new ControllerMock();
-OpKnitMock     *opKnit     = new OpKnitMock();
+OpKnitMock *opKnit = new OpKnitMock();
 
 // initialize static members
 BeeperInterface     *GlobalBeeper::m_instance     = beeper;
@@ -65,6 +67,7 @@ OpReadyInterface    *GlobalOpReady::m_instance    = opReady;
 OpTestInterface     *GlobalOpTest::m_instance     = opTest;
 OpErrorInterface    *GlobalOpError::m_instance    = opError;
 
+AnalogReadAsyncWrapperInterface *GlobalAnalogReadAsyncWrapper::m_instance = analogReadAsyncWrapper;
 ControllerInterface *GlobalController::m_instance = controller;
 OpKnitInterface     *GlobalOpKnit::m_instance     = opKnit;
 

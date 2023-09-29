@@ -33,18 +33,9 @@ set(COMMON_INCLUDES
     )
 set(EXTERNAL_LIB_INCLUDES
     ${LIBRARY_DIRECTORY}/Adafruit_MCP23008
-    #${LIBRARY_DIRECTORY}/avr-libc/include
     )
 set(COMMON_SOURCES
     ${PROJECT_SOURCE_DIR}/test_boards.cpp
-
-    ${SOURCE_DIRECTORY}/encoders.cpp
-    ${SOURCE_DIRECTORY}/global_encoders.cpp
-    ${PROJECT_SOURCE_DIR}/test_encoders.cpp
-
-    ${SOURCE_DIRECTORY}/solenoids.cpp
-    ${SOURCE_DIRECTORY}/global_solenoids.cpp
-    ${PROJECT_SOURCE_DIR}/test_solenoids.cpp
 
     ${SOURCE_DIRECTORY}/beeper.cpp
     ${SOURCE_DIRECTORY}/global_beeper.cpp
@@ -53,6 +44,14 @@ set(COMMON_SOURCES
     ${SOURCE_DIRECTORY}/com.cpp
     ${SOURCE_DIRECTORY}/global_com.cpp
     ${PROJECT_SOURCE_DIR}/test_com.cpp
+
+    ${SOURCE_DIRECTORY}/encoders.cpp
+    ${SOURCE_DIRECTORY}/global_encoders.cpp
+    ${PROJECT_SOURCE_DIR}/test_encoders.cpp
+
+    ${SOURCE_DIRECTORY}/solenoids.cpp
+    ${SOURCE_DIRECTORY}/global_solenoids.cpp
+    ${PROJECT_SOURCE_DIR}/test_solenoids.cpp
 
     ${SOURCE_DIRECTORY}/opIdle.cpp
     ${SOURCE_DIRECTORY}/global_OpIdle.cpp
@@ -79,6 +78,9 @@ set(COMMON_SOURCES
 
     ${SOURCE_DIRECTORY}/global_controller.cpp
     ${PROJECT_SOURCE_DIR}/mocks/controller_mock.cpp
+
+    ${SOURCE_DIRECTORY}/global_analogReadAsyncWrapper.cpp
+    ${PROJECT_SOURCE_DIR}/mocks/analogReadAsyncWrapper_mock.cpp
     )
 set(COMMON_DEFINES
     ARDUINO=1819
@@ -176,18 +178,25 @@ add_executable(${PROJECT_NAME}_knit
     ${SOURCE_DIRECTORY}/opKnit.cpp
     ${SOURCE_DIRECTORY}/global_OpKnit.cpp
     ${PROJECT_SOURCE_DIR}/test_OpKnit.cpp
+
+    ${SOURCE_DIRECTORY}/analogReadAsyncWrapper.cpp
+    ${SOURCE_DIRECTORY}/global_analogReadAsyncWrapper.cpp
+    #${LIBRARY_DIRECTORY}/AnalogReadAsync/src/analogReadAsync.cpp
+    #${PROJECT_SOURCE_DIR}/test_analogReadAsyncWrapper.cpp
 )
 target_include_directories(${PROJECT_NAME}_knit
     PRIVATE
     ${COMMON_INCLUDES}
     ${EXTERNAL_LIB_INCLUDES}
+    ${LIBRARY_DIRECTORY}/AnalogReadAsync/src
 )
 target_compile_definitions(${PROJECT_NAME}_knit
     PRIVATE
     ${COMMON_DEFINES}
     __AVR_ATmega168__
 )
-target_compile_options(${PROJECT_NAME}_knit PRIVATE
+target_compile_options(${PROJECT_NAME}_knit
+    PRIVATE
     ${COMMON_FLAGS}
 )
 target_link_libraries(${PROJECT_NAME}_knit

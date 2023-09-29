@@ -10,3 +10,6 @@
         active = true
 	path = lib/avr-libc
 	url = https://github.com/avrdudes/avr-libc.git
+[submodule "lib/AnalogReadAsync"]
+	path = lib/AnalogReadAsync
+	url = https://github.com/boothinator/AnalogReadAsync

@@ -54,6 +54,16 @@ void Encoders::isr() {
   gEncodersMock->isr();
 }
 
+void Encoders::hallLeftCallback(uint16_t hallValue, void *data) {
+  assert(gEncodersMock != nullptr);
+  gEncodersMock->hallLeftCallback(hallValue, data);
+}
+
+void Encoders::hallRightCallback(uint16_t hallValue, void *data) {
+  assert(gEncodersMock != nullptr);
+  gEncodersMock->hallRightCallback(hallValue, data);
+}
+
 uint16_t Encoders::getHallValue(Direction_t dir) {
   assert(gEncodersMock != nullptr);
   return gEncodersMock->getHallValue(dir);

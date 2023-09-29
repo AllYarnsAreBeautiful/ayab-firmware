@@ -23,6 +23,7 @@
 
 #include "gtest/gtest.h"
 
+#include <analogReadAsyncWrapper.h>
 #include <controller.h>
 #include <opKnit.h>
 
@@ -39,6 +40,7 @@
 
 // global definitions
 // references everywhere else must use `extern`
+AnalogReadAsyncWrapper *analogReadAsyncWrapper = new AnalogReadAsyncWrapper();
 Controller    *controller = new Controller();
 OpKnit        *opKnit     = new OpKnit();
 
@@ -54,6 +56,7 @@ OpTestMock    *opTest     = new OpTestMock();
 OpErrorMock   *opError    = new OpErrorMock();
 
 // instantiate singleton classes with mock objects
+AnalogReadAsyncWrapperInterface *GlobalAnalogReadAsyncWrapper::m_instance = analogReadAsyncWrapper;
 ControllerInterface *GlobalController::m_instance = controller;
 OpKnitInterface     *GlobalOpKnit::m_instance     = opKnit;
 

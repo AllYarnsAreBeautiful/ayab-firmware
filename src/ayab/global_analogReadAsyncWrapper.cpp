@@ -1,5 +1,7 @@
-/*!`
- * \file encoders_mock.h
+/*!
+ * \file global_analogReadAsyncWrapper.cpp
+ * \brief Singleton class containing methods to actuate a analogReadAsyncWrapper
+ *    connected to PIEZO_PIN.
  *
  * This file is part of AYAB.
  *
@@ -21,29 +23,10 @@
  *    http://ayab-knitting.com
  */
 
-#ifndef ENCODERS_MOCK_H_
-#define ENCODERS_MOCK_H_
+#include "analogReadAsyncWrapper.h"
 
-#include <encoders.h>
-#include <gmock/gmock.h>
+// static member functions
 
-class EncodersMock : public EncodersInterface {
-public:
-  MOCK_METHOD1(init, void(Machine_t));
-  MOCK_METHOD0(setUpInterrupt, void());
-  MOCK_METHOD0(isr, void());
-  MOCK_METHOD2(hallLeftCallback, void(uint16_t hallValue, void *data));
-  MOCK_METHOD2(hallRightCallback, void(uint16_t hallValue, void *data));
-  MOCK_METHOD1(getHallValue, uint16_t(Direction_t));
-  MOCK_METHOD0(getBeltShift, BeltShift_t());
-  MOCK_METHOD0(getDirection, Direction_t());
-  MOCK_METHOD0(getCarriage, Carriage_t());
-  MOCK_METHOD0(getMachineType, Machine_t());
-  MOCK_METHOD0(getHallActive, Direction_t());
-  MOCK_METHOD0(getPosition, uint8_t());
-};
-
-EncodersMock *encodersMockInstance();
-void releaseEncodersMock();
-
-#endif // ENCODERS_MOCK_H_
+void GlobalAnalogReadAsyncWrapper::analogReadAsyncWrapped(uint8_t pin, analogReadCompleteCallback_t cb, const void *data) {
+  m_instance->analogReadAsyncWrapped(pin, cb, data);
+}

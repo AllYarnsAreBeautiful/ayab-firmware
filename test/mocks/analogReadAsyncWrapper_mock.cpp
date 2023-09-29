@@ -1,5 +1,5 @@
 /*!`
- * \file encoders_mock.h
+ * \file analogReadAsyncWrapper_mock.cpp
  *
  * This file is part of AYAB.
  *
@@ -21,29 +21,24 @@
  *    http://ayab-knitting.com
  */
 
-#ifndef ENCODERS_MOCK_H_
-#define ENCODERS_MOCK_H_
+#include <analogReadAsyncWrapper_mock.h>
 
-#include <encoders.h>
-#include <gmock/gmock.h>
+static AnalogReadAsyncWrapperMock *gAnalogReadAsyncWrapperMock = nullptr;
+AnalogReadAsyncWrapperMock *analogReadAsyncWrapperMockInstance() {
+  if (!gAnalogReadAsyncWrapperMock) {
+    gAnalogReadAsyncWrapperMock = new AnalogReadAsyncWrapperMock();
+  }
+  return gAnalogReadAsyncWrapperMock;
+}
 
-class EncodersMock : public EncodersInterface {
-public:
-  MOCK_METHOD1(init, void(Machine_t));
-  MOCK_METHOD0(setUpInterrupt, void());
-  MOCK_METHOD0(isr, void());
-  MOCK_METHOD2(hallLeftCallback, void(uint16_t hallValue, void *data));
-  MOCK_METHOD2(hallRightCallback, void(uint16_t hallValue, void *data));
-  MOCK_METHOD1(getHallValue, uint16_t(Direction_t));
-  MOCK_METHOD0(getBeltShift, BeltShift_t());
-  MOCK_METHOD0(getDirection, Direction_t());
-  MOCK_METHOD0(getCarriage, Carriage_t());
-  MOCK_METHOD0(getMachineType, Machine_t());
-  MOCK_METHOD0(getHallActive, Direction_t());
-  MOCK_METHOD0(getPosition, uint8_t());
-};
+void releaseAnalogReadAsyncWrapperMock() {
+  if (gAnalogReadAsyncWrapperMock) {
+    delete gAnalogReadAsyncWrapperMock;
+    gAnalogReadAsyncWrapperMock = nullptr;
+  }
+}
 
-EncodersMock *encodersMockInstance();
-void releaseEncodersMock();
-
-#endif // ENCODERS_MOCK_H_
+void AnalogReadAsyncWrapper::analogReadAsyncWrapped(uint8_t pin, analogReadCompleteCallback_t cb, const void *data) {
+  assert(gAnalogReadAsyncWrapperMock != nullptr);
+  gAnalogReadAsyncWrapperMock->analogReadAsyncWrapped(pin, cb, data);
+}

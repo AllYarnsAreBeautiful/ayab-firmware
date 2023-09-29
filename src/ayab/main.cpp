@@ -24,6 +24,7 @@
 
 #include <Arduino.h>
 
+#include "analogReadAsyncWrapper.h"
 #include "beeper.h"
 #include "com.h"
 #include "controller.h"
@@ -40,6 +41,7 @@
 // Global definitions: references elsewhere must use `extern`.
 // Each of the following is a pointer to a singleton class
 // containing static methods.
+constexpr GlobalAnalogReadAsyncWrapper *analogReadAsyncWrapper;
 constexpr GlobalBeeper    *beeper;
 constexpr GlobalCom       *com;
 constexpr GlobalController       *controller;
@@ -57,6 +59,7 @@ constexpr GlobalOpError   *opError;
 // Each singleton class contains a pointer to a static instance
 // that implements a public interface. When testing, a pointer
 // to an instance of a mock class can be substituted.
+AnalogReadAsyncWrapperInterface *GlobalAnalogReadAsyncWrapper::m_instance = new AnalogReadAsyncWrapper();
 BeeperInterface    *GlobalBeeper::m_instance    = new Beeper();
 ComInterface       *GlobalCom::m_instance       = new Com();
 EncodersInterface  *GlobalEncoders::m_instance  = new Encoders();

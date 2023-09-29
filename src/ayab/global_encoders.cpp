@@ -40,6 +40,14 @@ void GlobalEncoders::isr() {
 }
 #endif // AYAB_TESTS
 
+void GlobalEncoders::hallLeftCallback(uint16_t hallValue, void *data) {
+  m_instance->hallLeftCallback(hallValue, data);
+}
+
+void GlobalEncoders::hallRightCallback(uint16_t hallValue, void *data) {
+  m_instance->hallRightCallback(hallValue, data);
+}
+
 uint16_t GlobalEncoders::getHallValue(Direction_t pSensor) {
   return m_instance->getHallValue(pSensor);
 }

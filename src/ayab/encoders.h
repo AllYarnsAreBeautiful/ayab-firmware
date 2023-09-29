@@ -24,8 +24,8 @@
 #ifndef ENCODERS_H_
 #define ENCODERS_H_
 
-#include "board.h"
 #include <Arduino.h>
+#include "board.h"
 
 // Enumerated constants
 
@@ -123,6 +123,8 @@ public:
   virtual void init(Machine_t machineType) = 0;
   virtual void setUpInterrupt() = 0;
   virtual void isr() = 0;
+  virtual void hallLeftCallback(uint16_t hallValue, void *data) = 0;
+  virtual void hallRightCallback(uint16_t hallValue, void *data) = 0;
   virtual uint16_t getHallValue(Direction_t pSensor) = 0;
   virtual Machine_t getMachineType() = 0;
   virtual BeltShift_t getBeltShift() = 0;
@@ -151,6 +153,8 @@ public:
 //#ifndef AYAB_TESTS
   static void isr();
 //#endif
+  static void hallLeftCallback(uint16_t hallValue, void *data);
+  static void hallRightCallback(uint16_t hallValue, void *data);
   static uint16_t getHallValue(Direction_t pSensor);
   static Machine_t getMachineType();
   static BeltShift_t getBeltShift();
@@ -167,6 +171,8 @@ public:
   void init(Machine_t machineType) final;
   void setUpInterrupt() final;
   void isr() final;
+  void hallLeftCallback(uint16_t hallValue, void *data) final;
+  void hallRightCallback(uint16_t hallValue, void *data) final;
   uint16_t getHallValue(Direction_t pSensor) final;
   Machine_t getMachineType() final;
   BeltShift_t getBeltShift() final;
