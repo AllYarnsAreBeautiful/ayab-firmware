@@ -23,7 +23,7 @@
  */
 
 #include "board.h"
-#include "atomic.h"
+#include <util/atomic.h>
 
 #include "encoders.h"
 #include "controller.h"
@@ -70,8 +70,8 @@ void Controller::update() {
  */
 void Controller::cacheEncoders() {
 #ifndef AYAB_TESTS
-  /* ATOMIC_BLOCK(ATOMIC_RESTORESTATE) { */
-  ENTER_CRITICAL();
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+  // start of critical code
 #endif
   m_beltShift  = GlobalEncoders::getBeltShift();
   m_carriage   = GlobalEncoders::getCarriage();
@@ -79,8 +79,8 @@ void Controller::cacheEncoders() {
   m_hallActive = GlobalEncoders::getHallActive();
   m_position   = GlobalEncoders::getPosition();
 #ifndef AYAB_TESTS
-  /* } */
-  EXIT_CRITICAL();
+  // end of critical code
+  }
 #endif
 }
 
