@@ -45,10 +45,24 @@ GTEST_COLOR=1 ctest $ctest_verbose --output-on-failure .
 
 cd ../..
 
-GCOVR_ARGS="--exclude-unreachable-branches --exclude-throw-branches \
+GCOVR_ARGS="--exclude-unreachable-branches \
+            --exclude-throw-branches \
+            --decisions \
             --exclude-directories 'test/build/arduino_mock$' \
-	    -e test_* -e libraries* -e src/ayab/global_knitter.cpp \
-	    -e src/ayab/global_fsm.cpp"
+	    -e test_* -e lib* \
+            -e src/ayab/analogReadAsyncWrapper.cpp \
+	    -e src/ayab/global_OpIdle.cpp \
+	    -e src/ayab/global_OpInit.cpp \
+	    -e src/ayab/global_OpTest.cpp \
+	    -e src/ayab/global_OpReady.cpp \
+	    -e src/ayab/global_OpError.cpp \
+	    -e src/ayab/global_OpKnit.cpp \
+            -e src/ayab/global_beeper.cpp \
+            -e src/ayab/global_com.cpp \
+            -e src/ayab/global_controller.cpp \
+            -e src/ayab/global_encoders.cpp \
+            -e src/ayab/global_solenoids.cpp \
+            -e src/ayab/global_analogReadAsyncWrapper.cpp"
 
 if [[ $sonar -eq 1 ]]; then
   gcovr -r . $GCOVR_ARGS --sonarqube ./test/build/coverage.xml

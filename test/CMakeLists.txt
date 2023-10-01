@@ -37,14 +37,6 @@ set(EXTERNAL_LIB_INCLUDES
 set(COMMON_SOURCES
     ${PROJECT_SOURCE_DIR}/test_boards.cpp
 
-    ${SOURCE_DIRECTORY}/encoders.cpp
-    ${SOURCE_DIRECTORY}/global_encoders.cpp
-    ${PROJECT_SOURCE_DIR}/test_encoders.cpp
-
-    ${SOURCE_DIRECTORY}/solenoids.cpp
-    ${SOURCE_DIRECTORY}/global_solenoids.cpp
-    ${PROJECT_SOURCE_DIR}/test_solenoids.cpp
-
     ${SOURCE_DIRECTORY}/beeper.cpp
     ${SOURCE_DIRECTORY}/global_beeper.cpp
     ${PROJECT_SOURCE_DIR}/test_beeper.cpp
@@ -53,15 +45,42 @@ set(COMMON_SOURCES
     ${SOURCE_DIRECTORY}/global_com.cpp
     ${PROJECT_SOURCE_DIR}/test_com.cpp
 
-    ${SOURCE_DIRECTORY}/tester.cpp
-    ${SOURCE_DIRECTORY}/global_tester.cpp
-    ${PROJECT_SOURCE_DIR}/test_tester.cpp
+    ${SOURCE_DIRECTORY}/encoders.cpp
+    ${SOURCE_DIRECTORY}/global_encoders.cpp
+    ${PROJECT_SOURCE_DIR}/test_encoders.cpp
 
-    ${SOURCE_DIRECTORY}/global_knitter.cpp
-    ${PROJECT_SOURCE_DIR}/mocks/knitter_mock.cpp
+    ${SOURCE_DIRECTORY}/solenoids.cpp
+    ${SOURCE_DIRECTORY}/global_solenoids.cpp
+    ${PROJECT_SOURCE_DIR}/test_solenoids.cpp
 
-    ${SOURCE_DIRECTORY}/global_fsm.cpp
-    ${PROJECT_SOURCE_DIR}/mocks/fsm_mock.cpp
+    ${SOURCE_DIRECTORY}/opIdle.cpp
+    ${SOURCE_DIRECTORY}/global_OpIdle.cpp
+    ${PROJECT_SOURCE_DIR}/test_OpIdle.cpp
+
+    ${SOURCE_DIRECTORY}/opInit.cpp
+    ${SOURCE_DIRECTORY}/global_OpInit.cpp
+    ${PROJECT_SOURCE_DIR}/test_OpInit.cpp
+
+    ${SOURCE_DIRECTORY}/opReady.cpp
+    ${SOURCE_DIRECTORY}/global_OpReady.cpp
+    ${PROJECT_SOURCE_DIR}/test_OpReady.cpp
+
+    ${SOURCE_DIRECTORY}/opTest.cpp
+    ${SOURCE_DIRECTORY}/global_OpTest.cpp
+    ${PROJECT_SOURCE_DIR}/test_OpTest.cpp
+
+    ${SOURCE_DIRECTORY}/opError.cpp
+    ${SOURCE_DIRECTORY}/global_OpError.cpp
+    ${PROJECT_SOURCE_DIR}/test_OpError.cpp
+
+    ${SOURCE_DIRECTORY}/global_OpKnit.cpp
+    ${PROJECT_SOURCE_DIR}/mocks/opKnit_mock.cpp
+
+    ${SOURCE_DIRECTORY}/global_controller.cpp
+    ${PROJECT_SOURCE_DIR}/mocks/controller_mock.cpp
+
+    ${SOURCE_DIRECTORY}/global_analogReadAsyncWrapper.cpp
+    ${PROJECT_SOURCE_DIR}/mocks/analogReadAsyncWrapper_mock.cpp
     )
 set(COMMON_DEFINES
     ARDUINO=1819
@@ -122,7 +141,7 @@ endfunction()
 
 add_board(uno)
 
-add_executable(${PROJECT_NAME}_knitter
+add_executable(${PROJECT_NAME}_knit
     ${PROJECT_SOURCE_DIR}/test_all.cpp
 
     ${SOURCE_DIRECTORY}/global_beeper.cpp
@@ -137,36 +156,55 @@ add_executable(${PROJECT_NAME}_knitter
     ${SOURCE_DIRECTORY}/global_solenoids.cpp
     ${PROJECT_SOURCE_DIR}/mocks/solenoids_mock.cpp
 
-    ${SOURCE_DIRECTORY}/global_tester.cpp
-    ${PROJECT_SOURCE_DIR}/mocks/tester_mock.cpp
+    ${SOURCE_DIRECTORY}/global_OpIdle.cpp
+    ${PROJECT_SOURCE_DIR}/mocks/opIdle_mock.cpp
 
-    ${SOURCE_DIRECTORY}/fsm.cpp
-    ${SOURCE_DIRECTORY}/global_fsm.cpp
-    ${PROJECT_SOURCE_DIR}/test_fsm.cpp
+    ${SOURCE_DIRECTORY}/global_OpInit.cpp
+    ${PROJECT_SOURCE_DIR}/mocks/opInit_mock.cpp
 
-    ${SOURCE_DIRECTORY}/knitter.cpp
-    ${SOURCE_DIRECTORY}/global_knitter.cpp
-    ${PROJECT_SOURCE_DIR}/test_knitter.cpp
+    ${SOURCE_DIRECTORY}/global_OpReady.cpp
+    ${PROJECT_SOURCE_DIR}/mocks/opReady_mock.cpp
+
+    ${SOURCE_DIRECTORY}/global_OpTest.cpp
+    ${PROJECT_SOURCE_DIR}/mocks/opTest_mock.cpp
+
+    ${SOURCE_DIRECTORY}/global_OpError.cpp
+    ${PROJECT_SOURCE_DIR}/mocks/opError_mock.cpp
+
+    ${SOURCE_DIRECTORY}/controller.cpp
+    ${SOURCE_DIRECTORY}/global_controller.cpp
+    ${PROJECT_SOURCE_DIR}/test_controller.cpp
+
+    ${SOURCE_DIRECTORY}/opKnit.cpp
+    ${SOURCE_DIRECTORY}/global_OpKnit.cpp
+    ${PROJECT_SOURCE_DIR}/test_OpKnit.cpp
+
+    ${SOURCE_DIRECTORY}/analogReadAsyncWrapper.cpp
+    ${SOURCE_DIRECTORY}/global_analogReadAsyncWrapper.cpp
+    #${LIBRARY_DIRECTORY}/AnalogReadAsync/src/analogReadAsync.cpp
+    #${PROJECT_SOURCE_DIR}/test_analogReadAsyncWrapper.cpp
 )
-target_include_directories(${PROJECT_NAME}_knitter
+target_include_directories(${PROJECT_NAME}_knit
     PRIVATE
     ${COMMON_INCLUDES}
     ${EXTERNAL_LIB_INCLUDES}
+    ${LIBRARY_DIRECTORY}/AnalogReadAsync/src
 )
-target_compile_definitions(${PROJECT_NAME}_knitter
+target_compile_definitions(${PROJECT_NAME}_knit
     PRIVATE
     ${COMMON_DEFINES}
     __AVR_ATmega168__
 )
-target_compile_options(${PROJECT_NAME}_knitter PRIVATE
+target_compile_options(${PROJECT_NAME}_knit
+    PRIVATE
     ${COMMON_FLAGS}
 )
-target_link_libraries(${PROJECT_NAME}_knitter
+target_link_libraries(${PROJECT_NAME}_knit
     ${COMMON_LINKER_FLAGS}
 )
-add_dependencies(${PROJECT_NAME}_knitter arduino_mock)
+add_dependencies(${PROJECT_NAME}_knit arduino_mock)
 
 enable_testing()
 include(GoogleTest)
 gtest_discover_tests(${PROJECT_NAME}_uno TEST_PREFIX uno_ XML_OUTPUT_DIR ./xml_out)
-gtest_discover_tests(${PROJECT_NAME}_knitter TEST_PREFIX knitter_ XML_OUTPUT_DIR ./xml_out)
+gtest_discover_tests(${PROJECT_NAME}_knit TEST_PREFIX knit_ XML_OUTPUT_DIR ./xml_out)
