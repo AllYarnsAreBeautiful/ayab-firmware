@@ -1,5 +1,5 @@
 /*!
- * \file global_analogReadAsyncWrapper.cpp
+ * \file global_packetSerialWrapper.cpp
  *
  * This file is part of AYAB.
  *
@@ -21,10 +21,22 @@
  *    http://ayab-knitting.com
  */
 
-#include "analogReadAsyncWrapper.h"
+#include "packetSerialWrapper.h"
 
 // static member functions
 
-void GlobalAnalogReadAsyncWrapper::analogReadAsyncWrapped(uint8_t pin, analogReadCompleteCallback_t cb, const void *data) {
-  m_instance->analogReadAsyncWrapped(pin, cb, data);
+void GlobalPacketSerialWrapper::begin(uint32_t speed) {
+  m_instance->begin(speed);
+}
+
+void GlobalPacketSerialWrapper::send(const uint8_t *buffer, size_t size) {
+  m_instance->send(buffer, size);
+}
+
+void GlobalPacketSerialWrapper::setPacketHandler(SLIPPacketSerial::PacketHandlerFunction onPacketFunction) {
+  m_instance->setPacketHandler(onPacketFunction);
+}
+
+void GlobalPacketSerialWrapper::update() {
+  m_instance->update();
 }

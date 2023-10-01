@@ -36,6 +36,17 @@
  * \brief Initialize Finite State Machine.
  */
 void Controller::init() {
+  pinMode(ENC_PIN_A, INPUT);
+  pinMode(ENC_PIN_B, INPUT);
+  pinMode(ENC_PIN_C, INPUT);
+  pinMode(LED_PIN_A, OUTPUT);
+  pinMode(LED_PIN_B, OUTPUT);
+  digitalWrite(LED_PIN_A, 1);
+  digitalWrite(LED_PIN_B, 1);
+#if DBG_NOMACHINE
+  pinMode(DBG_BTN_PIN, INPUT);
+#endif
+
   m_machineType = Machine_t::NoMachine;
   m_carriage = Carriage_t::NoCarriage;
   m_direction = Direction_t::NoDirection;

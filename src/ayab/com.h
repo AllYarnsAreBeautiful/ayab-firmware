@@ -132,9 +132,6 @@ public:
   static void h_reqTest();
   static void h_quitCmd();
   static void h_unrecognized();
-
-private:
-  static SLIPPacketSerial m_packetSerial;
 };
 
 class Com : public ComInterface {
@@ -158,7 +155,6 @@ public:
   void h_unrecognized() const final;
 
 private:
-  SLIPPacketSerial m_packetSerial;
   uint8_t lineBuffer[MAX_LINE_BUFFER_LEN] = {0};
   uint8_t msgBuffer[MAX_MSG_BUFFER_LEN] = {0};
 

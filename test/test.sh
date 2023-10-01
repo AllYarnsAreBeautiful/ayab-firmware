@@ -51,6 +51,7 @@ GCOVR_ARGS="--exclude-unreachable-branches \
             --exclude-directories 'test/build/arduino_mock$' \
 	    -e test_* -e lib* \
             -e src/ayab/analogReadAsyncWrapper.cpp \
+            -e src/ayab/packetSerialWrapper.cpp \
 	    -e src/ayab/global_OpIdle.cpp \
 	    -e src/ayab/global_OpInit.cpp \
 	    -e src/ayab/global_OpTest.cpp \
@@ -62,7 +63,8 @@ GCOVR_ARGS="--exclude-unreachable-branches \
             -e src/ayab/global_controller.cpp \
             -e src/ayab/global_encoders.cpp \
             -e src/ayab/global_solenoids.cpp \
-            -e src/ayab/global_analogReadAsyncWrapper.cpp"
+            -e src/ayab/global_analogReadAsyncWrapper.cpp \
+            -e src/ayab/global_packetSerialWrapper.cpp"
 
 if [[ $sonar -eq 1 ]]; then
   gcovr -r . $GCOVR_ARGS --sonarqube ./test/build/coverage.xml

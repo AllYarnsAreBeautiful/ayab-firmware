@@ -1,5 +1,5 @@
-/*!
- * \file global_analogReadAsyncWrapper.cpp
+/*!`
+ * \file packetSerialWrapper_mock.h
  *
  * This file is part of AYAB.
  *
@@ -21,10 +21,22 @@
  *    http://ayab-knitting.com
  */
 
-#include "analogReadAsyncWrapper.h"
+#ifndef PACKETSERIALWRAPPER_MOCK_H_
+#define PACKETSERIALWRAPPER_MOCK_H_
 
-// static member functions
+#include <gmock/gmock.h>
 
-void GlobalAnalogReadAsyncWrapper::analogReadAsyncWrapped(uint8_t pin, analogReadCompleteCallback_t cb, const void *data) {
-  m_instance->analogReadAsyncWrapped(pin, cb, data);
-}
+#include <packetSerialWrapper.h>
+
+class PacketSerialWrapperMock : public PacketSerialWrapperInterface {
+public:
+  MOCK_METHOD1(begin, void(uint32_t speed));
+  MOCK_CONST_METHOD2(send, void(const uint8_t *buffer, size_t size));
+  MOCK_METHOD1(setPacketHandler, void(SLIPPacketSerial::PacketHandlerFunction onPacketFunction));
+  MOCK_METHOD0(update, void());
+};
+
+PacketSerialWrapperMock *packetSerialWrapperMockInstance();
+void releasePacketSerialWrapperMock();
+
+#endif // PACKETSERIALWRAPPER_MOCK_H_

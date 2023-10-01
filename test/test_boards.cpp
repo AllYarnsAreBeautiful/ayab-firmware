@@ -35,6 +35,7 @@
 #include <opError.h>
 
 #include <analogReadAsyncWrapper_mock.h>
+#include <packetSerialWrapper_mock.h>
 #include <controller_mock.h>
 #include <opKnit_mock.h>
 
@@ -52,6 +53,7 @@ OpTest    *opTest    = new OpTest();
 OpError   *opError   = new OpError();
 
 AnalogReadAsyncWrapperMock *analogReadAsyncWrapper = new AnalogReadAsyncWrapperMock();
+PacketSerialWrapperMock *packetSerialWrapper = new PacketSerialWrapperMock();
 ControllerMock *controller = new ControllerMock();
 OpKnitMock *opKnit = new OpKnitMock();
 
@@ -68,6 +70,7 @@ OpTestInterface     *GlobalOpTest::m_instance     = opTest;
 OpErrorInterface    *GlobalOpError::m_instance    = opError;
 
 AnalogReadAsyncWrapperInterface *GlobalAnalogReadAsyncWrapper::m_instance = analogReadAsyncWrapper;
+PacketSerialWrapperInterface *GlobalPacketSerialWrapper::m_instance = packetSerialWrapper;
 ControllerInterface *GlobalController::m_instance = controller;
 OpKnitInterface     *GlobalOpKnit::m_instance     = opKnit;
 

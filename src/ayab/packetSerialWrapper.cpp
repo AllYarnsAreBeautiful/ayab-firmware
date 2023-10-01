@@ -1,5 +1,5 @@
 /*!
- * \file analogReadAsyncWrapper.cpp
+ * \file packetSerialWrapper.cpp
  *
  * This file is part of AYAB.
  *
@@ -21,17 +21,47 @@
  *    http://ayab-knitting.com
  */
 
-#include "analogReadAsyncWrapper.h"
+#include "packetSerialWrapper.h"
 
 /*!
- * \brief Wrapper for analogReadAsync
+ * \brief Wrapper for PacketSerial::begin
  */
-void AnalogReadAsyncWrapper::analogReadAsyncWrapped(uint8_t pin, analogReadCompleteCallback_t cb, const void *data) {
+void PacketSerialWrapper::begin(uint32_t speed) {
 #ifndef AYAB_TESTS
-  analogReadAsync(pin, cb, data);
+  m_packetSerial.begin(speed);
 #else
-  (void) pin;
-  (void) cb;
-  (void) data;
+  (void) speed;
+#endif
+}
+
+/*!
+ * \brief Wrapper for PacketSerial::send
+ */
+void PacketSerialWrapper::send(const uint8_t *buffer, size_t size) const {
+#ifndef AYAB_TESTS
+  m_packetSerial.send(buffer, size);
+#else
+  (void) buffer;
+  (void) size;
+#endif
+}
+
+/*!
+ * \brief Wrapper for PacketSerial::setPacketHandler
+ */
+void PacketSerialWrapper::setPacketHandler(SLIPPacketSerial::PacketHandlerFunction onPacketFunction) {
+#ifndef AYAB_TESTS
+  m_packetSerial.setPacketHandler(onPacketFunction);
+#else
+  (void) onPacketFunction;
+#endif
+}
+
+/*!
+ * \brief Wrapper for PacketSerial::update
+ */
+void PacketSerialWrapper::update() {
+#ifndef AYAB_TESTS
+  m_packetSerial.update();
 #endif
 }

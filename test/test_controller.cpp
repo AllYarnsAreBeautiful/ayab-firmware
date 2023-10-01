@@ -62,7 +62,6 @@ class ControllerTest : public ::testing::Test {
 protected:
   void SetUp() override {
     arduinoMock = arduinoMockInstance();
-    serialMock = serialMockInstance();
 
     // pointers to global instances
     beeperMock = beeper;
@@ -92,7 +91,6 @@ protected:
 
     // start in state `OpIdle`
     controller->init();
-    expect_knit_init();
     opKnit->init();
     controller->setMachineType(Machine_t::Kh910);
     expected_isready(Direction_t::NoDirection, Direction_t::NoDirection, 0);
@@ -100,14 +98,12 @@ protected:
 
   void TearDown() override {
     releaseArduinoMock();
-    releaseSerialMock();
   }
 
   ArduinoMock *arduinoMock;
   BeeperMock *beeperMock;
   ComMock *comMock;
   EncodersMock *encodersMock;
-  SerialMock *serialMock;
   SolenoidsMock *solenoidsMock;
 
   OpIdleMock *opIdleMock;
@@ -115,17 +111,6 @@ protected:
   OpReadyMock *opReadyMock;
   OpTestMock *opTestMock;
   OpErrorMock *opErrorMock;
-
-  void expect_knit_init() {
-    EXPECT_CALL(*arduinoMock, pinMode(ENC_PIN_A, INPUT));
-    EXPECT_CALL(*arduinoMock, pinMode(ENC_PIN_B, INPUT));
-    EXPECT_CALL(*arduinoMock, pinMode(ENC_PIN_C, INPUT));
-    EXPECT_CALL(*arduinoMock, pinMode(LED_PIN_A, OUTPUT));
-    EXPECT_CALL(*arduinoMock, pinMode(LED_PIN_B, OUTPUT));
-    EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, HIGH));
-    EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_B, HIGH));
-    EXPECT_CALL(*solenoidsMock, init);
-  }
 
   void expect_reqLine() {
     EXPECT_CALL(*comMock, send_reqLine);
@@ -215,6 +200,17 @@ protected:
     expect_reqLine();
   }
 };
+
+TEST_F(ControllerTest, test_init) {
+  EXPECT_CALL(*arduinoMock, pinMode(ENC_PIN_A, INPUT));
+  EXPECT_CALL(*arduinoMock, pinMode(ENC_PIN_B, INPUT));
+  EXPECT_CALL(*arduinoMock, pinMode(ENC_PIN_C, INPUT));
+  EXPECT_CALL(*arduinoMock, pinMode(LED_PIN_A, OUTPUT));
+  EXPECT_CALL(*arduinoMock, pinMode(LED_PIN_B, OUTPUT));
+  EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, HIGH));
+  EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_B, HIGH));
+  controller->init();
+}
 
 TEST_F(ControllerTest, test_setState) {
   controller->setState(opInitMock);

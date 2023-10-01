@@ -22,6 +22,8 @@
  *    http://ayab-knitting.com
  */
 
+#include "packetSerialWrapper.h"
+
 #include "beeper.h"
 #include "com.h"
 #include "controller.h"
@@ -34,17 +36,15 @@
  * \brief Initialize serial communication.
  */
 void Com::init() {
-  m_packetSerial.begin(SERIAL_BAUDRATE);
-#ifndef AYAB_TESTS
-  m_packetSerial.setPacketHandler(GlobalCom::onPacketReceived);
-#endif // AYAB_TESTS
+  GlobalPacketSerialWrapper::begin(SERIAL_BAUDRATE);
+  GlobalPacketSerialWrapper::setPacketHandler(GlobalCom::onPacketReceived);
 }
 
 /*!
  * \brief Service the serial connection.
  */
 void Com::update() {
-  m_packetSerial.update();
+  GlobalPacketSerialWrapper::update();
 }
 
 /*!
@@ -96,7 +96,7 @@ void Com::send(uint8_t *payload, size_t length) const {
     Serial.print(", Encoded as: ");
   #endif
   */
-  m_packetSerial.send(payload, length);
+  GlobalPacketSerialWrapper::send(payload, length);
 }
 
 /*!
@@ -110,7 +110,7 @@ void Com::sendMsg(API_t id, const char *msg) {
   while (*msg) {
     msgBuffer[length++] = static_cast<uint8_t>(*msg++);
   }
-  m_packetSerial.send(msgBuffer, length);
+  GlobalPacketSerialWrapper::send(msgBuffer, length);
 }
 void Com::sendMsg(API_t id, char *msg) {
   sendMsg(id, static_cast<const char *>(msg));

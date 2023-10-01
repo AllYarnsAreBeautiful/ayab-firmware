@@ -81,6 +81,9 @@ set(COMMON_SOURCES
 
     ${SOURCE_DIRECTORY}/global_analogReadAsyncWrapper.cpp
     ${PROJECT_SOURCE_DIR}/mocks/analogReadAsyncWrapper_mock.cpp
+
+    ${SOURCE_DIRECTORY}/global_packetSerialWrapper.cpp
+    ${PROJECT_SOURCE_DIR}/mocks/packetSerialWrapper_mock.cpp
     )
 set(COMMON_DEFINES
     ARDUINO=1819
@@ -181,8 +184,11 @@ add_executable(${PROJECT_NAME}_knit
 
     ${SOURCE_DIRECTORY}/analogReadAsyncWrapper.cpp
     ${SOURCE_DIRECTORY}/global_analogReadAsyncWrapper.cpp
-    #${LIBRARY_DIRECTORY}/AnalogReadAsync/src/analogReadAsync.cpp
     #${PROJECT_SOURCE_DIR}/test_analogReadAsyncWrapper.cpp
+
+    ${SOURCE_DIRECTORY}/packetSerialWrapper.cpp
+    ${SOURCE_DIRECTORY}/global_packetSerialWrapper.cpp
+    #${PROJECT_SOURCE_DIR}/test_packetSerialWrapper.cpp
 )
 target_include_directories(${PROJECT_NAME}_knit
     PRIVATE

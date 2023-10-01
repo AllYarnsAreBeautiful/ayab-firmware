@@ -44,8 +44,6 @@ class OpIdleTest : public ::testing::Test {
 protected:
   void SetUp() override {
     arduinoMock = arduinoMockInstance();
-    serialMock = serialMockInstance();
-    // serialCommandMock = serialCommandMockInstance();
 
     // pointers to global instances
     controllerMock = controller;
@@ -60,12 +58,10 @@ protected:
 
   void TearDown() override {
     releaseArduinoMock();
-    releaseSerialMock();
   }
 
   ArduinoMock *arduinoMock;
   ControllerMock *controllerMock;
-  SerialMock *serialMock;
   OpKnitMock *opKnitMock;
 };
 

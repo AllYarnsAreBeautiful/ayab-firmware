@@ -90,7 +90,6 @@ protected:
     controller->init();
     opIdle->init();
     opInit->init();
-    expect_opKnit_init();
     opKnit->init();
     expected_cacheISR(Direction_t::NoDirection, Direction_t::NoDirection);
   }
@@ -114,7 +113,7 @@ protected:
     return (END_LEFT_PLUS_OFFSET[static_cast<uint8_t>(m)] + GARTER_SLOP) + 1;
   }
 
-  void expect_opKnit_init() {
+  void expect_controller_init() {
     EXPECT_CALL(*arduinoMock, pinMode(ENC_PIN_A, INPUT));
     EXPECT_CALL(*arduinoMock, pinMode(ENC_PIN_B, INPUT));
     EXPECT_CALL(*arduinoMock, pinMode(ENC_PIN_C, INPUT));

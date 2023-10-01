@@ -29,6 +29,7 @@
 #include <opReady.h>
 #include <opTest.h>
 
+#include <packetSerialWrapper_mock.h>
 #include <controller_mock.h>
 #include <opKnit_mock.h>
 
@@ -44,55 +45,51 @@ extern OpInit *opInit;
 extern OpReady *opReady;
 extern OpTest *opTest;
 
-extern OpKnitMock *opKnit;
 extern ControllerMock *controller;
+extern OpKnitMock *opKnit;
+extern PacketSerialWrapperMock *packetSerialWrapper;
 
 class OpTestTest : public ::testing::Test {
 protected:
   void SetUp() override {
     arduinoMock = arduinoMockInstance();
-    serialMock = serialMockInstance();
-    // serialCommandMock = serialCommandMockInstance();
 
     // pointers to global instances
     controllerMock = controller;
     opKnitMock = opKnit;
+    packetSerialWrapperMock = packetSerialWrapper;
 
     // The global instances do not get destroyed at the end of each test.
     // Ordinarily the mock instance would be local and such behaviour would
     // cause a memory leak. We must notify the test that this is not the case.
     Mock::AllowLeak(controllerMock);
     Mock::AllowLeak(opKnitMock);
+    Mock::AllowLeak(packetSerialWrapperMock);
 
     beeper->init(true);
   }
 
   void TearDown() override {
     releaseArduinoMock();
-    releaseSerialMock();
   }
 
   ArduinoMock *arduinoMock;
-  SerialMock *serialMock;
   ControllerMock *controllerMock;
   OpKnitMock *opKnitMock;
+  PacketSerialWrapperMock *packetSerialWrapperMock;
 
-  void expect_startTest(uint32_t t) {
-    expect_write(false);
-    EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(t));
-    opTest->begin();
+  void expect_send(bool once) {
+    if (once) {
+      EXPECT_CALL(*packetSerialWrapperMock, send).Times(1);
+    } else {
+      EXPECT_CALL(*packetSerialWrapperMock, send).Times(AtLeast(2));
+    }
   }
 
-  void expect_write(bool once) {
-    return;
-    //TODO: FIXME: Mock PocketSerial, so this works again.
-    if (once) {
-      EXPECT_CALL(*serialMock, write(_, _));
-      EXPECT_CALL(*serialMock, write(SLIP::END));
-    } else {
-      EXPECT_CALL(*serialMock, write(_, _)).Times(AtLeast(1));
-      EXPECT_CALL(*serialMock, write(SLIP::END)).Times(AtLeast(1));
-    }
+  void expect_startTest(uint32_t t) {
+    expect_send(false);
+    EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(t));
+    opTest->begin();
   }
 
   void expect_readEOLsensors(bool flag) {
@@ -134,89 +131,131 @@ TEST_F(OpTestTest, test_enabled) {
 }
 
 TEST_F(OpTestTest, test_helpCmd) {
-  expect_write(false);
+  expect_send(false);
   opTest->helpCmd();
+
+  // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(packetSerialWrapperMock));
 }
 
 TEST_F(OpTestTest, test_sendCmd) {
-  expect_write(false);
+  expect_send(false);
   opTest->sendCmd();
+
+  // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(packetSerialWrapperMock));
 }
 
 TEST_F(OpTestTest, test_beepCmd) {
-  expect_write(true);
+  expect_send(true);
   opTest->beepCmd();
   EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(0U));
   beeper->update();
   EXPECT_CALL(*arduinoMock, analogWrite(PIEZO_PIN, BEEP_ON_DUTY));
   EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(1U));
   beeper->update();
+
+  // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(packetSerialWrapperMock));
 }
 
 TEST_F(OpTestTest, test_setSingleCmd_fail1) {
   const uint8_t buf[] = {static_cast<uint8_t>(API_t::setSingleCmd), 0};
-  expect_write(false);
+  expect_send(false);
   opTest->setSingleCmd(buf, 2);
+
+  // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(packetSerialWrapperMock));
 }
 
 TEST_F(OpTestTest, test_setSingleCmd_fail2) {
   const uint8_t buf[] = {static_cast<uint8_t>(API_t::setSingleCmd), 16, 0};
-  expect_write(false);
+  expect_send(false);
   opTest->setSingleCmd(buf, 3);
+
+  // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(packetSerialWrapperMock));
 }
 
 TEST_F(OpTestTest, test_setSingleCmd_fail3) {
   const uint8_t buf[] = {static_cast<uint8_t>(API_t::setSingleCmd), 15, 2};
-  expect_write(false);
+  expect_send(false);
   opTest->setSingleCmd(buf, 3);
+
+  // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(packetSerialWrapperMock));
 }
 
 TEST_F(OpTestTest, test_setSingleCmd_success) {
   const uint8_t buf[] = {static_cast<uint8_t>(API_t::setSingleCmd), 15, 1};
-  expect_write(true);
+  expect_send(true);
   opTest->setSingleCmd(buf, 3);
+
+  // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(packetSerialWrapperMock));
 }
 
 TEST_F(OpTestTest, test_setAllCmd_fail1) {
   const uint8_t buf[] = {static_cast<uint8_t>(API_t::setAllCmd), 0};
-  expect_write(false);
+  expect_send(false);
   opTest->setAllCmd(buf, 2);
+
+  // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(packetSerialWrapperMock));
 }
 
 TEST_F(OpTestTest, test_setAllCmd_success) {
   const uint8_t buf[] = {static_cast<uint8_t>(API_t::setAllCmd), 0xFF, 0xFF};
-  expect_write(true);
+  expect_send(true);
   opTest->setAllCmd(buf, 3);
+
+  // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(packetSerialWrapperMock));
 }
 
 TEST_F(OpTestTest, test_readEOLsensorsCmd) {
-  expect_write(false);
+  expect_send(false);
   expect_readEOLsensors(true);
   opTest->readEOLsensorsCmd();
+
+  // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(packetSerialWrapperMock));
 }
 
 TEST_F(OpTestTest, test_readEncodersCmd_low) {
-  expect_write(false);
+  expect_send(false);
   EXPECT_CALL(*arduinoMock, digitalRead).WillRepeatedly(Return(LOW));
   opTest->readEncodersCmd();
+
+  // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(packetSerialWrapperMock));
 }
 
 TEST_F(OpTestTest, test_readEncodersCmd_high) {
-  expect_write(false);
+  expect_send(false);
   EXPECT_CALL(*arduinoMock, digitalRead).WillRepeatedly(Return(HIGH));
   opTest->readEncodersCmd();
+
+  // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(packetSerialWrapperMock));
 }
 
 TEST_F(OpTestTest, test_autoReadCmd) {
   const uint8_t buf[] = {static_cast<uint8_t>(API_t::autoReadCmd)};
-  expect_write(true);
+  expect_send(true);
   opTest->com(buf, 1);
+
+  // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(packetSerialWrapperMock));
 }
 
 TEST_F(OpTestTest, test_autoTestCmd) {
   const uint8_t buf[] = {static_cast<uint8_t>(API_t::autoTestCmd)};
-  expect_write(true);
+  expect_send(true);
   opTest->com(buf, 1);
+
+  // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(packetSerialWrapperMock));
 }
 
 TEST_F(OpTestTest, test_quitCmd) {
@@ -249,7 +288,6 @@ TEST_F(OpTestTest, test_autoRead) {
   // nothing has happened yet
   EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(TEST_LOOP_DELAY - 1));
   EXPECT_CALL(*opKnitMock, encodePosition);
-  expect_write(false);
   expect_readEOLsensors(false);
   expect_readEncoders(false);
   opTest->update();
@@ -257,15 +295,14 @@ TEST_F(OpTestTest, test_autoRead) {
   // m_timerEventOdd = false
   EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(TEST_LOOP_DELAY));
   EXPECT_CALL(*opKnitMock, encodePosition);
-  expect_write(true);
   expect_readEOLsensors(false);
   expect_readEncoders(false);
   opTest->update();
 
-  // m_timerEventOdd = false
+  // m_timerEventOdd = true
   EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(2 * TEST_LOOP_DELAY));
   EXPECT_CALL(*opKnitMock, encodePosition);
-  expect_write(false);
+  expect_send(false);
   expect_readEOLsensors(true);
   expect_readEncoders(true);
   opTest->update();
@@ -274,13 +311,13 @@ TEST_F(OpTestTest, test_autoRead) {
   opTest->stopCmd();
   EXPECT_CALL(*arduinoMock, millis).Times(0);
   EXPECT_CALL(*opKnitMock, encodePosition).Times(0);
-  expect_write(false);
   expect_readEOLsensors(false);
   expect_readEncoders(false);
   opTest->update();
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(opKnitMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(packetSerialWrapperMock));
 }
 
 TEST_F(OpTestTest, test_autoTest) {
@@ -290,7 +327,6 @@ TEST_F(OpTestTest, test_autoTest) {
   // nothing has happened yet
   EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(TEST_LOOP_DELAY - 1));
   EXPECT_CALL(*opKnitMock, encodePosition);
-  expect_write(false);
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, HIGH)).Times(0);
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_B, HIGH)).Times(0);
   opTest->update();
@@ -298,15 +334,15 @@ TEST_F(OpTestTest, test_autoTest) {
   // m_timerEventOdd = false
   EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(TEST_LOOP_DELAY));
   EXPECT_CALL(*opKnitMock, encodePosition);
-  expect_write(true);
+  expect_send(true);
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, HIGH));
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_B, HIGH));
   opTest->update();
 
-  // m_timerEventOdd = false
+  // m_timerEventOdd = true
   EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(2 * TEST_LOOP_DELAY));
   EXPECT_CALL(*opKnitMock, encodePosition);
-  expect_write(false);
+  expect_send(true);
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, LOW));
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_B, LOW));
   opTest->update();
@@ -315,13 +351,13 @@ TEST_F(OpTestTest, test_autoTest) {
   opTest->stopCmd();
   EXPECT_CALL(*arduinoMock, millis).Times(0);
   EXPECT_CALL(*opKnitMock, encodePosition).Times(0);
-  expect_write(false);
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, _)).Times(0);
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_B, _)).Times(0);
   opTest->update();
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(opKnitMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(packetSerialWrapperMock));
 }
 
 TEST_F(OpTestTest, test_startTest_success) {
@@ -333,4 +369,3 @@ TEST_F(OpTestTest, test_unrecognized) {
   const uint8_t buffer[] = {0xFF};
   opTest->com(buffer, 1);
 }
-
