@@ -43,7 +43,7 @@ public:
 };
 
 // Singleton container class for static methods.
-// Dependency injection is enabled using a pointer
+// Dependency injection is enabled using a reference
 // to a global instance of either `Knitter` or `KnitterMock`
 // both of which classes implement the pure virtual methods
 // of the `KnitterInterface` class.
@@ -54,8 +54,8 @@ private:
   GlobalOpKnit() = default;
 
 public:
-  // pointer to global instance whose methods are implemented
-  static OpKnitInterface *m_instance;
+  // reference to global instance whose methods are implemented
+  static OpKnitInterface& m_instance;
 
   static OpState_t state();
   static void init();

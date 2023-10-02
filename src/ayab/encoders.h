@@ -135,7 +135,7 @@ public:
 };
 
 // Container class for the static methods for the encoders.
-// Dependency injection is enabled using a pointer to a global instance of
+// Dependency injection is enabled using a reference to a global instance of
 // either `Encoders` or `EncodersMock`, both of which classes implement the
 // pure virtual methods of `EncodersInterface`.
 
@@ -145,8 +145,8 @@ private:
   GlobalEncoders() = default;
 
 public:
-  // pointer to global instance whose methods are implemented
-  static EncodersInterface *m_instance;
+  // reference to global instance whose methods are implemented
+  static EncodersInterface& m_instance;
 
   static void init(Machine_t machineType);
   static void setUpInterrupt();

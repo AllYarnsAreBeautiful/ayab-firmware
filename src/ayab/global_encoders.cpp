@@ -27,47 +27,47 @@
 #include "opKnit.h"
 
 void GlobalEncoders::init(Machine_t machineType) {
-  m_instance->init(machineType);
+  m_instance.init(machineType);
 }
 
 void GlobalEncoders::setUpInterrupt() {
-  m_instance->setUpInterrupt();
+  m_instance.setUpInterrupt();
 }
 
 #ifndef AYAB_TESTS
 void GlobalEncoders::isr() {
-  m_instance->isr();
+  m_instance.isr();
 }
 #endif // AYAB_TESTS
 
 void GlobalEncoders::hallLeftCallback(uint16_t hallValue, void *data) {
-  m_instance->hallLeftCallback(hallValue, data);
+  m_instance.hallLeftCallback(hallValue, data);
 }
 
 void GlobalEncoders::hallRightCallback(uint16_t hallValue, void *data) {
-  m_instance->hallRightCallback(hallValue, data);
+  m_instance.hallRightCallback(hallValue, data);
 }
 
 uint16_t GlobalEncoders::getHallValue(Direction_t pSensor) {
-  return m_instance->getHallValue(pSensor);
+  return m_instance.getHallValue(pSensor);
 }
 
 BeltShift_t GlobalEncoders::getBeltShift() {
-  return m_instance->getBeltShift();
+  return m_instance.getBeltShift();
 }
 
 Carriage_t GlobalEncoders::getCarriage() {
-  return m_instance->getCarriage();
+  return m_instance.getCarriage();
 }
 
 Direction_t GlobalEncoders::getDirection() {
-  return m_instance->getDirection();
+  return m_instance.getDirection();
 }
 
 Direction_t GlobalEncoders::getHallActive() {
-  return m_instance->getHallActive();
+  return m_instance.getHallActive();
 }
 
 uint8_t GlobalEncoders::getPosition() {
-  return m_instance->getPosition();
+  return m_instance.getPosition();
 }

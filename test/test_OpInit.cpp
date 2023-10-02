@@ -36,12 +36,12 @@ using ::testing::AtLeast;
 using ::testing::Mock;
 using ::testing::Return;
 
-extern OpInit *opInit;
-extern OpReady *opReady;
-extern OpTest *opTest;
+extern OpInit& opInit;
+extern OpReady& opReady;
+extern OpTest& opTest;
 
-extern ControllerMock *controller;
-extern OpKnitMock *opKnit;
+extern ControllerMock& controller;
+extern OpKnitMock& opKnit;
 
 class OpInitTest : public ::testing::Test {
 protected:
@@ -49,8 +49,8 @@ protected:
     arduinoMock = arduinoMockInstance();
 
     // pointers to global instances
-    controllerMock = controller;
-    opKnitMock = opKnit;
+    controllerMock = &controller;
+    opKnitMock = &opKnit;
 
     // The global instances do not get destroyed at the end of each test.
     // Ordinarily the mock instance would be local and such behaviour would
@@ -80,31 +80,31 @@ protected:
     EXPECT_CALL(*controllerMock, getDirection).WillRepeatedly(Return(dir));
     EXPECT_CALL(*controllerMock, getHallActive).WillRepeatedly(Return(hall));
     EXPECT_CALL(*controllerMock, getMachineType).WillRepeatedly(Return(Machine_t::Kh910));
-    EXPECT_CALL(*controllerMock, getState).WillRepeatedly(Return(opInit));
+    EXPECT_CALL(*controllerMock, getState).WillRepeatedly(Return(&opInit));
   }
 
   void expect_ready(bool ready) {
     if (ready) {
-      EXPECT_CALL(*controllerMock, getState).WillOnce(Return(opInit));
+      EXPECT_CALL(*controllerMock, getState).WillOnce(Return(&opInit));
     }
-    ASSERT_EQ(opInit->isReady(), ready);
+    ASSERT_EQ(opInit.isReady(), ready);
   }
 };
 
 TEST_F(OpInitTest, test_state) {
-  ASSERT_EQ(opInit->state(), OpState_t::Init);
+  ASSERT_EQ(opInit.state(), OpState_t::Init);
 }
 
 TEST_F(OpInitTest, test_init) {
   // no calls expected
-  opInit->init();
-  ASSERT_EQ(opInit->m_lastHall, Direction_t::NoDirection);
+  opInit.init();
+  ASSERT_EQ(opInit.m_lastHall, Direction_t::NoDirection);
 }
 
 TEST_F(OpInitTest, test_reqTest) {
-  EXPECT_CALL(*controllerMock, setState(opTest));
+  EXPECT_CALL(*controllerMock, setState(&opTest));
   const uint8_t buffer[] = {static_cast<uint8_t>(API_t::reqTest)};
-  opInit->com(buffer, 1);
+  opInit.com(buffer, 1);
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(controllerMock));
@@ -113,18 +113,18 @@ TEST_F(OpInitTest, test_reqTest) {
 TEST_F(OpInitTest, test_com_unrecognized) {
   // no calls expected
   const uint8_t buffer[] = {0xFF};
-  opInit->com(buffer, 1);
+  opInit.com(buffer, 1);
 }
 
 TEST_F(OpInitTest, test_end) {
   // no calls expected
-  opInit->end();
+  opInit.end();
 }
 
 TEST_F(OpInitTest, test_begin910) {
   EXPECT_CALL(*controllerMock, getMachineType());
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, LOW));
-  opInit->begin();
+  opInit.begin();
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(controllerMock));
@@ -134,8 +134,8 @@ TEST_F(OpInitTest, test_updateF) {
   // isReady() == false
   expect_update(get_position_past_right(Machine_t::Kh910), Direction_t::Left, Direction_t::Left);
   EXPECT_CALL(*controllerMock, getState).Times(0);
-  EXPECT_CALL(*controllerMock, setState(opReady)).Times(0);
-  opInit->update();
+  EXPECT_CALL(*controllerMock, setState(&opReady)).Times(0);
+  opInit.update();
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(controllerMock));
@@ -144,9 +144,9 @@ TEST_F(OpInitTest, test_updateF) {
 TEST_F(OpInitTest, test_updateT) {
   // isReady() == true
   expect_update(get_position_past_left(Machine_t::Kh910), Direction_t::Right, Direction_t::Left);
-  EXPECT_CALL(*controllerMock, getState).WillOnce(Return(opInit));
-  EXPECT_CALL(*controllerMock, setState(opReady));
-  opInit->update();
+  EXPECT_CALL(*controllerMock, getState).WillOnce(Return(&opInit));
+  EXPECT_CALL(*controllerMock, setState(&opReady));
+  opInit.update();
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(controllerMock));

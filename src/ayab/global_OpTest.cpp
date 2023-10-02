@@ -27,76 +27,76 @@
 // static member functions
 
 OpState_t GlobalOpTest::state() {
-  return m_instance->state();
+  return m_instance.state();
 }
 
 void GlobalOpTest::init() {
-  m_instance->init();
+  m_instance.init();
 }
 
 void GlobalOpTest::begin() {
-  m_instance->begin();
+  m_instance.begin();
 }
 
 void GlobalOpTest::update() {
-  m_instance->update();
+  m_instance.update();
 }
 
 void GlobalOpTest::com(const uint8_t *buffer, size_t size) {
-  m_instance->com(buffer, size);
+  m_instance.com(buffer, size);
 }
 
 void GlobalOpTest::end() {
-  m_instance->end();
+  m_instance.end();
 }
 
 
 bool GlobalOpTest::enabled() {
-  return m_instance->enabled();
+  return m_instance.enabled();
 }
 
 void GlobalOpTest::helpCmd() {
-  m_instance->helpCmd();
+  m_instance.helpCmd();
 }
 
 void GlobalOpTest::sendCmd() {
-  m_instance->sendCmd();
+  m_instance.sendCmd();
 }
 
 void GlobalOpTest::beepCmd() {
-  m_instance->beepCmd();
+  m_instance.beepCmd();
 }
 
 void GlobalOpTest::setSingleCmd(const uint8_t *buffer, size_t size) {
-  m_instance->setSingleCmd(buffer, size);
+  m_instance.setSingleCmd(buffer, size);
 }
 
 void GlobalOpTest::setAllCmd(const uint8_t *buffer, size_t size) {
-  m_instance->setAllCmd(buffer, size);
+  m_instance.setAllCmd(buffer, size);
 }
 
 void GlobalOpTest::readEOLsensorsCmd() {
-  m_instance->readEOLsensorsCmd();
+  m_instance.readEOLsensorsCmd();
 }
 
 void GlobalOpTest::readEncodersCmd() {
-  m_instance->readEncodersCmd();
+  m_instance.readEncodersCmd();
 }
 
 void GlobalOpTest::autoReadCmd() {
-  m_instance->autoReadCmd();
+  m_instance.autoReadCmd();
 }
 
 void GlobalOpTest::autoTestCmd() {
-  m_instance->autoTestCmd();
+  m_instance.autoTestCmd();
 }
 
 void GlobalOpTest::stopCmd() {
-  m_instance->stopCmd();
+  m_instance.stopCmd();
 }
 
 #ifndef AYAB_TESTS
 void GlobalOpTest::encoderAChange() {
-  m_instance->encoderAChange();
+  m_instance.encoderAChange();
 }
 #endif // AYAB_TESTS

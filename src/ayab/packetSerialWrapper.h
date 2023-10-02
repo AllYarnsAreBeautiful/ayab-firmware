@@ -39,7 +39,7 @@ public:
 };
 
 // Container class for the static method packetSerial.
-// Dependency injection is enabled using a pointer to a global instance of
+// Dependency injection is enabled using a reference to a global instance of
 // either `PacketSerialWrapper` or `PacketSerialWrapperMock`,
 // both of which classes implement the
 // pure virtual methods of `PacketSerialWrapperInterface`.
@@ -50,8 +50,8 @@ private:
   GlobalPacketSerialWrapper() = default;
 
 public:
-  // pointer to global instance whose methods are implemented
-  static PacketSerialWrapperInterface *m_instance;
+  // reference to global instance whose methods are implemented
+  static PacketSerialWrapperInterface& m_instance;
 
   static void begin(uint32_t speed);
   static void send(const uint8_t *buffer, size_t size);

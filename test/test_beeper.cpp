@@ -28,7 +28,7 @@
 
 using ::testing::Return;
 
-extern Beeper *beeper;
+extern Beeper& beeper;
 
 class BeeperTest : public ::testing::Test {
 protected:
@@ -44,72 +44,72 @@ protected:
 
   void expectedBeepSchedule(unsigned long t) {
     EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(t));
-    beeper->update();
+    beeper.update();
   }
 
   void expectedBeepRepeats(uint8_t repeats) {
-    if (beeper->enabled()) {
-      ASSERT_EQ(beeper->getState(), BeepState::Wait);
+    if (beeper.enabled()) {
+      ASSERT_EQ(beeper.getState(), BeepState::Wait);
       for (uint8_t i = 0; i < repeats; i++) {
         expectedBeepSchedule(BEEP_DELAY * 2 * i);
-        ASSERT_EQ(beeper->getState(), BeepState::On);
+        ASSERT_EQ(beeper.getState(), BeepState::On);
         EXPECT_CALL(*arduinoMock, analogWrite(PIEZO_PIN, BEEP_ON_DUTY));
         expectedBeepSchedule(BEEP_DELAY * 2 * i);
-        ASSERT_EQ(beeper->getState(), BeepState::Wait);
+        ASSERT_EQ(beeper.getState(), BeepState::Wait);
         expectedBeepSchedule(BEEP_DELAY * (2 * i + 1) - 1);
-        ASSERT_EQ(beeper->getState(), BeepState::Wait);
+        ASSERT_EQ(beeper.getState(), BeepState::Wait);
         expectedBeepSchedule(BEEP_DELAY * (2 * i + 1));
-        ASSERT_EQ(beeper->getState(), BeepState::Off);
+        ASSERT_EQ(beeper.getState(), BeepState::Off);
         EXPECT_CALL(*arduinoMock, analogWrite(PIEZO_PIN, BEEP_OFF_DUTY));
         expectedBeepSchedule(BEEP_DELAY * (2 * i + 1));
-        ASSERT_EQ(beeper->getState(), BeepState::Wait);
+        ASSERT_EQ(beeper.getState(), BeepState::Wait);
       }
       EXPECT_CALL(*arduinoMock, analogWrite(PIEZO_PIN, BEEP_NO_DUTY));
       expectedBeepSchedule(BEEP_DELAY * (2 * repeats));
     }
-    ASSERT_EQ(beeper->getState(), BeepState::Idle);
+    ASSERT_EQ(beeper.getState(), BeepState::Idle);
     expectedBeepSchedule(BEEP_DELAY * (2 * repeats) + 1);
   }
 };
 
 TEST_F(BeeperTest, test_ready_enabled) {
-  beeper->init(true);
+  beeper.init(true);
   EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(0U));
-  beeper->ready();
+  beeper.ready();
   expectedBeepRepeats(BEEP_NUM_READY);
 }
 
 TEST_F(BeeperTest, test_finishedLine_enabled) {
-  beeper->init(true);
+  beeper.init(true);
   EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(0U));
-  beeper->finishedLine();
+  beeper.finishedLine();
   expectedBeepRepeats(BEEP_NUM_FINISHEDLINE);
 }
 
 TEST_F(BeeperTest, test_endWork_enabled) {
-  beeper->init(true);
+  beeper.init(true);
   EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(0U));
-  beeper->endWork();
+  beeper.endWork();
   expectedBeepRepeats(BEEP_NUM_ENDWORK);
 }
 
 TEST_F(BeeperTest, test_ready_disabled) {
-  beeper->init(false);
+  beeper.init(false);
   EXPECT_CALL(*arduinoMock, millis).Times(0);
-  beeper->ready();
+  beeper.ready();
   expectedBeepRepeats(BEEP_NUM_READY);
 }
 
 TEST_F(BeeperTest, test_finishedLine_disabled) {
-  beeper->init(false);
+  beeper.init(false);
   EXPECT_CALL(*arduinoMock, millis).Times(0);
-  beeper->finishedLine();
+  beeper.finishedLine();
   expectedBeepRepeats(BEEP_NUM_FINISHEDLINE);
 }
 
 TEST_F(BeeperTest, test_endWork_disabled) {
-  beeper->init(false);
+  beeper.init(false);
   EXPECT_CALL(*arduinoMock, millis).Times(0);
-  beeper->endWork();
+  beeper.endWork();
   expectedBeepRepeats(BEEP_NUM_ENDWORK);
 }

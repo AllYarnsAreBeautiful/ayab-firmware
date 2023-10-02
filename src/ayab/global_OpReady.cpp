@@ -27,25 +27,25 @@
 // static member functions
 
 OpState_t GlobalOpReady::state() {
-  return m_instance->state();
+  return m_instance.state();
 }
 
 void GlobalOpReady::init() {
-  m_instance->init();
+  m_instance.init();
 }
 
 void GlobalOpReady::begin() {
-  m_instance->begin();
+  m_instance.begin();
 }
 
 void GlobalOpReady::update() {
-  m_instance->update();
+  m_instance.update();
 }
 
 void GlobalOpReady::com(const uint8_t *buffer, size_t size) {
-  m_instance->com(buffer, size);
+  m_instance.com(buffer, size);
 }
 
 void GlobalOpReady::end() {
-  m_instance->end();
+  m_instance.end();
 }

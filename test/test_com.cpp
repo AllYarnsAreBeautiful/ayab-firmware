@@ -39,16 +39,16 @@ using ::testing::AtLeast;
 using ::testing::Mock;
 using ::testing::Return;
 
-extern Com *com;
-extern Beeper *beeper;
+extern Com& com;
+extern Beeper& beeper;
 
-extern OpIdle *opIdle;
-extern OpInit *opInit;
-extern OpTest *opTest;
+extern OpIdle& opIdle;
+extern OpInit& opInit;
+extern OpTest& opTest;
 
-extern ControllerMock *controller;
-extern OpKnitMock *opKnit;
-extern PacketSerialWrapperMock *packetSerialWrapper;
+extern ControllerMock& controller;
+extern OpKnitMock& opKnit;
+extern PacketSerialWrapperMock& packetSerialWrapper;
 
 class ComTest : public ::testing::Test {
 protected:
@@ -56,9 +56,9 @@ protected:
     arduinoMock = arduinoMockInstance();
 
     // pointer to global instance
-    controllerMock = controller;
-    opKnitMock = opKnit;
-    packetSerialWrapperMock = packetSerialWrapper;
+    controllerMock = &controller;
+    opKnitMock = &opKnit;
+    packetSerialWrapperMock = &packetSerialWrapper;
 
     // The global instance does not get destroyed at the end of each test.
     // Ordinarily the mock instance would be local and such behaviour would
@@ -67,9 +67,9 @@ protected:
     Mock::AllowLeak(opKnitMock);
     Mock::AllowLeak(packetSerialWrapperMock);
 
-    beeper->init(true);
+    beeper.init(true);
     expect_init();
-    com->init();
+    com.init();
     controllerMock->init();
   }
 
@@ -97,23 +97,23 @@ protected:
   void expected_write_onPacketReceived(uint8_t *buffer, size_t size,
                                        bool once) {
     expect_send(once);
-    opTest->com(buffer, size);
+    opTest.com(buffer, size);
   }
 
   void reqInit(Machine_t machine) {
     uint8_t buffer[] = {static_cast<uint8_t>(API_t::reqInit), static_cast<uint8_t>(machine), 0};
-    buffer[2] = com->CRC8(buffer, 2);
-    EXPECT_CALL(*controllerMock, setState(opInit));
+    buffer[2] = com.CRC8(buffer, 2);
+    EXPECT_CALL(*controllerMock, setState(&opInit));
     expect_send(true);
-    opIdle->com(buffer, sizeof(buffer));
+    opIdle.com(buffer, sizeof(buffer));
   }
 };
 
 TEST_F(ComTest, test_reqInit_fail1) {
   uint8_t buffer[] = {static_cast<uint8_t>(API_t::reqInit), static_cast<uint8_t>(Machine_t::Kh930)};
-  EXPECT_CALL(*controllerMock, setState(opInit)).Times(0);
+  EXPECT_CALL(*controllerMock, setState(&opInit)).Times(0);
   expect_send(true);
-  opIdle->com(buffer, sizeof(buffer));
+  opIdle.com(buffer, sizeof(buffer));
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(packetSerialWrapperMock));
@@ -121,10 +121,10 @@ TEST_F(ComTest, test_reqInit_fail1) {
 
 TEST_F(ComTest, test_reqInit_fail2) {
   uint8_t buffer[] = {static_cast<uint8_t>(API_t::reqInit), static_cast<uint8_t>(Machine_t::Kh930), 0};
-  buffer[2] = com->CRC8(buffer, 2) ^ 1;
-  EXPECT_CALL(*controllerMock, setState(opInit)).Times(0);
+  buffer[2] = com.CRC8(buffer, 2) ^ 1;
+  EXPECT_CALL(*controllerMock, setState(&opInit)).Times(0);
   expect_send(true);
-  opIdle->com(buffer, sizeof(buffer));
+  opIdle.com(buffer, sizeof(buffer));
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(packetSerialWrapperMock));
@@ -132,10 +132,10 @@ TEST_F(ComTest, test_reqInit_fail2) {
 
 TEST_F(ComTest, test_reqInit_fail3) {
   uint8_t buffer[] = {static_cast<uint8_t>(API_t::reqInit), static_cast<uint8_t>(Machine_t::NoMachine), 0};
-  buffer[2] = com->CRC8(buffer, 2);
-  EXPECT_CALL(*controllerMock, setState(opInit)).Times(0);
+  buffer[2] = com.CRC8(buffer, 2);
+  EXPECT_CALL(*controllerMock, setState(&opInit)).Times(0);
   expect_send(true);
-  opIdle->com(buffer, sizeof(buffer));
+  opIdle.com(buffer, sizeof(buffer));
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(packetSerialWrapperMock));
@@ -151,7 +151,7 @@ TEST_F(ComTest, test_API) {
 TEST_F(ComTest, test_reqtest_fail) {
   // no machineType
   uint8_t buffer[] = {static_cast<uint8_t>(API_t::reqTest)};
-  EXPECT_CALL(*controllerMock, setState(opTest)).Times(0);
+  EXPECT_CALL(*controllerMock, setState(&opTest)).Times(0);
   expected_write_onPacketReceived(buffer, sizeof(buffer), true);
 
   // test expectations without destroying instance
@@ -160,9 +160,9 @@ TEST_F(ComTest, test_reqtest_fail) {
 */
 
 TEST_F(ComTest, test_reqtest) {
-  EXPECT_CALL(*controllerMock, setState(opTest));
+  EXPECT_CALL(*controllerMock, setState(&opTest));
   expect_send(true);
-  com->h_reqTest();
+  com.h_reqTest();
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(controllerMock));
@@ -174,7 +174,7 @@ TEST_F(ComTest, test_reqstart_fail1) {
   uint8_t buffer[] = {static_cast<uint8_t>(API_t::reqStart), 0, 10, 1, 0x73};
   EXPECT_CALL(*opKnitMock, startKnitting).Times(0);
   expect_send(true);
-  com->h_reqStart(buffer, sizeof(buffer));
+  com.h_reqStart(buffer, sizeof(buffer));
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(opKnitMock));
@@ -186,7 +186,7 @@ TEST_F(ComTest, test_reqstart_fail2) {
   uint8_t buffer[] = {static_cast<uint8_t>(API_t::reqStart), 0, 1, 0x74};
   EXPECT_CALL(*opKnitMock, startKnitting).Times(0);
   expect_send(true);
-  com->h_reqStart(buffer, sizeof(buffer) - 1);
+  com.h_reqStart(buffer, sizeof(buffer) - 1);
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(opKnitMock));
@@ -198,7 +198,7 @@ TEST_F(ComTest, test_reqstart_success_KH910) {
   uint8_t buffer[] = {static_cast<uint8_t>(API_t::reqStart), 0, 10, 1, 0x36};
   EXPECT_CALL(*opKnitMock, startKnitting);
   expect_send(true);
-  com->h_reqStart(buffer, sizeof(buffer));
+  com.h_reqStart(buffer, sizeof(buffer));
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(opKnitMock));
@@ -210,7 +210,7 @@ TEST_F(ComTest, test_reqstart_success_KH270) {
   uint8_t buffer[] = {static_cast<uint8_t>(API_t::reqStart), 0, 10, 1, 0x36};
   EXPECT_CALL(*opKnitMock, startKnitting);
   expect_send(true);
-  com->h_reqStart(buffer, sizeof(buffer));
+  com.h_reqStart(buffer, sizeof(buffer));
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(opKnitMock));
@@ -219,7 +219,7 @@ TEST_F(ComTest, test_reqstart_success_KH270) {
 
 TEST_F(ComTest, test_reqinfo) {
   expect_send(true);
-  com->h_reqInfo();
+  com.h_reqInfo();
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(packetSerialWrapperMock));
@@ -245,10 +245,10 @@ TEST_F(ComTest, test_beepCmd) {
   uint8_t buffer[] = {static_cast<uint8_t>(API_t::beepCmd)};
   expected_write_onPacketReceived(buffer, sizeof(buffer), true);
   EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(0U));
-  beeper->update();
+  beeper.update();
   EXPECT_CALL(*arduinoMock, analogWrite(PIEZO_PIN, BEEP_ON_DUTY));
   EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(1U));
-  beeper->update();
+  beeper.update();
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(packetSerialWrapperMock));
@@ -310,7 +310,7 @@ TEST_F(ComTest, test_autoTestCmd) {
 /*
 TEST_F(ComTest, test_stopCmd) {
   uint8_t buffer[] = {static_cast<uint8_t>(API_t::stopCmd)};
-  com->onPacketReceived(buffer, sizeof(buffer));
+  com.onPacketReceived(buffer, sizeof(buffer));
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(packetSerialWrapperMock));
@@ -319,9 +319,9 @@ TEST_F(ComTest, test_stopCmd) {
 
 /*
 TEST_F(ComTest, test_quitCmd) {
-  EXPECT_CALL(*controllerMock, setState(opInit));
+  EXPECT_CALL(*controllerMock, setState(&opInit));
   EXPECT_CALL(*opKnitMock, init);
-  com->h_quitCmd();
+  com.h_quitCmd();
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(opKnitMock));
@@ -351,28 +351,28 @@ TEST_F(ComTest, test_cnfline_kh910) {
   // first call increments line number to zero, not accepted
   EXPECT_CALL(*opKnitMock, setNextLine).WillOnce(Return(false));
   EXPECT_CALL(*opKnitMock, setLastLine).Times(0);
-  com->h_cnfLine(buffer, sizeof(buffer));
+  com.h_cnfLine(buffer, sizeof(buffer));
 
   // second call Line accepted, last line
   EXPECT_CALL(*opKnitMock, setNextLine).WillOnce(Return(true));
   EXPECT_CALL(*opKnitMock, setLastLine).Times(1);
-  com->h_cnfLine(buffer, sizeof(buffer));
+  com.h_cnfLine(buffer, sizeof(buffer));
 
   // not last line
   buffer[3] = 0x00;
   buffer[29] = 0xC0;
   EXPECT_CALL(*opKnitMock, setNextLine).WillOnce(Return(true));
   EXPECT_CALL(*opKnitMock, setLastLine).Times(0);
-  com->h_cnfLine(buffer, sizeof(buffer));
+  com.h_cnfLine(buffer, sizeof(buffer));
 
   // checksum wrong
   EXPECT_CALL(*opKnitMock, setNextLine).Times(0);
   buffer[29]--;
-  com->h_cnfLine(buffer, sizeof(buffer));
+  com.h_cnfLine(buffer, sizeof(buffer));
 
   // not enough bytes in buffer
   EXPECT_CALL(*opKnitMock, setNextLine).Times(0);
-  com->h_cnfLine(buffer, sizeof(buffer) - 1);
+  com.h_cnfLine(buffer, sizeof(buffer) - 1);
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(opKnitMock));
@@ -401,20 +401,20 @@ TEST_F(ComTest, test_cnfline_kh270) {
   // Last line accepted
   EXPECT_CALL(*opKnitMock, setNextLine).WillOnce(Return(true));
   EXPECT_CALL(*opKnitMock, setLastLine).Times(1);
-  com->h_cnfLine(buffer, sizeof(buffer));
+  com.h_cnfLine(buffer, sizeof(buffer));
 }
 */
 
 /*
 TEST_F(ComTest, test_debug) {
   uint8_t buffer[] = {static_cast<uint8_t>(API_t::debug)};
-  com->onPacketReceived(buffer, sizeof(buffer));
+  com.onPacketReceived(buffer, sizeof(buffer));
 }
 */
 
 TEST_F(ComTest, test_update) {
   EXPECT_CALL(*packetSerialWrapperMock, update);
-  com->update();
+  com.update();
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(packetSerialWrapperMock));
@@ -423,7 +423,7 @@ TEST_F(ComTest, test_update) {
 TEST_F(ComTest, test_send) {
   expect_send(true);
   uint8_t p[] = {1, 2, 3};
-  com->send(p, 3);
+  com.send(p, 3);
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(packetSerialWrapperMock));
@@ -431,7 +431,7 @@ TEST_F(ComTest, test_send) {
 
 TEST_F(ComTest, test_sendMsg1) {
   expect_send(true);
-  com->sendMsg(API_t::testRes, "abc");
+  com.sendMsg(API_t::testRes, "abc");
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(packetSerialWrapperMock));
@@ -440,7 +440,7 @@ TEST_F(ComTest, test_sendMsg1) {
 TEST_F(ComTest, test_sendMsg2) {
   char buf[] = "abc\0";
   expect_send(true);
-  com->sendMsg(API_t::testRes, buf);
+  com.sendMsg(API_t::testRes, buf);
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(packetSerialWrapperMock));
@@ -448,7 +448,7 @@ TEST_F(ComTest, test_sendMsg2) {
 
 TEST_F(ComTest, test_send_reqLine) {
   expect_send(true);
-  com->send_reqLine(0);
+  com.send_reqLine(0);
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(packetSerialWrapperMock));
@@ -457,12 +457,12 @@ TEST_F(ComTest, test_send_reqLine) {
 TEST_F(ComTest, test_send_indState) {
   EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_L));
   EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_R));
-  EXPECT_CALL(*controllerMock, getState).WillOnce(Return(opInit));
+  EXPECT_CALL(*controllerMock, getState).WillOnce(Return(&opInit));
   EXPECT_CALL(*controllerMock, getCarriage);
   EXPECT_CALL(*controllerMock, getPosition);
   EXPECT_CALL(*controllerMock, getDirection);
   expect_send(true);
-  com->send_indState(Err_t::Success);
+  com.send_indState(Err_t::Success);
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(controllerMock));

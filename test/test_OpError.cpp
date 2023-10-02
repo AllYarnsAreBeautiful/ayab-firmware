@@ -34,10 +34,10 @@ using ::testing::AtLeast;
 using ::testing::Mock;
 using ::testing::Return;
 
-extern OpError *opError;
+extern OpError& opError;
 
-extern ControllerMock *controller;
-extern OpKnitMock *opKnit;
+extern ControllerMock& controller;
+extern OpKnitMock& opKnit;
 
 class OpErrorTest : public ::testing::Test {
 protected:
@@ -45,8 +45,8 @@ protected:
     arduinoMock = arduinoMockInstance();
 
     // pointers to global instances
-    controllerMock = controller;
-    opKnitMock = opKnit;
+    controllerMock = &controller;
+    opKnitMock = &opKnit;
 
     // The global instances do not get destroyed at the end of each test.
     // Ordinarily the mock instance would be local and such behaviour would
@@ -65,62 +65,62 @@ protected:
 };
 
 TEST_F(OpErrorTest, test_state) {
-  ASSERT_EQ(opError->state(), OpState_t::Error);
+  ASSERT_EQ(opError.state(), OpState_t::Error);
 }
 
 TEST_F(OpErrorTest, test_begin) {
   EXPECT_CALL(*arduinoMock, millis);
-  opError->begin();
+  opError.begin();
 }
 
 TEST_F(OpErrorTest, test_init) {
   // no calls expected
-  opError->init();
+  opError.init();
 }
 
 TEST_F(OpErrorTest, test_com) {
   // no calls expected
   const uint8_t *buffer = {};
-  opError->com(buffer, 0);
+  opError.com(buffer, 0);
 }
 
 TEST_F(OpErrorTest, test_end) {
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, LOW));
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_B, LOW));
   EXPECT_CALL(*opKnitMock, init());
-  opError->end();
+  opError.end();
 }
 
 TEST_F(OpErrorTest, test_update) {
   EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(0U));
-  opError->begin();
+  opError.begin();
 
   // too soon to flash
   EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(FLASH_DELAY - 1));
   EXPECT_CALL(*arduinoMock, digitalWrite).Times(0);
-  opError->update();
+  opError.update();
 
   // flash first time
   EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(FLASH_DELAY));
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, LOW));
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_B, HIGH));
   // send_indState
-  EXPECT_CALL(*controllerMock, getState).WillOnce(Return(opError));
+  EXPECT_CALL(*controllerMock, getState).WillOnce(Return(&opError));
   EXPECT_CALL(*controllerMock, getCarriage);
   EXPECT_CALL(*controllerMock, getPosition);
   EXPECT_CALL(*controllerMock, getDirection);
-  opError->update();
+  opError.update();
 
   // alternate flash
   EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(FLASH_DELAY * 2));
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, HIGH));
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_B, LOW));
   // send_indState
-  EXPECT_CALL(*controllerMock, getState).WillOnce(Return(opError));
+  EXPECT_CALL(*controllerMock, getState).WillOnce(Return(&opError));
   EXPECT_CALL(*controllerMock, getCarriage);
   EXPECT_CALL(*controllerMock, getPosition);
   EXPECT_CALL(*controllerMock, getDirection);
-  opError->update();
+  opError.update();
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(controllerMock));

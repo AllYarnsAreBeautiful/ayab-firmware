@@ -191,7 +191,7 @@ void Com::h_reqInit(const uint8_t *buffer, size_t size) {
   }
 
   GlobalController::setMachineType(machineType);
-  GlobalController::setState(GlobalOpInit::m_instance);
+  GlobalController::setState(&GlobalOpInit::m_instance);
   send_cnfInit(Err_t::Success);
 }
 
@@ -288,7 +288,7 @@ void Com::h_reqInfo() const {
  * \brief Handle `reqTest` (request hardware test) command.
  */
 void Com::h_reqTest() const {
-  GlobalController::setState(GlobalOpTest::m_instance);
+  GlobalController::setState(&GlobalOpTest::m_instance);
   send_cnfTest(Err_t::Success);
 }
 
@@ -296,7 +296,7 @@ void Com::h_reqTest() const {
  * \brief Handle `quitCmd` (cancel) command.
  */
 void Com::h_quitCmd() const {
-  GlobalController::setState(GlobalOpInit::m_instance);
+  GlobalController::setState(&GlobalOpInit::m_instance);
 }
 
 /*!

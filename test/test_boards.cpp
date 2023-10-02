@@ -41,38 +41,40 @@
 
 // global definitions
 // references everywhere else must use `extern`
-Beeper    *beeper    = new Beeper();
-Com       *com       = new Com();
-Encoders  *encoders  = new Encoders();
-Solenoids *solenoids = new Solenoids();
+Beeper&    beeper    = *new Beeper();
+Com&       com       = *new Com();
+Encoders&  encoders  = *new Encoders();
+Solenoids& solenoids = *new Solenoids();
 
-OpIdle    *opIdle    = new OpIdle();
-OpInit    *opInit    = new OpInit();
-OpReady   *opReady   = new OpReady();
-OpTest    *opTest    = new OpTest();
-OpError   *opError   = new OpError();
+OpIdle&    opIdle    = *new OpIdle();
+OpInit&    opInit    = *new OpInit();
+OpReady&   opReady   = *new OpReady();
+OpTest&    opTest    = *new OpTest();
+OpError&   opError   = *new OpError();
 
-AnalogReadAsyncWrapperMock *analogReadAsyncWrapper = new AnalogReadAsyncWrapperMock();
-PacketSerialWrapperMock *packetSerialWrapper = new PacketSerialWrapperMock();
-ControllerMock *controller = new ControllerMock();
-OpKnitMock *opKnit = new OpKnitMock();
+ControllerMock& controller = *new ControllerMock();
+OpKnitMock&     opKnit     = *new OpKnitMock();
+
+AnalogReadAsyncWrapperMock& analogReadAsyncWrapper = *new AnalogReadAsyncWrapperMock();
+PacketSerialWrapperMock&    packetSerialWrapper    = *new PacketSerialWrapperMock();
 
 // initialize static members
-BeeperInterface     *GlobalBeeper::m_instance     = beeper;
-ComInterface        *GlobalCom::m_instance        = com;
-EncodersInterface   *GlobalEncoders::m_instance   = encoders;
-SolenoidsInterface  *GlobalSolenoids::m_instance  = solenoids;
+BeeperInterface&     GlobalBeeper::m_instance     = beeper;
+ComInterface&        GlobalCom::m_instance        = com;
+EncodersInterface&   GlobalEncoders::m_instance   = encoders;
+SolenoidsInterface&  GlobalSolenoids::m_instance  = solenoids;
 
-OpIdleInterface     *GlobalOpIdle::m_instance     = opIdle;
-OpInitInterface     *GlobalOpInit::m_instance     = opInit;
-OpReadyInterface    *GlobalOpReady::m_instance    = opReady;
-OpTestInterface     *GlobalOpTest::m_instance     = opTest;
-OpErrorInterface    *GlobalOpError::m_instance    = opError;
+OpIdleInterface&     GlobalOpIdle::m_instance     = opIdle;
+OpInitInterface&     GlobalOpInit::m_instance     = opInit;
+OpReadyInterface&    GlobalOpReady::m_instance    = opReady;
+OpTestInterface&     GlobalOpTest::m_instance     = opTest;
+OpErrorInterface&    GlobalOpError::m_instance    = opError;
 
-AnalogReadAsyncWrapperInterface *GlobalAnalogReadAsyncWrapper::m_instance = analogReadAsyncWrapper;
-PacketSerialWrapperInterface *GlobalPacketSerialWrapper::m_instance = packetSerialWrapper;
-ControllerInterface *GlobalController::m_instance = controller;
-OpKnitInterface     *GlobalOpKnit::m_instance     = opKnit;
+ControllerInterface& GlobalController::m_instance = controller;
+OpKnitInterface&     GlobalOpKnit::m_instance     = opKnit;
+
+AnalogReadAsyncWrapperInterface& GlobalAnalogReadAsyncWrapper::m_instance = analogReadAsyncWrapper;
+PacketSerialWrapperInterface&    GlobalPacketSerialWrapper::m_instance    = packetSerialWrapper;
 
 int main(int argc, char *argv[]) {
   ::testing::InitGoogleMock(&argc, argv);

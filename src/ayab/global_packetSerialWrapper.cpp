@@ -26,17 +26,17 @@
 // static member functions
 
 void GlobalPacketSerialWrapper::begin(uint32_t speed) {
-  m_instance->begin(speed);
+  m_instance.begin(speed);
 }
 
 void GlobalPacketSerialWrapper::send(const uint8_t *buffer, size_t size) {
-  m_instance->send(buffer, size);
+  m_instance.send(buffer, size);
 }
 
 void GlobalPacketSerialWrapper::setPacketHandler(SLIPPacketSerial::PacketHandlerFunction onPacketFunction) {
-  m_instance->setPacketHandler(onPacketFunction);
+  m_instance.setPacketHandler(onPacketFunction);
 }
 
 void GlobalPacketSerialWrapper::update() {
-  m_instance->update();
+  m_instance.update();
 }

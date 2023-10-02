@@ -160,7 +160,7 @@ Err_t OpKnit::startKnitting(uint8_t startNeedle,
   m_lastLineFlag = false;
 
   // proceed to next state
-  GlobalController::setState(GlobalOpKnit::m_instance);
+  GlobalController::setState(&GlobalOpKnit::m_instance);
   GlobalBeeper::ready();
 
   // success
@@ -253,7 +253,7 @@ void OpKnit::knit() {
       reqLine(m_currentLineNumber);
     } else if (m_lastLineFlag) {
       // move to state `OpInit`
-      GlobalController::setState(GlobalOpInit::m_instance);
+      GlobalController::setState(&GlobalOpInit::m_instance);
     }
   }
 #endif // DBG_NOMACHINE

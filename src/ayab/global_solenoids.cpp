@@ -28,13 +28,13 @@
 // static member functions
 
 void GlobalSolenoids::init() {
-  m_instance->init();
+  m_instance.init();
 }
 
 void GlobalSolenoids::setSolenoid(uint8_t solenoid, bool state) {
-  m_instance->setSolenoid(solenoid, state);
+  m_instance.setSolenoid(solenoid, state);
 }
 
 void GlobalSolenoids::setSolenoids(uint16_t state) {
-  m_instance->setSolenoids(state);
+  m_instance.setSolenoids(state);
 }

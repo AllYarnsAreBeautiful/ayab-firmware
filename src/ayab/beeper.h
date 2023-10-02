@@ -53,7 +53,7 @@ public:
 };
 
 // Container class for the static methods that control the beeper.
-// Dependency injection is enabled using a pointer to a global instance of
+// Dependency injection is enabled using a reference to a global instance of
 // either `Beeper` or `BeeperMock`, both of which classes implement the
 // pure virtual methods of `BeeperInterface`.
 
@@ -63,8 +63,8 @@ private:
   GlobalBeeper() = default;
 
 public:
-  // pointer to global instance whose methods are implemented
-  static BeeperInterface *m_instance;
+  // reference to global instance whose methods are implemented
+  static BeeperInterface& m_instance;
 
   static void init(bool enabled);
   static void update();

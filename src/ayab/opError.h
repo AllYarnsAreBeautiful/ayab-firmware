@@ -35,7 +35,7 @@ public:
 };
 
 // Container class for the static methods that implement the hardware test
-// commands. Dependency injection is enabled using a pointer to a global
+// commands. Dependency injection is enabled using a reference to a global
 // instance of either `OpError` or `OpErrorMock`, both of which classes
 // implement the pure virtual methods of the `OpErrorInterface` class.
 
@@ -45,8 +45,8 @@ private:
   GlobalOpError() = default;
 
 public:
-  // pointer to global instance whose methods are implemented
-  static OpErrorInterface *m_instance;
+  // reference to global instance whose methods are implemented
+  static OpErrorInterface& m_instance;
 
   static OpState_t state();
   static void init();

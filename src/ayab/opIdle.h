@@ -31,7 +31,7 @@ public:
 };
 
 // Container class for the static methods that implement the hardware test
-// commands. Dependency injection is enabled using a pointer to a global
+// commands. Dependency injection is enabled using a reference to a global
 // instance of either `OpIdle` or `OpIdleMock`, both of which classes
 // implement the pure virtual methods of the `OpIdleInterface` class.
 
@@ -41,8 +41,8 @@ private:
   GlobalOpIdle() = default;
 
 public:
-  // pointer to global instance whose methods are implemented
-  static OpIdleInterface *m_instance;
+  // reference to global instance whose methods are implemented
+  static OpIdleInterface& m_instance;
 
   static OpState_t state();
   static void init();
