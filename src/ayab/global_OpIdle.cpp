@@ -27,25 +27,25 @@
 // static member functions
 
 OpState_t GlobalOpIdle::state() {
-  return m_instance->state();
+  return m_instance.state();
 }
 
 void GlobalOpIdle::init() {
-  m_instance->init();
+  m_instance.init();
 }
 
 void GlobalOpIdle::begin() {
-  m_instance->begin();
+  m_instance.begin();
 }
 
 void GlobalOpIdle::update() {
-  m_instance->update();
+  m_instance.update();
 }
 
 void GlobalOpIdle::com(const uint8_t *buffer, size_t size) {
-  m_instance->com(buffer, size);
+  m_instance.com(buffer, size);
 }
 
 void GlobalOpIdle::end() {
-  m_instance->end();
+  m_instance.end();
 }

@@ -28,29 +28,29 @@
 // static member functions
 
 void GlobalBeeper::init(bool enabled) {
-  m_instance->init(enabled);
+  m_instance.init(enabled);
 }
 
 void GlobalBeeper::update() {
-  m_instance->update();
+  m_instance.update();
 }
 
 void GlobalBeeper::ready() {
-  m_instance->ready();
+  m_instance.ready();
 }
 
 void GlobalBeeper::finishedLine() {
-  m_instance->finishedLine();
+  m_instance.finishedLine();
 }
 
 void GlobalBeeper::endWork() {
-  m_instance->endWork();
+  m_instance.endWork();
 }
 
 BeepState GlobalBeeper::getState() {
-  return m_instance->getState();
+  return m_instance.getState();
 }
 
 bool GlobalBeeper::enabled() {
-  return m_instance->enabled();
+  return m_instance.enabled();
 }

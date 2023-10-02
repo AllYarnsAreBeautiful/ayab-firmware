@@ -44,18 +44,18 @@ using ::testing::Mock;
 using ::testing::Return;
 using ::testing::TypedEq;
 
-extern OpKnit *opKnit;
-extern Controller *controller;
+extern OpKnit& opKnit;
+extern Controller& controller;
 
-extern BeeperMock *beeper;
-extern ComMock *com;
-extern EncodersMock *encoders;
-extern SolenoidsMock *solenoids;
+extern BeeperMock& beeper;
+extern ComMock& com;
+extern EncodersMock& encoders;
+extern SolenoidsMock& solenoids;
 
-extern OpIdleMock *opIdle;
-extern OpInitMock *opInit;
-extern OpTestMock *opTest;
-extern OpReadyMock *opReady;
+extern OpIdleMock& opIdle;
+extern OpInitMock& opInit;
+extern OpTestMock& opTest;
+extern OpReadyMock& opReady;
 
 class OpKnitTest : public ::testing::Test {
 protected:
@@ -63,15 +63,15 @@ protected:
     arduinoMock = arduinoMockInstance();
 
     // pointers to global instances
-    beeperMock = beeper;
-    comMock = com;
-    encodersMock = encoders;
-    solenoidsMock = solenoids;
+    beeperMock = &beeper;
+    comMock = &com;
+    encodersMock = &encoders;
+    solenoidsMock = &solenoids;
 
-    opIdleMock = opIdle;
-    opInitMock = opInit;
-    opReadyMock = opReady;
-    opTestMock = opTest;
+    opIdleMock = &opIdle;
+    opInitMock = &opInit;
+    opReadyMock = &opReady;
+    opTestMock = &opTest;
 
     // The global instances do not get destroyed at the end of each test.
     // Ordinarily the mock instances would be local and such behaviour would
@@ -87,10 +87,10 @@ protected:
     Mock::AllowLeak(opTestMock);
 
     // start in state `OpIdle`
-    controller->init();
-    opIdle->init();
-    opInit->init();
-    opKnit->init();
+    controller.init();
+    opIdle.init();
+    opInit.init();
+    opKnit.init();
     expected_cacheISR(Direction_t::NoDirection, Direction_t::NoDirection);
   }
 
@@ -139,12 +139,12 @@ protected:
   void expected_cacheISR(uint16_t pos, Direction_t dir, Direction_t hall,
                     BeltShift_t belt, Carriage_t carriage) {
     expect_cacheISR(pos, dir, hall, belt, carriage);
-    controller->cacheEncoders();
+    controller.cacheEncoders();
   }
 
   void expected_cacheISR(uint16_t pos, Direction_t dir, BeltShift_t belt, Carriage_t carriage) {
     expect_cacheISR(pos, dir, Direction_t::NoDirection, belt, carriage);
-    controller->cacheEncoders();
+    controller.cacheEncoders();
   }
 
   void expect_cacheISR(Direction_t dir, Direction_t hall) {
@@ -153,12 +153,12 @@ protected:
 
   void expected_cacheISR(uint8_t pos, Direction_t dir, Direction_t hall) {
     expect_cacheISR(pos, dir, hall, BeltShift::Regular, Carriage_t::Knit);
-    controller->cacheEncoders();
+    controller.cacheEncoders();
   }
 
   void expected_cacheISR(Direction_t dir, Direction_t hall) {
     expect_cacheISR(dir, hall);
-    controller->cacheEncoders();
+    controller.cacheEncoders();
   }
 
   void expect_cacheISR(uint16_t pos) {
@@ -167,7 +167,7 @@ protected:
 
   void expected_cacheISR(uint16_t pos) {
     expect_cacheISR(pos);
-    controller->cacheEncoders();
+    controller.cacheEncoders();
   }
 
   void expected_cacheISR() {
@@ -184,25 +184,25 @@ protected:
 
   void expected_init_machine(Machine_t m) {
     // starts in state `OpIdle`
-    ASSERT_EQ(controller->getState(), opIdle);
+    ASSERT_EQ(controller.getState(), &opIdle);
 
-    controller->setMachineType(m);
-    controller->setState(opInit);
+    controller.setMachineType(m);
+    controller.setState(&opInit);
     expected_update_idle();
 
     // transition to state `OpInit`
-    ASSERT_EQ(controller->getState(), opInit);
+    ASSERT_EQ(controller.getState(), &opInit);
   }
 
   void expected_get_ready() {
-    controller->setState(opReady);
+    controller.setState(&opReady);
     expected_update_init();
   }
 
   void get_to_ready(Machine_t m) {
     expected_init_machine(m);
     expected_get_ready();
-    ASSERT_EQ(controller->getState(), opReady);
+    ASSERT_EQ(controller.getState(), &opReady);
   }
 
   void get_to_knit(Machine_t m) {
@@ -210,19 +210,19 @@ protected:
 
     uint8_t pattern[] = {1};
     EXPECT_CALL(*beeperMock, ready);
-    ASSERT_EQ(opKnit->startKnitting(0, NUM_NEEDLES[static_cast<uint8_t>(m)] - 1, pattern, false), Err_t::Success);
-    ASSERT_EQ(controller->getState(), opReady);
+    ASSERT_EQ(opKnit.startKnitting(0, NUM_NEEDLES[static_cast<uint8_t>(m)] - 1, pattern, false), Err_t::Success);
+    ASSERT_EQ(controller.getState(), &opReady);
 
     EXPECT_CALL(*encodersMock, init);
     EXPECT_CALL(*encodersMock, setUpInterrupt);
     expected_update_ready();
 
     // ends in state `OpKnit`
-    ASSERT_EQ(controller->getState(), opKnit);
+    ASSERT_EQ(controller.getState(), &opKnit);
   }
 
   void expected_update() {
-    controller->update();
+    controller.update();
   }
 
   void expected_update_knit(bool first) {
@@ -233,14 +233,14 @@ protected:
       expected_update();
       return;
     }
-    ASSERT_EQ(controller->getState(), opKnit);
+    ASSERT_EQ(controller.getState(), &opKnit);
     //EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, HIGH)); // green LED on
     expected_update();
   }
 
   void expected_update_idle() {
     // starts in state `OpIdle`
-    ASSERT_EQ(controller->getState(), opIdle);
+    ASSERT_EQ(controller.getState(), &opIdle);
 
     //EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, LOW));
     expected_update();
@@ -248,7 +248,7 @@ protected:
 
   void expected_update_init() {
     // starts in state `OpInit`
-    ASSERT_EQ(controller->getState(), opInit);
+    ASSERT_EQ(controller.getState(), &opInit);
 
     //EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, LOW));
     expected_update();
@@ -256,7 +256,7 @@ protected:
 
   void expected_update_ready() {
     // starts in state `OpReady`
-    ASSERT_EQ(controller->getState(), opReady);
+    ASSERT_EQ(controller.getState(), &opReady);
 
     //EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, LOW));
     expected_update();
@@ -264,7 +264,7 @@ protected:
 
   void expected_update_test() {
     // starts in state `OpTest`
-    ASSERT_EQ(controller->getState(), opTest);
+    ASSERT_EQ(controller.getState(), &opTest);
 
     //expect_indState();
     EXPECT_CALL(*opTestMock, update);
@@ -279,7 +279,7 @@ protected:
 };
 
 TEST_F(OpKnitTest, test_state) {
-  ASSERT_EQ(opKnit->state(), OpState_t::Knit);
+  ASSERT_EQ(opKnit.state(), OpState_t::Knit);
 }
 
 TEST_F(OpKnitTest, test_send) {
@@ -294,28 +294,28 @@ TEST_F(OpKnitTest, test_send) {
 TEST_F(OpKnitTest, test_com) {
   const uint8_t cnf[] = {static_cast<uint8_t>(API_t::cnfLine)};
   EXPECT_CALL(*comMock, h_cnfLine);
-  opKnit->com(cnf, 1);
+  opKnit.com(cnf, 1);
 
   const uint8_t reqTest[] = {static_cast<uint8_t>(API_t::reqTest)};
   EXPECT_CALL(*comMock, h_reqTest);
-  opKnit->com(reqTest, 1);
+  opKnit.com(reqTest, 1);
 
   const uint8_t unrec[] = {0xFF};
   EXPECT_CALL(*comMock, h_unrecognized);
-  opKnit->com(unrec, 1);
+  opKnit.com(unrec, 1);
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(comMock));
 }
 
 TEST_F(OpKnitTest, test_encodePosition) {
-  opKnit->m_sOldPosition = controller->getPosition();
+  opKnit.m_sOldPosition = controller.getPosition();
   EXPECT_CALL(*comMock, send_indState).Times(0);
-  opKnit->encodePosition();
+  opKnit.encodePosition();
 
-  opKnit->m_sOldPosition += 1;
+  opKnit.m_sOldPosition += 1;
   EXPECT_CALL(*comMock, send_indState).Times(1);
-  opKnit->encodePosition();
+  opKnit.encodePosition();
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(comMock));
@@ -338,12 +338,12 @@ TEST_F(OpKnitTest, test_init_machine) {
 
 TEST_F(OpKnitTest, test_startKnitting_NoMachine) {
   uint8_t pattern[] = {1};
-  Machine_t m = controller->getMachineType();
+  Machine_t m = controller.getMachineType();
   ASSERT_EQ(m, Machine_t::NoMachine);
 
-  opKnit->begin();
+  opKnit.begin();
   ASSERT_TRUE(
-      opKnit->startKnitting(0, NUM_NEEDLES[static_cast<uint8_t>(m)] - 1, pattern, false) != Err_t::Success);
+      opKnit.startKnitting(0, NUM_NEEDLES[static_cast<uint8_t>(m)] - 1, pattern, false) != Err_t::Success);
 }
 
 TEST_F(OpKnitTest, test_startKnitting_Kh910) {
@@ -373,14 +373,14 @@ TEST_F(OpKnitTest, test_startKnitting_failures) {
   get_to_ready(Machine_t::Kh910);
 
   // `m_stopNeedle` lower than `m_startNeedle`
-  ASSERT_TRUE(opKnit->startKnitting(1, 0, pattern, false) != Err_t::Success);
+  ASSERT_TRUE(opKnit.startKnitting(1, 0, pattern, false) != Err_t::Success);
 
   // `m_stopNeedle` out of range
-  ASSERT_TRUE(opKnit->startKnitting(0, NUM_NEEDLES[static_cast<uint8_t>(Machine_t::Kh910)], pattern,
+  ASSERT_TRUE(opKnit.startKnitting(0, NUM_NEEDLES[static_cast<uint8_t>(Machine_t::Kh910)], pattern,
                                      false) != Err_t::Success);
 
   // null pattern
-  ASSERT_TRUE(opKnit->startKnitting(0, NUM_NEEDLES[static_cast<uint8_t>(Machine_t::Kh910)] - 1, nullptr,
+  ASSERT_TRUE(opKnit.startKnitting(0, NUM_NEEDLES[static_cast<uint8_t>(Machine_t::Kh910)] - 1, nullptr,
                                      false) != Err_t::Success);
 
   // test expectations without destroying instance
@@ -391,26 +391,26 @@ TEST_F(OpKnitTest, test_startKnitting_failures) {
 
 TEST_F(OpKnitTest, test_setNextLine) {
   // set `m_lineRequested`
-  ASSERT_EQ(opKnit->setNextLine(1), false);
+  ASSERT_EQ(opKnit.setNextLine(1), false);
 
   expected_update_knit(true);
 
   // outside of the active needles
-  expected_cacheISR(NUM_NEEDLES[static_cast<uint8_t>(Machine_t::Kh910)] + END_OF_LINE_OFFSET_R[static_cast<uint8_t>(Machine_t::Kh910)] + 1 + opKnit->getStartOffset(Direction_t::Left));
+  expected_cacheISR(NUM_NEEDLES[static_cast<uint8_t>(Machine_t::Kh910)] + END_OF_LINE_OFFSET_R[static_cast<uint8_t>(Machine_t::Kh910)] + 1 + opKnit.getStartOffset(Direction_t::Left));
   EXPECT_CALL(*solenoidsMock, setSolenoid).Times(1);
   expected_update_knit(false);
 
   // wrong line number
   EXPECT_CALL(*beeperMock, finishedLine).Times(0);
   expect_reqLine();
-  ASSERT_EQ(opKnit->setNextLine(1), false);
+  ASSERT_EQ(opKnit.setNextLine(1), false);
 
   // correct line number
   EXPECT_CALL(*beeperMock, finishedLine).Times(1);
-  ASSERT_EQ(opKnit->setNextLine(0), true);
+  ASSERT_EQ(opKnit.setNextLine(0), true);
 
   // `m_lineRequested` has been set to `false`
-  ASSERT_EQ(opKnit->setNextLine(0), false);
+  ASSERT_EQ(opKnit.setNextLine(0), false);
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
@@ -429,7 +429,7 @@ TEST_F(OpKnitTest, test_knit_Kh910) {
   EXPECT_CALL(*beeperMock, ready);
   const uint8_t START_NEEDLE = NUM_NEEDLES[static_cast<uint8_t>(Machine_t::Kh910)] - 2;
   const uint8_t STOP_NEEDLE = NUM_NEEDLES[static_cast<uint8_t>(Machine_t::Kh910)] - 1;
-  opKnit->startKnitting(START_NEEDLE, STOP_NEEDLE, pattern, true);
+  opKnit.startKnitting(START_NEEDLE, STOP_NEEDLE, pattern, true);
   //EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, LOW)); // green LED off
   expected_update();
 
@@ -473,7 +473,7 @@ TEST_F(OpKnitTest, test_knit_Kh270) {
   EXPECT_CALL(*beeperMock, ready);
   const uint8_t START_NEEDLE = NUM_NEEDLES[static_cast<uint8_t>(Machine_t::Kh270)] - 2;
   const uint8_t STOP_NEEDLE = NUM_NEEDLES[static_cast<uint8_t>(Machine_t::Kh270)] - 1;
-  opKnit->startKnitting(START_NEEDLE, STOP_NEEDLE, pattern, true);
+  opKnit.startKnitting(START_NEEDLE, STOP_NEEDLE, pattern, true);
   //EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, LOW));
   expected_update();
 
@@ -540,16 +540,16 @@ TEST_F(OpKnitTest, test_knit_lastLine) {
 
   // Run one knit inside the working needles.
   EXPECT_CALL(*solenoidsMock, setSolenoid);
-  expected_cacheISR(opKnit->getStartOffset(Direction_t::Left) + 20);
+  expected_cacheISR(opKnit.getStartOffset(Direction_t::Left) + 20);
   // `m_workedOnLine` is set to true
   expected_update_knit(false);
 
   // Position has changed since last call to operate function
   // `m_pixelToSet` is above `m_stopNeedle` + END_OF_LINE_OFFSET_R
-  expected_cacheISR(NUM_NEEDLES[static_cast<uint8_t>(Machine_t::Kh910)] + END_OF_LINE_OFFSET_R[static_cast<uint8_t>(Machine_t::Kh910)] + 1 + opKnit->getStartOffset(Direction_t::Left));
+  expected_cacheISR(NUM_NEEDLES[static_cast<uint8_t>(Machine_t::Kh910)] + END_OF_LINE_OFFSET_R[static_cast<uint8_t>(Machine_t::Kh910)] + 1 + opKnit.getStartOffset(Direction_t::Left));
 
   // `m_lastLineFlag` is `true`
-  opKnit->setLastLine();
+  opKnit.setLastLine();
 
   EXPECT_CALL(*solenoidsMock, setSolenoid);
   EXPECT_CALL(*beeperMock, endWork);
@@ -569,19 +569,19 @@ TEST_F(OpKnitTest, test_knit_lastLine_and_no_req) {
 
   // Run one knit inside the working needles.
   EXPECT_CALL(*solenoidsMock, setSolenoid);
-  expected_cacheISR(opKnit->getStartOffset(Direction_t::Left) + 20);
+  expected_cacheISR(opKnit.getStartOffset(Direction_t::Left) + 20);
   // `m_workedOnLine` is set to true
   expected_update_knit(false);
 
   // Position has changed since last call to operate function
   // `m_pixelToSet` is above `m_stopNeedle` + END_OF_LINE_OFFSET_R
-  expected_cacheISR(NUM_NEEDLES[static_cast<uint8_t>(Machine_t::Kh910)] + END_OF_LINE_OFFSET_R[static_cast<uint8_t>(Machine_t::Kh910)] + 1 + opKnit->getStartOffset(Direction_t::Left));
+  expected_cacheISR(NUM_NEEDLES[static_cast<uint8_t>(Machine_t::Kh910)] + END_OF_LINE_OFFSET_R[static_cast<uint8_t>(Machine_t::Kh910)] + 1 + opKnit.getStartOffset(Direction_t::Left));
 
   // `m_lastLineFlag` is `true`
-  opKnit->setLastLine();
+  opKnit.setLastLine();
 
   // Note: probing private data and methods to get full branch coverage.
-  opKnit->m_lineRequested = false;
+  opKnit.m_lineRequested = false;
 
   // EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, 1));
   EXPECT_CALL(*solenoidsMock, setSolenoid);
@@ -617,17 +617,17 @@ TEST_F(OpKnitTest, test_knit_new_line) {
 
   // Run one knit inside the working needles.
   EXPECT_CALL(*solenoidsMock, setSolenoid);
-  expected_cacheISR(opKnit->getStartOffset(Direction_t::Left) + 20);
+  expected_cacheISR(opKnit.getStartOffset(Direction_t::Left) + 20);
   // `m_workedOnLine` is set to true
   expected_update_knit(false);
 
   // Position has changed since last call to operate function
   // `m_pixelToSet` is above `m_stopNeedle` + END_OF_LINE_OFFSET_R
-  expected_cacheISR(NUM_NEEDLES[static_cast<uint8_t>(Machine_t::Kh910)] + END_OF_LINE_OFFSET_R[static_cast<uint8_t>(Machine_t::Kh910)] + 1 + opKnit->getStartOffset(Direction_t::Left));
+  expected_cacheISR(NUM_NEEDLES[static_cast<uint8_t>(Machine_t::Kh910)] + END_OF_LINE_OFFSET_R[static_cast<uint8_t>(Machine_t::Kh910)] + 1 + opKnit.getStartOffset(Direction_t::Left));
 
   // set `m_lineRequested` to `false`
   EXPECT_CALL(*beeperMock, finishedLine);
-  opKnit->setNextLine(0);
+  opKnit.setNextLine(0);
 
   EXPECT_CALL(*solenoidsMock, setSolenoid);
 
@@ -645,92 +645,92 @@ TEST_F(OpKnitTest, test_knit_new_line) {
 TEST_F(OpKnitTest, test_calculatePixelAndSolenoid) {
   // Initialize KH910
   expected_init_machine(Machine_t::Kh910);
-  controller->setState(opKnit);
+  controller.setState(&opKnit);
   expected_update_init();
 
   // No direction
   // Lace carriage, no direction, need to change position to enter test
   expected_cacheISR(100, Direction_t::NoDirection, BeltShift::Shifted, Carriage_t::Lace);
-  ASSERT_FALSE(opKnit->calculatePixelAndSolenoid());
-  // opKnit->pixelToSet not set
-  // opKnit->m_solenoidToSet not set
+  ASSERT_FALSE(opKnit.calculatePixelAndSolenoid());
+  // opKnit.pixelToSet not set
+  // opKnit.m_solenoidToSet not set
 
   // Right direction
   // Lace carriage, no belt on Right, have not reached offset
   expected_cacheISR(39, Direction_t::Right, BeltShift::Unknown, Carriage_t::Lace);
-  ASSERT_FALSE(opKnit->calculatePixelAndSolenoid());
-  // opKnit->pixelToSet not set
-  // opKnit->m_solenoidToSet not set
+  ASSERT_FALSE(opKnit.calculatePixelAndSolenoid());
+  // opKnit.pixelToSet not set
+  // opKnit.m_solenoidToSet not set
 
   // Lace carriage, no belt on Right, need to change position to enter test
   expected_cacheISR(100, Direction_t::Right, BeltShift::Unknown, Carriage_t::Lace);
-  ASSERT_TRUE(opKnit->calculatePixelAndSolenoid());
-  ASSERT_EQ(opKnit->m_pixelToSet, (100 - 40) + 8);
-  // opKnit->m_solenoidToSet not set
+  ASSERT_TRUE(opKnit.calculatePixelAndSolenoid());
+  ASSERT_EQ(opKnit.m_pixelToSet, (100 - 40) + 8);
+  // opKnit.m_solenoidToSet not set
 
   // Lace carriage, regular belt on Right
   expected_cacheISR(100, Direction_t::Right, BeltShift::Regular, Carriage_t::Lace);
-  ASSERT_TRUE(opKnit->calculatePixelAndSolenoid());
-  ASSERT_EQ(opKnit->m_pixelToSet, (100 - 40) + 8);
-  ASSERT_EQ(opKnit->m_solenoidToSet, 100 % 16);
+  ASSERT_TRUE(opKnit.calculatePixelAndSolenoid());
+  ASSERT_EQ(opKnit.m_pixelToSet, (100 - 40) + 8);
+  ASSERT_EQ(opKnit.m_solenoidToSet, 100 % 16);
 
   // Lace carriage, shifted belt on Right
   expected_cacheISR(100, Direction_t::Right, BeltShift::Shifted, Carriage_t::Lace);
-  ASSERT_TRUE(opKnit->calculatePixelAndSolenoid());
-  ASSERT_EQ(opKnit->m_pixelToSet, (100 - 40) + 8);
-  ASSERT_EQ(opKnit->m_solenoidToSet, (100 - 8) % 16);
+  ASSERT_TRUE(opKnit.calculatePixelAndSolenoid());
+  ASSERT_EQ(opKnit.m_pixelToSet, (100 - 40) + 8);
+  ASSERT_EQ(opKnit.m_solenoidToSet, (100 - 8) % 16);
 
   // Left direction
   // Lace carriage, no belt on Left, off of Right end, position is changed
   expected_cacheISR(END_RIGHT[static_cast<uint8_t>(Machine_t::Kh910)] - 15, Direction_t::Left, BeltShift::Unknown, Carriage_t::Lace);
-  ASSERT_FALSE(opKnit->calculatePixelAndSolenoid());
-  // opKnit->pixelToSet not set
-  // opKnit->m_solenoidToSet not set
+  ASSERT_FALSE(opKnit.calculatePixelAndSolenoid());
+  // opKnit.pixelToSet not set
+  // opKnit.m_solenoidToSet not set
 
   // Lace carriage, no belt on Left
   expected_cacheISR(100, Direction_t::Left, BeltShift::Unknown, Carriage_t::Lace);
-  ASSERT_TRUE(opKnit->calculatePixelAndSolenoid());
-  ASSERT_EQ(opKnit->m_pixelToSet, 100 - 16 - 16);
-  // opKnit->m_solenoidToSet not set
+  ASSERT_TRUE(opKnit.calculatePixelAndSolenoid());
+  ASSERT_EQ(opKnit.m_pixelToSet, 100 - 16 - 16);
+  // opKnit.m_solenoidToSet not set
 
   // Lace carriage, regular belt on Left
   expected_cacheISR(100, Direction_t::Left, BeltShift::Regular, Carriage_t::Lace);
-  ASSERT_TRUE(opKnit->calculatePixelAndSolenoid());
-  ASSERT_EQ(opKnit->m_pixelToSet, 100 - 16 - 16);
-  ASSERT_EQ(opKnit->m_solenoidToSet, (100 + 8) % 16);
+  ASSERT_TRUE(opKnit.calculatePixelAndSolenoid());
+  ASSERT_EQ(opKnit.m_pixelToSet, 100 - 16 - 16);
+  ASSERT_EQ(opKnit.m_solenoidToSet, (100 + 8) % 16);
 
   // Garter Carriage, no belt on Left, need to change position to enter test
   expected_cacheISR(100, Direction_t::Left, BeltShift::Unknown, Carriage_t::Garter);
-  ASSERT_TRUE(opKnit->calculatePixelAndSolenoid());
-  ASSERT_EQ(opKnit->m_pixelToSet, 100 - 56);
-  // opKnit->m_solenoidToSet not set
+  ASSERT_TRUE(opKnit.calculatePixelAndSolenoid());
+  ASSERT_EQ(opKnit.m_pixelToSet, 100 - 56);
+  // opKnit.m_solenoidToSet not set
 
   // Garter carriage, regular belt on Left, need to change position to enter test
   expected_cacheISR(100, Direction_t::Left, BeltShift::Regular, Carriage_t::Garter);
-  ASSERT_TRUE(opKnit->calculatePixelAndSolenoid());
-  ASSERT_EQ(opKnit->m_pixelToSet, 100 - 56);
-  ASSERT_EQ(opKnit->m_solenoidToSet, (100 + 8) % 16);
+  ASSERT_TRUE(opKnit.calculatePixelAndSolenoid());
+  ASSERT_EQ(opKnit.m_pixelToSet, 100 - 56);
+  ASSERT_EQ(opKnit.m_solenoidToSet, (100 + 8) % 16);
 
   // Garter carriage, shifted belt on Left, need to change position to enter test
   expected_cacheISR(100, Direction_t::Left, BeltShift::Shifted, Carriage_t::Garter);
-  ASSERT_TRUE(opKnit->calculatePixelAndSolenoid());
-  ASSERT_EQ(opKnit->m_pixelToSet, 100 - 56);
-  ASSERT_EQ(opKnit->m_solenoidToSet, 100 % 16);
+  ASSERT_TRUE(opKnit.calculatePixelAndSolenoid());
+  ASSERT_EQ(opKnit.m_pixelToSet, 100 - 56);
+  ASSERT_EQ(opKnit.m_solenoidToSet, 100 % 16);
 
   // KH270
-  controller->setMachineType(Machine_t::Kh270);
+  controller.setMachineType(Machine_t::Kh270);
 
   // K carriage, no belt on Left
   expected_cacheISR(0, Direction_t::Left, BeltShift::Unknown, Carriage_t::Knit);
-  ASSERT_TRUE(opKnit->calculatePixelAndSolenoid());
-  ASSERT_EQ(opKnit->m_pixelToSet, static_cast<uint8_t>(0 - 16));
-  ASSERT_EQ(opKnit->m_solenoidToSet, static_cast<uint8_t>(0 + 6) % 12 + 3);
+  ASSERT_TRUE(opKnit.calculatePixelAndSolenoid());
+  ASSERT_EQ(opKnit.m_pixelToSet, static_cast<uint8_t>(0 - 16));
+  ASSERT_EQ(opKnit.m_solenoidToSet, static_cast<uint8_t>(0 + 6) % 12 + 3);
 
   // K carriage, no belt on Right
   expected_cacheISR(END_RIGHT[static_cast<uint8_t>(Machine_t::Kh270)], Direction_t::Right, BeltShift::Unknown, Carriage_t::Knit);
-  ASSERT_TRUE(opKnit->calculatePixelAndSolenoid());
-  ASSERT_EQ(opKnit->m_pixelToSet, (140 - 28));
-  ASSERT_EQ(opKnit->m_solenoidToSet, 140 % 12 + 3);
+  ASSERT_TRUE(opKnit.calculatePixelAndSolenoid());
+  ASSERT_EQ(opKnit.m_pixelToSet, (140 - 28));
+  ASSERT_EQ(opKnit.m_solenoidToSet, 140 % 12 + 3);
 
   // Test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
@@ -740,15 +740,15 @@ TEST_F(OpKnitTest, test_calculatePixelAndSolenoid) {
 
 TEST_F(OpKnitTest, test_getStartOffset) {
   // out of range values
-  controller->m_carriage = Carriage_t::Knit;
-  ASSERT_EQ(opKnit->getStartOffset(Direction_t::NoDirection), 0);
+  controller.m_carriage = Carriage_t::Knit;
+  ASSERT_EQ(opKnit.getStartOffset(Direction_t::NoDirection), 0);
 
-  controller->m_carriage = Carriage_t::NoCarriage;
-  ASSERT_EQ(opKnit->getStartOffset(Direction_t::Left), 0);
-  ASSERT_EQ(opKnit->getStartOffset(Direction_t::Right), 0);
+  controller.m_carriage = Carriage_t::NoCarriage;
+  ASSERT_EQ(opKnit.getStartOffset(Direction_t::Left), 0);
+  ASSERT_EQ(opKnit.getStartOffset(Direction_t::Right), 0);
 
-  controller->m_carriage = Carriage_t::Lace;
-  controller->m_machineType = Machine_t::NoMachine;
-  ASSERT_EQ(opKnit->getStartOffset(Direction_t::Left), 0);
-  ASSERT_EQ(opKnit->getStartOffset(Direction_t::Right), 0);
+  controller.m_carriage = Carriage_t::Lace;
+  controller.m_machineType = Machine_t::NoMachine;
+  ASSERT_EQ(opKnit.getStartOffset(Direction_t::Left), 0);
+  ASSERT_EQ(opKnit.getStartOffset(Direction_t::Right), 0);
 }

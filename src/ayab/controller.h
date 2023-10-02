@@ -38,7 +38,7 @@ public:
   virtual void update() = 0;
   virtual void cacheEncoders() = 0;
   virtual void setState(OpInterface *state) = 0;
-  virtual OpInterface *getState() = 0;
+  virtual OpInterface* getState() = 0;
   virtual void setMachineType(Machine_t) = 0;
   virtual Machine_t getMachineType() = 0;
   virtual BeltShift_t getBeltShift() = 0;
@@ -49,7 +49,7 @@ public:
 };
 
 // Singleton container class for static methods.
-// Dependency injection is enabled using a pointer
+// Dependency injection is enabled using a reference
 // to a global instance of either `Controller` or `ControllerMock`
 // both of which classes implement the pure virtual methods
 // of the `ControllerInterface` class.
@@ -60,14 +60,14 @@ private:
   GlobalController() = default;
 
 public:
-  // pointer to global instance whose methods are implemented
-  static ControllerInterface *m_instance;
+  // reference to global instance whose methods are implemented
+  static ControllerInterface& m_instance;
 
   static void init();
   static void update();
   static void cacheEncoders();
   static void setState(OpInterface *state);
-  static OpInterface *getState();
+  static OpInterface* getState();
   static void setMachineType(Machine_t);
   static Machine_t getMachineType();
   static BeltShift_t getBeltShift();
@@ -83,7 +83,7 @@ public:
   void update() final;
   void cacheEncoders() final;
   void setState(OpInterface *state) final;
-  OpInterface *getState() final;
+  OpInterface* getState() final;
   void setMachineType(Machine_t) final;
   Machine_t getMachineType() final;
   BeltShift_t getBeltShift() final;

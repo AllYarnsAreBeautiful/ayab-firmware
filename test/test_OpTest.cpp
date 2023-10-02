@@ -39,15 +39,15 @@ using ::testing::AtLeast;
 using ::testing::Mock;
 using ::testing::Return;
 
-extern Beeper *beeper;
+extern Beeper& beeper;
 
-extern OpInit *opInit;
-extern OpReady *opReady;
-extern OpTest *opTest;
+extern OpInit& opInit;
+extern OpReady& opReady;
+extern OpTest& opTest;
 
-extern ControllerMock *controller;
-extern OpKnitMock *opKnit;
-extern PacketSerialWrapperMock *packetSerialWrapper;
+extern ControllerMock& controller;
+extern OpKnitMock& opKnit;
+extern PacketSerialWrapperMock& packetSerialWrapper;
 
 class OpTestTest : public ::testing::Test {
 protected:
@@ -55,9 +55,9 @@ protected:
     arduinoMock = arduinoMockInstance();
 
     // pointers to global instances
-    controllerMock = controller;
-    opKnitMock = opKnit;
-    packetSerialWrapperMock = packetSerialWrapper;
+    controllerMock = &controller;
+    opKnitMock = &opKnit;
+    packetSerialWrapperMock = &packetSerialWrapper;
 
     // The global instances do not get destroyed at the end of each test.
     // Ordinarily the mock instance would be local and such behaviour would
@@ -66,7 +66,7 @@ protected:
     Mock::AllowLeak(opKnitMock);
     Mock::AllowLeak(packetSerialWrapperMock);
 
-    beeper->init(true);
+    beeper.init(true);
   }
 
   void TearDown() override {
@@ -89,7 +89,7 @@ protected:
   void expect_startTest(uint32_t t) {
     expect_send(false);
     EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(t));
-    opTest->begin();
+    opTest.begin();
   }
 
   void expect_readEOLsensors(bool flag) {
@@ -107,32 +107,32 @@ protected:
 };
 
 TEST_F(OpTestTest, test_state) {
-  ASSERT_EQ(opTest->state(), OpState_t::Test);
+  ASSERT_EQ(opTest.state(), OpState_t::Test);
 }
 
 TEST_F(OpTestTest, test_init) {
   // no calls expected
-  opTest->init();
+  opTest.init();
 }
 
 TEST_F(OpTestTest, test_enabled) {
   const uint8_t stopCmd[] = {static_cast<uint8_t>(API_t::stopCmd)};
   const uint8_t autoReadCmd[] = {static_cast<uint8_t>(API_t::autoReadCmd)};
   const uint8_t autoTestCmd[] = {static_cast<uint8_t>(API_t::autoTestCmd)};
-  opTest->com(stopCmd, 1);
-  ASSERT_EQ(opTest->enabled(), false);
-  opTest->com(autoReadCmd, 1);
-  ASSERT_EQ(opTest->enabled(), true);
-  opTest->com(autoTestCmd, 1);
-  ASSERT_EQ(opTest->enabled(), true);
-  opTest->com(stopCmd, 1);
-  opTest->com(autoTestCmd, 1);
-  ASSERT_EQ(opTest->enabled(), true);
+  opTest.com(stopCmd, 1);
+  ASSERT_EQ(opTest.enabled(), false);
+  opTest.com(autoReadCmd, 1);
+  ASSERT_EQ(opTest.enabled(), true);
+  opTest.com(autoTestCmd, 1);
+  ASSERT_EQ(opTest.enabled(), true);
+  opTest.com(stopCmd, 1);
+  opTest.com(autoTestCmd, 1);
+  ASSERT_EQ(opTest.enabled(), true);
 }
 
 TEST_F(OpTestTest, test_helpCmd) {
   expect_send(false);
-  opTest->helpCmd();
+  opTest.helpCmd();
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(packetSerialWrapperMock));
@@ -140,7 +140,7 @@ TEST_F(OpTestTest, test_helpCmd) {
 
 TEST_F(OpTestTest, test_sendCmd) {
   expect_send(false);
-  opTest->sendCmd();
+  opTest.sendCmd();
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(packetSerialWrapperMock));
@@ -148,12 +148,12 @@ TEST_F(OpTestTest, test_sendCmd) {
 
 TEST_F(OpTestTest, test_beepCmd) {
   expect_send(true);
-  opTest->beepCmd();
+  opTest.beepCmd();
   EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(0U));
-  beeper->update();
+  beeper.update();
   EXPECT_CALL(*arduinoMock, analogWrite(PIEZO_PIN, BEEP_ON_DUTY));
   EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(1U));
-  beeper->update();
+  beeper.update();
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(packetSerialWrapperMock));
@@ -162,7 +162,7 @@ TEST_F(OpTestTest, test_beepCmd) {
 TEST_F(OpTestTest, test_setSingleCmd_fail1) {
   const uint8_t buf[] = {static_cast<uint8_t>(API_t::setSingleCmd), 0};
   expect_send(false);
-  opTest->setSingleCmd(buf, 2);
+  opTest.setSingleCmd(buf, 2);
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(packetSerialWrapperMock));
@@ -171,7 +171,7 @@ TEST_F(OpTestTest, test_setSingleCmd_fail1) {
 TEST_F(OpTestTest, test_setSingleCmd_fail2) {
   const uint8_t buf[] = {static_cast<uint8_t>(API_t::setSingleCmd), 16, 0};
   expect_send(false);
-  opTest->setSingleCmd(buf, 3);
+  opTest.setSingleCmd(buf, 3);
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(packetSerialWrapperMock));
@@ -180,7 +180,7 @@ TEST_F(OpTestTest, test_setSingleCmd_fail2) {
 TEST_F(OpTestTest, test_setSingleCmd_fail3) {
   const uint8_t buf[] = {static_cast<uint8_t>(API_t::setSingleCmd), 15, 2};
   expect_send(false);
-  opTest->setSingleCmd(buf, 3);
+  opTest.setSingleCmd(buf, 3);
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(packetSerialWrapperMock));
@@ -189,7 +189,7 @@ TEST_F(OpTestTest, test_setSingleCmd_fail3) {
 TEST_F(OpTestTest, test_setSingleCmd_success) {
   const uint8_t buf[] = {static_cast<uint8_t>(API_t::setSingleCmd), 15, 1};
   expect_send(true);
-  opTest->setSingleCmd(buf, 3);
+  opTest.setSingleCmd(buf, 3);
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(packetSerialWrapperMock));
@@ -198,7 +198,7 @@ TEST_F(OpTestTest, test_setSingleCmd_success) {
 TEST_F(OpTestTest, test_setAllCmd_fail1) {
   const uint8_t buf[] = {static_cast<uint8_t>(API_t::setAllCmd), 0};
   expect_send(false);
-  opTest->setAllCmd(buf, 2);
+  opTest.setAllCmd(buf, 2);
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(packetSerialWrapperMock));
@@ -207,7 +207,7 @@ TEST_F(OpTestTest, test_setAllCmd_fail1) {
 TEST_F(OpTestTest, test_setAllCmd_success) {
   const uint8_t buf[] = {static_cast<uint8_t>(API_t::setAllCmd), 0xFF, 0xFF};
   expect_send(true);
-  opTest->setAllCmd(buf, 3);
+  opTest.setAllCmd(buf, 3);
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(packetSerialWrapperMock));
@@ -216,7 +216,7 @@ TEST_F(OpTestTest, test_setAllCmd_success) {
 TEST_F(OpTestTest, test_readEOLsensorsCmd) {
   expect_send(false);
   expect_readEOLsensors(true);
-  opTest->readEOLsensorsCmd();
+  opTest.readEOLsensorsCmd();
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(packetSerialWrapperMock));
@@ -225,7 +225,7 @@ TEST_F(OpTestTest, test_readEOLsensorsCmd) {
 TEST_F(OpTestTest, test_readEncodersCmd_low) {
   expect_send(false);
   EXPECT_CALL(*arduinoMock, digitalRead).WillRepeatedly(Return(LOW));
-  opTest->readEncodersCmd();
+  opTest.readEncodersCmd();
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(packetSerialWrapperMock));
@@ -234,7 +234,7 @@ TEST_F(OpTestTest, test_readEncodersCmd_low) {
 TEST_F(OpTestTest, test_readEncodersCmd_high) {
   expect_send(false);
   EXPECT_CALL(*arduinoMock, digitalRead).WillRepeatedly(Return(HIGH));
-  opTest->readEncodersCmd();
+  opTest.readEncodersCmd();
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(packetSerialWrapperMock));
@@ -243,7 +243,7 @@ TEST_F(OpTestTest, test_readEncodersCmd_high) {
 TEST_F(OpTestTest, test_autoReadCmd) {
   const uint8_t buf[] = {static_cast<uint8_t>(API_t::autoReadCmd)};
   expect_send(true);
-  opTest->com(buf, 1);
+  opTest.com(buf, 1);
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(packetSerialWrapperMock));
@@ -252,7 +252,7 @@ TEST_F(OpTestTest, test_autoReadCmd) {
 TEST_F(OpTestTest, test_autoTestCmd) {
   const uint8_t buf[] = {static_cast<uint8_t>(API_t::autoTestCmd)};
   expect_send(true);
-  opTest->com(buf, 1);
+  opTest.com(buf, 1);
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(packetSerialWrapperMock));
@@ -260,8 +260,8 @@ TEST_F(OpTestTest, test_autoTestCmd) {
 
 TEST_F(OpTestTest, test_quitCmd) {
   const uint8_t buf[] = {static_cast<uint8_t>(API_t::quitCmd)};
-  EXPECT_CALL(*controllerMock, setState(opInit));
-  opTest->com(buf, 1);
+  EXPECT_CALL(*controllerMock, setState(&opInit));
+  opTest.com(buf, 1);
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(controllerMock));
@@ -269,7 +269,7 @@ TEST_F(OpTestTest, test_quitCmd) {
 
 TEST_F(OpTestTest, test_end) {
   EXPECT_CALL(*opKnitMock, init);
-  opTest->end();
+  opTest.end();
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(opKnitMock));
@@ -278,26 +278,26 @@ TEST_F(OpTestTest, test_end) {
 TEST_F(OpTestTest, test_loop_null) {
   expect_startTest(0U);
   EXPECT_CALL(*arduinoMock, millis).Times(0);
-  opTest->update();
+  opTest.update();
 }
 
 TEST_F(OpTestTest, test_autoRead) {
   expect_startTest(0U);
-  opTest->autoReadCmd();
+  opTest.autoReadCmd();
 
   // nothing has happened yet
   EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(TEST_LOOP_DELAY - 1));
   EXPECT_CALL(*opKnitMock, encodePosition);
   expect_readEOLsensors(false);
   expect_readEncoders(false);
-  opTest->update();
+  opTest.update();
 
   // m_timerEventOdd = false
   EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(TEST_LOOP_DELAY));
   EXPECT_CALL(*opKnitMock, encodePosition);
   expect_readEOLsensors(false);
   expect_readEncoders(false);
-  opTest->update();
+  opTest.update();
 
   // m_timerEventOdd = true
   EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(2 * TEST_LOOP_DELAY));
@@ -305,15 +305,15 @@ TEST_F(OpTestTest, test_autoRead) {
   expect_send(false);
   expect_readEOLsensors(true);
   expect_readEncoders(true);
-  opTest->update();
+  opTest.update();
 
   // after `stopCmd()`
-  opTest->stopCmd();
+  opTest.stopCmd();
   EXPECT_CALL(*arduinoMock, millis).Times(0);
   EXPECT_CALL(*opKnitMock, encodePosition).Times(0);
   expect_readEOLsensors(false);
   expect_readEncoders(false);
-  opTest->update();
+  opTest.update();
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(opKnitMock));
@@ -322,14 +322,14 @@ TEST_F(OpTestTest, test_autoRead) {
 
 TEST_F(OpTestTest, test_autoTest) {
   expect_startTest(0U);
-  opTest->autoTestCmd();
+  opTest.autoTestCmd();
 
   // nothing has happened yet
   EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(TEST_LOOP_DELAY - 1));
   EXPECT_CALL(*opKnitMock, encodePosition);
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, HIGH)).Times(0);
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_B, HIGH)).Times(0);
-  opTest->update();
+  opTest.update();
 
   // m_timerEventOdd = false
   EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(TEST_LOOP_DELAY));
@@ -337,7 +337,7 @@ TEST_F(OpTestTest, test_autoTest) {
   expect_send(true);
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, HIGH));
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_B, HIGH));
-  opTest->update();
+  opTest.update();
 
   // m_timerEventOdd = true
   EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(2 * TEST_LOOP_DELAY));
@@ -345,15 +345,15 @@ TEST_F(OpTestTest, test_autoTest) {
   expect_send(true);
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, LOW));
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_B, LOW));
-  opTest->update();
+  opTest.update();
 
   // after `stopCmd()`
-  opTest->stopCmd();
+  opTest.stopCmd();
   EXPECT_CALL(*arduinoMock, millis).Times(0);
   EXPECT_CALL(*opKnitMock, encodePosition).Times(0);
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, _)).Times(0);
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_B, _)).Times(0);
-  opTest->update();
+  opTest.update();
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(opKnitMock));
@@ -367,5 +367,5 @@ TEST_F(OpTestTest, test_startTest_success) {
 TEST_F(OpTestTest, test_unrecognized) {
   // no calls expected
   const uint8_t buffer[] = {0xFF};
-  opTest->com(buffer, 1);
+  opTest.com(buffer, 1);
 }

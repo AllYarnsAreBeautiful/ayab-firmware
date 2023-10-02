@@ -152,7 +152,7 @@ void Com::send_indState(Err_t error) const {
   send(static_cast<uint8_t *>(payload), INDSTATE_LEN);
 }
 
-/*! GCOVR_EXCL_START
+/*!
  *
  * \brief Callback for PacketSerial.
  * \param buffer A pointer to a data buffer.
@@ -161,7 +161,6 @@ void Com::send_indState(Err_t error) const {
 void Com::onPacketReceived(const uint8_t *buffer, size_t size) {
   GlobalController::getState()->com(buffer, size);
 }
-// GCOVR_EXCL_STOP
 
 // Serial command handling
 
@@ -191,7 +190,7 @@ void Com::h_reqInit(const uint8_t *buffer, size_t size) {
   }
 
   GlobalController::setMachineType(machineType);
-  GlobalController::setState(GlobalOpInit::m_instance);
+  GlobalController::setState(&GlobalOpInit::m_instance);
   send_cnfInit(Err_t::Success);
 }
 
@@ -277,8 +276,6 @@ void Com::h_cnfLine(const uint8_t *buffer, size_t size) {
 
 /*!
  * \brief Handle `reqInfo` (request information) command.
- * \param buffer A pointer to a data buffer.
- * \param size The number of bytes in the data buffer.
  */
 void Com::h_reqInfo() const {
   send_cnfInfo();
@@ -288,7 +285,7 @@ void Com::h_reqInfo() const {
  * \brief Handle `reqTest` (request hardware test) command.
  */
 void Com::h_reqTest() const {
-  GlobalController::setState(GlobalOpTest::m_instance);
+  GlobalController::setState(&GlobalOpTest::m_instance);
   send_cnfTest(Err_t::Success);
 }
 
@@ -296,14 +293,13 @@ void Com::h_reqTest() const {
  * \brief Handle `quitCmd` (cancel) command.
  */
 void Com::h_quitCmd() const {
-  GlobalController::setState(GlobalOpInit::m_instance);
+  GlobalController::setState(&GlobalOpInit::m_instance);
 }
 
 /*!
  * \brief Handle unrecognized command.
  */
 void Com::h_unrecognized() const {
-  // do nothing
 }
 
 /*!
@@ -333,7 +329,6 @@ void Com::send_cnfInit(Err_t error) const {
   payload[1] = static_cast<uint8_t>(error);
   send(payload, 2);
 }
-
 
 /*!
  * \brief Send `cnfStart` message.

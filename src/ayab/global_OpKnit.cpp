@@ -28,53 +28,53 @@
 // static member functions
 
 OpState_t GlobalOpKnit::state() {
-  return m_instance->state();
+  return m_instance.state();
 }
 
 void GlobalOpKnit::init() {
-  m_instance->init();
+  m_instance.init();
 }
 
 void GlobalOpKnit::begin() {
-  m_instance->begin();
+  m_instance.begin();
 }
 
 void GlobalOpKnit::update() {
-  m_instance->update();
+  m_instance.update();
 }
 
 void GlobalOpKnit::com(const uint8_t *buffer, size_t size) {
-  m_instance->com(buffer, size);
+  m_instance.com(buffer, size);
 }
 
 void GlobalOpKnit::end() {
-  m_instance->end();
+  m_instance.end();
 }
 
 
 Err_t GlobalOpKnit::startKnitting(uint8_t startNeedle,
                                    uint8_t stopNeedle, uint8_t *pattern_start,
                                    bool continuousReportingEnabled) {
-  return m_instance->startKnitting(startNeedle, stopNeedle,
+  return m_instance.startKnitting(startNeedle, stopNeedle,
                                    pattern_start, continuousReportingEnabled);
 }
 
 void GlobalOpKnit::encodePosition() {
-  m_instance->encodePosition();
+  m_instance.encodePosition();
 }
 
 void GlobalOpKnit::knit() {
-  m_instance->knit();
+  m_instance.knit();
 }
 
 uint8_t GlobalOpKnit::getStartOffset(const Direction_t direction) {
-  return m_instance->getStartOffset(direction);
+  return m_instance.getStartOffset(direction);
 }
 
 bool GlobalOpKnit::setNextLine(uint8_t lineNumber) {
-  return m_instance->setNextLine(lineNumber);
+  return m_instance.setNextLine(lineNumber);
 }
 
 void GlobalOpKnit::setLastLine() {
-  m_instance->setLastLine();
+  m_instance.setLastLine();
 }

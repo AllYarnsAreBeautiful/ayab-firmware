@@ -102,7 +102,7 @@ public:
 };
 
 // Container class for the static methods that implement the serial API.
-// Dependency injection is enabled using a pointer to a global instance of
+// Dependency injection is enabled using a reference to a global instance of
 // either `Com` or `ComMock`, both of which classes implement the
 // pure virtual methods of `ComInterface`.
 
@@ -112,8 +112,8 @@ private:
   GlobalCom() = default;
 
 public:
-  // pointer to global instance whose methods are implemented
-  static ComInterface *m_instance;
+  // reference to global instance whose methods are implemented
+  static ComInterface& m_instance;
 
   static void init();
   static void update();

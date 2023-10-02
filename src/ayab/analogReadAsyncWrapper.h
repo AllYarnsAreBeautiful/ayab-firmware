@@ -36,7 +36,7 @@ public:
 };
 
 // Container class for the static method analogReadAsync.
-// Dependency injection is enabled using a pointer to a global instance of
+// Dependency injection is enabled using a reference to a global instance of
 // either `AnalogReadAsyncWrapper` or `AnalogReadAsyncWrapperMock`,
 // both of which classes implement the
 // pure virtual methods of `AnalogReadAsyncWrapperInterface`.
@@ -47,8 +47,8 @@ private:
   GlobalAnalogReadAsyncWrapper() = default;
 
 public:
-  // pointer to global instance whose methods are implemented
-  static AnalogReadAsyncWrapperInterface *m_instance;
+  // reference to global instance whose methods are implemented
+  static AnalogReadAsyncWrapperInterface& m_instance;
 
   static void analogReadAsyncWrapped(uint8_t pin, analogReadCompleteCallback_t cb = nullptr, const void *data = nullptr);
 };

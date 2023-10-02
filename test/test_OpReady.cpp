@@ -37,11 +37,11 @@ using ::testing::AtLeast;
 using ::testing::Mock;
 using ::testing::Return;
 
-extern OpReady *opReady;
-extern OpTest *opTest;
+extern OpReady& opReady;
+extern OpTest& opTest;
 
-extern ControllerMock *controller;
-extern OpKnitMock *opKnit;
+extern ControllerMock& controller;
+extern OpKnitMock& opKnit;
 
 class OpReadyTest : public ::testing::Test {
 protected:
@@ -49,8 +49,8 @@ protected:
     arduinoMock = arduinoMockInstance();
 
     // pointers to global instances
-    controllerMock = controller;
-    opKnitMock = opKnit;
+    controllerMock = &controller;
+    opKnitMock = &opKnit;
 
     // The global instances do not get destroyed at the end of each test.
     // Ordinarily the mock instance would be local and such behaviour would
@@ -69,43 +69,43 @@ protected:
 };
 
 TEST_F(OpReadyTest, test_state) {
-  ASSERT_EQ(opReady->state(), OpState_t::Ready);
+  ASSERT_EQ(opReady.state(), OpState_t::Ready);
 }
 
 TEST_F(OpReadyTest, test_begin) {
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, LOW));
-  opReady->begin();
+  opReady.begin();
 }
 
 TEST_F(OpReadyTest, test_init) {
   // no calls expected
-  opReady->init();
+  opReady.init();
 }
 
 TEST_F(OpReadyTest, test_reqStart) {
   EXPECT_CALL(*opKnitMock, startKnitting);
   const uint8_t buffer[] = {static_cast<uint8_t>(API_t::reqStart), 0, 10, 1, 0x36};
-  opReady->com(buffer, 5);
+  opReady.com(buffer, 5);
 }
 
 TEST_F(OpReadyTest, test_reqTest) {
-  EXPECT_CALL(*controllerMock, setState(opTest));
+  EXPECT_CALL(*controllerMock, setState(&opTest));
   const uint8_t buffer[] = {static_cast<uint8_t>(API_t::reqTest)};
-  opReady->com(buffer, 1);
+  opReady.com(buffer, 1);
 }
 
 TEST_F(OpReadyTest, test_unrecognized) {
   // no calls expected
   const uint8_t buffer[] = {0xFF};
-  opReady->com(buffer, 1);
+  opReady.com(buffer, 1);
 }
 
 TEST_F(OpReadyTest, test_update) {
   // no calls expected
-  opReady->update();
+  opReady.update();
 }
 
 TEST_F(OpReadyTest, test_end) {
   // no calls expected
-  opReady->end();
+  opReady.end();
 }

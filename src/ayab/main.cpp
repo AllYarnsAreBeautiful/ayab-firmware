@@ -43,41 +43,41 @@
 // Global definitions: references elsewhere must use `extern`.
 // Each of the following is a pointer to a singleton class
 // containing static methods.
-constexpr GlobalAnalogReadAsyncWrapper *analogReadAsyncWrapper;
+constexpr GlobalAnalogReadAsyncWrapper *analogReadasyncWrapper;
 constexpr GlobalPacketSerialWrapper    *packetSerialWrapper;
 
-constexpr GlobalBeeper    *beeper;
-constexpr GlobalCom       *com;
-constexpr GlobalController       *controller;
-constexpr GlobalEncoders  *encoders;
-constexpr GlobalSolenoids *solenoids;
+constexpr GlobalBeeper     *beeper;
+constexpr GlobalCom        *com;
+constexpr GlobalController *controller;
+constexpr GlobalEncoders   *encoders;
+constexpr GlobalSolenoids  *solenoids;
 
-constexpr GlobalOpIdle    *opIdle;
-constexpr GlobalOpInit    *opInit;
-constexpr GlobalOpReady   *opReady;
-constexpr GlobalOpKnit    *opKnit;
-constexpr GlobalOpTest    *opTest;
-constexpr GlobalOpError   *opError;
+constexpr GlobalOpIdle     *opIdle;
+constexpr GlobalOpInit     *opInit;
+constexpr GlobalOpReady    *opReady;
+constexpr GlobalOpKnit     *opKnit;
+constexpr GlobalOpTest     *opTest;
+constexpr GlobalOpError    *opError;
 
 // Initialize static members.
-// Each singleton class contains a pointer to a static instance
-// that implements a public interface. When testing, a pointer
+// Each singleton class contains a reference to a static instance
+// that implements a public interface. When testing, a reference
 // to an instance of a mock class can be substituted.
-AnalogReadAsyncWrapperInterface *GlobalAnalogReadAsyncWrapper::m_instance = new AnalogReadAsyncWrapper();
-PacketSerialWrapperInterface    *GlobalPacketSerialWrapper::m_instance    = new PacketSerialWrapper();
+AnalogReadAsyncWrapperInterface& GlobalAnalogReadAsyncWrapper::m_instance = *new AnalogReadAsyncWrapper();
+PacketSerialWrapperInterface&    GlobalPacketSerialWrapper::m_instance    = *new PacketSerialWrapper();
 
-BeeperInterface    *GlobalBeeper::m_instance    = new Beeper();
-ComInterface       *GlobalCom::m_instance       = new Com();
-EncodersInterface  *GlobalEncoders::m_instance  = new Encoders();
-ControllerInterface       *GlobalController::m_instance       = new Controller();
-SolenoidsInterface *GlobalSolenoids::m_instance = new Solenoids();
+BeeperInterface&     GlobalBeeper::m_instance     = *new Beeper();
+ComInterface&        GlobalCom::m_instance        = *new Com();
+EncodersInterface&   GlobalEncoders::m_instance   = *new Encoders();
+ControllerInterface& GlobalController::m_instance = *new Controller();
+SolenoidsInterface&  GlobalSolenoids::m_instance  = *new Solenoids();
 
-OpIdleInterface    *GlobalOpIdle::m_instance    = new OpIdle();
-OpInitInterface    *GlobalOpInit::m_instance    = new OpInit();
-OpReadyInterface   *GlobalOpReady::m_instance   = new OpReady();
-OpKnitInterface    *GlobalOpKnit::m_instance    = new OpKnit();
-OpTestInterface    *GlobalOpTest::m_instance    = new OpTest();
-OpErrorInterface   *GlobalOpError::m_instance   = new OpError();
+OpIdleInterface&     GlobalOpIdle::m_instance     = *new OpIdle();
+OpInitInterface&     GlobalOpInit::m_instance     = *new OpInit();
+OpReadyInterface&    GlobalOpReady::m_instance    = *new OpReady();
+OpKnitInterface&     GlobalOpKnit::m_instance     = *new OpKnit();
+OpTestInterface&     GlobalOpTest::m_instance     = *new OpTest();
+OpErrorInterface&    GlobalOpError::m_instance    = *new OpError();
 
 /*!
  * Setup - do once before going to the main loop.

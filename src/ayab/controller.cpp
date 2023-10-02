@@ -53,8 +53,8 @@ void Controller::init() {
   m_hallActive = Direction_t::NoDirection;
   m_beltShift = BeltShift_t::Unknown;
   m_position = 0;
-  m_currentState = GlobalOpIdle::m_instance;
-  m_nextState = GlobalOpIdle::m_instance;
+  m_currentState = &GlobalOpIdle::m_instance;
+  m_nextState = &GlobalOpIdle::m_instance;
 }
 
 /*!
@@ -109,7 +109,7 @@ void Controller::setState(OpInterface *state) {
  * \brief Get machine state.
  * \return Current state of Finite State Machine.
  */
-OpInterface *Controller::getState() {
+OpInterface* Controller::getState() {
   return m_currentState;
 }
 

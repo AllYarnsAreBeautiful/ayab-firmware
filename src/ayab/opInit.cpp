@@ -66,7 +66,7 @@ void OpInit::begin() {
  */
 void OpInit::update() {
   if (isReady()) {
-    GlobalController::setState(GlobalOpReady::m_instance);
+    GlobalController::setState(&GlobalOpReady::m_instance);
   }
 }
 

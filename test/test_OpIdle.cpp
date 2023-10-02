@@ -35,10 +35,10 @@ using ::testing::AtLeast;
 using ::testing::Mock;
 using ::testing::Return;
 
-extern OpIdle *opIdle;
+extern OpIdle& opIdle;
 
-extern ControllerMock *controller;
-extern OpKnitMock *opKnit;
+extern ControllerMock& controller;
+extern OpKnitMock& opKnit;
 
 class OpIdleTest : public ::testing::Test {
 protected:
@@ -46,8 +46,8 @@ protected:
     arduinoMock = arduinoMockInstance();
 
     // pointers to global instances
-    controllerMock = controller;
-    opKnitMock = opKnit;
+    controllerMock = &controller;
+    opKnitMock = &opKnit;
 
     // The global instances do not get destroyed at the end of each test.
     // Ordinarily the mock instance would be local and such behaviour would
@@ -66,38 +66,38 @@ protected:
 };
 
 TEST_F(OpIdleTest, test_state) {
-  ASSERT_EQ(opIdle->state(), OpState_t::Idle);
+  ASSERT_EQ(opIdle.state(), OpState_t::Idle);
 }
 
 TEST_F(OpIdleTest, test_begin) {
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, LOW));
-  opIdle->begin();
+  opIdle.begin();
 }
 
 TEST_F(OpIdleTest, test_init) {
   // no calls expected
-  opIdle->init();
+  opIdle.init();
 }
 
 TEST_F(OpIdleTest, test_reqTest) {
   // no calls expected
   // can't enter state `OpTest` from state `OpIdle`
   const uint8_t buffer[] = {static_cast<uint8_t>(API_t::reqTest)};
-  opIdle->com(buffer, 1);
+  opIdle.com(buffer, 1);
 }
 
 TEST_F(OpIdleTest, test_unrecognized) {
   // no calls expected
   const uint8_t buffer[] = {0xFF};
-  opIdle->com(buffer, 1);
+  opIdle.com(buffer, 1);
 }
 
 TEST_F(OpIdleTest, test_update) {
   // no calls expected
-  opIdle->update();
+  opIdle.update();
 }
 
 TEST_F(OpIdleTest, test_end) {
   // no calls expected
-  opIdle->end();
+  opIdle.end();
 }

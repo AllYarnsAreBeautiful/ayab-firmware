@@ -44,19 +44,19 @@ using ::testing::Mock;
 using ::testing::Return;
 using ::testing::Test;
 
-extern Controller *controller;
-extern OpKnit *opKnit;
+extern Controller& controller;
+extern OpKnit& opKnit;
 
-extern BeeperMock *beeper;
-extern ComMock *com;
-extern EncodersMock *encoders;
-extern SolenoidsMock *solenoids;
+extern BeeperMock& beeper;
+extern ComMock& com;
+extern EncodersMock& encoders;
+extern SolenoidsMock& solenoids;
 
-extern OpIdleMock  *opIdle;
-extern OpInitMock  *opInit;
-extern OpReadyMock *opReady;
-extern OpTestMock  *opTest;
-extern OpErrorMock *opError;
+extern OpIdleMock&  opIdle;
+extern OpInitMock&  opInit;
+extern OpReadyMock& opReady;
+extern OpTestMock&  opTest;
+extern OpErrorMock& opError;
 
 class ControllerTest : public ::testing::Test {
 protected:
@@ -64,16 +64,16 @@ protected:
     arduinoMock = arduinoMockInstance();
 
     // pointers to global instances
-    beeperMock = beeper;
-    comMock = com;
-    encodersMock = encoders;
-    solenoidsMock = solenoids;
+    beeperMock = &beeper;
+    comMock = &com;
+    encodersMock = &encoders;
+    solenoidsMock = &solenoids;
 
-    opIdleMock = opIdle;
-    opInitMock = opInit;
-    opReadyMock = opReady;
-    opTestMock = opTest;
-    opErrorMock = opError;
+    opIdleMock = &opIdle;
+    opInitMock = &opInit;
+    opReadyMock = &opReady;
+    opTestMock = &opTest;
+    opErrorMock = &opError;
 
     // The global instance does not get destroyed at the end of each test.
     // Ordinarily the mock instance would be local and such behaviour would
@@ -90,9 +90,9 @@ protected:
     Mock::AllowLeak(opErrorMock);
 
     // start in state `OpIdle`
-    controller->init();
-    opKnit->init();
-    controller->setMachineType(Machine_t::Kh910);
+    controller.init();
+    opKnit.init();
+    controller.setMachineType(Machine_t::Kh910);
     expected_isready(Direction_t::NoDirection, Direction_t::NoDirection, 0);
   }
 
@@ -121,14 +121,14 @@ protected:
   }
 
   void expected_isready(Direction_t dir, Direction_t hall, uint8_t position) {
-    controller->m_direction = dir;
-    controller->m_hallActive = hall;
-    controller->m_position = position;
+    controller.m_direction = dir;
+    controller.m_hallActive = hall;
+    controller.m_position = position;
   }
 
   void expected_state(OpInterface *state) {
-    controller->setState(state);
-    controller->update();
+    controller.setState(state);
+    controller.update();
   }
 
   void expected_update() {
@@ -137,7 +137,7 @@ protected:
     EXPECT_CALL(*encodersMock, getHallActive).Times(1);
     EXPECT_CALL(*encodersMock, getBeltShift).Times(1);
     EXPECT_CALL(*encodersMock, getCarriage).Times(1);
-    controller->update();
+    controller.update();
 
     // test expectations without destroying instance
     ASSERT_TRUE(Mock::VerifyAndClear(encodersMock));
@@ -145,7 +145,7 @@ protected:
 
   void expected_update_idle() {
     // starts in state `OpIdle`
-    ASSERT_EQ(controller->getState(), opIdleMock);
+    ASSERT_EQ(controller.getState(), &opIdle);
 
     EXPECT_CALL(*opIdleMock, update);
     expected_update();
@@ -156,7 +156,7 @@ protected:
 
   void expected_update_init() {
     // starts in state `OpInit`
-    ASSERT_EQ(controller->getState(), opInitMock);
+    ASSERT_EQ(controller.getState(), &opInit);
 
     EXPECT_CALL(*opInitMock, update);
     expected_update();
@@ -167,7 +167,7 @@ protected:
 
   void expected_update_ready() {
     // starts in state `OpReady`
-    ASSERT_EQ(controller->getState(), opReadyMock);
+    ASSERT_EQ(controller.getState(), &opReady);
 
     EXPECT_CALL(*opReadyMock, update);
     expected_update();
@@ -178,14 +178,14 @@ protected:
 
   void expected_update_knit() {
     // starts in state `OpKnit`
-    ASSERT_EQ(controller->getState(), opKnit);
+    ASSERT_EQ(controller.getState(), &opKnit);
 
     expected_update();
   }
 
   void expected_update_test() {
     // starts in state `OpTest`
-    ASSERT_EQ(controller->getState(), opTestMock);
+    ASSERT_EQ(controller.getState(), &opTest);
 
     EXPECT_CALL(*opTestMock, update);
     expected_update();
@@ -209,19 +209,19 @@ TEST_F(ControllerTest, test_init) {
   EXPECT_CALL(*arduinoMock, pinMode(LED_PIN_B, OUTPUT));
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, HIGH));
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_B, HIGH));
-  controller->init();
+  controller.init();
 }
 
 TEST_F(ControllerTest, test_setState) {
-  controller->setState(opInitMock);
+  controller.setState(&opInit);
 
-  EXPECT_CALL(*opIdle, end);
-  EXPECT_CALL(*opInit, begin);
+  EXPECT_CALL(*opIdleMock, end);
+  EXPECT_CALL(*opInitMock, begin);
   expected_update_idle();
-  ASSERT_EQ(controller->getState(), opInitMock);
+  ASSERT_EQ(controller.getState(), &opInit);
 
   EXPECT_CALL(*opInitMock, state).WillOnce(Return(OpState_t::Init));
-  controller->getState()->state();
+  controller.getState()->state();
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(opIdleMock));
@@ -229,28 +229,28 @@ TEST_F(ControllerTest, test_setState) {
 }
 
 TEST_F(ControllerTest, test_getHallActive) {
-  controller->init();
-  ASSERT_EQ(controller->getHallActive(), Direction_t::NoDirection);
+  controller.init();
+  ASSERT_EQ(controller.getHallActive(), Direction_t::NoDirection);
 }
 
 TEST_F(ControllerTest, test_ready_state) {
-  controller->setState(opReadyMock);
+  controller.setState(&opReady);
   expected_update_idle();
-  ASSERT_EQ(controller->getState(), opReadyMock);
+  ASSERT_EQ(controller.getState(), &opReady);
 
   EXPECT_CALL(*opReadyMock, state).WillOnce(Return(OpState_t::Ready));
-  controller->getState()->state();
+  controller.getState()->state();
 }
 
 TEST_F(ControllerTest, test_update_knit) {
   // get to state `OpReady`
-  controller->setState(opReadyMock);
+  controller.setState(&opReady);
   expected_update_idle();
 
   // get to state `OpKnit`
-  controller->setState(opKnit);
+  controller.setState(&opKnit);
   expected_update_ready();
-  ASSERT_EQ(controller->getState(), opKnit);
+  ASSERT_EQ(controller.getState(), &opKnit);
 
   // now in state `OpKnit`
   expect_first_knit();
@@ -263,22 +263,22 @@ TEST_F(ControllerTest, test_update_knit) {
 
 TEST_F(ControllerTest, test_update_test) {
   // get in state `OpTest`
-  controller->setState(opTestMock);
+  controller.setState(&opTest);
   expected_update_idle();
 
   // now in state `OpTest`
   expected_update_test();
-  ASSERT_EQ(controller->getState(), opTestMock);
+  ASSERT_EQ(controller.getState(), &opTest);
 
   EXPECT_CALL(*opTestMock, state).WillOnce(Return(OpState_t::Test));
-  controller->getState()->state();
+  controller.getState()->state();
 
   // now quit test
-  controller->setState(opInitMock);
+  controller.setState(&opInit);
   EXPECT_CALL(*opTestMock, end);
   EXPECT_CALL(*opInitMock, begin);
   expected_update_test();
-  ASSERT_EQ(controller->getState(), opInitMock);
+  ASSERT_EQ(controller.getState(), &opInit);
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(opInitMock));
@@ -286,10 +286,10 @@ TEST_F(ControllerTest, test_update_test) {
 }
 
 TEST_F(ControllerTest, test_error_state) {
-  controller->setState(opErrorMock);
+  controller.setState(&opError);
   expected_update_idle();
-  ASSERT_EQ(controller->getState(), opErrorMock);
+  ASSERT_EQ(controller.getState(), &opError);
 
   EXPECT_CALL(*opErrorMock, state).WillOnce(Return(OpState_t::Error));
-  controller->getState()->state();
+  controller.getState()->state();
 }

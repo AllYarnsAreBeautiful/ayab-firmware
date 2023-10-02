@@ -25,49 +25,49 @@
 // static member functions
 
 void GlobalController::init() {
-  m_instance->init();
+  m_instance.init();
 }
 
 void GlobalController::update() {
-  m_instance->update();
+  m_instance.update();
 }
 
 void GlobalController::cacheEncoders() {
-  m_instance->cacheEncoders();
+  m_instance.cacheEncoders();
 }
 
-void GlobalController::setState(OpInterface* state) {
-  m_instance->setState(state);
+void GlobalController::setState(OpInterface *state) {
+  m_instance.setState(state);
 }
 
-OpInterface *GlobalController::getState() {
-  return m_instance->getState();
+OpInterface* GlobalController::getState() {
+  return m_instance.getState();
 }
 
 void GlobalController::setMachineType(Machine_t machineType) {
-  m_instance->setMachineType(machineType);
+  m_instance.setMachineType(machineType);
 }
 
 Machine_t GlobalController::getMachineType() {
-  return m_instance->getMachineType();
+  return m_instance.getMachineType();
 }
 
 BeltShift_t GlobalController::getBeltShift() {
-  return m_instance->getBeltShift();
+  return m_instance.getBeltShift();
 }
 
 Carriage_t GlobalController::getCarriage() {
-  return m_instance->getCarriage();
+  return m_instance.getCarriage();
 }
 
 Direction_t GlobalController::getDirection() {
-  return m_instance->getDirection();
+  return m_instance.getDirection();
 }
 
 Direction_t GlobalController::getHallActive() {
-  return m_instance->getHallActive();
+  return m_instance.getHallActive();
 }
 
 uint8_t GlobalController::getPosition() {
-  return m_instance->getPosition();
+  return m_instance.getPosition();
 }

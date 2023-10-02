@@ -26,5 +26,5 @@
 // static member functions
 
 void GlobalAnalogReadAsyncWrapper::analogReadAsyncWrapped(uint8_t pin, analogReadCompleteCallback_t cb, const void *data) {
-  m_instance->analogReadAsyncWrapped(pin, cb, data);
+  m_instance.analogReadAsyncWrapped(pin, cb, data);
 }
