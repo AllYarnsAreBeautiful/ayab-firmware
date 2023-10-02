@@ -34,7 +34,9 @@ public:
   virtual ~ControllerInterface() = default;
 
   // any methods that need to be mocked should go here
+  virtual OpState_t state() = 0;
   virtual void init() = 0;
+  virtual void com(const uint8_t *buffer, size_t size) = 0;
   virtual void update() = 0;
   virtual void cacheEncoders() = 0;
   virtual void setState(OpInterface *state) = 0;
@@ -63,7 +65,9 @@ public:
   // reference to global instance whose methods are implemented
   static ControllerInterface& m_instance;
 
+  static OpState_t state();
   static void init();
+  static void com(const uint8_t *buffer, size_t size);
   static void update();
   static void cacheEncoders();
   static void setState(OpInterface *state);
@@ -79,7 +83,9 @@ public:
 
 class Controller : public ControllerInterface {
 public:
+  OpState_t state() final;
   void init() final;
+  void com(const uint8_t *buffer, size_t size) final;
   void update() final;
   void cacheEncoders() final;
   void setState(OpInterface *state) final;

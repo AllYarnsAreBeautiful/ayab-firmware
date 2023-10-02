@@ -43,21 +43,21 @@
 // Global definitions: references elsewhere must use `extern`.
 // Each of the following is a pointer to a singleton class
 // containing static methods.
-constexpr GlobalAnalogReadAsyncWrapper *analogReadasyncWrapper;
-constexpr GlobalPacketSerialWrapper    *packetSerialWrapper;
+const GlobalAnalogReadAsyncWrapper *analogReadasyncWrapper;
+const GlobalPacketSerialWrapper    *packetSerialWrapper;
 
-constexpr GlobalBeeper     *beeper;
-constexpr GlobalCom        *com;
-constexpr GlobalController *controller;
-constexpr GlobalEncoders   *encoders;
-constexpr GlobalSolenoids  *solenoids;
+const GlobalBeeper     *beeper;
+const GlobalCom        *com;
+const GlobalController *controller;
+const GlobalEncoders   *encoders;
+const GlobalSolenoids  *solenoids;
 
-constexpr GlobalOpIdle     *opIdle;
-constexpr GlobalOpInit     *opInit;
-constexpr GlobalOpReady    *opReady;
-constexpr GlobalOpKnit     *opKnit;
-constexpr GlobalOpTest     *opTest;
-constexpr GlobalOpError    *opError;
+const GlobalOpIdle     *opIdle;
+const GlobalOpInit     *opInit;
+const GlobalOpReady    *opReady;
+const GlobalOpKnit     *opKnit;
+const GlobalOpTest     *opTest;
+const GlobalOpError    *opError;
 
 // Initialize static members.
 // Each singleton class contains a reference to a static instance

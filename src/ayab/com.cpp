@@ -140,7 +140,7 @@ void Com::send_indState(Err_t error) const {
   uint8_t payload[INDSTATE_LEN] = {
       static_cast<uint8_t>(API_t::indState),
       static_cast<uint8_t>(error),
-      static_cast<uint8_t>(GlobalController::getState()->state()),
+      static_cast<uint8_t>(GlobalController::state()),
       highByte(leftHallValue),
       lowByte(leftHallValue),
       highByte(rightHallValue),
@@ -159,7 +159,7 @@ void Com::send_indState(Err_t error) const {
  * \param size The number of bytes in the data buffer.
  */
 void Com::onPacketReceived(const uint8_t *buffer, size_t size) {
-  GlobalController::getState()->com(buffer, size);
+  GlobalController::com(buffer, size);
 }
 
 // Serial command handling

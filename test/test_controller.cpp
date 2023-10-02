@@ -201,6 +201,14 @@ protected:
   }
 };
 
+TEST_F(ControllerTest, test_state) {
+  EXPECT_CALL(*opIdleMock, state);
+  controller.state();
+
+  // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(opIdleMock));
+}
+
 TEST_F(ControllerTest, test_init) {
   EXPECT_CALL(*arduinoMock, pinMode(ENC_PIN_A, INPUT));
   EXPECT_CALL(*arduinoMock, pinMode(ENC_PIN_B, INPUT));
@@ -283,6 +291,15 @@ TEST_F(ControllerTest, test_update_test) {
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(opInitMock));
   ASSERT_TRUE(Mock::VerifyAndClear(opTestMock));
+}
+
+TEST_F(ControllerTest, test_com) {
+  const uint8_t buffer[] = {0xFF};
+  EXPECT_CALL(*opIdleMock, com);
+  controller.com(buffer, 1);
+
+  // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(opIdleMock));
 }
 
 TEST_F(ControllerTest, test_error_state) {

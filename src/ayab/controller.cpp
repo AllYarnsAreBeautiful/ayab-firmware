@@ -33,6 +33,13 @@
 // Public methods
 
 /*!
+ * \brief Return current machine state
+ */
+OpState_t Controller::state() {
+  return m_currentState->state();
+}
+
+/*!
  * \brief Initialize Finite State Machine.
  */
 void Controller::init() {
@@ -55,6 +62,13 @@ void Controller::init() {
   m_position = 0;
   m_currentState = &GlobalOpIdle::m_instance;
   m_nextState = &GlobalOpIdle::m_instance;
+}
+
+/*!
+ * \brief Call communication method of current machine state
+ */
+void Controller::com(const uint8_t *buffer, size_t size) {
+  m_currentState->com(buffer, size);
 }
 
 /*!

@@ -40,9 +40,19 @@ void releaseControllerMock() {
   }
 }
 
+OpState_t Controller::state() {
+  assert(gControllerMock != nullptr);
+  return gControllerMock->state();
+}
+
 void Controller::init() {
   assert(gControllerMock != nullptr);
   gControllerMock->init();
+}
+
+void Controller::com(const uint8_t *buffer, size_t size) {
+  assert(gControllerMock != nullptr);
+  gControllerMock->com(buffer, size);
 }
 
 void Controller::update() {

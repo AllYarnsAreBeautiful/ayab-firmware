@@ -96,9 +96,11 @@ protected:
 
   void expected_write_onPacketReceived(uint8_t *buffer, size_t size,
                                        bool once) {
-    expect_send(once);
-    EXPECT_CALL(*controllerMock, getState).WillOnce(Return(&opTest));
+    EXPECT_CALL(*controllerMock, com);
     com.onPacketReceived(buffer, size);
+
+    expect_send(once);
+    opTest.com(buffer, size);
   }
 
   void reqInit(Machine_t machine) {
@@ -469,7 +471,7 @@ TEST_F(ComTest, test_send_reqLine) {
 TEST_F(ComTest, test_send_indState) {
   EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_L));
   EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_R));
-  EXPECT_CALL(*controllerMock, getState).WillOnce(Return(&opInit));
+  EXPECT_CALL(*controllerMock, state);
   EXPECT_CALL(*controllerMock, getCarriage);
   EXPECT_CALL(*controllerMock, getPosition);
   EXPECT_CALL(*controllerMock, getDirection);

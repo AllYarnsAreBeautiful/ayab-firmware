@@ -85,7 +85,7 @@ protected:
 
   void expect_ready(bool ready) {
     if (ready) {
-      EXPECT_CALL(*controllerMock, getState).WillOnce(Return(&opInit));
+      EXPECT_CALL(*controllerMock, state);
     }
     ASSERT_EQ(opInit.isReady(), ready);
   }
@@ -144,7 +144,7 @@ TEST_F(OpInitTest, test_updateF) {
 TEST_F(OpInitTest, test_updateT) {
   // isReady() == true
   expect_update(get_position_past_left(Machine_t::Kh910), Direction_t::Right, Direction_t::Left);
-  EXPECT_CALL(*controllerMock, getState).WillOnce(Return(&opInit));
+  EXPECT_CALL(*controllerMock, state);
   EXPECT_CALL(*controllerMock, setState(&opReady));
   opInit.update();
 

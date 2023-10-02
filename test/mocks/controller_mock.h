@@ -31,7 +31,9 @@
 
 class ControllerMock : public ControllerInterface {
 public:
+  MOCK_METHOD0(state, OpState_t());
   MOCK_METHOD0(init, void());
+  MOCK_METHOD2(com, void(const uint8_t *buffer, size_t size));
   MOCK_METHOD0(update, void());
   MOCK_METHOD0(cacheEncoders, void());
   MOCK_METHOD1(setState, void(OpInterface *state));

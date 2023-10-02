@@ -105,7 +105,7 @@ TEST_F(OpErrorTest, test_update) {
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, LOW));
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_B, HIGH));
   // send_indState
-  EXPECT_CALL(*controllerMock, getState).WillOnce(Return(&opError));
+  EXPECT_CALL(*controllerMock, state);
   EXPECT_CALL(*controllerMock, getCarriage);
   EXPECT_CALL(*controllerMock, getPosition);
   EXPECT_CALL(*controllerMock, getDirection);
@@ -116,7 +116,7 @@ TEST_F(OpErrorTest, test_update) {
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, HIGH));
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_B, LOW));
   // send_indState
-  EXPECT_CALL(*controllerMock, getState).WillOnce(Return(&opError));
+  EXPECT_CALL(*controllerMock, state);
   EXPECT_CALL(*controllerMock, getCarriage);
   EXPECT_CALL(*controllerMock, getPosition);
   EXPECT_CALL(*controllerMock, getDirection);
