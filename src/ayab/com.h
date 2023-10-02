@@ -92,7 +92,7 @@ public:
   virtual void send_indState(Err_t error) const = 0;
   virtual void onPacketReceived(const uint8_t *buffer, size_t size) = 0;
 
-  virtual void h_reqInit(const uint8_t *buffer, size_t size) = 0;
+  virtual void h_reqInit(const uint8_t (&buffer)[3]) = 0;
   virtual void h_reqStart(const uint8_t *buffer, size_t size) = 0;
   virtual void h_cnfLine(const uint8_t *buffer, size_t size) = 0;
   virtual void h_reqInfo() const = 0;
@@ -125,7 +125,7 @@ public:
   static void send_indState(Err_t error = Err_t::Success);
   static void onPacketReceived(const uint8_t *buffer, size_t size);
 
-  static void h_reqInit(const uint8_t *buffer, size_t size);
+  static void h_reqInit(const uint8_t (&buffer)[3]);
   static void h_reqStart(const uint8_t *buffer, size_t size);
   static void h_cnfLine(const uint8_t *buffer, size_t size);
   static void h_reqInfo();
@@ -146,7 +146,7 @@ public:
   void send_indState(Err_t error = Err_t::Success) const final;
   void onPacketReceived(const uint8_t *buffer, size_t size) final;
 
-  void h_reqInit(const uint8_t *buffer, size_t size) final;
+  void h_reqInit(const uint8_t (&buffer)[3]) final;
   void h_reqStart(const uint8_t *buffer, size_t size) final;
   void h_cnfLine(const uint8_t *buffer, size_t size) final;
   void h_reqInfo() const final;

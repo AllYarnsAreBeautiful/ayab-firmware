@@ -52,9 +52,9 @@ void Controller::init() {
   m_direction = Direction_t::NoDirection;
   m_hallActive = Direction_t::NoDirection;
   m_beltShift = BeltShift_t::Unknown;
-  m_position = 0;
+  m_position = 0U;
   m_currentState = &GlobalOpIdle::m_instance;
-  m_nextState = &GlobalOpIdle::m_instance;
+  m_nextState = m_currentState;
 }
 
 /*!

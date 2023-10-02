@@ -40,7 +40,7 @@ public:
   MOCK_CONST_METHOD1(send_indState, void(Err_t error));
   MOCK_METHOD2(onPacketReceived, void(const uint8_t *buffer, size_t size));
 
-  MOCK_METHOD2(h_reqInit, void(const uint8_t *buffer, size_t size));
+  MOCK_METHOD1(h_reqInit, void(const uint8_t (&buffer)[3]));
   MOCK_METHOD2(h_reqStart, void(const uint8_t *buffer, size_t size));
   MOCK_METHOD2(h_cnfLine, void(const uint8_t *buffer, size_t size));
   MOCK_CONST_METHOD0(h_reqInfo, void());

@@ -85,9 +85,9 @@ void Com::onPacketReceived(const uint8_t *buffer, size_t size) {
   gComMock->onPacketReceived(buffer, size);
 }
 
-void Com::h_reqInit(const uint8_t *buffer, size_t size) {
+void Com::h_reqInit(const uint8_t (&buffer)[3]) {
   assert(gComMock != nullptr);
-  gComMock->h_reqInit(buffer, size);
+  gComMock->h_reqInit(buffer);
 }
 
 void Com::h_reqStart(const uint8_t *buffer, size_t size) {

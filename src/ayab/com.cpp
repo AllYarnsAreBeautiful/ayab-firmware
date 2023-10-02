@@ -170,13 +170,7 @@ void Com::onPacketReceived(const uint8_t *buffer, size_t size) {
  * \param buffer A pointer to a data buffer.
  * \param size The number of bytes in the data buffer.
  */
-void Com::h_reqInit(const uint8_t *buffer, size_t size) {
-  if (size < 3U) {
-    // Need 3 bytes from buffer below.
-    send_cnfInit(Err_t::Expected_longer_message);
-    return;
-  }
-
+void Com::h_reqInit(const uint8_t (&buffer)[3]) {
   uint8_t crc8 = buffer[2];
   // Check crc on bytes 0-4 of buffer.
   if (crc8 != CRC8(buffer, 2)) {
