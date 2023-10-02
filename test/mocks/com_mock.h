@@ -17,7 +17,7 @@
  *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
  *
  *    Original Work Copyright 2013 Christian Obersteiner, Andreas Müller
- *    Modified Work Copyright 2020 Sturla Lange, Tom Price
+ *    Modified Work Copyright 2020-3 Sturla Lange, Tom Price
  *    http://ayab-knitting.com
  */
 
@@ -32,13 +32,21 @@ class ComMock : public ComInterface {
 public:
   MOCK_METHOD0(init, void());
   MOCK_METHOD0(update, void());
+  MOCK_CONST_METHOD2(CRC8, uint8_t(const uint8_t *buffer, size_t len));
   MOCK_CONST_METHOD2(send, void(uint8_t *payload, size_t length));
-  MOCK_METHOD2(sendMsg, void(AYAB_API_t id, const char *msg));
-  MOCK_METHOD2(sendMsg, void(AYAB_API_t id, char *msg));
+  MOCK_METHOD2(sendMsg, void(API_t id, const char *msg));
+  MOCK_METHOD2(sendMsg, void(API_t id, char *msg));
   MOCK_CONST_METHOD2(send_reqLine, void(const uint8_t lineNumber, Err_t error));
-  MOCK_CONST_METHOD3(send_indState, void(Carriage_t carriage, uint8_t position,
-                                   Err_t error));
+  MOCK_CONST_METHOD1(send_indState, void(Err_t error));
   MOCK_METHOD2(onPacketReceived, void(const uint8_t *buffer, size_t size));
+
+  MOCK_METHOD2(h_reqInit, void(const uint8_t *buffer, size_t size));
+  MOCK_METHOD2(h_reqStart, void(const uint8_t *buffer, size_t size));
+  MOCK_METHOD2(h_cnfLine, void(const uint8_t *buffer, size_t size));
+  MOCK_CONST_METHOD0(h_reqInfo, void());
+  MOCK_CONST_METHOD0(h_reqTest, void());
+  MOCK_CONST_METHOD0(h_quitCmd, void());
+  MOCK_CONST_METHOD0(h_unrecognized, void());
 };
 
 ComMock *comMockInstance();

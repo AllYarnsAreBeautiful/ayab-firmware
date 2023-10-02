@@ -94,7 +94,7 @@ void Solenoids::setSolenoids(uint16_t state) {
  */
 // GCOVR_EXCL_START
 void Solenoids::write(uint16_t newState) {
-  (void)newState;
+  //(void)newState;
   mcp_0.writeGPIO(lowByte(newState));
   mcp_1.writeGPIO(highByte(newState));
 }
