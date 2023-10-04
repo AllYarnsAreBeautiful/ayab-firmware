@@ -35,7 +35,6 @@ public:
   virtual Err_t startKnitting(uint8_t startNeedle,
                               uint8_t stopNeedle, uint8_t *pattern_start,
                               bool continuousReportingEnabled) = 0;
-  virtual void encodePosition() = 0;
   virtual void knit() = 0;
   virtual uint8_t getStartOffset(const Direction_t direction) = 0;
   virtual bool setNextLine(uint8_t lineNumber) = 0;
@@ -67,7 +66,6 @@ public:
   static Err_t startKnitting(uint8_t startNeedle,
                              uint8_t stopNeedle, uint8_t *pattern_start,
                              bool continuousReportingEnabled);
-  static void encodePosition();
   static void knit();
   static uint8_t getStartOffset(const Direction_t direction);
   static bool setNextLine(uint8_t lineNumber);
@@ -86,7 +84,6 @@ public:
   Err_t startKnitting(uint8_t startNeedle,
                       uint8_t stopNeedle, uint8_t *pattern_start,
                       bool continuousReportingEnabled) final;
-  void encodePosition() final;
   void knit() final;
   uint8_t getStartOffset(const Direction_t direction) final;
   bool setNextLine(uint8_t lineNumber) final;
@@ -120,7 +117,6 @@ private:
 
 #if AYAB_TESTS
   // Note: ideally tests would only rely on the public interface.
-  FRIEND_TEST(OpKnitTest, test_encodePosition);
   FRIEND_TEST(OpKnitTest, test_getStartOffset);
   FRIEND_TEST(OpKnitTest, test_knit_lastLine_and_no_req);
   FRIEND_TEST(OpKnitTest, test_calculatePixelAndSolenoid);

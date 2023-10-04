@@ -32,6 +32,10 @@ void GlobalController::update() {
   m_instance->update();
 }
 
+void GlobalController::com(const uint8_t *buffer, size_t size) {
+  m_instance->com(buffer, size);
+}
+
 void GlobalController::cacheEncoders() {
   m_instance->cacheEncoders();
 }

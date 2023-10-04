@@ -168,22 +168,6 @@ Err_t OpKnit::startKnitting(uint8_t startNeedle,
 }
 
 /*!
- * \brief Record current encoder position.
- *
- * Used in hardware test procedure.
- */
-void OpKnit::encodePosition() {
-  auto position = GlobalController::getPosition();
-  if (m_sOldPosition != position) {
-    // only act if there is an actual change of position
-    // store current encoder position for next call of this function
-    m_sOldPosition = position;
-    (void) calculatePixelAndSolenoid();
-    GlobalCom::send_indState(Err_t::Unspecified_failure); // FIXME is this the right error code?
-  }
-}
-
-/*!
  * \brief Function that is repeatedly called during state `OpKnit`
  */
 void OpKnit::knit() {

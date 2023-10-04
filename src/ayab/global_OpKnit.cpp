@@ -59,10 +59,6 @@ Err_t GlobalOpKnit::startKnitting(uint8_t startNeedle,
                                    pattern_start, continuousReportingEnabled);
 }
 
-void GlobalOpKnit::encodePosition() {
-  m_instance->encodePosition();
-}
-
 void GlobalOpKnit::knit() {
   m_instance->knit();
 }

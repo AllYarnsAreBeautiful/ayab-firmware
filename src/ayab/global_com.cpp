@@ -58,11 +58,9 @@ void GlobalCom::send_indState(Err_t error) {
   m_instance->send_indState(error);
 }
 
-// GCOVR_EXCL_START
 void GlobalCom::onPacketReceived(const uint8_t *buffer, size_t size) {
   m_instance->onPacketReceived(buffer, size);
 }
-// GCOVR_EXCL_STOP
 
 void GlobalCom::h_reqInit(const uint8_t *buffer, size_t size) {
   m_instance->h_reqInit(buffer, size);

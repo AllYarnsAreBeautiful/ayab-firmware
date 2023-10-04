@@ -36,16 +36,17 @@ public:
   // any methods that need to be mocked should go here
   virtual void init() = 0;
   virtual void update() = 0;
+  virtual void com(const uint8_t *buffer, size_t size) const = 0;
   virtual void cacheEncoders() = 0;
   virtual void setState(OpInterface *state) = 0;
-  virtual OpInterface *getState() = 0;
+  virtual OpInterface *getState() const = 0;
   virtual void setMachineType(Machine_t) = 0;
-  virtual Machine_t getMachineType() = 0;
-  virtual BeltShift_t getBeltShift() = 0;
-  virtual Carriage_t getCarriage() = 0;
-  virtual Direction_t getDirection() = 0;
-  virtual Direction_t getHallActive() = 0;
-  virtual uint8_t getPosition() = 0;
+  virtual Machine_t getMachineType() const = 0;
+  virtual BeltShift_t getBeltShift() const = 0;
+  virtual Carriage_t getCarriage() const = 0;
+  virtual Direction_t getDirection() const = 0;
+  virtual Direction_t getHallActive() const = 0;
+  virtual uint8_t getPosition() const = 0;
 };
 
 // Singleton container class for static methods.
@@ -65,6 +66,7 @@ public:
 
   static void init();
   static void update();
+  static void com(const uint8_t *buffer, size_t size);
   static void cacheEncoders();
   static void setState(OpInterface *state);
   static OpInterface *getState();
@@ -81,16 +83,17 @@ class Controller : public ControllerInterface {
 public:
   void init() final;
   void update() final;
+  void com(const uint8_t *buffer, size_t size) const final;
   void cacheEncoders() final;
   void setState(OpInterface *state) final;
-  OpInterface *getState() final;
+  OpInterface *getState() const final;
   void setMachineType(Machine_t) final;
-  Machine_t getMachineType() final;
-  BeltShift_t getBeltShift() final;
-  Carriage_t getCarriage() final;
-  Direction_t getDirection() final;
-  Direction_t getHallActive() final;
-  uint8_t getPosition() final;
+  Machine_t getMachineType() const final;
+  BeltShift_t getBeltShift() const final;
+  Carriage_t getCarriage() const final;
+  Direction_t getDirection() const final;
+  Direction_t getHallActive() const final;
+  uint8_t getPosition() const final;
 
   // machine state
   OpInterface *m_currentState;

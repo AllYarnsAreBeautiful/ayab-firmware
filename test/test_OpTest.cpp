@@ -287,21 +287,18 @@ TEST_F(OpTestTest, test_autoRead) {
 
   // nothing has happened yet
   EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(TEST_LOOP_DELAY - 1));
-  EXPECT_CALL(*opKnitMock, encodePosition);
   expect_readEOLsensors(false);
   expect_readEncoders(false);
   opTest->update();
 
   // m_timerEventOdd = false
   EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(TEST_LOOP_DELAY));
-  EXPECT_CALL(*opKnitMock, encodePosition);
   expect_readEOLsensors(false);
   expect_readEncoders(false);
   opTest->update();
 
   // m_timerEventOdd = true
   EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(2 * TEST_LOOP_DELAY));
-  EXPECT_CALL(*opKnitMock, encodePosition);
   expect_send(false);
   expect_readEOLsensors(true);
   expect_readEncoders(true);
@@ -310,7 +307,6 @@ TEST_F(OpTestTest, test_autoRead) {
   // after `stopCmd()`
   opTest->stopCmd();
   EXPECT_CALL(*arduinoMock, millis).Times(0);
-  EXPECT_CALL(*opKnitMock, encodePosition).Times(0);
   expect_readEOLsensors(false);
   expect_readEncoders(false);
   opTest->update();
@@ -326,14 +322,12 @@ TEST_F(OpTestTest, test_autoTest) {
 
   // nothing has happened yet
   EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(TEST_LOOP_DELAY - 1));
-  EXPECT_CALL(*opKnitMock, encodePosition);
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, HIGH)).Times(0);
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_B, HIGH)).Times(0);
   opTest->update();
 
   // m_timerEventOdd = false
   EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(TEST_LOOP_DELAY));
-  EXPECT_CALL(*opKnitMock, encodePosition);
   expect_send(true);
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, HIGH));
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_B, HIGH));
@@ -341,7 +335,6 @@ TEST_F(OpTestTest, test_autoTest) {
 
   // m_timerEventOdd = true
   EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(2 * TEST_LOOP_DELAY));
-  EXPECT_CALL(*opKnitMock, encodePosition);
   expect_send(true);
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, LOW));
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_B, LOW));
@@ -350,7 +343,6 @@ TEST_F(OpTestTest, test_autoTest) {
   // after `stopCmd()`
   opTest->stopCmd();
   EXPECT_CALL(*arduinoMock, millis).Times(0);
-  EXPECT_CALL(*opKnitMock, encodePosition).Times(0);
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, _)).Times(0);
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_B, _)).Times(0);
   opTest->update();

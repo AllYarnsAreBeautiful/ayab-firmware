@@ -96,6 +96,8 @@ protected:
 
   void expected_write_onPacketReceived(uint8_t *buffer, size_t size,
                                        bool once) {
+    EXPECT_CALL(*controllerMock, com(buffer, size));
+    com->onPacketReceived(buffer, size);
     expect_send(once);
     opTest->com(buffer, size);
   }

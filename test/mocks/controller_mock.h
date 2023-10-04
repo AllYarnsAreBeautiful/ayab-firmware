@@ -33,16 +33,17 @@ class ControllerMock : public ControllerInterface {
 public:
   MOCK_METHOD0(init, void());
   MOCK_METHOD0(update, void());
+  MOCK_CONST_METHOD2(com, void(const uint8_t *buffer, size_t size));
   MOCK_METHOD0(cacheEncoders, void());
   MOCK_METHOD1(setState, void(OpInterface *state));
-  MOCK_METHOD0(getState, OpInterface*());
+  MOCK_CONST_METHOD0(getState, OpInterface*());
   MOCK_METHOD1(setMachineType, void(Machine_t machineType));
-  MOCK_METHOD0(getMachineType, Machine_t());
-  MOCK_METHOD0(getBeltShift, BeltShift_t());
-  MOCK_METHOD0(getCarriage, Carriage_t());
-  MOCK_METHOD0(getDirection, Direction_t());
-  MOCK_METHOD0(getHallActive, Direction_t());
-  MOCK_METHOD0(getPosition, uint8_t());
+  MOCK_CONST_METHOD0(getMachineType, Machine_t());
+  MOCK_CONST_METHOD0(getBeltShift, BeltShift_t());
+  MOCK_CONST_METHOD0(getCarriage, Carriage_t());
+  MOCK_CONST_METHOD0(getDirection, Direction_t());
+  MOCK_CONST_METHOD0(getHallActive, Direction_t());
+  MOCK_CONST_METHOD0(getPosition, uint8_t());
 };
 
 ControllerMock *controllerMockInstance();

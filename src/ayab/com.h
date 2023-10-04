@@ -138,7 +138,7 @@ class Com : public ComInterface {
 public:
   void init() final;
   void update() final;
-  uint8_t CRC8(const uint8_t *buffer, size_t len) const;
+  uint8_t CRC8(const uint8_t *buffer, size_t len) const final;
   void send(uint8_t *payload, size_t length) const final;
   void sendMsg(API_t id, const char *msg) final;
   void sendMsg(API_t id, char *msg) final;

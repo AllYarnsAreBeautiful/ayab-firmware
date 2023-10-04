@@ -85,7 +85,6 @@ void OpTest::begin() {
  */
 void OpTest::update() {
   if (enabled()) {
-    GlobalOpKnit::encodePosition(); // FIXME is this even necessary?
     uint32_t now = millis();
     if (now - m_lastTime >= TEST_LOOP_DELAY) {
       m_lastTime = now;

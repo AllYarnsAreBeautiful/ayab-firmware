@@ -75,6 +75,13 @@ void Controller::update() {
 }
 
 /*!
+ * \brief Call communication method for current machine state
+ */
+void Controller::com(const uint8_t *buffer, size_t size) const {
+  m_currentState->com(buffer, size);
+}
+
+/*!
  * \brief Cache Encoder values
  * The code that saves the Encoder values is bookended by macros
  * ensuring that interrupts are disabled while the code executes.
@@ -109,7 +116,7 @@ void Controller::setState(OpInterface *state) {
  * \brief Get machine state.
  * \return Current state of Finite State Machine.
  */
-OpInterface *Controller::getState() {
+OpInterface *Controller::getState() const {
   return m_currentState;
 }
 
@@ -125,7 +132,7 @@ void Controller::setMachineType(Machine_t machineType) {
  * \brief Get knitting machine type.
  * \return Machine type.
  */
-Machine_t Controller::getMachineType() {
+Machine_t Controller::getMachineType() const {
   return m_machineType;
 }
 
@@ -133,7 +140,7 @@ Machine_t Controller::getMachineType() {
  * \brief Get cached beltShift value.
  * \return Cached beltShift value.
  */
-BeltShift_t Controller::getBeltShift() {
+BeltShift_t Controller::getBeltShift() const {
   return m_beltShift;
 }
 
@@ -141,7 +148,7 @@ BeltShift_t Controller::getBeltShift() {
  * \brief Get cached carriage value.
  * \return Cached carriage value.
  */
-Carriage_t Controller::getCarriage() {
+Carriage_t Controller::getCarriage() const {
   return m_carriage;
 }
 
@@ -149,7 +156,7 @@ Carriage_t Controller::getCarriage() {
  * \brief Get cached direction value.
  * \return Cached direction value.
  */
-Direction_t Controller::getDirection() {
+Direction_t Controller::getDirection() const {
   return m_direction;
 }
 
@@ -157,7 +164,7 @@ Direction_t Controller::getDirection() {
  * \brief Get cached hallActive value.
  * \return Cached hallActive value.
  */
-Direction_t Controller::getHallActive() {
+Direction_t Controller::getHallActive() const {
   return m_hallActive;
 }
 
@@ -165,6 +172,6 @@ Direction_t Controller::getHallActive() {
  * \brief Get cached position value.
  * \return Cached position value.
  */
-uint8_t Controller::getPosition() {
+uint8_t Controller::getPosition() const {
   return m_position;
 }

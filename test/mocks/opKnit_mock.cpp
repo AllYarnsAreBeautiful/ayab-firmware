@@ -76,11 +76,6 @@ Err_t OpKnit::startKnitting(uint8_t startNeedle,
                                      pattern_start, continuousReportingEnabled);
 }
 
-void OpKnit::encodePosition() {
-  assert(gOpKnitMock != nullptr);
-  gOpKnitMock->encodePosition();
-}
-
 void OpKnit::knit() {
   assert(gOpKnitMock != nullptr);
   gOpKnitMock->knit();

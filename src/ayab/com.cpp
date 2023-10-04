@@ -158,7 +158,7 @@ void Com::send_indState(Err_t error) const {
  * \param size The number of bytes in the data buffer.
  */
 void Com::onPacketReceived(const uint8_t *buffer, size_t size) {
-  GlobalController::getState()->com(buffer, size);
+  GlobalController::com(buffer, size);
 }
 
 // Serial command handling

@@ -308,19 +308,6 @@ TEST_F(OpKnitTest, test_com) {
   ASSERT_TRUE(Mock::VerifyAndClear(comMock));
 }
 
-TEST_F(OpKnitTest, test_encodePosition) {
-  opKnit->m_sOldPosition = controller->getPosition();
-  EXPECT_CALL(*comMock, send_indState).Times(0);
-  opKnit->encodePosition();
-
-  opKnit->m_sOldPosition += 1;
-  EXPECT_CALL(*comMock, send_indState).Times(1);
-  opKnit->encodePosition();
-
-  // test expectations without destroying instance
-  ASSERT_TRUE(Mock::VerifyAndClear(comMock));
-}
-
 TEST_F(OpKnitTest, test_cacheISR) {
   expected_cacheISR();
 

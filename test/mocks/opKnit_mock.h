@@ -41,7 +41,6 @@ public:
   MOCK_METHOD4(startKnitting, Err_t(uint8_t startNeedle,
                                     uint8_t stopNeedle, uint8_t *pattern_start,
                                     bool continuousReportingEnabled));
-  MOCK_METHOD0(encodePosition, void());
   MOCK_METHOD0(knit, void());
   MOCK_METHOD1(getStartOffset, uint8_t(const Direction_t direction));
   MOCK_METHOD1(setNextLine, bool(uint8_t lineNumber));

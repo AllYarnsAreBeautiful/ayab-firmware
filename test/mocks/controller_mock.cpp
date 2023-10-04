@@ -50,6 +50,11 @@ void Controller::update() {
   gControllerMock->update();
 }
 
+void Controller::com(const uint8_t *buffer, size_t size) const {
+  assert(gControllerMock != nullptr);
+  return gControllerMock->com(buffer, size);
+}
+
 void Controller::cacheEncoders() {
   assert(gControllerMock != nullptr);
   gControllerMock->cacheEncoders();
@@ -60,7 +65,7 @@ void Controller::setState(OpInterface *state) {
   gControllerMock->setState(state);
 }
 
-OpInterface *Controller::getState() {
+OpInterface *Controller::getState() const {
   assert(gControllerMock != nullptr);
   return gControllerMock->getState();
 }
@@ -70,32 +75,32 @@ void Controller::setMachineType(Machine_t machineType) {
   gControllerMock->setMachineType(machineType);
 }
 
-Machine_t Controller::getMachineType() {
+Machine_t Controller::getMachineType() const {
   assert(gControllerMock != nullptr);
   return gControllerMock->getMachineType();
 }
 
-BeltShift_t Controller::getBeltShift() {
+BeltShift_t Controller::getBeltShift() const {
   assert(gControllerMock != nullptr);
   return gControllerMock->getBeltShift();
 }
 
-Carriage_t Controller::getCarriage() {
+Carriage_t Controller::getCarriage() const {
   assert(gControllerMock != nullptr);
   return gControllerMock->getCarriage();
 }
 
-Direction_t Controller::getDirection() {
+Direction_t Controller::getDirection() const {
   assert(gControllerMock != nullptr);
   return gControllerMock->getDirection();
 }
 
-Direction_t Controller::getHallActive() {
+Direction_t Controller::getHallActive() const {
   assert(gControllerMock != nullptr);
   return gControllerMock->getHallActive();
 }
 
-uint8_t Controller::getPosition() {
+uint8_t Controller::getPosition() const {
   assert(gControllerMock != nullptr);
   return gControllerMock->getPosition();
 }

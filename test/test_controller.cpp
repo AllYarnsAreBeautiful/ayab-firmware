@@ -285,6 +285,15 @@ TEST_F(ControllerTest, test_update_test) {
   ASSERT_TRUE(Mock::VerifyAndClear(opTestMock));
 }
 
+TEST_F(ControllerTest, test_com) {
+  const uint8_t buffer[] = {0xFF};
+  EXPECT_CALL(*opIdleMock, com);
+  controller->com(buffer, 1);
+
+  // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(opIdleMock));
+}
+
 TEST_F(ControllerTest, test_error_state) {
   controller->setState(opErrorMock);
   expected_update_idle();
