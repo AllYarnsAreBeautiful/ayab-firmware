@@ -152,8 +152,7 @@ void Com::send_indState(Err_t error) const {
   send(static_cast<uint8_t *>(payload), INDSTATE_LEN);
 }
 
-/*! GCOVR_EXCL_START
- *
+/*!
  * \brief Callback for PacketSerial.
  * \param buffer A pointer to a data buffer.
  * \param size The number of bytes in the data buffer.
@@ -161,7 +160,6 @@ void Com::send_indState(Err_t error) const {
 void Com::onPacketReceived(const uint8_t *buffer, size_t size) {
   GlobalController::getState()->com(buffer, size);
 }
-// GCOVR_EXCL_STOP
 
 // Serial command handling
 
@@ -277,8 +275,6 @@ void Com::h_cnfLine(const uint8_t *buffer, size_t size) {
 
 /*!
  * \brief Handle `reqInfo` (request information) command.
- * \param buffer A pointer to a data buffer.
- * \param size The number of bytes in the data buffer.
  */
 void Com::h_reqInfo() const {
   send_cnfInfo();

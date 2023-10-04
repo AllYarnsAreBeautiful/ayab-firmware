@@ -26,11 +26,9 @@
 
 // static member functions
 
-// GCOVR_EXCL_START
 void GlobalCom::init() {
   m_instance->init();
 }
-// GCOVR_EXCL_STOP
 
 void GlobalCom::update() {
   m_instance->update();
