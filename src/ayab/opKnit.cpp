@@ -136,13 +136,13 @@ void OpKnit::end() {
  * \return Error code (0 = success, other values = error).
  */
 Err_t OpKnit::startKnitting(uint8_t startNeedle,
-                             uint8_t stopNeedle, uint8_t *pattern_start,
+                             uint8_t stopNeedle, uint8_t *patternStart,
                              bool continuousReportingEnabled) {
   Machine_t machineType = GlobalController::getMachineType();
   if (machineType == Machine_t::NoMachine) {
     return Err_t::No_machine_type;
   }
-  if (pattern_start == nullptr) {
+  if (patternStart == nullptr) {
     return Err_t::Null_pointer_argument;
   }
   if ((startNeedle >= stopNeedle) || (stopNeedle >= NUM_NEEDLES[static_cast<uint8_t>(machineType)])) {
@@ -152,7 +152,7 @@ Err_t OpKnit::startKnitting(uint8_t startNeedle,
   // record argument values
   m_startNeedle = startNeedle;
   m_stopNeedle = stopNeedle;
-  m_lineBuffer = pattern_start;
+  m_lineBuffer = patternStart;
   m_continuousReportingEnabled = continuousReportingEnabled;
 
   // reset variables to start conditions
@@ -207,7 +207,7 @@ void OpKnit::knit() {
   // then read the appropriate Pixel(/Bit) for the current needle to set
   uint8_t currentByte = m_pixelToSet >> 3;
   bool pixelValue =
-      bitRead(m_lineBuffer[currentByte], m_pixelToSet & 0x07);
+      bitRead(m_currentLineBuffer[currentByte], m_pixelToSet & 0x07);
   // write Pixel state to the appropriate needle
   GlobalSolenoids::setSolenoid(m_solenoidToSet, pixelValue);
 
@@ -285,6 +285,9 @@ void OpKnit::setLastLine() {
  * \param lineNumber Line number requested.
  */
 void OpKnit::reqLine(uint8_t lineNumber) {
+  // copy stored pattern data
+  copyBuffer();
+
   GlobalCom::send_reqLine(lineNumber, Err_t::Success);
   m_lineRequested = true;
 }
@@ -351,4 +354,12 @@ bool OpKnit::calculatePixelAndSolenoid() {
     m_solenoidToSet = m_solenoidToSet + 3;
   }
   return true;
+}
+
+void OpKnit::copyBuffer() {
+  auto machineType = static_cast<uint8_t>(GlobalController::getMachineType());
+  uint8_t lenLineBuffer = LINE_BUFFER_LEN[machineType];
+  for (uint8_t i = 0U; i < lenLineBuffer; i++) {
+    m_currentLineBuffer[i] = m_lineBuffer[i];
+  }
 }

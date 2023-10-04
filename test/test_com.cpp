@@ -105,6 +105,7 @@ protected:
   void reqInit(Machine_t machine) {
     uint8_t buffer[] = {static_cast<uint8_t>(API_t::reqInit), static_cast<uint8_t>(machine), 0};
     buffer[2] = com->CRC8(buffer, 2);
+    EXPECT_CALL(*controllerMock, setMachineType(machine));
     EXPECT_CALL(*controllerMock, setState(opInit));
     expect_send(true);
     opIdle->com(buffer, sizeof(buffer));
@@ -172,8 +173,18 @@ TEST_F(ComTest, test_reqtest) {
 }
 
 TEST_F(ComTest, test_reqstart_fail1) {
+  reqInit(Machine_t::Kh910);
+
   // checksum wrong
-  uint8_t buffer[] = {static_cast<uint8_t>(API_t::reqStart), 0, 10, 1, 0x73};
+  uint8_t buffer[30] = {static_cast<uint8_t>(API_t::reqStart),
+                        0, 0, 1,
+                        0xDE, 0xAD, 0xBE, 0xEF, 0x00,
+                        0x00, 0x00, 0x00, 0x00, 0x00,
+                        0x00, 0x00, 0x00, 0x00, 0x00,
+                        0x00, 0x00, 0x00, 0x00, 0x00,
+                        0x00, 0x00, 0x00, 0x00, 0x00,
+                        0xD3}; // CRC8
+  EXPECT_CALL(*controllerMock, getMachineType).WillOnce(Return(Machine_t::Kh910));
   EXPECT_CALL(*opKnitMock, startKnitting).Times(0);
   expect_send(true);
   com->h_reqStart(buffer, sizeof(buffer));
@@ -184,8 +195,18 @@ TEST_F(ComTest, test_reqstart_fail1) {
 }
 
 TEST_F(ComTest, test_reqstart_fail2) {
+  reqInit(Machine_t::Kh910);
+
   // not enough bytes
-  uint8_t buffer[] = {static_cast<uint8_t>(API_t::reqStart), 0, 1, 0x74};
+  uint8_t buffer[30] = {static_cast<uint8_t>(API_t::reqStart),
+                        0, 0, 1,
+                        0xDE, 0xAD, 0xBE, 0xEF, 0x00,
+                        0x00, 0x00, 0x00, 0x00, 0x00,
+                        0x00, 0x00, 0x00, 0x00, 0x00,
+                        0x00, 0x00, 0x00, 0x00, 0x00,
+                        0x00, 0x00, 0x00, 0x00, 0x00,
+                        0xD2}; // CRC8
+  EXPECT_CALL(*controllerMock, getMachineType).WillOnce(Return(Machine_t::Kh910));
   EXPECT_CALL(*opKnitMock, startKnitting).Times(0);
   expect_send(true);
   com->h_reqStart(buffer, sizeof(buffer) - 1);
@@ -197,7 +218,16 @@ TEST_F(ComTest, test_reqstart_fail2) {
 
 TEST_F(ComTest, test_reqstart_success_KH910) {
   reqInit(Machine_t::Kh910);
-  uint8_t buffer[] = {static_cast<uint8_t>(API_t::reqStart), 0, 10, 1, 0x36};
+
+  uint8_t buffer[30] = {static_cast<uint8_t>(API_t::reqStart),
+                        0, 0, 1,
+                        0xDE, 0xAD, 0xBE, 0xEF, 0x00,
+                        0x00, 0x00, 0x00, 0x00, 0x00,
+                        0x00, 0x00, 0x00, 0x00, 0x00,
+                        0x00, 0x00, 0x00, 0x00, 0x00,
+                        0x00, 0x00, 0x00, 0x00, 0x00,
+                        0xD2}; // CRC8
+  EXPECT_CALL(*controllerMock, getMachineType).WillOnce(Return(Machine_t::Kh910));
   EXPECT_CALL(*opKnitMock, startKnitting);
   expect_send(true);
   com->h_reqStart(buffer, sizeof(buffer));
@@ -209,7 +239,14 @@ TEST_F(ComTest, test_reqstart_success_KH910) {
 
 TEST_F(ComTest, test_reqstart_success_KH270) {
   reqInit(Machine_t::Kh270);
-  uint8_t buffer[] = {static_cast<uint8_t>(API_t::reqStart), 0, 10, 1, 0x36};
+
+  uint8_t buffer[19] = {static_cast<uint8_t>(API_t::reqStart),
+                        0, 0, 1,
+                        0xDE, 0xAD, 0xBE, 0xEF, 0x00,
+                        0x00, 0x00, 0x00, 0x00, 0x00,
+                        0x00, 0x00, 0x00, 0x00,
+                        0xA3}; // CRC8
+  EXPECT_CALL(*controllerMock, getMachineType).WillOnce(Return(Machine_t::Kh270));
   EXPECT_CALL(*opKnitMock, startKnitting);
   expect_send(true);
   com->h_reqStart(buffer, sizeof(buffer));
@@ -348,14 +385,17 @@ TEST_F(ComTest, test_cnfline_kh910) {
   // start job
   reqInit(Machine_t::Kh910);
   opKnitMock->begin();
+  EXPECT_CALL(*controllerMock, getMachineType).WillOnce(Return(Machine_t::Kh910));
   opKnitMock->startKnitting(0, 199, pattern, false);
 
   // first call increments line number to zero, not accepted
+  EXPECT_CALL(*controllerMock, getMachineType).WillOnce(Return(Machine_t::Kh910));
   EXPECT_CALL(*opKnitMock, setNextLine).WillOnce(Return(false));
   EXPECT_CALL(*opKnitMock, setLastLine).Times(0);
   com->h_cnfLine(buffer, sizeof(buffer));
 
   // second call Line accepted, last line
+  EXPECT_CALL(*controllerMock, getMachineType).WillOnce(Return(Machine_t::Kh910));
   EXPECT_CALL(*opKnitMock, setNextLine).WillOnce(Return(true));
   EXPECT_CALL(*opKnitMock, setLastLine).Times(1);
   com->h_cnfLine(buffer, sizeof(buffer));
@@ -363,16 +403,19 @@ TEST_F(ComTest, test_cnfline_kh910) {
   // not last line
   buffer[3] = 0x00;
   buffer[29] = 0xC0;
+  EXPECT_CALL(*controllerMock, getMachineType).WillOnce(Return(Machine_t::Kh910));
   EXPECT_CALL(*opKnitMock, setNextLine).WillOnce(Return(true));
   EXPECT_CALL(*opKnitMock, setLastLine).Times(0);
   com->h_cnfLine(buffer, sizeof(buffer));
 
   // checksum wrong
+  EXPECT_CALL(*controllerMock, getMachineType).WillOnce(Return(Machine_t::Kh910));
   EXPECT_CALL(*opKnitMock, setNextLine).Times(0);
   buffer[29]--;
   com->h_cnfLine(buffer, sizeof(buffer));
 
   // not enough bytes in buffer
+  EXPECT_CALL(*controllerMock, getMachineType).WillOnce(Return(Machine_t::Kh910));
   EXPECT_CALL(*opKnitMock, setNextLine).Times(0);
   com->h_cnfLine(buffer, sizeof(buffer) - 1);
 
@@ -380,7 +423,6 @@ TEST_F(ComTest, test_cnfline_kh910) {
   ASSERT_TRUE(Mock::VerifyAndClear(opKnitMock));
 }
 
-/*
 TEST_F(ComTest, test_cnfline_kh270) {
   // dummy pattern
   uint8_t pattern[] = {1};
@@ -388,24 +430,25 @@ TEST_F(ComTest, test_cnfline_kh270) {
   // message for KH270
   // CRC8 calculated with
   // http://tomeko.net/online_tools/crc8.php?lang=en
-  uint8_t buffer[20] = {static_cast<uint8_t>(API_t::cnfLine),
+  uint8_t buffer[19] = {static_cast<uint8_t>(API_t::cnfLine),
                         0, 0, 1,
                         0xDE, 0xAD, 0xBE, 0xEF, 0x00,
                         0x00, 0x00, 0x00, 0x00, 0x00,
-                        0x00, 0x00, 0x00, 0x00, 0x00,
-                        0xA7}; // CRC8
+                        0x00, 0x00, 0x00, 0x00,
+                        0xC4}; // CRC8
 
   // start job
   reqInit(Machine_t::Kh270);
   opKnitMock->begin();
+  EXPECT_CALL(*controllerMock, getMachineType).WillOnce(Return(Machine_t::Kh270));
   opKnitMock->startKnitting(0, 113, pattern, false);
 
   // Last line accepted
+  EXPECT_CALL(*controllerMock, getMachineType).WillOnce(Return(Machine_t::Kh270));
   EXPECT_CALL(*opKnitMock, setNextLine).WillOnce(Return(true));
   EXPECT_CALL(*opKnitMock, setLastLine).Times(1);
   com->h_cnfLine(buffer, sizeof(buffer));
 }
-*/
 
 /*
 TEST_F(ComTest, test_debug) {

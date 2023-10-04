@@ -64,10 +64,12 @@ enum class ErrorCode : unsigned char {
   No_beltshift = 0x23,
 
   // machine in wrong FSM state
-  Machine_state_init = 0xE0,
-  Machine_state_ready = 0xE1,
-  Machine_state_knit = 0xE2,
-  Machine_state_test = 0xE3,
+  Machine_state_idle = 0xE0,
+  Machine_state_init = 0xE1,
+  Machine_state_ready = 0xE2,
+  Machine_state_knit = 0xE3,
+  Machine_state_test = 0xE4,
+  Machine_state_error = 0xE5,
   Wrong_machine_state = 0xEF,
 
   // generic error codes

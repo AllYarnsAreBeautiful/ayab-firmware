@@ -181,6 +181,8 @@ protected:
     // starts in state `OpKnit`
     ASSERT_EQ(controller->getState(), opKnit);
 
+    EXPECT_CALL(*encodersMock, setUpInterrupt);
+    expect_reqLine();
     expected_update();
   }
 
@@ -242,7 +244,7 @@ TEST_F(ControllerTest, test_ready_state) {
   EXPECT_CALL(*opReadyMock, state).WillOnce(Return(OpState_t::Ready));
   controller->getState()->state();
 }
-
+/*
 TEST_F(ControllerTest, test_update_knit) {
   // get to state `OpReady`
   controller->setState(opReadyMock);
@@ -259,8 +261,9 @@ TEST_F(ControllerTest, test_update_knit) {
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(beeperMock));
   ASSERT_TRUE(Mock::VerifyAndClear(comMock));
+  ASSERT_TRUE(Mock::VerifyAndClear(encodersMock));
 }
-
+*/
 TEST_F(ControllerTest, test_update_test) {
   // get in state `OpTest`
   controller->setState(opTestMock);

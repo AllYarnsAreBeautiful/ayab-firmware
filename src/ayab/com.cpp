@@ -199,15 +199,17 @@ void Com::h_reqInit(const uint8_t *buffer, size_t size) {
  * \param size The number of bytes in the data buffer.
  */
 void Com::h_reqStart(const uint8_t *buffer, size_t size) {
-  if (size < 5U) {
-    // Need 5 bytes from buffer below.
+  auto machineType = static_cast<uint8_t>(GlobalController::getMachineType());
+  uint8_t lenLineBuffer = LINE_BUFFER_LEN[machineType];
+  if (size < lenLineBuffer + 5U) {
+    // Buffer size is too small.
     send_cnfStart(Err_t::Expected_longer_message);
     return;
   }
 
-  uint8_t crc8 = buffer[4];
-  // Check crc on bytes 0-4 of buffer.
-  if (crc8 != CRC8(buffer, 4)) {
+  uint8_t crc8 = buffer[lenLineBuffer + 4];
+  // Check crc on contents of buffer.
+  if (crc8 != CRC8(buffer, lenLineBuffer + 4)) {
     send_cnfStart(Err_t::Checksum_error);
     return;
   }
@@ -217,8 +219,14 @@ void Com::h_reqStart(const uint8_t *buffer, size_t size) {
   auto continuousReportingEnabled = static_cast<bool>(buffer[3] & 1);
   auto beeperEnabled = static_cast<bool>(buffer[3] & 2);
 
-  GlobalBeeper::init(beeperEnabled);
+  // copy first line of pattern into `lineBuffer`
   memset(lineBuffer, 0xFF, MAX_LINE_BUFFER_LEN);
+  for (uint8_t i = 0U; i < lenLineBuffer; i++) {
+    // Values have to be inverted because of needle states
+    lineBuffer[i] = ~buffer[i + 4];
+  }
+
+  GlobalBeeper::init(beeperEnabled);
 
   // Note (August 2020): the return value of this function has changed.
   // Previously, it returned `true` for success and `false` for failure.
@@ -247,15 +255,6 @@ void Com::h_cnfLine(const uint8_t *buffer, size_t size) {
     return;
   }
 
-  uint8_t lineNumber = buffer[1];
-  /* uint8_t color = buffer[2];  */ // currently unused
-  uint8_t flags = buffer[3];
-
-  for (uint8_t i = 0U; i < lenLineBuffer; i++) {
-    // Values have to be inverted because of needle states
-    lineBuffer[i] = ~buffer[i + 4];
-  }
-
   uint8_t crc8 = buffer[lenLineBuffer + 4];
   // Calculate checksum of buffer contents
   if (crc8 != CRC8(buffer, lenLineBuffer + 4)) {
@@ -264,9 +263,20 @@ void Com::h_cnfLine(const uint8_t *buffer, size_t size) {
     return;
   }
 
+  uint8_t lineNumber = buffer[1];
+  /* uint8_t color = buffer[2];  */ // currently unused
+  uint8_t flags = buffer[3];
+
+  bool flagLastLine = bitRead(flags, 0U);
+  if (!flagLastLine) {
+    for (uint8_t i = 0U; i < lenLineBuffer; i++) {
+      // Values have to be inverted because of needle states
+      lineBuffer[i] = ~buffer[i + 4];
+    }
+  }
+
   if (GlobalOpKnit::setNextLine(lineNumber)) {
     // Line was accepted
-    bool flagLastLine = bitRead(flags, 0U);
     if (flagLastLine) {
       GlobalOpKnit::setLastLine();
     }

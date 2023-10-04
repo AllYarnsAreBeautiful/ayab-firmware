@@ -318,12 +318,10 @@ TEST_F(OpKnitTest, test_init_machine) {
 
 TEST_F(OpKnitTest, test_startKnitting_NoMachine) {
   uint8_t pattern[] = {1};
+  get_to_ready(Machine_t::NoMachine);
   Machine_t m = controller->getMachineType();
   ASSERT_EQ(m, Machine_t::NoMachine);
-
-  opKnit->begin();
-  ASSERT_TRUE(
-      opKnit->startKnitting(0, NUM_NEEDLES[static_cast<uint8_t>(m)] - 1, pattern, false) != Err_t::Success);
+  ASSERT_EQ(opKnit->startKnitting(0, 99, pattern, false), Err_t::No_machine_type);
 }
 
 TEST_F(OpKnitTest, test_startKnitting_Kh910) {
@@ -628,9 +626,7 @@ TEST_F(OpKnitTest, test_knit_new_line) {
 
 TEST_F(OpKnitTest, test_calculatePixelAndSolenoid) {
   // Initialize KH910
-  expected_init_machine(Machine_t::Kh910);
-  controller->setState(opKnit);
-  expected_update_init();
+  get_to_knit(Machine_t::Kh910);
 
   // No direction
   // Lace carriage, no direction, need to change position to enter test

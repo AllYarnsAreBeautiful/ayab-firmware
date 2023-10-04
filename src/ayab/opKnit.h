@@ -24,6 +24,7 @@
 #ifndef OP_KNIT_H_
 #define OP_KNIT_H_
 
+#include "com.h"
 #include "controller.h"
 #include "encoders.h"
 
@@ -92,6 +93,7 @@ public:
 private:
   void reqLine(uint8_t lineNumber);
   bool calculatePixelAndSolenoid();
+  void copyBuffer();
 
   // job parameters
   uint8_t m_startNeedle;
@@ -103,12 +105,12 @@ private:
   bool m_lineRequested;
   uint8_t m_currentLineNumber;
   bool m_lastLineFlag;
-
   uint8_t m_sOldPosition;
   bool m_workedOnLine;
 #ifdef DBG_NOMACHINE
   bool m_prevState;
 #endif
+  uint8_t m_currentLineBuffer[MAX_LINE_BUFFER_LEN] = {0};
 
   // resulting needle data
   uint8_t m_solenoidToSet;
