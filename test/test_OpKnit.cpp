@@ -225,14 +225,7 @@ protected:
     controller->update();
   }
 
-  void expected_update_knit(bool first) {
-    if (first) {
-      get_to_knit(Machine_t::Kh910);
-      expect_first_knit();
-      //EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, HIGH)); // green LED on
-      expected_update();
-      return;
-    }
+  void expected_update_knit() {
     ASSERT_EQ(controller->getState(), opKnit);
     //EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, HIGH)); // green LED on
     expected_update();
@@ -377,15 +370,15 @@ TEST_F(OpKnitTest, test_startKnitting_failures) {
 }
 
 TEST_F(OpKnitTest, test_setNextLine) {
+  get_to_knit(Machine_t::Kh910);
+
   // set `m_lineRequested`
   ASSERT_EQ(opKnit->setNextLine(1), false);
-
-  expected_update_knit(true);
 
   // outside of the active needles
   expected_cacheISR(NUM_NEEDLES[static_cast<uint8_t>(Machine_t::Kh910)] + END_OF_LINE_OFFSET_R[static_cast<uint8_t>(Machine_t::Kh910)] + 1 + opKnit->getStartOffset(Direction_t::Left));
   EXPECT_CALL(*solenoidsMock, setSolenoid).Times(1);
-  expected_update_knit(false);
+  expected_update_knit();
 
   // wrong line number
   EXPECT_CALL(*beeperMock, finishedLine).Times(0);
@@ -418,30 +411,31 @@ TEST_F(OpKnitTest, test_knit_Kh910) {
   const uint8_t STOP_NEEDLE = NUM_NEEDLES[static_cast<uint8_t>(Machine_t::Kh910)] - 1;
   opKnit->startKnitting(START_NEEDLE, STOP_NEEDLE, pattern, true);
   //EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, LOW)); // green LED off
-  expected_update();
-
-  // first knit
   expect_first_knit();
-  expect_indState();
-  expected_update_knit(false);
+  expected_update();
 
   // no useful position calculated by `calculatePixelAndSolenoid()`
   expected_cacheISR(100, Direction_t::NoDirection, Direction_t::Right, BeltShift::Shifted, Carriage_t::Knit);
   EXPECT_CALL(*solenoidsMock, setSolenoid).Times(0);
   expect_indState();
-  expected_update_knit(false);
+  expected_update_knit();
 
   // don't set `m_workedonline` to `true`
   const uint8_t OFFSET = END_OF_LINE_OFFSET_R[static_cast<uint8_t>(Machine_t::Kh910)];
   expected_cacheISR(8 + STOP_NEEDLE + OFFSET);
   EXPECT_CALL(*solenoidsMock, setSolenoid);
   expect_indState();
-  expected_update_knit(false);
+  expected_update_knit();
 
   expected_cacheISR(START_NEEDLE);
   EXPECT_CALL(*solenoidsMock, setSolenoid);
   expect_indState();
-  expected_update_knit(false);
+  expected_update_knit();
+
+  // cancel
+  EXPECT_CALL(*comMock, h_quitCmd);
+  const uint8_t buffer[] = {static_cast<uint8_t>(API_t::quitCmd)};
+  opKnit->com(buffer, 1);
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
@@ -462,36 +456,32 @@ TEST_F(OpKnitTest, test_knit_Kh270) {
   const uint8_t STOP_NEEDLE = NUM_NEEDLES[static_cast<uint8_t>(Machine_t::Kh270)] - 1;
   opKnit->startKnitting(START_NEEDLE, STOP_NEEDLE, pattern, true);
   //EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, LOW));
+  expect_first_knit();
   expected_update();
 
   // first knit
-  expect_first_knit();
-  expect_indState();
-  expected_update_knit(false);
-
-  // second knit
   expected_cacheISR(START_NEEDLE);
   expect_indState();
   EXPECT_CALL(*solenoidsMock, setSolenoid);
-  expected_update_knit(false);
+  expected_update_knit();
 
   // no useful position calculated by `calculatePixelAndSolenoid()`
   expected_cacheISR(60, Direction_t::NoDirection, Direction_t::Right, BeltShift::Shifted, Carriage_t::Knit);
   EXPECT_CALL(*solenoidsMock, setSolenoid).Times(0);
   expect_indState();
-  expected_update_knit(false);
+  expected_update_knit();
 
   // don't set `m_workedonline` to `true`
   const uint8_t OFFSET = END_OF_LINE_OFFSET_R[static_cast<uint8_t>(Machine_t::Kh270)];
   expected_cacheISR(8 + STOP_NEEDLE + OFFSET, Direction_t::Right, Direction_t::Left, BeltShift::Regular, Carriage_t::Knit);
   EXPECT_CALL(*solenoidsMock, setSolenoid);
   expect_indState();
-  expected_update_knit(false);
+  expected_update_knit();
 
   expected_cacheISR(START_NEEDLE, Direction_t::Right, Direction_t::Left, BeltShift::Regular, Carriage_t::Knit);
   EXPECT_CALL(*solenoidsMock, setSolenoid);
   expect_indState();
-  expected_update_knit(false);
+  expected_update_knit();
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
@@ -501,19 +491,21 @@ TEST_F(OpKnitTest, test_knit_Kh270) {
 }
 
 TEST_F(OpKnitTest, test_knit_line_request) {
+  get_to_knit(Machine_t::Kh910);
+
   // `m_workedOnLine` is set to `true`
-  expected_update_knit(true);
+  expected_update_knit();
 
   // Position has changed since last call to operate function
   // `m_pixelToSet` is set above `m_stopNeedle` + END_OF_LINE_OFFSET_R
   expected_cacheISR(NUM_NEEDLES[static_cast<uint8_t>(Machine_t::Kh910)] + 8 + END_OF_LINE_OFFSET_R[static_cast<uint8_t>(Machine_t::Kh910)] + 1);
 
   EXPECT_CALL(*solenoidsMock, setSolenoid);
-  expected_update_knit(false);
+  expected_update_knit();
 
   // no change in position, no action.
   EXPECT_CALL(*solenoidsMock, setSolenoid).Times(0);
-  expected_update_knit(false);
+  expected_update_knit();
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
@@ -523,13 +515,14 @@ TEST_F(OpKnitTest, test_knit_line_request) {
 }
 
 TEST_F(OpKnitTest, test_knit_lastLine) {
-  expected_update_knit(true);
+  get_to_knit(Machine_t::Kh910);
+  expected_update_knit();
 
   // Run one knit inside the working needles.
   EXPECT_CALL(*solenoidsMock, setSolenoid);
   expected_cacheISR(opKnit->getStartOffset(Direction_t::Left) + 20);
   // `m_workedOnLine` is set to true
-  expected_update_knit(false);
+  expected_update_knit();
 
   // Position has changed since last call to operate function
   // `m_pixelToSet` is above `m_stopNeedle` + END_OF_LINE_OFFSET_R
@@ -542,7 +535,7 @@ TEST_F(OpKnitTest, test_knit_lastLine) {
   EXPECT_CALL(*beeperMock, endWork);
   EXPECT_CALL(*solenoidsMock, setSolenoids(SOLENOIDS_BITMASK));
   //EXPECT_CALL(*beeperMock, finishedLine);
-  expected_update_knit(false);
+  expected_update_knit();
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
@@ -552,13 +545,14 @@ TEST_F(OpKnitTest, test_knit_lastLine) {
 }
 
 TEST_F(OpKnitTest, test_knit_lastLine_and_no_req) {
-  expected_update_knit(true);
+  get_to_knit(Machine_t::Kh910);
+  expected_update_knit();
 
   // Run one knit inside the working needles.
   EXPECT_CALL(*solenoidsMock, setSolenoid);
   expected_cacheISR(opKnit->getStartOffset(Direction_t::Left) + 20);
   // `m_workedOnLine` is set to true
-  expected_update_knit(false);
+  expected_update_knit();
 
   // Position has changed since last call to operate function
   // `m_pixelToSet` is above `m_stopNeedle` + END_OF_LINE_OFFSET_R
@@ -575,7 +569,7 @@ TEST_F(OpKnitTest, test_knit_lastLine_and_no_req) {
   EXPECT_CALL(*beeperMock, endWork);
   EXPECT_CALL(*solenoidsMock, setSolenoids(SOLENOIDS_BITMASK));
   //EXPECT_CALL(*beeperMock, finishedLine);
-  expected_update_knit(false);
+  expected_update_knit();
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
@@ -585,11 +579,12 @@ TEST_F(OpKnitTest, test_knit_lastLine_and_no_req) {
 }
 
 TEST_F(OpKnitTest, test_knit_same_position) {
-  expected_update_knit(true);
+  get_to_knit(Machine_t::Kh910);
+  expected_update_knit();
 
   // no call to `setSolenoid()` since position was the same
   EXPECT_CALL(*solenoidsMock, setSolenoid).Times(0);
-  expected_update_knit(false);
+  expected_update_knit();
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
@@ -599,14 +594,16 @@ TEST_F(OpKnitTest, test_knit_same_position) {
 }
 
 TEST_F(OpKnitTest, test_knit_new_line) {
+  get_to_knit(Machine_t::Kh910);
+
   // _workedOnLine is set to true
-  expected_update_knit(true);
+  expected_update_knit();
 
   // Run one knit inside the working needles.
   EXPECT_CALL(*solenoidsMock, setSolenoid);
   expected_cacheISR(opKnit->getStartOffset(Direction_t::Left) + 20);
   // `m_workedOnLine` is set to true
-  expected_update_knit(false);
+  expected_update_knit();
 
   // Position has changed since last call to operate function
   // `m_pixelToSet` is above `m_stopNeedle` + END_OF_LINE_OFFSET_R
@@ -620,7 +617,7 @@ TEST_F(OpKnitTest, test_knit_new_line) {
 
   // `reqLine()` is called which calls `send_reqLine()`
   expect_reqLine();
-  expected_update_knit(false);
+  expected_update_knit();
 
   // test expectations without destroying instance
   ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));

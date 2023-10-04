@@ -36,13 +36,6 @@
 #include "opReady.h"
 #include "opKnit.h"
 
-#ifdef CLANG_TIDY
-// clang-tidy doesn't find these macros for some reason,
-// no problem when building or testing though.
-constexpr uint8_t UINT8_MAX = 0xFFU;
-constexpr uint16_t UINT16_MAX = 0xFFFFU;
-#endif
-
 /*!
  * \brief enum OpState
  * \return OpState_t::Knit
@@ -69,7 +62,6 @@ void OpKnit::init() {
   m_currentLineNumber = 0U;
   m_lastLineFlag = false;
   m_sOldPosition = 0U;
-  m_firstRun = true;
   m_workedOnLine = false;
 #ifdef DBG_NOMACHINE
   m_prevState = false;
@@ -85,6 +77,12 @@ void OpKnit::init() {
 void OpKnit::begin() {
   GlobalEncoders::init(GlobalController::getMachineType());
   GlobalEncoders::setUpInterrupt();
+
+  // first run
+  // TODO(who?): optimize delay for various Arduino models
+  delay(START_KNITTING_DELAY);
+  GlobalBeeper::finishedLine();
+  reqLine(0);
 }
 
 /*!
@@ -107,7 +105,11 @@ void OpKnit::com(const uint8_t *buffer, size_t size) {
     GlobalCom::h_reqTest();
     break;
 
-  // FIXME needs to be a `Cancel` command in the API that resets state from `OpKnit` to `OpInit`
+  // Resets state from `OpKnit` to `OpInit`
+  case static_cast<uint8_t>(API_t::quitCmd):
+    GlobalCom::h_quitCmd();
+    break;
+
   default:
     GlobalCom::h_unrecognized();
     break;
@@ -154,8 +156,7 @@ Err_t OpKnit::startKnitting(uint8_t startNeedle,
   m_continuousReportingEnabled = continuousReportingEnabled;
 
   // reset variables to start conditions
-  m_currentLineNumber = UINT8_MAX; // because counter will
-                                   // be incremented before request
+  m_currentLineNumber = 0;
   m_lineRequested = false;
   m_lastLineFlag = false;
 
@@ -171,15 +172,6 @@ Err_t OpKnit::startKnitting(uint8_t startNeedle,
  * \brief Function that is repeatedly called during state `OpKnit`
  */
 void OpKnit::knit() {
-  if (m_firstRun) {
-    m_firstRun = false;
-    // TODO(who?): optimize delay for various Arduino models
-    delay(START_KNITTING_DELAY);
-    GlobalBeeper::finishedLine();
-    ++m_currentLineNumber;
-    reqLine(m_currentLineNumber);
-  }
-
 #ifdef DBG_NOMACHINE
   // TODO(who?): check if debounce is needed
   bool state = digitalRead(DBG_BTN_PIN);

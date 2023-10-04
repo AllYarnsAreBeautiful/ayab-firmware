@@ -105,7 +105,6 @@ private:
   bool m_lastLineFlag;
 
   uint8_t m_sOldPosition;
-  bool m_firstRun;
   bool m_workedOnLine;
 #ifdef DBG_NOMACHINE
   bool m_prevState;

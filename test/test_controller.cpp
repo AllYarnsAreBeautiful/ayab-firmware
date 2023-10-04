@@ -170,6 +170,7 @@ protected:
     ASSERT_EQ(controller->getState(), opReadyMock);
 
     EXPECT_CALL(*opReadyMock, update);
+    expect_first_knit();
     expected_update();
 
     // test expectations without destroying instance
@@ -253,7 +254,6 @@ TEST_F(ControllerTest, test_update_knit) {
   ASSERT_EQ(controller->getState(), opKnit);
 
   // now in state `OpKnit`
-  expect_first_knit();
   expected_update_knit();
 
   // test expectations without destroying instance

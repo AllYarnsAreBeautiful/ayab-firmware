@@ -47,7 +47,7 @@ OpState_t OpError::state() {
 void OpError::begin() {
   m_flash = false;
   m_flashTime = millis();
-  m_error = Err_t::Success; // FIXME use other nonzero error code
+  m_error = Err_t::Fatal_error;
 }
 
 /*!
