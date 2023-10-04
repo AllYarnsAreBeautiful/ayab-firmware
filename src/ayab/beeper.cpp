@@ -29,24 +29,87 @@
 #include "board.h"
 
 /*!
+ * Initialize beeper
+ */
+void Beeper::init(bool enabled) {
+  m_currentState = BeepState::Idle;
+  m_enabled = enabled;
+}
+
+/*!
+ * Get beeper enabled flag
+ */
+bool Beeper::enabled() {
+  return m_enabled;
+}
+
+/*!
+ * Get beeper state
+ */
+BeepState Beeper::getState() {
+  return m_currentState;
+}
+
+/*!
  * Beep to indicate readiness
  */
 void Beeper::ready() {
-  beep(BEEP_NUM_READY);
+  if (m_enabled) {
+    beep(BEEP_NUM_READY);
+  }
 }
 
 /*!
  * Beep to indicate the end of a line
  */
 void Beeper::finishedLine() {
-  beep(BEEP_NUM_FINISHEDLINE);
+  if (m_enabled) {
+    beep(BEEP_NUM_FINISHEDLINE);
+  }
 }
 
 /*!
  * Beep to indicate the end the knitting pattern
  */
 void Beeper::endWork() {
-  beep(BEEP_NUM_ENDWORK);
+  if (m_enabled) {
+    beep(BEEP_NUM_ENDWORK);
+  }
+}
+
+/*!
+ * Beep handler scheduled from main loop
+ */
+void Beeper::update() {
+  long unsigned int now = millis();
+  switch (m_currentState) {
+  case BeepState::On:
+    analogWrite(PIEZO_PIN, BEEP_ON_DUTY);
+    m_currentState = BeepState::Wait;
+    m_nextState = BeepState::Off;
+    m_nextTime = now + BEEP_DELAY;
+    break;
+  case BeepState::Off:
+    analogWrite(PIEZO_PIN, BEEP_OFF_DUTY);
+    m_currentState = BeepState::Wait;
+    m_nextState = BeepState::On;
+    m_nextTime = now + BEEP_DELAY;
+    m_repeat--;
+    break;
+  case BeepState::Wait:
+    if (now >= m_nextTime) {
+      if (m_repeat == 0) {
+        analogWrite(PIEZO_PIN, BEEP_NO_DUTY);
+        m_currentState = BeepState::Idle;
+      } else {
+        m_currentState = m_nextState;
+      }
+    }
+    break;
+  case BeepState::Idle:
+  default: // GCOVR_EXCL_LINE
+    break;
+  }
 }
 
 /* Private Methods */
@@ -54,18 +117,11 @@ void Beeper::endWork() {
 /*!
  * Generic beep function.
  *
- * /param length number of beeps
+ * /param repeats number of beeps
  */
-void Beeper::beep(uint8_t length) const {
-
-  for (uint8_t i = 0U; i < length; ++i) {
-
-    analogWrite(PIEZO_PIN, BEEP_ON_DUTY);
-    delay(BEEP_DELAY);
-
-    analogWrite(PIEZO_PIN, BEEP_OFF_DUTY);
-    delay(BEEP_DELAY);
-  }
-
-  analogWrite(PIEZO_PIN, BEEP_NO_DUTY);
+void Beeper::beep(uint8_t repeats) {
+  m_repeat = repeats;
+  m_currentState = BeepState::Wait;
+  m_nextState = BeepState::On;
+  m_nextTime = millis();
 }

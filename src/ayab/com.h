@@ -17,7 +17,7 @@
  *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
  *
  *    Original Work Copyright 2013 Christian Obersteiner, Andreas Müller
- *    Modified Work Copyright 2020 Sturla Lange, Tom Price
+ *    Modified Work Copyright 2020-3 Sturla Lange, Tom Price
  *    http://ayab-knitting.com
  */
 
@@ -27,8 +27,7 @@
 #include <Arduino.h>
 #include <PacketSerial.h>
 
-#include "encoders.h"
-#include "fsm.h"
+#include "op.h"
 
 #ifndef AYAB_TESTS
   #include "version.h"
@@ -72,7 +71,7 @@ enum class AYAB_API : unsigned char {
   testRes = 0xEE,
   debug = 0x9F
 };
-using AYAB_API_t = enum AYAB_API;
+using API_t = enum AYAB_API;
 
 // API constants
 constexpr uint8_t INDSTATE_LEN = 10U;
@@ -85,14 +84,21 @@ public:
   // any methods that need to be mocked should go here
   virtual void init() = 0;
   virtual void update() = 0;
+  virtual uint8_t CRC8(const uint8_t *buffer, size_t len) const = 0;
   virtual void send(uint8_t *payload, size_t length) const = 0;
-  virtual void sendMsg(AYAB_API_t id, const char *msg) = 0;
-  virtual void sendMsg(AYAB_API_t id, char *msg) = 0;
-  virtual void send_reqLine(const uint8_t lineNumber,
-                            Err_t error = ErrorCode::success) const = 0;
-  virtual void send_indState(Carriage_t carriage, uint8_t position,
-                             Err_t error = ErrorCode::success) const = 0;
+  virtual void sendMsg(API_t id, const char *msg) = 0;
+  virtual void sendMsg(API_t id, char *msg) = 0;
+  virtual void send_reqLine(const uint8_t lineNumber, Err_t error = Err_t::Success) const = 0;
+  virtual void send_indState(Err_t error) const = 0;
   virtual void onPacketReceived(const uint8_t *buffer, size_t size) = 0;
+
+  virtual void h_reqInit(const uint8_t *buffer, size_t size) = 0;
+  virtual void h_reqStart(const uint8_t *buffer, size_t size) = 0;
+  virtual void h_cnfLine(const uint8_t *buffer, size_t size) = 0;
+  virtual void h_reqInfo() const = 0;
+  virtual void h_reqTest() const = 0;
+  virtual void h_quitCmd() const = 0;
+  virtual void h_unrecognized() const = 0;
 };
 
 // Container class for the static methods that implement the serial API.
@@ -111,47 +117,51 @@ public:
 
   static void init();
   static void update();
+  static uint8_t CRC8(const uint8_t *buffer, size_t len);
   static void send(uint8_t *payload, size_t length);
-  static void sendMsg(AYAB_API_t id, const char *msg);
-  static void sendMsg(AYAB_API_t id, char *msg);
-  static void send_reqLine(const uint8_t lineNumber, Err_t error = ErrorCode::success);
-  static void send_indState(Carriage_t carriage, uint8_t position,
-                             Err_t error = ErrorCode::success);
+  static void sendMsg(API_t id, const char *msg);
+  static void sendMsg(API_t id, char *msg);
+  static void send_reqLine(const uint8_t lineNumber, Err_t error = Err_t::Success);
+  static void send_indState(Err_t error = Err_t::Success);
   static void onPacketReceived(const uint8_t *buffer, size_t size);
 
-private:
-  static SLIPPacketSerial m_packetSerial;
+  static void h_reqInit(const uint8_t *buffer, size_t size);
+  static void h_reqStart(const uint8_t *buffer, size_t size);
+  static void h_cnfLine(const uint8_t *buffer, size_t size);
+  static void h_reqInfo();
+  static void h_reqTest();
+  static void h_quitCmd();
+  static void h_unrecognized();
 };
 
 class Com : public ComInterface {
 public:
   void init() final;
   void update() final;
+  uint8_t CRC8(const uint8_t *buffer, size_t len) const final;
   void send(uint8_t *payload, size_t length) const final;
-  void sendMsg(AYAB_API_t id, const char *msg) final;
-  void sendMsg(AYAB_API_t id, char *msg) final;
-  void send_reqLine(const uint8_t lineNumber, Err_t error = ErrorCode::success) const final;
-  void send_indState(Carriage_t carriage, uint8_t position,
-                             Err_t error = ErrorCode::success) const final;
+  void sendMsg(API_t id, const char *msg) final;
+  void sendMsg(API_t id, char *msg) final;
+  void send_reqLine(const uint8_t lineNumber, Err_t error = Err_t::Success) const final;
+  void send_indState(Err_t error = Err_t::Success) const final;
   void onPacketReceived(const uint8_t *buffer, size_t size) final;
 
+  void h_reqInit(const uint8_t *buffer, size_t size) final;
+  void h_reqStart(const uint8_t *buffer, size_t size) final;
+  void h_cnfLine(const uint8_t *buffer, size_t size) final;
+  void h_reqInfo() const final;
+  void h_reqTest() const final;
+  void h_quitCmd() const final;
+  void h_unrecognized() const final;
+
 private:
-  SLIPPacketSerial m_packetSerial;
   uint8_t lineBuffer[MAX_LINE_BUFFER_LEN] = {0};
   uint8_t msgBuffer[MAX_MSG_BUFFER_LEN] = {0};
-
-  void h_reqInit(const uint8_t *buffer, size_t size);
-  void h_reqStart(const uint8_t *buffer, size_t size);
-  void h_cnfLine(const uint8_t *buffer, size_t size);
-  void h_reqInfo() const;
-  void h_reqTest(const uint8_t *buffer, size_t size) const;
-  void h_unrecognized() const;
 
   void send_cnfInfo() const;
   void send_cnfInit(Err_t error) const;
   void send_cnfStart(Err_t error) const;
   void send_cnfTest(Err_t error) const;
-  uint8_t CRC8(const uint8_t *buffer, size_t len) const;
 };
 
 #endif // COM_H_
