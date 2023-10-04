@@ -19,13 +19,21 @@
  *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
  *
  *    Original Work Copyright 2013 Christian Obersteiner, Andreas Müller
- *    Modified Work Copyright 2020 Sturla Lange, Tom Price
+ *    Modified Work Copyright 2020-3 Sturla Lange, Tom Price
  *    http://ayab-knitting.com
  */
 
 #include "beeper.h"
 
 // static member functions
+
+void GlobalBeeper::init(bool enabled) {
+  m_instance->init(enabled);
+}
+
+void GlobalBeeper::update() {
+  m_instance->update();
+}
 
 void GlobalBeeper::ready() {
   m_instance->ready();
@@ -37,4 +45,12 @@ void GlobalBeeper::finishedLine() {
 
 void GlobalBeeper::endWork() {
   m_instance->endWork();
+}
+
+BeepState GlobalBeeper::getState() {
+  return m_instance->getState();
+}
+
+bool GlobalBeeper::enabled() {
+  return m_instance->enabled();
 }
