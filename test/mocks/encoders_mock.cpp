@@ -44,14 +44,29 @@ void Encoders::init(Machine_t machineType) {
   return gEncodersMock->init(machineType);
 }
 
-void Encoders::encA_interrupt() {
+void Encoders::setUpInterrupt() {
   assert(gEncodersMock != nullptr);
-  gEncodersMock->encA_interrupt();
+  gEncodersMock->setUpInterrupt();
 }
 
-uint8_t Encoders::getPosition() {
+void Encoders::isr() {
   assert(gEncodersMock != nullptr);
-  return gEncodersMock->getPosition();
+  gEncodersMock->isr();
+}
+
+void Encoders::hallLeftCallback(uint16_t hallValue, void *data) {
+  assert(gEncodersMock != nullptr);
+  gEncodersMock->hallLeftCallback(hallValue, data);
+}
+
+void Encoders::hallRightCallback(uint16_t hallValue, void *data) {
+  assert(gEncodersMock != nullptr);
+  gEncodersMock->hallRightCallback(hallValue, data);
+}
+
+uint16_t Encoders::getHallValue(Direction_t dir) {
+  assert(gEncodersMock != nullptr);
+  return gEncodersMock->getHallValue(dir);
 }
 
 BeltShift_t Encoders::getBeltShift() {
@@ -64,11 +79,6 @@ Direction_t Encoders::getDirection() {
   return gEncodersMock->getDirection();
 }
 
-Direction_t Encoders::getHallActive() {
-  assert(gEncodersMock != nullptr);
-  return gEncodersMock->getHallActive();
-}
-
 Carriage_t Encoders::getCarriage() {
   assert(gEncodersMock != nullptr);
   return gEncodersMock->getCarriage();
@@ -79,7 +89,13 @@ Machine_t Encoders::getMachineType() {
   return gEncodersMock->getMachineType();
 }
 
-uint16_t Encoders::getHallValue(Direction_t dir) {
+Direction_t Encoders::getHallActive() {
   assert(gEncodersMock != nullptr);
-  return gEncodersMock->getHallValue(dir);
+  return gEncodersMock->getHallActive();
 }
+
+uint8_t Encoders::getPosition() {
+  assert(gEncodersMock != nullptr);
+  return gEncodersMock->getPosition();
+}
+

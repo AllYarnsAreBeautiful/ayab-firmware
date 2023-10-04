@@ -17,7 +17,7 @@
  *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
  *
  *    Original Work Copyright 2013 Christian Obersteiner, Andreas Müller
- *    Modified Work Copyright 2020 Sturla Lange, Tom Price
+ *    Modified Work Copyright 2020-3 Sturla Lange, Tom Price
  *    http://ayab-knitting.com
  */
 
@@ -26,7 +26,9 @@
 
 #include <Arduino.h>
 
-constexpr uint8_t BEEP_DELAY = 50U; // ms
+enum class BeepState : unsigned char {Idle, Wait, On, Off};
+
+constexpr unsigned int BEEP_DELAY = 50U; // ms
 
 constexpr uint8_t BEEP_NUM_READY = 5U;
 constexpr uint8_t BEEP_NUM_FINISHEDLINE = 3U;
@@ -41,13 +43,17 @@ public:
   virtual ~BeeperInterface() = default;
 
   // any methods that need to be mocked should go here
+  virtual void init(bool enabled) = 0;
+  virtual void update() = 0;
   virtual void ready() = 0;
   virtual void finishedLine() = 0;
   virtual void endWork() = 0;
+  virtual BeepState getState() = 0;
+  virtual bool enabled() = 0;
 };
 
 // Container class for the static methods that control the beeper.
-// Dependency injection is enabled using a pointer to a global instance of
+// Dependency injection is enabled using a reference to a global instance of
 // either `Beeper` or `BeeperMock`, both of which classes implement the
 // pure virtual methods of `BeeperInterface`.
 
@@ -57,12 +63,16 @@ private:
   GlobalBeeper() = default;
 
 public:
-  // pointer to global instance whose methods are implemented
-  static BeeperInterface *m_instance;
+  // reference to global instance whose methods are implemented
+  static BeeperInterface& m_instance;
 
+  static void init(bool enabled);
+  static void update();
   static void ready();
   static void finishedLine();
   static void endWork();
+  static BeepState getState();
+  static bool enabled();
 };
 
 /*!
@@ -70,12 +80,22 @@ public:
  */
 class Beeper : public BeeperInterface {
 public:
+  void init(bool enabled) final;
+  void update() final;
   void ready() final;
   void finishedLine() final;
   void endWork() final;
+  BeepState getState() final;
+  bool enabled() final;
 
 private:
-  void beep(uint8_t length) const;
+  void beep(uint8_t repeats);
+
+  BeepState m_currentState;
+  BeepState m_nextState;
+  unsigned long m_nextTime;
+  uint8_t m_repeat;
+  bool m_enabled;
 };
 
 #endif // BEEPER_H_

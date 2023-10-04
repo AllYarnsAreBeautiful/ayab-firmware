@@ -19,7 +19,7 @@
  *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
  *
  *    Original Work Copyright 2013 Christian Obersteiner, Andreas Müller
- *    Modified Work Copyright 2020 Sturla Lange, Tom Price
+ *    Modified Work Copyright 2020-3 Sturla Lange, Tom Price
  *    http://ayab-knitting.com
  */
 
@@ -28,13 +28,13 @@
 // static member functions
 
 void GlobalSolenoids::init() {
-  m_instance->init();
+  m_instance.init();
 }
 
 void GlobalSolenoids::setSolenoid(uint8_t solenoid, bool state) {
-  m_instance->setSolenoid(solenoid, state);
+  m_instance.setSolenoid(solenoid, state);
 }
 
 void GlobalSolenoids::setSolenoids(uint16_t state) {
-  m_instance->setSolenoids(state);
+  m_instance.setSolenoids(state);
 }

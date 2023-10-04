@@ -17,7 +17,7 @@
  *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
  *
  *    Original Work Copyright 2013 Christian Obersteiner, Andreas Müller
- *    Modified Work Copyright 2020 Sturla Lange, Tom Price
+ *    Modified Work Copyright 2020-3 Sturla Lange, Tom Price
  *    http://ayab-knitting.com
  */
 
@@ -30,9 +30,13 @@
 
 class BeeperMock : public BeeperInterface {
 public:
+  MOCK_METHOD1(init, void(bool));
+  MOCK_METHOD0(update, void());
   MOCK_METHOD0(ready, void());
   MOCK_METHOD0(finishedLine, void());
   MOCK_METHOD0(endWork, void());
+  MOCK_METHOD0(getState, BeepState());
+  MOCK_METHOD0(enabled, bool());
 };
 
 BeeperMock *beeperMockInstance();

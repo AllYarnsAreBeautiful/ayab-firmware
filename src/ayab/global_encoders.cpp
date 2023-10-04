@@ -19,40 +19,55 @@
  *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
  *
  *    Original Work Copyright 2013 Christian Obersteiner, Andreas Müller
- *    Modified Work Copyright 2020 Sturla Lange, Tom Price
+ *    Modified Work Copyright 2020-3 Sturla Lange, Tom Price
  *    http://ayab-knitting.com
  */
 
 #include "encoders.h"
+#include "opKnit.h"
 
-void GlobalEncoders::encA_interrupt() {
-  m_instance->encA_interrupt();
+void GlobalEncoders::init(Machine_t machineType) {
+  m_instance.init(machineType);
+}
+
+void GlobalEncoders::setUpInterrupt() {
+  m_instance.setUpInterrupt();
+}
+
+#ifndef AYAB_TESTS
+void GlobalEncoders::isr() {
+  m_instance.isr();
+}
+#endif // AYAB_TESTS
+
+void GlobalEncoders::hallLeftCallback(uint16_t hallValue, void *data) {
+  m_instance.hallLeftCallback(hallValue, data);
+}
+
+void GlobalEncoders::hallRightCallback(uint16_t hallValue, void *data) {
+  m_instance.hallRightCallback(hallValue, data);
 }
 
 uint16_t GlobalEncoders::getHallValue(Direction_t pSensor) {
-  return m_instance->getHallValue(pSensor);
-}
-
-void GlobalEncoders::init(Machine_t machineType) {
-  m_instance->init(machineType);
+  return m_instance.getHallValue(pSensor);
 }
 
 BeltShift_t GlobalEncoders::getBeltShift() {
-  return m_instance->getBeltShift();
+  return m_instance.getBeltShift();
 }
 
 Carriage_t GlobalEncoders::getCarriage() {
-  return m_instance->getCarriage();
+  return m_instance.getCarriage();
 }
 
 Direction_t GlobalEncoders::getDirection() {
-  return m_instance->getDirection();
+  return m_instance.getDirection();
 }
 
 Direction_t GlobalEncoders::getHallActive() {
-  return m_instance->getHallActive();
+  return m_instance.getHallActive();
 }
 
 uint8_t GlobalEncoders::getPosition() {
-  return m_instance->getPosition();
+  return m_instance.getPosition();
 }

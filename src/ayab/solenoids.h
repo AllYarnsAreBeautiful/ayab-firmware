@@ -36,6 +36,7 @@ constexpr uint8_t SOLENOIDS_NUM[NUM_MACHINES] = {16U, 16U, 12U};
 constexpr uint8_t HALF_SOLENOIDS_NUM[NUM_MACHINES] = {8U, 8U, 6U};
 constexpr uint8_t SOLENOIDS_I2C_ADDRESS_MASK = 0x20U;
 constexpr uint8_t SOLENOID_BUFFER_SIZE = 16U;
+constexpr uint16_t SOLENOIDS_BITMASK = 0xFFFFU;
 
 class SolenoidsInterface {
 public:
@@ -48,7 +49,7 @@ public:
 };
 
 // Container class for the static methods that control the solenoids.
-// Dependency injection is enabled using a pointer to a global instance of
+// Dependency injection is enabled using a reference to a global instance of
 // either `Solenoids` or `SolenoidsMock`, both of which classes implement
 // the pure virtual methods of `SolenoidsInterface`.
 
@@ -58,8 +59,8 @@ private:
   GlobalSolenoids() = default;
 
 public:
-  // pointer to global instance whose methods are implemented
-  static SolenoidsInterface *m_instance;
+  // reference to global instance whose methods are implemented
+  static SolenoidsInterface& m_instance;
 
   static void init();
   static void setSolenoid(uint8_t solenoid, bool state);
