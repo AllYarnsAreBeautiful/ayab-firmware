@@ -18,56 +18,88 @@
  *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
  *
  *    Original Work Copyright 2013 Christian Obersteiner, Andreas Müller
- *    Modified Work Copyright 2020 Sturla Lange, Tom Price
+ *    Modified Work Copyright 2020-3 Sturla Lange, Tom Price
  *    http://ayab-knitting.com
  */
 
 #include <Arduino.h>
 
+#include "analogReadAsyncWrapper.h"
+#include "packetSerialWrapper.h"
+
 #include "beeper.h"
 #include "com.h"
+#include "controller.h"
 #include "encoders.h"
-#include "fsm.h"
-#include "knitter.h"
 #include "solenoids.h"
-#include "tester.h"
+
+#include "opIdle.h"
+#include "opInit.h"
+#include "opReady.h"
+#include "opKnit.h"
+#include "opTest.h"
+#include "opError.h"
 
 // Global definitions: references elsewhere must use `extern`.
 // Each of the following is a pointer to a singleton class
 // containing static methods.
-constexpr GlobalBeeper    *beeper;
-constexpr GlobalCom       *com;
-constexpr GlobalEncoders  *encoders;
-constexpr GlobalFsm       *fsm;
-constexpr GlobalKnitter   *knitter;
-constexpr GlobalSolenoids *solenoids;
-constexpr GlobalTester    *tester;
+const GlobalAnalogReadAsyncWrapper *analogReadAsyncWrapper;
+const GlobalPacketSerialWrapper    *packetSerialWrapper;
+
+const GlobalBeeper    *beeper;
+const GlobalCom       *com;
+const GlobalController       *controller;
+const GlobalEncoders  *encoders;
+const GlobalSolenoids *solenoids;
+
+const GlobalOpIdle    *opIdle;
+const GlobalOpInit    *opInit;
+const GlobalOpReady   *opReady;
+const GlobalOpKnit    *opKnit;
+const GlobalOpTest    *opTest;
+const GlobalOpError   *opError;
 
 // Initialize static members.
 // Each singleton class contains a pointer to a static instance
 // that implements a public interface. When testing, a pointer
 // to an instance of a mock class can be substituted.
+AnalogReadAsyncWrapperInterface *GlobalAnalogReadAsyncWrapper::m_instance = new AnalogReadAsyncWrapper();
+PacketSerialWrapperInterface    *GlobalPacketSerialWrapper::m_instance    = new PacketSerialWrapper();
+
 BeeperInterface    *GlobalBeeper::m_instance    = new Beeper();
 ComInterface       *GlobalCom::m_instance       = new Com();
 EncodersInterface  *GlobalEncoders::m_instance  = new Encoders();
-FsmInterface       *GlobalFsm::m_instance       = new Fsm();
-KnitterInterface   *GlobalKnitter::m_instance   = new Knitter();
+ControllerInterface       *GlobalController::m_instance       = new Controller();
 SolenoidsInterface *GlobalSolenoids::m_instance = new Solenoids();
-TesterInterface    *GlobalTester::m_instance    = new Tester();
+
+OpIdleInterface    *GlobalOpIdle::m_instance    = new OpIdle();
+OpInitInterface    *GlobalOpInit::m_instance    = new OpInit();
+OpReadyInterface   *GlobalOpReady::m_instance   = new OpReady();
+OpKnitInterface    *GlobalOpKnit::m_instance    = new OpKnit();
+OpTestInterface    *GlobalOpTest::m_instance    = new OpTest();
+OpErrorInterface   *GlobalOpError::m_instance   = new OpError();
 
 /*!
  * Setup - do once before going to the main loop.
  */
 void setup() {
+  // Objects running in async context
+  GlobalBeeper::init(false);
   GlobalCom::init();
-  GlobalFsm::init();
-  GlobalKnitter::init();
+  GlobalController::init();
   GlobalSolenoids::init();
+  GlobalOpKnit::init();
 }
 
 /*!
  * Main Loop - repeat forever.
  */
 void loop() {
-  GlobalFsm::dispatch();
+  // Non-blocking methods
+  // Cooperative Round Robin scheduling
+  GlobalController::update();
+  GlobalCom::update();
+  if (GlobalBeeper::enabled()) {
+    GlobalBeeper::update();
+  }
 }

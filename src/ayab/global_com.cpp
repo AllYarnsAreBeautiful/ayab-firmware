@@ -18,7 +18,7 @@
  *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
  *
  *    Original Work Copyright 2013 Christian Obersteiner, Andreas Müller
- *    Modified Work Copyright 2020 Sturla Lange, Tom Price
+ *    Modified Work Copyright 2020-3 Sturla Lange, Tom Price
  *    http://ayab-knitting.com
  */
 
@@ -26,39 +26,66 @@
 
 // static member functions
 
-// GCOVR_EXCL_START
 void GlobalCom::init() {
   m_instance->init();
 }
-// GCOVR_EXCL_STOP
 
 void GlobalCom::update() {
   m_instance->update();
+}
+
+uint8_t GlobalCom::CRC8(const uint8_t *buffer, size_t len) {
+  return m_instance->CRC8(buffer, len);
 }
 
 void GlobalCom::send(uint8_t *payload, size_t length) {
   m_instance->send(payload, length);
 }
 
-void GlobalCom::sendMsg(AYAB_API_t id, const char *msg) {
+void GlobalCom::sendMsg(API_t id, const char *msg) {
   m_instance->sendMsg(id, msg);
 }
 
-void GlobalCom::sendMsg(AYAB_API_t id, char *msg) {
+void GlobalCom::sendMsg(API_t id, char *msg) {
   m_instance->sendMsg(id, msg);
 }
-
-// GCOVR_EXCL_START
-void GlobalCom::onPacketReceived(const uint8_t *buffer, size_t size) {
-  m_instance->onPacketReceived(buffer, size);
-}
-// GCOVR_EXCL_STOP
 
 void GlobalCom::send_reqLine(const uint8_t lineNumber, Err_t error) {
   m_instance->send_reqLine(lineNumber, error);
 }
 
-void GlobalCom::send_indState(Carriage_t carriage, uint8_t position,
-                              Err_t error) {
-  m_instance->send_indState(carriage, position, error);
+void GlobalCom::send_indState(Err_t error) {
+  m_instance->send_indState(error);
+}
+
+void GlobalCom::onPacketReceived(const uint8_t *buffer, size_t size) {
+  m_instance->onPacketReceived(buffer, size);
+}
+
+void GlobalCom::h_reqInit(const uint8_t *buffer, size_t size) {
+  m_instance->h_reqInit(buffer, size);
+}
+
+void GlobalCom::h_reqStart(const uint8_t *buffer, size_t size) {
+  m_instance->h_reqStart(buffer, size);
+}
+
+void GlobalCom::h_cnfLine(const uint8_t *buffer, size_t size) {
+  m_instance->h_cnfLine(buffer, size);
+}
+
+void GlobalCom::h_reqInfo() {
+  m_instance->h_reqInfo();
+}
+
+void GlobalCom::h_reqTest() {
+  m_instance->h_reqTest();
+}
+
+void GlobalCom::h_quitCmd() {
+  m_instance->h_quitCmd();
+}
+
+void GlobalCom::h_unrecognized() {
+  m_instance->h_unrecognized();
 }

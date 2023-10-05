@@ -1,5 +1,5 @@
 /*!`
- * \file test_all.cpp
+ * \file test_boards.cpp
  *
  * This file is part of AYAB.
  *
@@ -17,7 +17,7 @@
  *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
  *
  *    Original Work Copyright 2013 Christian Obersteiner, Andreas Müller
- *    Modified Work Copyright 2020 Sturla Lange, Tom Price
+ *    Modified Work Copyright 2020-3 Sturla Lange, Tom Price
  *    http://ayab-knitting.com
  */
 
@@ -27,33 +27,54 @@
 #include <com.h>
 #include <encoders.h>
 #include <solenoids.h>
-#include <tester.h>
 
-#include <fsm_mock.h>
-#include <knitter_mock.h>
+#include <opIdle.h>
+#include <opInit.h>
+#include <opReady.h>
+#include <opTest.h>
+#include <opError.h>
+
+#include <analogReadAsyncWrapper_mock.h>
+#include <packetSerialWrapper_mock.h>
+#include <controller_mock.h>
+#include <opKnit_mock.h>
 
 // global definitions
 // references everywhere else must use `extern`
-Beeper *beeper = new Beeper();
-Com *com = new Com();
-Encoders *encoders = new Encoders();
+Beeper    *beeper    = new Beeper();
+Com       *com       = new Com();
+Encoders  *encoders  = new Encoders();
 Solenoids *solenoids = new Solenoids();
-Tester *tester = new Tester();
 
-FsmMock *fsm = new FsmMock();
-KnitterMock *knitter = new KnitterMock();
+OpIdle    *opIdle    = new OpIdle();
+OpInit    *opInit    = new OpInit();
+OpReady   *opReady   = new OpReady();
+OpTest    *opTest    = new OpTest();
+OpError   *opError   = new OpError();
+
+AnalogReadAsyncWrapperMock *analogReadAsyncWrapper = new AnalogReadAsyncWrapperMock();
+PacketSerialWrapperMock *packetSerialWrapper = new PacketSerialWrapperMock();
+ControllerMock *controller = new ControllerMock();
+OpKnitMock *opKnit = new OpKnitMock();
 
 // initialize static members
-BeeperInterface *GlobalBeeper::m_instance = beeper;
-ComInterface *GlobalCom::m_instance = com;
-EncodersInterface *GlobalEncoders::m_instance = encoders;
-SolenoidsInterface *GlobalSolenoids::m_instance = solenoids;
-TesterInterface *GlobalTester::m_instance = tester;
+BeeperInterface     *GlobalBeeper::m_instance     = beeper;
+ComInterface        *GlobalCom::m_instance        = com;
+EncodersInterface   *GlobalEncoders::m_instance   = encoders;
+SolenoidsInterface  *GlobalSolenoids::m_instance  = solenoids;
 
-FsmInterface *GlobalFsm::m_instance = fsm;
-KnitterInterface *GlobalKnitter::m_instance = knitter;
+OpIdleInterface     *GlobalOpIdle::m_instance     = opIdle;
+OpInitInterface     *GlobalOpInit::m_instance     = opInit;
+OpReadyInterface    *GlobalOpReady::m_instance    = opReady;
+OpTestInterface     *GlobalOpTest::m_instance     = opTest;
+OpErrorInterface    *GlobalOpError::m_instance    = opError;
+
+AnalogReadAsyncWrapperInterface *GlobalAnalogReadAsyncWrapper::m_instance = analogReadAsyncWrapper;
+PacketSerialWrapperInterface *GlobalPacketSerialWrapper::m_instance = packetSerialWrapper;
+ControllerInterface *GlobalController::m_instance = controller;
+OpKnitInterface     *GlobalOpKnit::m_instance     = opKnit;
 
 int main(int argc, char *argv[]) {
   ::testing::InitGoogleMock(&argc, argv);
-	return RUN_ALL_TESTS();
+  return RUN_ALL_TESTS();
 }
