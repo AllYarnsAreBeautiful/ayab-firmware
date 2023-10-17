@@ -78,6 +78,8 @@ enum class ErrorCode : unsigned char {
 };
 using Err_t = enum ErrorCode;
 
+constexpr unsigned int FLASH_DELAY = 500; // ms
+
 class FsmInterface {
 public:
   virtual ~FsmInterface() = default;

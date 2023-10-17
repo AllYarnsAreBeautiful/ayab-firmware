@@ -27,6 +27,14 @@
 
 // static member functions
 
+void GlobalBeeper::init(bool enabled) {
+  m_instance->init(enabled);
+}
+
+bool GlobalBeeper::enabled() {
+  return m_instance->enabled();
+}
+
 void GlobalBeeper::ready() {
   m_instance->ready();
 }
@@ -37,4 +45,8 @@ void GlobalBeeper::finishedLine() {
 
 void GlobalBeeper::endWork() {
   m_instance->endWork();
+}
+
+void GlobalBeeper::schedule() {
+  m_instance->schedule();
 }

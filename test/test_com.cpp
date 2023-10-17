@@ -23,6 +23,7 @@
 
 #include <gtest/gtest.h>
 
+#include <beeper.h>
 #include <com.h>
 #include <encoders.h>
 
@@ -35,6 +36,7 @@ using ::testing::Mock;
 using ::testing::Return;
 
 extern Com *com;
+extern Beeper *beeper;
 
 extern FsmMock *fsm;
 extern KnitterMock *knitter;
@@ -55,6 +57,7 @@ protected:
     Mock::AllowLeak(fsmMock);
     Mock::AllowLeak(knitterMock);
 
+    beeper->init(true);
     expect_init();
     com->init();
   }
@@ -206,9 +209,12 @@ TEST_F(ComTest, test_sendCmd) {
 
 TEST_F(ComTest, test_beepCmd) {
   uint8_t buffer[] = {static_cast<uint8_t>(AYAB_API::beepCmd)};
-  EXPECT_CALL(*arduinoMock, analogWrite(PIEZO_PIN, _)).Times(AtLeast(1));
-  EXPECT_CALL(*arduinoMock, delay(BEEP_DELAY)).Times(AtLeast(1));
   expected_write_onPacketReceived(buffer, sizeof(buffer), true);
+  EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(0U));
+  beeper->schedule();
+  EXPECT_CALL(*arduinoMock, analogWrite(PIEZO_PIN, BEEP_ON_DUTY));
+  EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(1U));
+  beeper->schedule();
 }
 
 TEST_F(ComTest, test_setSingleCmd) {

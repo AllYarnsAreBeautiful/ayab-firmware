@@ -9,14 +9,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## 1.0.0 / Unreleased
 
 * Migrate to AYAB API v6
-* Remove dependency on SerialCommand library
-* Add informative error codes
+* Add support for garter carriage
+* Add support for KH270
 * Allow carriage to start on the right-hand side moving left
 * Add run-time hardware tests
+* Fix intermittent patterning errors
+* Change end-of-line beep to be non-blocking so that knitting can continue during beep
 * Migrate to generic firmware from machine-specific versions
+* Migrate to semantic versioning
 * Change libraries to submodules
+* Remove dependency on SerialCommand library
 * Add unit tests that can run in the absence of the hardware
 * Add GPLv3 license
+* Add informative error codes
 * Add development environment documentation to README
 * Add firmware update instructions to README
 * Add CHANGELOG.md

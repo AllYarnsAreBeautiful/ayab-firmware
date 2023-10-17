@@ -23,7 +23,7 @@
 
 #include <gtest/gtest.h>
 
-#include <com.h>
+#include <beeper.h>
 #include <tester.h>
 
 #include <fsm_mock.h>
@@ -35,6 +35,7 @@ using ::testing::AtLeast;
 using ::testing::Mock;
 using ::testing::Return;
 
+extern Beeper *beeper;
 extern Tester *tester;
 
 extern FsmMock *fsm;
@@ -56,6 +57,8 @@ protected:
     // cause a memory leak. We must notify the test that this is not the case.
     Mock::AllowLeak(fsmMock);
     Mock::AllowLeak(knitterMock);
+
+    beeper->init(true);
   }
 
   void TearDown() override {
@@ -64,9 +67,9 @@ protected:
   }
 
   ArduinoMock *arduinoMock;
-  SerialMock *serialMock;
   FsmMock *fsmMock;
   KnitterMock *knitterMock;
+  SerialMock *serialMock;
 
   void expect_startTest(unsigned long t) {
     EXPECT_CALL(*fsmMock, getState).WillOnce(Return(OpState::ready));
@@ -118,9 +121,12 @@ TEST_F(TesterTest, test_sendCmd) {
 
 TEST_F(TesterTest, test_beepCmd) {
   expect_write(true);
-  EXPECT_CALL(*arduinoMock, analogWrite(PIEZO_PIN, _)).Times(AtLeast(1));
-  EXPECT_CALL(*arduinoMock, delay(50)).Times(AtLeast(1));
   tester->beepCmd();
+  EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(0U));
+  beeper->schedule();
+  EXPECT_CALL(*arduinoMock, analogWrite(PIEZO_PIN, BEEP_ON_DUTY));
+  EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(1U));
+  beeper->schedule();
 }
 
 TEST_F(TesterTest, test_setSingleCmd_fail1) {
@@ -199,13 +205,13 @@ TEST_F(TesterTest, test_quitCmd) {
 
 TEST_F(TesterTest, test_loop_default) {
   expect_startTest(0);
-  EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(499));
+  EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(TEST_LOOP_DELAY - 1));
   tester->loop();
 }
 
 TEST_F(TesterTest, test_loop_null) {
   expect_startTest(0);
-  EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(500));
+  EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(TEST_LOOP_DELAY));
   tester->loop();
 }
 
@@ -215,7 +221,7 @@ TEST_F(TesterTest, test_loop_autoTest) {
   tester->autoTestCmd();
 
   // m_timerEventOdd = false
-  EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(500));
+  EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(TEST_LOOP_DELAY));
   expect_write(true);
   expect_readEOLsensors(false);
   expect_readEncoders(false);
@@ -224,7 +230,7 @@ TEST_F(TesterTest, test_loop_autoTest) {
   tester->loop();
 
   // m_timerEventOdd = false
-  EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(1000));
+  EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(2 * TEST_LOOP_DELAY));
   expect_write(false);
   expect_readEOLsensors(true);
   expect_readEncoders(true);
@@ -234,7 +240,7 @@ TEST_F(TesterTest, test_loop_autoTest) {
 
   // after `stopCmd()`
   tester->stopCmd();
-  EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(1500));
+  EXPECT_CALL(*arduinoMock, millis).WillOnce(Return(3 * TEST_LOOP_DELAY));
   expect_readEOLsensors(false);
   expect_readEncoders(false);
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, _)).Times(0);

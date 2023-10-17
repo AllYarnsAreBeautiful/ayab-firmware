@@ -236,7 +236,8 @@ void Com::h_reqStart(const uint8_t *buffer, size_t size) {
 
   uint8_t startNeedle = buffer[1];
   uint8_t stopNeedle = buffer[2];
-  auto continuousReportingEnabled = static_cast<bool>(buffer[3]);
+  auto continuousReportingEnabled = static_cast<bool>(buffer[3] & 1);
+  auto beeperEnabled = static_cast<bool>(buffer[3] & 2);
 
   uint8_t crc8 = buffer[4];
   // Check crc on bytes 0-4 of buffer.
@@ -245,7 +246,7 @@ void Com::h_reqStart(const uint8_t *buffer, size_t size) {
     return;
   }
 
-  // TODO(who?): verify operation
+  GlobalBeeper::init(beeperEnabled);
   memset(lineBuffer, 0xFF, MAX_LINE_BUFFER_LEN);
 
   // Note (August 2020): the return value of this function has changed.

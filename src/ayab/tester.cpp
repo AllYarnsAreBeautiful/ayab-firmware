@@ -180,7 +180,7 @@ Err_t Tester::startTest(Machine_t machineType) {
  */
 void Tester::loop() {
   unsigned long now = millis();
-  if (now - m_lastTime >= 500) {
+  if (now - m_lastTime >= TEST_LOOP_DELAY) {
     m_lastTime = now;
     handleTimerEvent();
   }

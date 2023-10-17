@@ -47,7 +47,7 @@ cd ../..
 
 GCOVR_ARGS="--exclude-unreachable-branches --exclude-throw-branches \
             --exclude-directories 'test/build/arduino_mock$' \
-	    -e test_* -e libraries* -e src/ayab/global_knitter.cpp \
+	    -e test_* -e lib* -e src/ayab/global_knitter.cpp \
 	    -e src/ayab/global_fsm.cpp"
 
 if [[ $sonar -eq 1 ]]; then

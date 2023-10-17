@@ -215,7 +215,7 @@ protected:
   }
 
   void expect_first_knit() {
-    EXPECT_CALL(*arduinoMock, delay(2000));
+    EXPECT_CALL(*arduinoMock, delay(START_KNITTING_DELAY));
     EXPECT_CALL(*beeperMock, finishedLine);
     expect_reqLine();
   }
@@ -311,19 +311,19 @@ TEST_F(FsmTest, test_dispatch_error) {
 
   // too soon to flash
   EXPECT_CALL(*arduinoMock, digitalWrite).Times(0);
-  expected_dispatch_error(499);
+  expected_dispatch_error(FLASH_DELAY - 1);
 
   // flash first time
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, LOW));
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_B, HIGH));
   EXPECT_CALL(*comMock, send_indState);
-  expected_dispatch_error(500);
+  expected_dispatch_error(FLASH_DELAY);
 
   // alternate flash
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_A, HIGH));
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_B, LOW));
   EXPECT_CALL(*comMock, send_indState);
-  expected_dispatch_error(1000);
+  expected_dispatch_error(2 * FLASH_DELAY);
 
   // get to state `OpState::init`
   EXPECT_CALL(*arduinoMock, digitalWrite(LED_PIN_B, LOW));

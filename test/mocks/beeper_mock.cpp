@@ -38,6 +38,21 @@ void releaseBeeperMock() {
   }
 }
 
+void Beeper::init(bool enabled) {
+  assert(gBeeperMock != nullptr);
+  gBeeperMock->init(enabled);
+}
+
+bool Beeper::enabled() {
+  assert(gBeeperMock != nullptr);
+  return gBeeperMock->enabled();
+}
+
+BeepState Beeper::getState() {
+  assert(gBeeperMock != nullptr);
+  return gBeeperMock->getState();
+}
+
 void Beeper::ready() {
   assert(gBeeperMock != nullptr);
   gBeeperMock->ready();
@@ -51,4 +66,9 @@ void Beeper::finishedLine() {
 void Beeper::endWork() {
   assert(gBeeperMock != nullptr);
   gBeeperMock->endWork();
+}
+
+void Beeper::schedule() {
+  assert(gBeeperMock != nullptr);
+  gBeeperMock->schedule();
 }

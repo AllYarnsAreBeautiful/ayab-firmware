@@ -28,9 +28,10 @@
 
 // Enumerated constants
 
-enum class Direction : unsigned char { 
-  NoDirection = 0xFF, 
-  Left = 0, 
+
+enum class Direction : unsigned char {
+  NoDirection = 0xFF,
+  Left = 0,
   Right = 1
 };
 constexpr int NUM_DIRECTIONS = 2;
