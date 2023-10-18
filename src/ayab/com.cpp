@@ -140,7 +140,7 @@ void Com::onPacketReceived(const uint8_t *buffer, size_t size) {
     break;
 
   case static_cast<uint8_t>(AYAB_API::reqTest):
-    h_reqTest(buffer, size);
+    h_reqTest();
     break;
 
   case static_cast<uint8_t>(AYAB_API::helpCmd):
@@ -316,14 +316,8 @@ void Com::h_reqInfo() const {
  * \param buffer A pointer to a data buffer.
  * \param size The number of bytes in the data buffer.
  */
-void Com::h_reqTest(const uint8_t *buffer, size_t size) const {
-  if (size < 2U) {
-    // message is too short
-    send_cnfTest(ErrorCode::expected_longer_message);
-    return;
-  }
-
-  auto machineType = static_cast<Machine_t>(buffer[1]);
+void Com::h_reqTest() const {
+  auto machineType = static_cast<Machine_t>(GlobalKnitter::getMachineType());
 
   // Note (August 2020): the return value of this function has changed.
   // Previously, it returned `true` for success and `false` for failure.
