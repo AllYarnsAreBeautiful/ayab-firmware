@@ -444,7 +444,7 @@ bool Knitter::calculatePixelAndSolenoid() {
  */
 void Knitter::stopKnitting() const {
   GlobalBeeper::endWork();
-  GlobalFsm::setState(OpState::ready);
+  GlobalFsm::setState(OpState::init);
 
   GlobalSolenoids::setSolenoids(SOLENOIDS_BITMASK);
   GlobalBeeper::finishedLine();
