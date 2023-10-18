@@ -130,20 +130,10 @@ TEST_F(ComTest, test_reqInit_checksum_error) {
   ASSERT_TRUE(Mock::VerifyAndClear(fsmMock));
 }
 
-TEST_F(ComTest, test_reqtest_fail) {
-  // no machineType
+TEST_F(ComTest, test_reqtest) {
   uint8_t buffer[] = {static_cast<uint8_t>(AYAB_API::reqTest)};
-  EXPECT_CALL(*fsmMock, setState(OpState::test)).Times(0);
-  expected_write_onPacketReceived(buffer, sizeof(buffer), true);
-
-  // test expectations without destroying instance
-  ASSERT_TRUE(Mock::VerifyAndClear(fsmMock));
-}
-
-TEST_F(ComTest, test_reqtest_success_KH270) {
-  uint8_t buffer[] = {static_cast<uint8_t>(AYAB_API::reqTest), static_cast<uint8_t>(Machine_t::Kh270)};
   EXPECT_CALL(*fsmMock, setState(OpState::test));
-  EXPECT_CALL(*knitterMock, setMachineType(Machine_t::Kh270));
+  EXPECT_CALL(*knitterMock, setMachineType(Machine_t::Kh910));
   EXPECT_CALL(*arduinoMock, millis);
   expected_write_onPacketReceived(buffer, sizeof(buffer), false);
 
