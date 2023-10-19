@@ -17,7 +17,7 @@
  *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
  *
  *    Original Work Copyright 2013 Christian Obersteiner, Andreas Müller
- *    Modified Work Copyright 2020 Sturla Lange, Tom Price
+ *    Modified Work Copyright 2020-3 Sturla Lange, Tom Price
  *    http://ayab-knitting.com
  */
 
@@ -50,28 +50,28 @@ TEST_F(SolenoidsTest, test_construct) {
 
 TEST_F(SolenoidsTest, test_init) {
   solenoids->init();
-  ASSERT_TRUE(solenoids->solenoidState == 0U);
+  ASSERT_EQ(solenoids->solenoidState, 0U);
 }
 
 TEST_F(SolenoidsTest, test_setSolenoid1) {
   solenoids->setSolenoids(0);
-  ASSERT_TRUE(solenoids->solenoidState == 0U);
+  ASSERT_EQ(solenoids->solenoidState, 0U);
   solenoids->setSolenoid(0, true);
-  ASSERT_TRUE(solenoids->solenoidState == 1U);
+  ASSERT_EQ(solenoids->solenoidState, 1U);
 }
 
 TEST_F(SolenoidsTest, test_setSolenoid2) {
   solenoids->setSolenoids(0);
-  ASSERT_TRUE(solenoids->solenoidState == 0U);
+  ASSERT_EQ(solenoids->solenoidState, 0U);
   solenoids->setSolenoids(0);
-  ASSERT_TRUE(solenoids->solenoidState == 0U);
+  ASSERT_EQ(solenoids->solenoidState, 0U);
   solenoids->setSolenoid(0, false);
-  ASSERT_TRUE(solenoids->solenoidState == 0U);
+  ASSERT_EQ(solenoids->solenoidState, 0U);
 }
 
 TEST_F(SolenoidsTest, test_setSolenoid3) {
   solenoids->setSolenoids(0x8000);
-  ASSERT_TRUE(solenoids->solenoidState == 0x8000U);
+  ASSERT_EQ(solenoids->solenoidState, 0x8000U);
   solenoids->setSolenoid(16, false);
-  ASSERT_TRUE(solenoids->solenoidState == 0x8000U);
+  ASSERT_EQ(solenoids->solenoidState, 0x8000U);
 }

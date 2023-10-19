@@ -1,6 +1,12 @@
-[submodule "libraries/PacketSerial"]
+[submodule "lib/PacketSerial"]
+        active = true
 	path = lib/PacketSerial
 	url = https://github.com/bakercp/PacketSerial.git
-[submodule "libraries/Adafruit_MCP23008"]
-	url = https://github.com/adafruit/Adafruit-MCP23008-library.git
+[submodule "lib/Adafruit_MCP23008"]
+        active = true
 	path = lib/Adafruit_MCP23008
+	url = https://github.com/adafruit/Adafruit-MCP23008-library.git
+[submodule "lib/avr-libc"]
+        active = true
+	path = lib/avr-libc
+	url = https://github.com/avrdudes/avr-libc.git

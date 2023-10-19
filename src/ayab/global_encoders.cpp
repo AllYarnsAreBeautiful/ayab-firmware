@@ -19,22 +19,29 @@
  *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
  *
  *    Original Work Copyright 2013 Christian Obersteiner, Andreas Müller
- *    Modified Work Copyright 2020 Sturla Lange, Tom Price
+ *    Modified Work Copyright 2020-3 Sturla Lange, Tom Price
  *    http://ayab-knitting.com
  */
 
 #include "encoders.h"
-
-void GlobalEncoders::encA_interrupt() {
-  m_instance->encA_interrupt();
-}
-
-uint16_t GlobalEncoders::getHallValue(Direction_t pSensor) {
-  return m_instance->getHallValue(pSensor);
-}
+#include "opKnit.h"
 
 void GlobalEncoders::init(Machine_t machineType) {
   m_instance->init(machineType);
+}
+
+void GlobalEncoders::setUpInterrupt() {
+  m_instance->setUpInterrupt();
+}
+
+#ifndef AYAB_TESTS
+void GlobalEncoders::isr() {
+  m_instance->isr();
+}
+#endif // AYAB_TESTS
+
+uint16_t GlobalEncoders::getHallValue(Direction_t pSensor) {
+  return m_instance->getHallValue(pSensor);
 }
 
 BeltShift_t GlobalEncoders::getBeltShift() {

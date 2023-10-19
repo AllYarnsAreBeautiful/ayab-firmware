@@ -17,17 +17,17 @@
  *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
  *
  *    Original Work Copyright 2013 Christian Obersteiner, Andreas Müller
- *    Modified Work Copyright 2020 Sturla Lange, Tom Price
+ *    Modified Work Copyright 2020-3 Sturla Lange, Tom Price
  *    http://ayab-knitting.com
  */
 
 #ifndef ENCODERS_H_
 #define ENCODERS_H_
 
+#include "board.h"
 #include <Arduino.h>
 
 // Enumerated constants
-
 
 enum class Direction : unsigned char {
   NoDirection = 0xFF,
@@ -84,19 +84,19 @@ constexpr uint8_t START_OFFSET[NUM_MACHINES][NUM_DIRECTIONS][NUM_CARRIAGES] = {
     {
         // K,   L,   G
         {40U, 40U, 32U}, // Left
-        {16U, 16U, 56U} // Right
+        {16U, 16U, 56U}  // Right
     },
     // KH930
     {
         // K,   L,   G
         {40U, 40U,  8U}, // Left
-        {16U, 16U, 32U} // Right
+        {16U, 16U, 32U}  // Right
     },
     // KH270
     {
         // K
         {28U, 0U, 0U}, // Left: x % 12 == 4
-        {16U, 0U, 0U}   // Right: (x + 6) % 12 == 10
+        {16U, 0U, 0U}  // Right: (x + 6) % 12 == 10
     }};
 
 // Should be calibrated to each device
@@ -107,8 +107,6 @@ constexpr uint16_t FILTER_L_MIN[NUM_MACHINES] = { 200U, 200U, 200U};
 constexpr uint16_t FILTER_L_MAX[NUM_MACHINES] = { 600U, 600U, 600U};
 constexpr uint16_t FILTER_R_MIN[NUM_MACHINES] = { 200U,   0U,   0U};
 constexpr uint16_t FILTER_R_MAX[NUM_MACHINES] = {1023U, 600U, 600U};
-
-constexpr uint16_t SOLENOIDS_BITMASK = 0xFFFFU;
 
 constexpr uint8_t MAGNET_DISTANCE_270 = 12U;
 
@@ -122,9 +120,10 @@ public:
   virtual ~EncodersInterface() = default;
 
   // any methods that need to be mocked should go here
-  virtual void encA_interrupt() = 0;
-  virtual uint16_t getHallValue(Direction_t pSensor) = 0;
   virtual void init(Machine_t machineType) = 0;
+  virtual void setUpInterrupt() = 0;
+  virtual void isr() = 0;
+  virtual uint16_t getHallValue(Direction_t pSensor) = 0;
   virtual Machine_t getMachineType() = 0;
   virtual BeltShift_t getBeltShift() = 0;
   virtual Carriage_t getCarriage() = 0;
@@ -147,9 +146,12 @@ public:
   // pointer to global instance whose methods are implemented
   static EncodersInterface *m_instance;
 
-  static void encA_interrupt();
-  static uint16_t getHallValue(Direction_t pSensor);
   static void init(Machine_t machineType);
+  static void setUpInterrupt();
+//#ifndef AYAB_TESTS
+  static void isr();
+//#endif
+  static uint16_t getHallValue(Direction_t pSensor);
   static Machine_t getMachineType();
   static BeltShift_t getBeltShift();
   static Carriage_t getCarriage();
@@ -162,9 +164,10 @@ class Encoders : public EncodersInterface {
 public:
   Encoders() = default;
 
-  void encA_interrupt() final;
-  uint16_t getHallValue(Direction_t pSensor) final;
   void init(Machine_t machineType) final;
+  void setUpInterrupt() final;
+  void isr() final;
+  uint16_t getHallValue(Direction_t pSensor) final;
   Machine_t getMachineType() final;
   BeltShift_t getBeltShift() final;
   Carriage_t getCarriage() final;
@@ -184,6 +187,12 @@ private:
 
   void encA_rising();
   void encA_falling();
+
+#if AYAB_TESTS
+  // Note: ideally tests would only rely on the public interface.
+  FRIEND_TEST(EncodersTest, test_encA_falling_not_in_front);
+  FRIEND_TEST(EncodersTest, test_encA_rising_in_front_notKH270);
+#endif
 };
 
 #endif // ENCODERS_H_

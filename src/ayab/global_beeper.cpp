@@ -19,7 +19,7 @@
  *    along with AYAB.  If not, see <http://www.gnu.org/licenses/>.
  *
  *    Original Work Copyright 2013 Christian Obersteiner, Andreas Müller
- *    Modified Work Copyright 2020 Sturla Lange, Tom Price
+ *    Modified Work Copyright 2020-3 Sturla Lange, Tom Price
  *    http://ayab-knitting.com
  */
 
@@ -31,8 +31,8 @@ void GlobalBeeper::init(bool enabled) {
   m_instance->init(enabled);
 }
 
-bool GlobalBeeper::enabled() {
-  return m_instance->enabled();
+void GlobalBeeper::update() {
+  m_instance->update();
 }
 
 void GlobalBeeper::ready() {
@@ -47,6 +47,10 @@ void GlobalBeeper::endWork() {
   m_instance->endWork();
 }
 
-void GlobalBeeper::schedule() {
-  m_instance->schedule();
+BeepState GlobalBeeper::getState() {
+  return m_instance->getState();
+}
+
+bool GlobalBeeper::enabled() {
+  return m_instance->enabled();
 }
