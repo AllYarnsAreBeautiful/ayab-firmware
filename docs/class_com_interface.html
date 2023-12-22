@@ -73,9 +73,9 @@ Inheritance diagram for ComInterface:</div>
 <div class="dyncontent">
 <div class="center"><img src="class_com_interface__inherit__graph.png" border="0" usemap="#a_com_interface_inherit__map" alt="Inheritance graph"/></div>
 <map name="a_com_interface_inherit__map" id="a_com_interface_inherit__map">
-<area shape="rect" title=" " alt="" coords="99,5,264,200"/>
+<area shape="rect" title=" " alt="" coords="112,5,277,200"/>
 <area shape="rect" href="class_com.html" title=" " alt="" coords="5,248,171,619"/>
-<area shape="rect" href="class_com_mock.html" title=" " alt="" coords="195,343,355,523"/>
+<area shape="rect" href="class_com_mock.html" title=" " alt="" coords="195,343,407,523"/>
 </map>
 </div>
 <div class="dynheader">
@@ -95,21 +95,21 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>init</b> ()=0
 <tr class="memitem:a2833b36f7ccf333e3e150e64c0c906b5"><td class="memItemLeft" align="right" valign="top"><a id="a2833b36f7ccf333e3e150e64c0c906b5"></a>
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>update</b> ()=0</td></tr>
 <tr class="separator:a2833b36f7ccf333e3e150e64c0c906b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a36fe8c7da7abff9a4c70db7d0450c99e"><td class="memItemLeft" align="right" valign="top"><a id="a36fe8c7da7abff9a4c70db7d0450c99e"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>send</b> (uint8_t *payload, size_t length)=0</td></tr>
-<tr class="separator:a36fe8c7da7abff9a4c70db7d0450c99e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0df2c652619d24f245d89d6595e6372a"><td class="memItemLeft" align="right" valign="top"><a id="a0df2c652619d24f245d89d6595e6372a"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>send</b> (uint8_t *payload, size_t length) const =0</td></tr>
+<tr class="separator:a0df2c652619d24f245d89d6595e6372a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8002b3fd50904a88a98ee1b32fb24c24"><td class="memItemLeft" align="right" valign="top"><a id="a8002b3fd50904a88a98ee1b32fb24c24"></a>
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>sendMsg</b> (AYAB_API_t id, const char *msg)=0</td></tr>
 <tr class="separator:a8002b3fd50904a88a98ee1b32fb24c24"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa654c26843f09f5d7c8c60af5aec6b9d"><td class="memItemLeft" align="right" valign="top"><a id="aa654c26843f09f5d7c8c60af5aec6b9d"></a>
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>sendMsg</b> (AYAB_API_t id, char *msg)=0</td></tr>
 <tr class="separator:aa654c26843f09f5d7c8c60af5aec6b9d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae3db37ff681bb7208fa66f99558be382"><td class="memItemLeft" align="right" valign="top"><a id="ae3db37ff681bb7208fa66f99558be382"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>send_reqLine</b> (const uint8_t lineNumber, Err_t error=SUCCESS)=0</td></tr>
-<tr class="separator:ae3db37ff681bb7208fa66f99558be382"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a30815ed67d2a53476e7bfdaeba7727a3"><td class="memItemLeft" align="right" valign="top"><a id="a30815ed67d2a53476e7bfdaeba7727a3"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>send_indState</b> (Carriage_t carriage, uint8_t position, const uint8_t initState=SUCCESS)=0</td></tr>
-<tr class="separator:a30815ed67d2a53476e7bfdaeba7727a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a43df75c9520a83c19c002daf81442712"><td class="memItemLeft" align="right" valign="top"><a id="a43df75c9520a83c19c002daf81442712"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>send_reqLine</b> (const uint8_t lineNumber, Err_t error=ErrorCode::success) const =0</td></tr>
+<tr class="separator:a43df75c9520a83c19c002daf81442712"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5eff91d349a83563edf96e19eae9c90f"><td class="memItemLeft" align="right" valign="top"><a id="a5eff91d349a83563edf96e19eae9c90f"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>send_indState</b> (Carriage_t carriage, uint8_t position, Err_t error=ErrorCode::success) const =0</td></tr>
+<tr class="separator:a5eff91d349a83563edf96e19eae9c90f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad04192a2a119f3ff42278fdfa9547d5b"><td class="memItemLeft" align="right" valign="top"><a id="ad04192a2a119f3ff42278fdfa9547d5b"></a>
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>onPacketReceived</b> (const uint8_t *buffer, size_t size)=0</td></tr>
 <tr class="separator:ad04192a2a119f3ff42278fdfa9547d5b"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -123,7 +123,7 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>onPacketRecei
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_com_interface.html">ComInterface</a></li>
-    <li class="footer">Generated on Wed Aug 2 2023 20:27:10 for AYAB Arduino Firmware by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Fri Dec 22 2023 22:16:23 for AYAB Arduino Firmware by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

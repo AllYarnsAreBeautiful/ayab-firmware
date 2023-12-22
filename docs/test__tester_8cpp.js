@@ -21,6 +21,7 @@ var test__tester_8cpp =
     [ "TEST_F", "test__tester_8cpp.html#ada6eab2cc7046afe868a7a59c644a6cf", null ],
     [ "TEST_F", "test__tester_8cpp.html#a2f722a956e1715eeb04fefaf2056f2ca", null ],
     [ "TEST_F", "test__tester_8cpp.html#a34fa2670842c3256c9cb2e88a56523df", null ],
+    [ "beeper", "test__tester_8cpp.html#a555dd0c2b050edf0c9a561d40cdd60f9", null ],
     [ "fsm", "test__tester_8cpp.html#a3e2c39c9af7649db1ef2f8614c7b847e", null ],
     [ "knitter", "test__tester_8cpp.html#acbb448d5ee139edadca5ffbafb1e33aa", null ],
     [ "tester", "test__tester_8cpp.html#acb0f1872c0f8c7da29e7a1e11fd575e2", null ]

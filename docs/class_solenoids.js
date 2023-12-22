@@ -1,9 +1,9 @@
 var class_solenoids =
 [
-    [ "Solenoids", "class_solenoids.html#a9b5ee0365335bc1028f1a656da0597cd", null ],
-    [ "init", "class_solenoids.html#a0a33b71158b4b81cd94c5924c7f8d9f7", null ],
-    [ "setSolenoid", "class_solenoids.html#aae6ff71b1ef20950e84cbe1b339562e6", null ],
-    [ "setSolenoids", "class_solenoids.html#ae025f3326d3572902172c867f4a7595d", null ],
+    [ "Solenoids", "class_solenoids.html#a1931720db99e9454a6d5513c381b7d33", null ],
+    [ "init", "class_solenoids.html#ade17c68ea9d47d91351d40a9232b927a", null ],
+    [ "setSolenoid", "class_solenoids.html#abd60ee380a8f8a4607fc48afe64869f1", null ],
+    [ "setSolenoids", "class_solenoids.html#a3642dba4c6f9a8b327bf8b59a179a2cd", null ],
     [ "write", "class_solenoids.html#a95e5368821444a4340ba2652d6bcf66c", null ],
     [ "mcp_0", "class_solenoids.html#a4d1ab616db6306c9c13fa8b597961a92", null ],
     [ "mcp_1", "class_solenoids.html#a79ff2470f8cf7aadaca2d65f323e8135", null ],

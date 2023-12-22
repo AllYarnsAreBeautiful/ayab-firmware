@@ -1,10 +1,10 @@
 var class_knitter_interface =
 [
-    [ "~KnitterInterface", "class_knitter_interface.html#a06ab980660a6aed04b45396a77d3bfb1", null ],
+    [ "~KnitterInterface", "class_knitter_interface.html#a0ada9d967e113bafed7af067d180e21c", null ],
     [ "encodePosition", "class_knitter_interface.html#ac899cfa662f6c28215932a37acc52df5", null ],
     [ "getMachineType", "class_knitter_interface.html#af9309a2d4d27719e9e8580afe1cc5f08", null ],
     [ "getStartOffset", "class_knitter_interface.html#a8997885e936000985c7223dfc448e375", null ],
-    [ "indState", "class_knitter_interface.html#a9635d48cac9e34925157a2138c493666", null ],
+    [ "indState", "class_knitter_interface.html#a2dc1863a3c9ec1b4a21436e5f7ed0249", null ],
     [ "init", "class_knitter_interface.html#ae0c9a43c1f1829705ca3ce429b959def", null ],
     [ "initMachine", "class_knitter_interface.html#acf0508d320dbec571e7897e5f83f826c", null ],
     [ "isr", "class_knitter_interface.html#a09745be186709a5057485e397a6d9b3c", null ],

@@ -1,0 +1,4 @@
+<map id="Com::h_reqInit" name="Com::h_reqInit">
+<area shape="rect" id="node1" title="Handle reqInit (request initialization) command." alt="" coords="232,5,349,32"/>
+<area shape="rect" id="node2" href="$class_com.html#a4aa2f1cac782b180cf8914017f764328" title="Callback for PacketSerial." alt="" coords="5,5,184,32"/>
+</map>

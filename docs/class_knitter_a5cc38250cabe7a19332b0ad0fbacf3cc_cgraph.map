@@ -1,0 +1,4 @@
+<map id="Knitter::calculatePixelAndSolenoid" name="Knitter::calculatePixelAndSolenoid">
+<area shape="rect" id="node1" title="Calculate the solenoid and pixel to be set." alt="" coords="5,5,195,47"/>
+<area shape="rect" id="node2" href="$class_knitter.html#ad00d6b246c74e1d7cc9c78ffaa2684fc" title="Get start offset." alt="" coords="243,13,408,39"/>
+</map>

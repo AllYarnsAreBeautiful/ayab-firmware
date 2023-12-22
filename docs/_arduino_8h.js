@@ -14,9 +14,11 @@ var _arduino_8h =
     [ "bitToggle", "_arduino_8h.html#a8e2767cc4700e825fa3d276a39f1d0a7", null ],
     [ "bitWrite", "_arduino_8h.html#a42c17f59f3f9a3112d01246760067a8e", null ],
     [ "digitalPinToBitMask", "_arduino_8h.html#a2566ca95d8c9be48ded1b1f29561df5c", null ],
+    [ "digitalPinToInterrupt", "_arduino_8h.html#a4eeada3d193a6c489a1a146fb4ff87d5", null ],
     [ "digitalPinToPort", "_arduino_8h.html#a38f8ec3f7a520e63b038957a163a0d16", null ],
     [ "highByte", "_arduino_8h.html#a32fff07c58e569ce66ad409fe85c73bb", null ],
     [ "lowByte", "_arduino_8h.html#a57600234f6e26049357fbecfbdca9537", null ],
+    [ "NOT_AN_INTERRUPT", "_arduino_8h.html#ace73be9d32b9ad15d9120c47304266dc", null ],
     [ "portInputRegister", "_arduino_8h.html#af948b14751ed1c20d9c96028e734673f", null ],
     [ "portModeRegister", "_arduino_8h.html#a5baba0edcf5480a04ec56059995db1c7", null ],
     [ "portOutputRegister", "_arduino_8h.html#a2a2ae2ff0934b2dbda1a0b18918d59c4", null ]

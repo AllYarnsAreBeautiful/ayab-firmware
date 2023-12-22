@@ -1,12 +1,13 @@
 <map id="test/mocks/solenoids_mock.h" name="test/mocks/solenoids_mock.h">
-<area shape="rect" id="node1" title=" " alt="" coords="212,5,372,47"/>
-<area shape="rect" id="node2" title=" " alt="" coords="161,95,287,121"/>
-<area shape="rect" id="node3" href="$solenoids_8h.html" title=" " alt="" coords="312,95,408,121"/>
-<area shape="rect" id="node4" href="$board_8h.html" title=" " alt="" coords="193,169,263,196"/>
-<area shape="rect" id="node5" href="$_arduino_8h.html" title=" " alt="" coords="189,244,273,271"/>
-<area shape="rect" id="node8" href="$_adafruit___m_c_p23008_8h_source.html" title=" " alt="" coords="339,169,501,196"/>
-<area shape="rect" id="node9" href="$_wire_8h.html" title=" " alt="" coords="447,244,511,271"/>
+<area shape="rect" id="node1" title=" " alt="" coords="143,5,303,47"/>
+<area shape="rect" id="node2" title=" " alt="" coords="91,95,218,121"/>
+<area shape="rect" id="node3" href="$solenoids_8h.html" title=" " alt="" coords="243,95,339,121"/>
+<area shape="rect" id="node4" href="$board_8h.html" title=" " alt="" coords="98,169,169,196"/>
+<area shape="rect" id="node5" href="$_arduino_8h.html" title=" " alt="" coords="165,244,249,271"/>
+<area shape="rect" id="node8" href="$encoders_8h.html" title=" " alt="" coords="244,169,337,196"/>
+<area shape="rect" id="node9" href="$_adafruit___m_c_p23008_8h_source.html" title=" " alt="" coords="361,169,524,196"/>
+<area shape="rect" id="node10" href="$_wire_8h.html" title=" " alt="" coords="469,244,533,271"/>
 <area shape="rect" id="node6" title=" " alt="" coords="5,319,184,345"/>
 <area shape="rect" id="node7" title=" " alt="" coords="208,319,373,345"/>
-<area shape="rect" id="node10" title=" " alt="" coords="399,319,558,345"/>
+<area shape="rect" id="node11" title=" " alt="" coords="422,319,581,345"/>
 </map>

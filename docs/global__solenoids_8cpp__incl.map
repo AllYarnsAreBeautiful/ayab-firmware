@@ -1,11 +1,12 @@
 <map id="src/ayab/global_solenoids.cpp" name="src/ayab/global_solenoids.cpp">
-<area shape="rect" id="node1" title="Singleton class containing methods that control the needles via solenoids connected to IO expanders o..." alt="" coords="251,5,469,32"/>
-<area shape="rect" id="node2" href="$solenoids_8h.html" title=" " alt="" coords="312,80,408,107"/>
-<area shape="rect" id="node3" href="$board_8h.html" title=" " alt="" coords="193,155,263,181"/>
-<area shape="rect" id="node4" href="$_arduino_8h.html" title=" " alt="" coords="189,229,273,256"/>
-<area shape="rect" id="node7" href="$_adafruit___m_c_p23008_8h_source.html" title=" " alt="" coords="339,155,501,181"/>
-<area shape="rect" id="node8" href="$_wire_8h.html" title=" " alt="" coords="447,229,511,256"/>
+<area shape="rect" id="node1" title="Singleton class containing methods that control the needles via solenoids connected to IO expanders o..." alt="" coords="182,5,399,32"/>
+<area shape="rect" id="node2" href="$solenoids_8h.html" title=" " alt="" coords="243,80,339,107"/>
+<area shape="rect" id="node3" href="$board_8h.html" title=" " alt="" coords="98,155,169,181"/>
+<area shape="rect" id="node4" href="$_arduino_8h.html" title=" " alt="" coords="165,229,249,256"/>
+<area shape="rect" id="node7" href="$encoders_8h.html" title=" " alt="" coords="244,155,337,181"/>
+<area shape="rect" id="node8" href="$_adafruit___m_c_p23008_8h_source.html" title=" " alt="" coords="361,155,524,181"/>
+<area shape="rect" id="node9" href="$_wire_8h.html" title=" " alt="" coords="469,229,533,256"/>
 <area shape="rect" id="node5" title=" " alt="" coords="5,304,184,331"/>
 <area shape="rect" id="node6" title=" " alt="" coords="208,304,373,331"/>
-<area shape="rect" id="node9" title=" " alt="" coords="399,304,558,331"/>
+<area shape="rect" id="node10" title=" " alt="" coords="422,304,581,331"/>
 </map>

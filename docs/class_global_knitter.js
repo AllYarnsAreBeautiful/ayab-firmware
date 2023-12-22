@@ -4,7 +4,7 @@ var class_global_knitter =
     [ "encodePosition", "class_global_knitter.html#a6739eaa2085ed44e66b5d4ad045d83af", null ],
     [ "getMachineType", "class_global_knitter.html#a5bb0e1faf01fbbc57629a154ef8cbdbe", null ],
     [ "getStartOffset", "class_global_knitter.html#ac28d754ad0b531071ea013b239a759af", null ],
-    [ "indState", "class_global_knitter.html#aed539e04434cd563989a5563b88e832b", null ],
+    [ "indState", "class_global_knitter.html#a602cc9711d8584579824f632da25f879", null ],
     [ "init", "class_global_knitter.html#a5ccfbee7c89ee714d77f2bffa95c840e", null ],
     [ "initMachine", "class_global_knitter.html#aa25b8d57a7f065e50c937953516c25ea", null ],
     [ "isr", "class_global_knitter.html#ab7dd884d5d131458fd4bc0837ba125c9", null ],

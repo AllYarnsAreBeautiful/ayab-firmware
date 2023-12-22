@@ -71,71 +71,95 @@ $(document).ready(function(){initNavTree('beeper_8h_source.html',''); initResiza
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160; </div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="_arduino_8h.html">Arduino.h</a>&gt;</span></div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160; </div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;constexpr uint8_t BEEP_DELAY = 50U; <span class="comment">// ms</span></div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="keyword">enum class</span> BeepState : unsigned char {Idle, Wait, On, Off};</div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160; </div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;constexpr uint8_t BEEP_NUM_READY = 5U;</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;constexpr uint8_t BEEP_NUM_FINISHEDLINE = 3U;</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;constexpr uint8_t BEEP_NUM_ENDWORK = 10U;</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160; </div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;constexpr uint8_t BEEP_ON_DUTY = 0U;</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;constexpr uint8_t BEEP_OFF_DUTY = 20U;</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;constexpr uint8_t BEEP_NO_DUTY = 255U;</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160; </div>
-<div class="line"><a name="l00039"></a><span class="lineno"><a class="line" href="class_beeper_interface.html">   39</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_beeper_interface.html">BeeperInterface</a> {</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;  <span class="keyword">virtual</span> ~<a class="code" href="class_beeper_interface.html">BeeperInterface</a>(){};</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160; </div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;  <span class="comment">// any methods that need to be mocked should go here</span></div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">void</span> ready() = 0;</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">void</span> finishedLine() = 0;</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">void</span> endWork() = 0;</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;};</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160; </div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="comment">// Container class for the static methods that control the beeper.</span></div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="comment">// Dependency injection is enabled using a pointer to a global instance of</span></div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;<span class="comment">// either `Beeper` or `BeeperMock`, both of which classes implement the</span></div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="comment">// pure virtual methods of `BeeperInterface`.</span></div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160; </div>
-<div class="line"><a name="l00054"></a><span class="lineno"><a class="line" href="class_global_beeper.html">   54</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_global_beeper.html">GlobalBeeper</a> final {</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;  <span class="comment">// singleton class so private constructor is appropriate</span></div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;  <a class="code" href="class_global_beeper.html">GlobalBeeper</a>() = <span class="keywordflow">default</span>;</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160; </div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;  <span class="comment">// pointer to global instance whose methods are implemented</span></div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;  <span class="keyword">static</span> <a class="code" href="class_beeper_interface.html">BeeperInterface</a> *m_instance;</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160; </div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;  <span class="keyword">static</span> <span class="keywordtype">void</span> ready();</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;  <span class="keyword">static</span> <span class="keywordtype">void</span> finishedLine();</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;  <span class="keyword">static</span> <span class="keywordtype">void</span> endWork();</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;};</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160; </div>
-<div class="line"><a name="l00071"></a><span class="lineno"><a class="line" href="class_beeper.html">   71</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_beeper.html">Beeper</a> : <span class="keyword">public</span> <a class="code" href="class_beeper_interface.html">BeeperInterface</a> {</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_beeper.html#a06ebbe1d989353b0c3f674fe5506efac">ready</a>();</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_beeper.html#aa5a848916d0ba5389038120bb0ac1e06">finishedLine</a>();</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_beeper.html#ad3f2def33d26e3b969b398c0fe0ca627">endWork</a>();</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160; </div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_beeper.html#a4c58e02ea235cbf87cc32acc437b1246">beep</a>(uint8_t length);</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;};</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160; </div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// BEEPER_H_</span></div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;constexpr <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> BEEP_DELAY = 50U; <span class="comment">// ms</span></div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160; </div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;constexpr uint8_t BEEP_NUM_READY = 5U;</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;constexpr uint8_t BEEP_NUM_FINISHEDLINE = 3U;</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;constexpr uint8_t BEEP_NUM_ENDWORK = 10U;</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160; </div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;constexpr uint8_t BEEP_ON_DUTY = 0U;</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;constexpr uint8_t BEEP_OFF_DUTY = 20U;</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;constexpr uint8_t BEEP_NO_DUTY = 255U;</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160; </div>
+<div class="line"><a name="l00041"></a><span class="lineno"><a class="line" href="class_beeper_interface.html">   41</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_beeper_interface.html">BeeperInterface</a> {</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;  <span class="keyword">virtual</span> ~<a class="code" href="class_beeper_interface.html">BeeperInterface</a>() = <span class="keywordflow">default</span>;</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160; </div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;  <span class="comment">// any methods that need to be mocked should go here</span></div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">void</span> init(<span class="keywordtype">bool</span> enabled) = 0;</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">bool</span> enabled() = 0;</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;  <span class="keyword">virtual</span> BeepState getState() = 0;</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">void</span> ready() = 0;</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">void</span> finishedLine() = 0;</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">void</span> endWork() = 0;</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">void</span> schedule() = 0;</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;};</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160; </div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="comment">// Container class for the static methods that control the beeper.</span></div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;<span class="comment">// Dependency injection is enabled using a pointer to a global instance of</span></div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;<span class="comment">// either `Beeper` or `BeeperMock`, both of which classes implement the</span></div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;<span class="comment">// pure virtual methods of `BeeperInterface`.</span></div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160; </div>
+<div class="line"><a name="l00060"></a><span class="lineno"><a class="line" href="class_global_beeper.html">   60</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_global_beeper.html">GlobalBeeper</a> final {</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;  <span class="comment">// singleton class so private constructor is appropriate</span></div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;  <a class="code" href="class_global_beeper.html">GlobalBeeper</a>() = <span class="keywordflow">default</span>;</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160; </div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;  <span class="comment">// pointer to global instance whose methods are implemented</span></div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;  <span class="keyword">static</span> <a class="code" href="class_beeper_interface.html">BeeperInterface</a> *m_instance;</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160; </div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;  <span class="keyword">static</span> <span class="keywordtype">void</span> init(<span class="keywordtype">bool</span> enabled);</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;  <span class="keyword">static</span> <span class="keywordtype">bool</span> enabled();</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;  <span class="keyword">static</span> BeepState getState();</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;  <span class="keyword">static</span> <span class="keywordtype">void</span> ready();</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;  <span class="keyword">static</span> <span class="keywordtype">void</span> finishedLine();</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;  <span class="keyword">static</span> <span class="keywordtype">void</span> endWork();</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;  <span class="keyword">static</span> <span class="keywordtype">void</span> schedule();</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;};</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160; </div>
+<div class="line"><a name="l00081"></a><span class="lineno"><a class="line" href="class_beeper.html">   81</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_beeper.html">Beeper</a> : <span class="keyword">public</span> <a class="code" href="class_beeper_interface.html">BeeperInterface</a> {</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_beeper.html#a828cd0ce729fc593c3b3b2c6fb669451">init</a>(<span class="keywordtype">bool</span> <a class="code" href="class_beeper.html#ad1be835732416646f28d3b8a4c2377ff">enabled</a>) <span class="keyword">final</span>;</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="class_beeper.html#ad1be835732416646f28d3b8a4c2377ff">enabled</a>() <span class="keyword">final</span>;</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;  BeepState <a class="code" href="class_beeper.html#a479e036d67f3991012c3f13d198488ae">getState</a>() <span class="keyword">final</span>;</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_beeper.html#ada6d0ae8e4ca9ec3d41c5c86b9bbc598">ready</a>() <span class="keyword">final</span>;</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_beeper.html#a8c7bd6ecd048ab8f21858302da26cf55">finishedLine</a>() <span class="keyword">final</span>;</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_beeper.html#a57ce68053466bf5956e463a709a35c2c">endWork</a>() <span class="keyword">final</span>;</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_beeper.html#a725a08b17701aa67394480bb450aa902">schedule</a>() <span class="keyword">final</span>;</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160; </div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_beeper.html#a3ac21e30910ef9ece6f1a1451255f9ac">beep</a>(uint8_t repeats);</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160; </div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;  BeepState m_currentState;</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;  BeepState m_nextState;</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;  <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> m_nextTime;</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;  uint8_t m_repeat;</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;  <span class="keywordtype">bool</span> m_enabled;</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;};</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160; </div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// BEEPER_H_</span></div>
 <div class="ttc" id="a_arduino_8h_html"><div class="ttname"><a href="_arduino_8h.html">Arduino.h</a></div></div>
-<div class="ttc" id="aclass_beeper_html"><div class="ttname"><a href="class_beeper.html">Beeper</a></div><div class="ttdoc">Class to actuate a beeper connected to PIEZO_PIN.</div><div class="ttdef"><b>Definition:</b> beeper.h:71</div></div>
-<div class="ttc" id="aclass_beeper_html_a06ebbe1d989353b0c3f674fe5506efac"><div class="ttname"><a href="class_beeper.html#a06ebbe1d989353b0c3f674fe5506efac">Beeper::ready</a></div><div class="ttdeci">void ready()</div><div class="ttdef"><b>Definition:</b> beeper.cpp:34</div></div>
-<div class="ttc" id="aclass_beeper_html_a4c58e02ea235cbf87cc32acc437b1246"><div class="ttname"><a href="class_beeper.html#a4c58e02ea235cbf87cc32acc437b1246">Beeper::beep</a></div><div class="ttdeci">void beep(uint8_t length)</div><div class="ttdef"><b>Definition:</b> beeper.cpp:59</div></div>
-<div class="ttc" id="aclass_beeper_html_aa5a848916d0ba5389038120bb0ac1e06"><div class="ttname"><a href="class_beeper.html#aa5a848916d0ba5389038120bb0ac1e06">Beeper::finishedLine</a></div><div class="ttdeci">void finishedLine()</div><div class="ttdef"><b>Definition:</b> beeper.cpp:41</div></div>
-<div class="ttc" id="aclass_beeper_html_ad3f2def33d26e3b969b398c0fe0ca627"><div class="ttname"><a href="class_beeper.html#ad3f2def33d26e3b969b398c0fe0ca627">Beeper::endWork</a></div><div class="ttdeci">void endWork()</div><div class="ttdef"><b>Definition:</b> beeper.cpp:48</div></div>
-<div class="ttc" id="aclass_beeper_interface_html"><div class="ttname"><a href="class_beeper_interface.html">BeeperInterface</a></div><div class="ttdef"><b>Definition:</b> beeper.h:39</div></div>
-<div class="ttc" id="aclass_global_beeper_html"><div class="ttname"><a href="class_global_beeper.html">GlobalBeeper</a></div><div class="ttdef"><b>Definition:</b> beeper.h:54</div></div>
+<div class="ttc" id="aclass_beeper_html"><div class="ttname"><a href="class_beeper.html">Beeper</a></div><div class="ttdoc">Class to actuate a beeper connected to PIEZO_PIN.</div><div class="ttdef"><b>Definition:</b> beeper.h:81</div></div>
+<div class="ttc" id="aclass_beeper_html_a3ac21e30910ef9ece6f1a1451255f9ac"><div class="ttname"><a href="class_beeper.html#a3ac21e30910ef9ece6f1a1451255f9ac">Beeper::beep</a></div><div class="ttdeci">void beep(uint8_t repeats)</div><div class="ttdef"><b>Definition:</b> beeper.cpp:122</div></div>
+<div class="ttc" id="aclass_beeper_html_a479e036d67f3991012c3f13d198488ae"><div class="ttname"><a href="class_beeper.html#a479e036d67f3991012c3f13d198488ae">Beeper::getState</a></div><div class="ttdeci">BeepState getState() final</div><div class="ttdef"><b>Definition:</b> beeper.cpp:49</div></div>
+<div class="ttc" id="aclass_beeper_html_a57ce68053466bf5956e463a709a35c2c"><div class="ttname"><a href="class_beeper.html#a57ce68053466bf5956e463a709a35c2c">Beeper::endWork</a></div><div class="ttdeci">void endWork() final</div><div class="ttdef"><b>Definition:</b> beeper.cpp:74</div></div>
+<div class="ttc" id="aclass_beeper_html_a725a08b17701aa67394480bb450aa902"><div class="ttname"><a href="class_beeper.html#a725a08b17701aa67394480bb450aa902">Beeper::schedule</a></div><div class="ttdeci">void schedule() final</div><div class="ttdef"><b>Definition:</b> beeper.cpp:83</div></div>
+<div class="ttc" id="aclass_beeper_html_a828cd0ce729fc593c3b3b2c6fb669451"><div class="ttname"><a href="class_beeper.html#a828cd0ce729fc593c3b3b2c6fb669451">Beeper::init</a></div><div class="ttdeci">void init(bool enabled) final</div><div class="ttdef"><b>Definition:</b> beeper.cpp:34</div></div>
+<div class="ttc" id="aclass_beeper_html_a8c7bd6ecd048ab8f21858302da26cf55"><div class="ttname"><a href="class_beeper.html#a8c7bd6ecd048ab8f21858302da26cf55">Beeper::finishedLine</a></div><div class="ttdeci">void finishedLine() final</div><div class="ttdef"><b>Definition:</b> beeper.cpp:65</div></div>
+<div class="ttc" id="aclass_beeper_html_ad1be835732416646f28d3b8a4c2377ff"><div class="ttname"><a href="class_beeper.html#ad1be835732416646f28d3b8a4c2377ff">Beeper::enabled</a></div><div class="ttdeci">bool enabled() final</div><div class="ttdef"><b>Definition:</b> beeper.cpp:42</div></div>
+<div class="ttc" id="aclass_beeper_html_ada6d0ae8e4ca9ec3d41c5c86b9bbc598"><div class="ttname"><a href="class_beeper.html#ada6d0ae8e4ca9ec3d41c5c86b9bbc598">Beeper::ready</a></div><div class="ttdeci">void ready() final</div><div class="ttdef"><b>Definition:</b> beeper.cpp:56</div></div>
+<div class="ttc" id="aclass_beeper_interface_html"><div class="ttname"><a href="class_beeper_interface.html">BeeperInterface</a></div><div class="ttdef"><b>Definition:</b> beeper.h:41</div></div>
+<div class="ttc" id="aclass_global_beeper_html"><div class="ttname"><a href="class_global_beeper.html">GlobalBeeper</a></div><div class="ttdef"><b>Definition:</b> beeper.h:60</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_438f4a02a1d99eec8e3376e0c84be64f.html">ayab</a></li><li class="navelem"><a class="el" href="beeper_8h.html">beeper.h</a></li>
-    <li class="footer">Generated on Wed Aug 2 2023 20:27:10 for AYAB Arduino Firmware by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Fri Dec 22 2023 22:16:23 for AYAB Arduino Firmware by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

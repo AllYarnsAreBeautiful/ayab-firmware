@@ -91,50 +91,50 @@ Collaboration diagram for Knitter:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a6a7da289fbcb6e0f8ba2fe0143e55cb5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_knitter.html#a6a7da289fbcb6e0f8ba2fe0143e55cb5">init</a> ()</td></tr>
-<tr class="memdesc:a6a7da289fbcb6e0f8ba2fe0143e55cb5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize <a class="el" href="class_knitter.html">Knitter</a> object.  <a href="class_knitter.html#a6a7da289fbcb6e0f8ba2fe0143e55cb5">More...</a><br /></td></tr>
-<tr class="separator:a6a7da289fbcb6e0f8ba2fe0143e55cb5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2d0300604033e91ef433697c0a2c9947"><td class="memItemLeft" align="right" valign="top"><a id="a2d0300604033e91ef433697c0a2c9947"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_knitter.html#a2d0300604033e91ef433697c0a2c9947">setUpInterrupt</a> ()</td></tr>
-<tr class="memdesc:a2d0300604033e91ef433697c0a2c9947"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize interrupt service routine for <a class="el" href="class_knitter.html">Knitter</a> object. <br /></td></tr>
-<tr class="separator:a2d0300604033e91ef433697c0a2c9947"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7af1779d6c63f4dfa23f6df3bafe9f93"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_knitter.html#a7af1779d6c63f4dfa23f6df3bafe9f93">isr</a> ()</td></tr>
-<tr class="memdesc:a7af1779d6c63f4dfa23f6df3bafe9f93"><td class="mdescLeft">&#160;</td><td class="mdescRight">Interrupt service routine.  <a href="class_knitter.html#a7af1779d6c63f4dfa23f6df3bafe9f93">More...</a><br /></td></tr>
-<tr class="separator:a7af1779d6c63f4dfa23f6df3bafe9f93"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adb4aaf799ddf050dafd8173b35c159a6"><td class="memItemLeft" align="right" valign="top">Err_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_knitter.html#adb4aaf799ddf050dafd8173b35c159a6">startKnitting</a> (uint8_t startNeedle, uint8_t stopNeedle, uint8_t *pattern_start, bool continuousReportingEnabled)</td></tr>
-<tr class="memdesc:adb4aaf799ddf050dafd8173b35c159a6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enter <code>OpState::knit</code> machine state.  <a href="class_knitter.html#adb4aaf799ddf050dafd8173b35c159a6">More...</a><br /></td></tr>
-<tr class="separator:adb4aaf799ddf050dafd8173b35c159a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3ce66fee764569ee063f2f6ac3a081da"><td class="memItemLeft" align="right" valign="top">Err_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_knitter.html#a3ce66fee764569ee063f2f6ac3a081da">initMachine</a> (Machine_t machine)</td></tr>
-<tr class="memdesc:a3ce66fee764569ee063f2f6ac3a081da"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize machine type.  <a href="class_knitter.html#a3ce66fee764569ee063f2f6ac3a081da">More...</a><br /></td></tr>
-<tr class="separator:a3ce66fee764569ee063f2f6ac3a081da"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af590c582a2952d793a09bb5c423fae88"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_knitter.html#af590c582a2952d793a09bb5c423fae88">encodePosition</a> ()</td></tr>
-<tr class="memdesc:af590c582a2952d793a09bb5c423fae88"><td class="mdescLeft">&#160;</td><td class="mdescRight">Record current encoder position.  <a href="class_knitter.html#af590c582a2952d793a09bb5c423fae88">More...</a><br /></td></tr>
-<tr class="separator:af590c582a2952d793a09bb5c423fae88"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab2e85b42e17bd9752f901f3bd7869cc5"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_knitter.html#ab2e85b42e17bd9752f901f3bd7869cc5">isReady</a> ()</td></tr>
-<tr class="memdesc:ab2e85b42e17bd9752f901f3bd7869cc5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Assess whether the Finite State Machine is ready to move from state <code>OpState::init</code> to <code>OpState::ready</code>.  <a href="class_knitter.html#ab2e85b42e17bd9752f901f3bd7869cc5">More...</a><br /></td></tr>
-<tr class="separator:ab2e85b42e17bd9752f901f3bd7869cc5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a21eb7c1cda78a9e857bbeb4e55292d60"><td class="memItemLeft" align="right" valign="top"><a id="a21eb7c1cda78a9e857bbeb4e55292d60"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_knitter.html#a21eb7c1cda78a9e857bbeb4e55292d60">knit</a> ()</td></tr>
-<tr class="memdesc:a21eb7c1cda78a9e857bbeb4e55292d60"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function that is repeatedly called during state <code>OpState::knit</code> <br /></td></tr>
-<tr class="separator:a21eb7c1cda78a9e857bbeb4e55292d60"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abcb8c65bfb3d3d5790734ce6e4b2ce81"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_knitter.html#abcb8c65bfb3d3d5790734ce6e4b2ce81">indState</a> (Err_t error=SUCCESS)</td></tr>
-<tr class="memdesc:abcb8c65bfb3d3d5790734ce6e4b2ce81"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send <code>indState</code> message.  <a href="class_knitter.html#abcb8c65bfb3d3d5790734ce6e4b2ce81">More...</a><br /></td></tr>
-<tr class="separator:abcb8c65bfb3d3d5790734ce6e4b2ce81"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adf693d1f5a6f2ad69f3c76af95857cd5"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_knitter.html#adf693d1f5a6f2ad69f3c76af95857cd5">getStartOffset</a> (const Direction_t direction)</td></tr>
-<tr class="memdesc:adf693d1f5a6f2ad69f3c76af95857cd5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get start offset.  <a href="class_knitter.html#adf693d1f5a6f2ad69f3c76af95857cd5">More...</a><br /></td></tr>
-<tr class="separator:adf693d1f5a6f2ad69f3c76af95857cd5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af428b56ffbea6b19a5d66ae8af0bc074"><td class="memItemLeft" align="right" valign="top">Machine_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_knitter.html#af428b56ffbea6b19a5d66ae8af0bc074">getMachineType</a> ()</td></tr>
-<tr class="memdesc:af428b56ffbea6b19a5d66ae8af0bc074"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get knitting machine type.  <a href="class_knitter.html#af428b56ffbea6b19a5d66ae8af0bc074">More...</a><br /></td></tr>
-<tr class="separator:af428b56ffbea6b19a5d66ae8af0bc074"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa04ec362c19acade77328ee2da8a4730"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_knitter.html#aa04ec362c19acade77328ee2da8a4730">setNextLine</a> (uint8_t lineNumber)</td></tr>
-<tr class="memdesc:aa04ec362c19acade77328ee2da8a4730"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set line number of next row to be knitted.  <a href="class_knitter.html#aa04ec362c19acade77328ee2da8a4730">More...</a><br /></td></tr>
-<tr class="separator:aa04ec362c19acade77328ee2da8a4730"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5eb0299bfba1b23c0b6ba7ca4988430a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_knitter.html#a5eb0299bfba1b23c0b6ba7ca4988430a">setLastLine</a> ()</td></tr>
-<tr class="memdesc:a5eb0299bfba1b23c0b6ba7ca4988430a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get value of last line flag.  <a href="class_knitter.html#a5eb0299bfba1b23c0b6ba7ca4988430a">More...</a><br /></td></tr>
-<tr class="separator:a5eb0299bfba1b23c0b6ba7ca4988430a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a06119f3fbd70af5d989e38cb9666e258"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_knitter.html#a06119f3fbd70af5d989e38cb9666e258">setMachineType</a> (Machine_t)</td></tr>
-<tr class="memdesc:a06119f3fbd70af5d989e38cb9666e258"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set machine type.  <a href="class_knitter.html#a06119f3fbd70af5d989e38cb9666e258">More...</a><br /></td></tr>
-<tr class="separator:a06119f3fbd70af5d989e38cb9666e258"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5daea276ba47f0fe7fa728f7c899af09"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_knitter.html#a5daea276ba47f0fe7fa728f7c899af09">init</a> () final</td></tr>
+<tr class="memdesc:a5daea276ba47f0fe7fa728f7c899af09"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize <a class="el" href="class_knitter.html">Knitter</a> object.  <a href="class_knitter.html#a5daea276ba47f0fe7fa728f7c899af09">More...</a><br /></td></tr>
+<tr class="separator:a5daea276ba47f0fe7fa728f7c899af09"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4b7aaf5735fe4189cf6fd69c10c98107"><td class="memItemLeft" align="right" valign="top"><a id="a4b7aaf5735fe4189cf6fd69c10c98107"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_knitter.html#a4b7aaf5735fe4189cf6fd69c10c98107">setUpInterrupt</a> () final</td></tr>
+<tr class="memdesc:a4b7aaf5735fe4189cf6fd69c10c98107"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize interrupt service routine for <a class="el" href="class_knitter.html">Knitter</a> object. <br /></td></tr>
+<tr class="separator:a4b7aaf5735fe4189cf6fd69c10c98107"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7237d95549d973e4b0b894574482508c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_knitter.html#a7237d95549d973e4b0b894574482508c">isr</a> () final</td></tr>
+<tr class="memdesc:a7237d95549d973e4b0b894574482508c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Interrupt service routine.  <a href="class_knitter.html#a7237d95549d973e4b0b894574482508c">More...</a><br /></td></tr>
+<tr class="separator:a7237d95549d973e4b0b894574482508c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a62d281bfdbae9585c9f5dfe6f1b7ff43"><td class="memItemLeft" align="right" valign="top">Err_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_knitter.html#a62d281bfdbae9585c9f5dfe6f1b7ff43">startKnitting</a> (uint8_t startNeedle, uint8_t stopNeedle, uint8_t *pattern_start, bool continuousReportingEnabled) final</td></tr>
+<tr class="memdesc:a62d281bfdbae9585c9f5dfe6f1b7ff43"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enter <code>OpState::knit</code> machine state.  <a href="class_knitter.html#a62d281bfdbae9585c9f5dfe6f1b7ff43">More...</a><br /></td></tr>
+<tr class="separator:a62d281bfdbae9585c9f5dfe6f1b7ff43"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae684b7ca6461254ef00ff813918e28e9"><td class="memItemLeft" align="right" valign="top">Err_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_knitter.html#ae684b7ca6461254ef00ff813918e28e9">initMachine</a> (Machine_t machine) final</td></tr>
+<tr class="memdesc:ae684b7ca6461254ef00ff813918e28e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize machine type.  <a href="class_knitter.html#ae684b7ca6461254ef00ff813918e28e9">More...</a><br /></td></tr>
+<tr class="separator:ae684b7ca6461254ef00ff813918e28e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af36522669a315dca49ce48af61c5dbdd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_knitter.html#af36522669a315dca49ce48af61c5dbdd">encodePosition</a> () final</td></tr>
+<tr class="memdesc:af36522669a315dca49ce48af61c5dbdd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Record current encoder position.  <a href="class_knitter.html#af36522669a315dca49ce48af61c5dbdd">More...</a><br /></td></tr>
+<tr class="separator:af36522669a315dca49ce48af61c5dbdd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ade911f1f980a950767272ce81860eb9b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_knitter.html#ade911f1f980a950767272ce81860eb9b">isReady</a> () final</td></tr>
+<tr class="memdesc:ade911f1f980a950767272ce81860eb9b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Assess whether the Finite State Machine is ready to move from state <code>OpState::init</code> to <code>OpState::ready</code>.  <a href="class_knitter.html#ade911f1f980a950767272ce81860eb9b">More...</a><br /></td></tr>
+<tr class="separator:ade911f1f980a950767272ce81860eb9b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8edb0e49c22e0b38345a24ddbd31fd81"><td class="memItemLeft" align="right" valign="top"><a id="a8edb0e49c22e0b38345a24ddbd31fd81"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_knitter.html#a8edb0e49c22e0b38345a24ddbd31fd81">knit</a> () final</td></tr>
+<tr class="memdesc:a8edb0e49c22e0b38345a24ddbd31fd81"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function that is repeatedly called during state <code>OpState::knit</code> <br /></td></tr>
+<tr class="separator:a8edb0e49c22e0b38345a24ddbd31fd81"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a92edc0570fa4e718302aa8fa2e36c482"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_knitter.html#a92edc0570fa4e718302aa8fa2e36c482">indState</a> (Err_t error=ErrorCode::success) final</td></tr>
+<tr class="memdesc:a92edc0570fa4e718302aa8fa2e36c482"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send <code>indState</code> message.  <a href="class_knitter.html#a92edc0570fa4e718302aa8fa2e36c482">More...</a><br /></td></tr>
+<tr class="separator:a92edc0570fa4e718302aa8fa2e36c482"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad00d6b246c74e1d7cc9c78ffaa2684fc"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_knitter.html#ad00d6b246c74e1d7cc9c78ffaa2684fc">getStartOffset</a> (const Direction_t direction) final</td></tr>
+<tr class="memdesc:ad00d6b246c74e1d7cc9c78ffaa2684fc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get start offset.  <a href="class_knitter.html#ad00d6b246c74e1d7cc9c78ffaa2684fc">More...</a><br /></td></tr>
+<tr class="separator:ad00d6b246c74e1d7cc9c78ffaa2684fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac22d16e6346f3da2569f8ed5ac1e23dd"><td class="memItemLeft" align="right" valign="top">Machine_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_knitter.html#ac22d16e6346f3da2569f8ed5ac1e23dd">getMachineType</a> () final</td></tr>
+<tr class="memdesc:ac22d16e6346f3da2569f8ed5ac1e23dd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get knitting machine type.  <a href="class_knitter.html#ac22d16e6346f3da2569f8ed5ac1e23dd">More...</a><br /></td></tr>
+<tr class="separator:ac22d16e6346f3da2569f8ed5ac1e23dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2207ceece59284f18f3d82409644675e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_knitter.html#a2207ceece59284f18f3d82409644675e">setNextLine</a> (uint8_t lineNumber) final</td></tr>
+<tr class="memdesc:a2207ceece59284f18f3d82409644675e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set line number of next row to be knitted.  <a href="class_knitter.html#a2207ceece59284f18f3d82409644675e">More...</a><br /></td></tr>
+<tr class="separator:a2207ceece59284f18f3d82409644675e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab3f96b9b1630c5282daf09404ce68252"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_knitter.html#ab3f96b9b1630c5282daf09404ce68252">setLastLine</a> () final</td></tr>
+<tr class="memdesc:ab3f96b9b1630c5282daf09404ce68252"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get value of last line flag.  <a href="class_knitter.html#ab3f96b9b1630c5282daf09404ce68252">More...</a><br /></td></tr>
+<tr class="separator:ab3f96b9b1630c5282daf09404ce68252"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab8c0729619d49b19a59bef1c767f7b94"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_knitter.html#ab8c0729619d49b19a59bef1c767f7b94">setMachineType</a> (Machine_t) final</td></tr>
+<tr class="memdesc:ab8c0729619d49b19a59bef1c767f7b94"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set machine type.  <a href="class_knitter.html#ab8c0729619d49b19a59bef1c767f7b94">More...</a><br /></td></tr>
+<tr class="separator:ab8c0729619d49b19a59bef1c767f7b94"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-methods"></a>
 Private Member Functions</h2></td></tr>
@@ -144,10 +144,10 @@ Private Member Functions</h2></td></tr>
 <tr class="memitem:a5cc38250cabe7a19332b0ad0fbacf3cc"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_knitter.html#a5cc38250cabe7a19332b0ad0fbacf3cc">calculatePixelAndSolenoid</a> ()</td></tr>
 <tr class="memdesc:a5cc38250cabe7a19332b0ad0fbacf3cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the solenoid and pixel to be set.  <a href="class_knitter.html#a5cc38250cabe7a19332b0ad0fbacf3cc">More...</a><br /></td></tr>
 <tr class="separator:a5cc38250cabe7a19332b0ad0fbacf3cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9a43a8023ef2f1f9b03ad97ba95d2edd"><td class="memItemLeft" align="right" valign="top"><a id="a9a43a8023ef2f1f9b03ad97ba95d2edd"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_knitter.html#a9a43a8023ef2f1f9b03ad97ba95d2edd">stopKnitting</a> ()</td></tr>
-<tr class="memdesc:a9a43a8023ef2f1f9b03ad97ba95d2edd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finish knitting procedure. <br /></td></tr>
-<tr class="separator:a9a43a8023ef2f1f9b03ad97ba95d2edd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2131cebe8b25d9f84300a851a95044ac"><td class="memItemLeft" align="right" valign="top"><a id="a2131cebe8b25d9f84300a851a95044ac"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_knitter.html#a2131cebe8b25d9f84300a851a95044ac">stopKnitting</a> () const</td></tr>
+<tr class="memdesc:a2131cebe8b25d9f84300a851a95044ac"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finish knitting procedure. <br /></td></tr>
+<tr class="separator:a2131cebe8b25d9f84300a851a95044ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
@@ -234,26 +234,32 @@ uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>m_pixelToSet</b></
 </div><div class="memdoc">
 
 <p>Calculate the solenoid and pixel to be set. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">&lt;tt&gt;true&lt;/tt&gt;</td><td>if successful, <code>false</code> otherwise. </td></tr>
-  </table>
-  </dd>
-</dl>
+<dl class="section return"><dt>Returns</dt><dd><code>true</code> if successful, <code>false</code> otherwise. </dd></dl>
+
+<p class="reference">References <a class="el" href="class_knitter.html#ad00d6b246c74e1d7cc9c78ffaa2684fc">getStartOffset()</a>.</p>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="class_knitter_a5cc38250cabe7a19332b0ad0fbacf3cc_cgraph.png" border="0" usemap="#aclass_knitter_a5cc38250cabe7a19332b0ad0fbacf3cc_cgraph" alt=""/></div>
+<map name="aclass_knitter_a5cc38250cabe7a19332b0ad0fbacf3cc_cgraph" id="aclass_knitter_a5cc38250cabe7a19332b0ad0fbacf3cc_cgraph">
+<area shape="rect" title="Calculate the solenoid and pixel to be set." alt="" coords="5,5,195,47"/>
+<area shape="rect" href="class_knitter.html#ad00d6b246c74e1d7cc9c78ffaa2684fc" title="Get start offset." alt="" coords="243,13,408,39"/>
+</map>
+</div>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="class_knitter_a5cc38250cabe7a19332b0ad0fbacf3cc_icgraph.png" border="0" usemap="#aclass_knitter_a5cc38250cabe7a19332b0ad0fbacf3cc_icgraph" alt=""/></div>
 <map name="aclass_knitter_a5cc38250cabe7a19332b0ad0fbacf3cc_icgraph" id="aclass_knitter_a5cc38250cabe7a19332b0ad0fbacf3cc_icgraph">
 <area shape="rect" title="Calculate the solenoid and pixel to be set." alt="" coords="227,5,416,47"/>
-<area shape="rect" href="class_knitter.html#af590c582a2952d793a09bb5c423fae88" title="Record current encoder position." alt="" coords="5,13,179,39"/>
+<area shape="rect" href="class_knitter.html#af36522669a315dca49ce48af61c5dbdd" title="Record current encoder position." alt="" coords="5,13,179,39"/>
 </map>
 </div>
 
 </div>
 </div>
-<a id="af590c582a2952d793a09bb5c423fae88"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af590c582a2952d793a09bb5c423fae88">&#9670;&nbsp;</a></span>encodePosition()</h2>
+<a id="af36522669a315dca49ce48af61c5dbdd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af36522669a315dca49ce48af61c5dbdd">&#9670;&nbsp;</a></span>encodePosition()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -270,7 +276,7 @@ Here is the caller graph for this function:</div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">final</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -280,22 +286,23 @@ Here is the caller graph for this function:</div>
 
 <p>Implements <a class="el" href="class_knitter_interface.html">KnitterInterface</a>.</p>
 
-<p class="reference">References <a class="el" href="class_knitter.html#a5cc38250cabe7a19332b0ad0fbacf3cc">calculatePixelAndSolenoid()</a>, and <a class="el" href="class_knitter.html#abcb8c65bfb3d3d5790734ce6e4b2ce81">indState()</a>.</p>
+<p class="reference">References <a class="el" href="class_knitter.html#a5cc38250cabe7a19332b0ad0fbacf3cc">calculatePixelAndSolenoid()</a>, and <a class="el" href="class_knitter.html#a92edc0570fa4e718302aa8fa2e36c482">indState()</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="class_knitter_af590c582a2952d793a09bb5c423fae88_cgraph.png" border="0" usemap="#aclass_knitter_af590c582a2952d793a09bb5c423fae88_cgraph" alt=""/></div>
-<map name="aclass_knitter_af590c582a2952d793a09bb5c423fae88_cgraph" id="aclass_knitter_af590c582a2952d793a09bb5c423fae88_cgraph">
+<div class="center"><img src="class_knitter_af36522669a315dca49ce48af61c5dbdd_cgraph.png" border="0" usemap="#aclass_knitter_af36522669a315dca49ce48af61c5dbdd_cgraph" alt=""/></div>
+<map name="aclass_knitter_af36522669a315dca49ce48af61c5dbdd_cgraph" id="aclass_knitter_af36522669a315dca49ce48af61c5dbdd_cgraph">
 <area shape="rect" title="Record current encoder position." alt="" coords="5,42,179,69"/>
 <area shape="rect" href="class_knitter.html#a5cc38250cabe7a19332b0ad0fbacf3cc" title="Calculate the solenoid and pixel to be set." alt="" coords="227,5,416,47"/>
-<area shape="rect" href="class_knitter.html#abcb8c65bfb3d3d5790734ce6e4b2ce81" title="Send indState message." alt="" coords="257,71,385,98"/>
+<area shape="rect" href="class_knitter.html#a92edc0570fa4e718302aa8fa2e36c482" title="Send indState message." alt="" coords="257,71,385,98"/>
+<area shape="rect" href="class_knitter.html#ad00d6b246c74e1d7cc9c78ffaa2684fc" title="Get start offset." alt="" coords="464,13,629,39"/>
 </map>
 </div>
 
 </div>
 </div>
-<a id="af428b56ffbea6b19a5d66ae8af0bc074"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af428b56ffbea6b19a5d66ae8af0bc074">&#9670;&nbsp;</a></span>getMachineType()</h2>
+<a id="ac22d16e6346f3da2569f8ed5ac1e23dd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac22d16e6346f3da2569f8ed5ac1e23dd">&#9670;&nbsp;</a></span>getMachineType()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -312,7 +319,7 @@ Here is the call graph for this function:</div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">final</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -324,8 +331,8 @@ Here is the call graph for this function:</div>
 
 </div>
 </div>
-<a id="adf693d1f5a6f2ad69f3c76af95857cd5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adf693d1f5a6f2ad69f3c76af95857cd5">&#9670;&nbsp;</a></span>getStartOffset()</h2>
+<a id="ad00d6b246c74e1d7cc9c78ffaa2684fc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad00d6b246c74e1d7cc9c78ffaa2684fc">&#9670;&nbsp;</a></span>getStartOffset()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -343,7 +350,7 @@ Here is the call graph for this function:</div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">final</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -352,11 +359,21 @@ Here is the call graph for this function:</div>
 <dl class="section return"><dt>Returns</dt><dd>Start offset, or 0 if unobtainable. </dd></dl>
 
 <p>Implements <a class="el" href="class_knitter_interface.html">KnitterInterface</a>.</p>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="class_knitter_ad00d6b246c74e1d7cc9c78ffaa2684fc_icgraph.png" border="0" usemap="#aclass_knitter_ad00d6b246c74e1d7cc9c78ffaa2684fc_icgraph" alt=""/></div>
+<map name="aclass_knitter_ad00d6b246c74e1d7cc9c78ffaa2684fc_icgraph" id="aclass_knitter_ad00d6b246c74e1d7cc9c78ffaa2684fc_icgraph">
+<area shape="rect" title="Get start offset." alt="" coords="464,13,629,39"/>
+<area shape="rect" href="class_knitter.html#a5cc38250cabe7a19332b0ad0fbacf3cc" title="Calculate the solenoid and pixel to be set." alt="" coords="227,5,416,47"/>
+<area shape="rect" href="class_knitter.html#af36522669a315dca49ce48af61c5dbdd" title="Record current encoder position." alt="" coords="5,13,179,39"/>
+</map>
+</div>
 
 </div>
 </div>
-<a id="abcb8c65bfb3d3d5790734ce6e4b2ce81"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abcb8c65bfb3d3d5790734ce6e4b2ce81">&#9670;&nbsp;</a></span>indState()</h2>
+<a id="a92edc0570fa4e718302aa8fa2e36c482"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a92edc0570fa4e718302aa8fa2e36c482">&#9670;&nbsp;</a></span>indState()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -368,13 +385,13 @@ Here is the call graph for this function:</div>
           <td class="memname">void Knitter::indState </td>
           <td>(</td>
           <td class="paramtype">Err_t&#160;</td>
-          <td class="paramname"><em>error</em> = <code>SUCCESS</code></td><td>)</td>
+          <td class="paramname"><em>error</em> = <code>ErrorCode::success</code></td><td>)</td>
           <td></td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">final</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -391,17 +408,17 @@ Here is the call graph for this function:</div>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="class_knitter_abcb8c65bfb3d3d5790734ce6e4b2ce81_icgraph.png" border="0" usemap="#aclass_knitter_abcb8c65bfb3d3d5790734ce6e4b2ce81_icgraph" alt=""/></div>
-<map name="aclass_knitter_abcb8c65bfb3d3d5790734ce6e4b2ce81_icgraph" id="aclass_knitter_abcb8c65bfb3d3d5790734ce6e4b2ce81_icgraph">
+<div class="center"><img src="class_knitter_a92edc0570fa4e718302aa8fa2e36c482_icgraph.png" border="0" usemap="#aclass_knitter_a92edc0570fa4e718302aa8fa2e36c482_icgraph" alt=""/></div>
+<map name="aclass_knitter_a92edc0570fa4e718302aa8fa2e36c482_icgraph" id="aclass_knitter_a92edc0570fa4e718302aa8fa2e36c482_icgraph">
 <area shape="rect" title="Send indState message." alt="" coords="227,5,355,32"/>
-<area shape="rect" href="class_knitter.html#af590c582a2952d793a09bb5c423fae88" title="Record current encoder position." alt="" coords="5,5,179,32"/>
+<area shape="rect" href="class_knitter.html#af36522669a315dca49ce48af61c5dbdd" title="Record current encoder position." alt="" coords="5,5,179,32"/>
 </map>
 </div>
 
 </div>
 </div>
-<a id="a6a7da289fbcb6e0f8ba2fe0143e55cb5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6a7da289fbcb6e0f8ba2fe0143e55cb5">&#9670;&nbsp;</a></span>init()</h2>
+<a id="a5daea276ba47f0fe7fa728f7c899af09"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5daea276ba47f0fe7fa728f7c899af09">&#9670;&nbsp;</a></span>init()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -418,7 +435,7 @@ Here is the caller graph for this function:</div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">final</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -430,8 +447,8 @@ Here is the caller graph for this function:</div>
 
 </div>
 </div>
-<a id="a3ce66fee764569ee063f2f6ac3a081da"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3ce66fee764569ee063f2f6ac3a081da">&#9670;&nbsp;</a></span>initMachine()</h2>
+<a id="ae684b7ca6461254ef00ff813918e28e9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae684b7ca6461254ef00ff813918e28e9">&#9670;&nbsp;</a></span>initMachine()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -449,7 +466,7 @@ Here is the caller graph for this function:</div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">final</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -467,8 +484,8 @@ Here is the caller graph for this function:</div>
 
 </div>
 </div>
-<a id="a7af1779d6c63f4dfa23f6df3bafe9f93"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7af1779d6c63f4dfa23f6df3bafe9f93">&#9670;&nbsp;</a></span>isr()</h2>
+<a id="a7237d95549d973e4b0b894574482508c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7237d95549d973e4b0b894574482508c">&#9670;&nbsp;</a></span>isr()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -485,7 +502,7 @@ Here is the caller graph for this function:</div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">final</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -497,8 +514,8 @@ Here is the caller graph for this function:</div>
 
 </div>
 </div>
-<a id="ab2e85b42e17bd9752f901f3bd7869cc5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab2e85b42e17bd9752f901f3bd7869cc5">&#9670;&nbsp;</a></span>isReady()</h2>
+<a id="ade911f1f980a950767272ce81860eb9b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ade911f1f980a950767272ce81860eb9b">&#9670;&nbsp;</a></span>isReady()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -515,7 +532,7 @@ Here is the caller graph for this function:</div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">final</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -564,14 +581,14 @@ Here is the caller graph for this function:</div>
 <div class="center"><img src="class_knitter_ac369fe67f9d546a9a1546b4b5e0d9d86_icgraph.png" border="0" usemap="#aclass_knitter_ac369fe67f9d546a9a1546b4b5e0d9d86_icgraph" alt=""/></div>
 <map name="aclass_knitter_ac369fe67f9d546a9a1546b4b5e0d9d86_icgraph" id="aclass_knitter_ac369fe67f9d546a9a1546b4b5e0d9d86_icgraph">
 <area shape="rect" title="Send reqLine message." alt="" coords="205,5,328,32"/>
-<area shape="rect" href="class_knitter.html#aa04ec362c19acade77328ee2da8a4730" title="Set line number of next row to be knitted." alt="" coords="5,5,157,32"/>
+<area shape="rect" href="class_knitter.html#a2207ceece59284f18f3d82409644675e" title="Set line number of next row to be knitted." alt="" coords="5,5,157,32"/>
 </map>
 </div>
 
 </div>
 </div>
-<a id="a5eb0299bfba1b23c0b6ba7ca4988430a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5eb0299bfba1b23c0b6ba7ca4988430a">&#9670;&nbsp;</a></span>setLastLine()</h2>
+<a id="ab3f96b9b1630c5282daf09404ce68252"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab3f96b9b1630c5282daf09404ce68252">&#9670;&nbsp;</a></span>setLastLine()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -588,7 +605,7 @@ Here is the caller graph for this function:</div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">final</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -605,8 +622,8 @@ Here is the caller graph for this function:</div>
 
 </div>
 </div>
-<a id="a06119f3fbd70af5d989e38cb9666e258"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a06119f3fbd70af5d989e38cb9666e258">&#9670;&nbsp;</a></span>setMachineType()</h2>
+<a id="ab8c0729619d49b19a59bef1c767f7b94"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab8c0729619d49b19a59bef1c767f7b94">&#9670;&nbsp;</a></span>setMachineType()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -624,7 +641,7 @@ Here is the caller graph for this function:</div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">final</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -641,8 +658,8 @@ Here is the caller graph for this function:</div>
 
 </div>
 </div>
-<a id="aa04ec362c19acade77328ee2da8a4730"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa04ec362c19acade77328ee2da8a4730">&#9670;&nbsp;</a></span>setNextLine()</h2>
+<a id="a2207ceece59284f18f3d82409644675e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2207ceece59284f18f3d82409644675e">&#9670;&nbsp;</a></span>setNextLine()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -660,7 +677,7 @@ Here is the caller graph for this function:</div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">final</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -672,6 +689,7 @@ Here is the caller graph for this function:</div>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd><code>true</code> if successful, <code>false</code> otherwise. </dd></dl>
 
 <p>Implements <a class="el" href="class_knitter_interface.html">KnitterInterface</a>.</p>
 
@@ -679,8 +697,8 @@ Here is the caller graph for this function:</div>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="class_knitter_aa04ec362c19acade77328ee2da8a4730_cgraph.png" border="0" usemap="#aclass_knitter_aa04ec362c19acade77328ee2da8a4730_cgraph" alt=""/></div>
-<map name="aclass_knitter_aa04ec362c19acade77328ee2da8a4730_cgraph" id="aclass_knitter_aa04ec362c19acade77328ee2da8a4730_cgraph">
+<div class="center"><img src="class_knitter_a2207ceece59284f18f3d82409644675e_cgraph.png" border="0" usemap="#aclass_knitter_a2207ceece59284f18f3d82409644675e_cgraph" alt=""/></div>
+<map name="aclass_knitter_a2207ceece59284f18f3d82409644675e_cgraph" id="aclass_knitter_a2207ceece59284f18f3d82409644675e_cgraph">
 <area shape="rect" title="Set line number of next row to be knitted." alt="" coords="5,5,157,32"/>
 <area shape="rect" href="class_knitter.html#ac369fe67f9d546a9a1546b4b5e0d9d86" title="Send reqLine message." alt="" coords="205,5,328,32"/>
 </map>
@@ -688,8 +706,8 @@ Here is the call graph for this function:</div>
 
 </div>
 </div>
-<a id="adb4aaf799ddf050dafd8173b35c159a6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adb4aaf799ddf050dafd8173b35c159a6">&#9670;&nbsp;</a></span>startKnitting()</h2>
+<a id="a62d281bfdbae9585c9f5dfe6f1b7ff43"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a62d281bfdbae9585c9f5dfe6f1b7ff43">&#9670;&nbsp;</a></span>startKnitting()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -729,7 +747,7 @@ Here is the call graph for this function:</div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">final</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -761,7 +779,7 @@ Here is the call graph for this function:</div>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_knitter.html">Knitter</a></li>
-    <li class="footer">Generated on Wed Aug 2 2023 20:27:10 for AYAB Arduino Firmware by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Fri Dec 22 2023 22:16:23 for AYAB Arduino Firmware by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

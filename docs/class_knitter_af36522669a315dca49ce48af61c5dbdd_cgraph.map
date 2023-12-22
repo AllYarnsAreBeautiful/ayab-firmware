@@ -1,5 +1,6 @@
 <map id="Knitter::encodePosition" name="Knitter::encodePosition">
 <area shape="rect" id="node1" title="Record current encoder position." alt="" coords="5,42,179,69"/>
 <area shape="rect" id="node2" href="$class_knitter.html#a5cc38250cabe7a19332b0ad0fbacf3cc" title="Calculate the solenoid and pixel to be set." alt="" coords="227,5,416,47"/>
-<area shape="rect" id="node3" href="$class_knitter.html#abcb8c65bfb3d3d5790734ce6e4b2ce81" title="Send indState message." alt="" coords="257,71,385,98"/>
+<area shape="rect" id="node4" href="$class_knitter.html#a92edc0570fa4e718302aa8fa2e36c482" title="Send indState message." alt="" coords="257,71,385,98"/>
+<area shape="rect" id="node3" href="$class_knitter.html#ad00d6b246c74e1d7cc9c78ffaa2684fc" title="Get start offset." alt="" coords="464,13,629,39"/>
 </map>

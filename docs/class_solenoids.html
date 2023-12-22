@@ -92,16 +92,16 @@ Collaboration diagram for Solenoids:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a0a33b71158b4b81cd94c5924c7f8d9f7"><td class="memItemLeft" align="right" valign="top"><a id="a0a33b71158b4b81cd94c5924c7f8d9f7"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_solenoids.html#a0a33b71158b4b81cd94c5924c7f8d9f7">init</a> ()</td></tr>
-<tr class="memdesc:a0a33b71158b4b81cd94c5924c7f8d9f7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize I2C connection for solenoids. <br /></td></tr>
-<tr class="separator:a0a33b71158b4b81cd94c5924c7f8d9f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aae6ff71b1ef20950e84cbe1b339562e6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_solenoids.html#aae6ff71b1ef20950e84cbe1b339562e6">setSolenoid</a> (uint8_t solenoid, bool state)</td></tr>
-<tr class="memdesc:aae6ff71b1ef20950e84cbe1b339562e6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the state of a solenoid.  <a href="class_solenoids.html#aae6ff71b1ef20950e84cbe1b339562e6">More...</a><br /></td></tr>
-<tr class="separator:aae6ff71b1ef20950e84cbe1b339562e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae025f3326d3572902172c867f4a7595d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_solenoids.html#ae025f3326d3572902172c867f4a7595d">setSolenoids</a> (uint16_t state)</td></tr>
-<tr class="memdesc:ae025f3326d3572902172c867f4a7595d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the state of all the solenoids.  <a href="class_solenoids.html#ae025f3326d3572902172c867f4a7595d">More...</a><br /></td></tr>
-<tr class="separator:ae025f3326d3572902172c867f4a7595d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ade17c68ea9d47d91351d40a9232b927a"><td class="memItemLeft" align="right" valign="top"><a id="ade17c68ea9d47d91351d40a9232b927a"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_solenoids.html#ade17c68ea9d47d91351d40a9232b927a">init</a> () final</td></tr>
+<tr class="memdesc:ade17c68ea9d47d91351d40a9232b927a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize I2C connection for solenoids. <br /></td></tr>
+<tr class="separator:ade17c68ea9d47d91351d40a9232b927a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abd60ee380a8f8a4607fc48afe64869f1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_solenoids.html#abd60ee380a8f8a4607fc48afe64869f1">setSolenoid</a> (uint8_t solenoid, bool state) final</td></tr>
+<tr class="memdesc:abd60ee380a8f8a4607fc48afe64869f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the state of a solenoid.  <a href="class_solenoids.html#abd60ee380a8f8a4607fc48afe64869f1">More...</a><br /></td></tr>
+<tr class="separator:abd60ee380a8f8a4607fc48afe64869f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3642dba4c6f9a8b327bf8b59a179a2cd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_solenoids.html#a3642dba4c6f9a8b327bf8b59a179a2cd">setSolenoids</a> (uint16_t state) final</td></tr>
+<tr class="memdesc:a3642dba4c6f9a8b327bf8b59a179a2cd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the state of all the solenoids.  <a href="class_solenoids.html#a3642dba4c6f9a8b327bf8b59a179a2cd">More...</a><br /></td></tr>
+<tr class="separator:a3642dba4c6f9a8b327bf8b59a179a2cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-methods"></a>
 Private Member Functions</h2></td></tr>
@@ -114,15 +114,15 @@ Private Attributes</h2></td></tr>
 uint16_t&#160;</td><td class="memItemRight" valign="bottom"><b>solenoidState</b> = 0x0000U</td></tr>
 <tr class="separator:ae41d003787cb65c00d1c88bc5e29a787"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4d1ab616db6306c9c13fa8b597961a92"><td class="memItemLeft" align="right" valign="top"><a id="a4d1ab616db6306c9c13fa8b597961a92"></a>
-<a class="el" href="class_adafruit___m_c_p23008.html">Adafruit_MCP23008</a>&#160;</td><td class="memItemRight" valign="bottom"><b>mcp_0</b></td></tr>
+<a class="el" href="class_adafruit___m_c_p23008.html">Adafruit_MCP23008</a>&#160;</td><td class="memItemRight" valign="bottom"><b>mcp_0</b> = <a class="el" href="class_adafruit___m_c_p23008.html">Adafruit_MCP23008</a>()</td></tr>
 <tr class="separator:a4d1ab616db6306c9c13fa8b597961a92"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a79ff2470f8cf7aadaca2d65f323e8135"><td class="memItemLeft" align="right" valign="top"><a id="a79ff2470f8cf7aadaca2d65f323e8135"></a>
-<a class="el" href="class_adafruit___m_c_p23008.html">Adafruit_MCP23008</a>&#160;</td><td class="memItemRight" valign="bottom"><b>mcp_1</b></td></tr>
+<a class="el" href="class_adafruit___m_c_p23008.html">Adafruit_MCP23008</a>&#160;</td><td class="memItemRight" valign="bottom"><b>mcp_1</b> = <a class="el" href="class_adafruit___m_c_p23008.html">Adafruit_MCP23008</a>()</td></tr>
 <tr class="separator:a79ff2470f8cf7aadaca2d65f323e8135"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="aae6ff71b1ef20950e84cbe1b339562e6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aae6ff71b1ef20950e84cbe1b339562e6">&#9670;&nbsp;</a></span>setSolenoid()</h2>
+<a id="abd60ee380a8f8a4607fc48afe64869f1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abd60ee380a8f8a4607fc48afe64869f1">&#9670;&nbsp;</a></span>setSolenoid()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -150,7 +150,7 @@ uint16_t&#160;</td><td class="memItemRight" valign="bottom"><b>solenoidState</b>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">final</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -168,8 +168,8 @@ uint16_t&#160;</td><td class="memItemRight" valign="bottom"><b>solenoidState</b>
 
 </div>
 </div>
-<a id="ae025f3326d3572902172c867f4a7595d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae025f3326d3572902172c867f4a7595d">&#9670;&nbsp;</a></span>setSolenoids()</h2>
+<a id="a3642dba4c6f9a8b327bf8b59a179a2cd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3642dba4c6f9a8b327bf8b59a179a2cd">&#9670;&nbsp;</a></span>setSolenoids()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -187,7 +187,7 @@ uint16_t&#160;</td><td class="memItemRight" valign="bottom"><b>solenoidState</b>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">final</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -206,8 +206,8 @@ uint16_t&#160;</td><td class="memItemRight" valign="bottom"><b>solenoidState</b>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="class_solenoids_ae025f3326d3572902172c867f4a7595d_cgraph.png" border="0" usemap="#aclass_solenoids_ae025f3326d3572902172c867f4a7595d_cgraph" alt=""/></div>
-<map name="aclass_solenoids_ae025f3326d3572902172c867f4a7595d_cgraph" id="aclass_solenoids_ae025f3326d3572902172c867f4a7595d_cgraph">
+<div class="center"><img src="class_solenoids_a3642dba4c6f9a8b327bf8b59a179a2cd_cgraph.png" border="0" usemap="#aclass_solenoids_a3642dba4c6f9a8b327bf8b59a179a2cd_cgraph" alt=""/></div>
+<map name="aclass_solenoids_a3642dba4c6f9a8b327bf8b59a179a2cd_cgraph" id="aclass_solenoids_a3642dba4c6f9a8b327bf8b59a179a2cd_cgraph">
 <area shape="rect" title="Set the state of all the solenoids." alt="" coords="5,5,181,32"/>
 <area shape="rect" href="class_solenoids.html#a95e5368821444a4340ba2652d6bcf66c" title=" " alt="" coords="229,5,356,32"/>
 </map>
@@ -252,7 +252,7 @@ Here is the caller graph for this function:</div>
 <div class="center"><img src="class_solenoids_a95e5368821444a4340ba2652d6bcf66c_icgraph.png" border="0" usemap="#aclass_solenoids_a95e5368821444a4340ba2652d6bcf66c_icgraph" alt=""/></div>
 <map name="aclass_solenoids_a95e5368821444a4340ba2652d6bcf66c_icgraph" id="aclass_solenoids_a95e5368821444a4340ba2652d6bcf66c_icgraph">
 <area shape="rect" title=" " alt="" coords="229,5,356,32"/>
-<area shape="rect" href="class_solenoids.html#ae025f3326d3572902172c867f4a7595d" title="Set the state of all the solenoids." alt="" coords="5,5,181,32"/>
+<area shape="rect" href="class_solenoids.html#a3642dba4c6f9a8b327bf8b59a179a2cd" title="Set the state of all the solenoids." alt="" coords="5,5,181,32"/>
 </map>
 </div>
 
@@ -269,7 +269,7 @@ Here is the caller graph for this function:</div>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_solenoids.html">Solenoids</a></li>
-    <li class="footer">Generated on Wed Aug 2 2023 20:27:10 for AYAB Arduino Firmware by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Fri Dec 22 2023 22:16:23 for AYAB Arduino Firmware by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

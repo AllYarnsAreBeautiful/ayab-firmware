@@ -73,9 +73,9 @@ Inheritance diagram for BeeperInterface:</div>
 <div class="dyncontent">
 <div class="center"><img src="class_beeper_interface__inherit__graph.png" border="0" usemap="#a_beeper_interface_inherit__map" alt="Inheritance graph"/></div>
 <map name="a_beeper_interface_inherit__map" id="a_beeper_interface_inherit__map">
-<area shape="rect" title=" " alt="" coords="69,5,232,127"/>
-<area shape="rect" href="class_beeper.html" title="Class to actuate a beeper connected to PIEZO_PIN." alt="" coords="5,175,131,296"/>
-<area shape="rect" href="class_beeper_mock.html" title=" " alt="" coords="155,182,315,289"/>
+<area shape="rect" title=" " alt="" coords="73,5,236,185"/>
+<area shape="rect" href="class_beeper.html" title="Class to actuate a beeper connected to PIEZO_PIN." alt="" coords="5,233,136,472"/>
+<area shape="rect" href="class_beeper_mock.html" title=" " alt="" coords="160,270,320,435"/>
 </map>
 </div>
 <div class="dynheader">
@@ -83,12 +83,21 @@ Collaboration diagram for BeeperInterface:</div>
 <div class="dyncontent">
 <div class="center"><img src="class_beeper_interface__coll__graph.png" border="0" usemap="#a_beeper_interface_coll__map" alt="Collaboration graph"/></div>
 <map name="a_beeper_interface_coll__map" id="a_beeper_interface_coll__map">
-<area shape="rect" title=" " alt="" coords="5,5,168,127"/>
+<area shape="rect" title=" " alt="" coords="5,5,168,185"/>
 </map>
 </div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:a54125bf3d545a753f6999567485ad85b"><td class="memItemLeft" align="right" valign="top"><a id="a54125bf3d545a753f6999567485ad85b"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>init</b> (bool enabled)=0</td></tr>
+<tr class="separator:a54125bf3d545a753f6999567485ad85b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abca9ca5e677991687b1856d2bcf598d8"><td class="memItemLeft" align="right" valign="top"><a id="abca9ca5e677991687b1856d2bcf598d8"></a>
+virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>enabled</b> ()=0</td></tr>
+<tr class="separator:abca9ca5e677991687b1856d2bcf598d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad3acb126e6f9e1b8fcb07f7f287e751e"><td class="memItemLeft" align="right" valign="top"><a id="ad3acb126e6f9e1b8fcb07f7f287e751e"></a>
+virtual BeepState&#160;</td><td class="memItemRight" valign="bottom"><b>getState</b> ()=0</td></tr>
+<tr class="separator:ad3acb126e6f9e1b8fcb07f7f287e751e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac3ce7dfedfd6c6c65888bf455b733adf"><td class="memItemLeft" align="right" valign="top"><a id="ac3ce7dfedfd6c6c65888bf455b733adf"></a>
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>ready</b> ()=0</td></tr>
 <tr class="separator:ac3ce7dfedfd6c6c65888bf455b733adf"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -98,6 +107,9 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>finishedLine<
 <tr class="memitem:a334dd08c1bdbe8dff0c6a6eafd86ed43"><td class="memItemLeft" align="right" valign="top"><a id="a334dd08c1bdbe8dff0c6a6eafd86ed43"></a>
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>endWork</b> ()=0</td></tr>
 <tr class="separator:a334dd08c1bdbe8dff0c6a6eafd86ed43"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a45c2d6bb82e6dfbf0005db3cb5352bbd"><td class="memItemLeft" align="right" valign="top"><a id="a45c2d6bb82e6dfbf0005db3cb5352bbd"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>schedule</b> ()=0</td></tr>
+<tr class="separator:a45c2d6bb82e6dfbf0005db3cb5352bbd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li>src/ayab/<a class="el" href="beeper_8h_source.html">beeper.h</a></li>
@@ -108,7 +120,7 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>endWork</b> (
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_beeper_interface.html">BeeperInterface</a></li>
-    <li class="footer">Generated on Wed Aug 2 2023 20:27:10 for AYAB Arduino Firmware by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Fri Dec 22 2023 22:16:23 for AYAB Arduino Firmware by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

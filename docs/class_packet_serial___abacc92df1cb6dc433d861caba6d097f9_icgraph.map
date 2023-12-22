@@ -2,5 +2,5 @@
 <area shape="rect" id="node1" title="Attach PacketSerial to an existing Arduino Stream." alt="" coords="405,31,588,57"/>
 <area shape="rect" id="node2" href="$class_packet_serial__.html#a306f8ad3ad4b64fd172080d7a1d6183c" title="Begin a default serial connection with the given speed." alt="" coords="205,31,357,57"/>
 <area shape="rect" id="node3" href="$class_packet_serial__.html#a5ce0f36dd94b8ab87ae6319e9ab75a69" title="Deprecated. Use setStream() to configure a non&#45;default port." alt="" coords="5,5,157,32"/>
-<area shape="rect" id="node4" href="$class_com.html#a1fdbb052f376bac842eba1562f821ca7" title="Initialize serial communication." alt="" coords="41,56,122,83"/>
+<area shape="rect" id="node4" href="$class_com.html#a81bced9fe4b7f19298cf45c61ac82824" title="Initialize serial communication." alt="" coords="41,56,122,83"/>
 </map>

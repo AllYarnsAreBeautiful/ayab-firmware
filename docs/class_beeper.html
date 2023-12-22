@@ -64,6 +64,7 @@ $(document).ready(function(){initNavTree('class_beeper.html',''); initResizable(
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pri-methods">Private Member Functions</a> &#124;
+<a href="#pri-attribs">Private Attributes</a> &#124;
 <a href="class_beeper-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">Beeper Class Reference</div>  </div>
@@ -79,8 +80,8 @@ Inheritance diagram for Beeper:</div>
 <div class="dyncontent">
 <div class="center"><img src="class_beeper__inherit__graph.png" border="0" usemap="#a_beeper_inherit__map" alt="Inheritance graph"/></div>
 <map name="a_beeper_inherit__map" id="a_beeper_inherit__map">
-<area shape="rect" title="Class to actuate a beeper connected to PIEZO_PIN." alt="" coords="24,175,149,296"/>
-<area shape="rect" href="class_beeper_interface.html" title=" " alt="" coords="5,5,168,127"/>
+<area shape="rect" title="Class to actuate a beeper connected to PIEZO_PIN." alt="" coords="21,233,152,472"/>
+<area shape="rect" href="class_beeper_interface.html" title=" " alt="" coords="5,5,168,185"/>
 </map>
 </div>
 <div class="dynheader">
@@ -88,30 +89,56 @@ Collaboration diagram for Beeper:</div>
 <div class="dyncontent">
 <div class="center"><img src="class_beeper__coll__graph.png" border="0" usemap="#a_beeper_coll__map" alt="Collaboration graph"/></div>
 <map name="a_beeper_coll__map" id="a_beeper_coll__map">
-<area shape="rect" title="Class to actuate a beeper connected to PIEZO_PIN." alt="" coords="24,175,149,296"/>
-<area shape="rect" href="class_beeper_interface.html" title=" " alt="" coords="5,5,168,127"/>
+<area shape="rect" title="Class to actuate a beeper connected to PIEZO_PIN." alt="" coords="21,233,152,472"/>
+<area shape="rect" href="class_beeper_interface.html" title=" " alt="" coords="5,5,168,185"/>
 </map>
 </div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a06ebbe1d989353b0c3f674fe5506efac"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_beeper.html#a06ebbe1d989353b0c3f674fe5506efac">ready</a> ()</td></tr>
-<tr class="separator:a06ebbe1d989353b0c3f674fe5506efac"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa5a848916d0ba5389038120bb0ac1e06"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_beeper.html#aa5a848916d0ba5389038120bb0ac1e06">finishedLine</a> ()</td></tr>
-<tr class="separator:aa5a848916d0ba5389038120bb0ac1e06"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad3f2def33d26e3b969b398c0fe0ca627"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_beeper.html#ad3f2def33d26e3b969b398c0fe0ca627">endWork</a> ()</td></tr>
-<tr class="separator:ad3f2def33d26e3b969b398c0fe0ca627"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a828cd0ce729fc593c3b3b2c6fb669451"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_beeper.html#a828cd0ce729fc593c3b3b2c6fb669451">init</a> (bool <a class="el" href="class_beeper.html#ad1be835732416646f28d3b8a4c2377ff">enabled</a>) final</td></tr>
+<tr class="separator:a828cd0ce729fc593c3b3b2c6fb669451"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad1be835732416646f28d3b8a4c2377ff"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_beeper.html#ad1be835732416646f28d3b8a4c2377ff">enabled</a> () final</td></tr>
+<tr class="separator:ad1be835732416646f28d3b8a4c2377ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a479e036d67f3991012c3f13d198488ae"><td class="memItemLeft" align="right" valign="top">BeepState&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_beeper.html#a479e036d67f3991012c3f13d198488ae">getState</a> () final</td></tr>
+<tr class="separator:a479e036d67f3991012c3f13d198488ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ada6d0ae8e4ca9ec3d41c5c86b9bbc598"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_beeper.html#ada6d0ae8e4ca9ec3d41c5c86b9bbc598">ready</a> () final</td></tr>
+<tr class="separator:ada6d0ae8e4ca9ec3d41c5c86b9bbc598"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8c7bd6ecd048ab8f21858302da26cf55"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_beeper.html#a8c7bd6ecd048ab8f21858302da26cf55">finishedLine</a> () final</td></tr>
+<tr class="separator:a8c7bd6ecd048ab8f21858302da26cf55"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a57ce68053466bf5956e463a709a35c2c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_beeper.html#a57ce68053466bf5956e463a709a35c2c">endWork</a> () final</td></tr>
+<tr class="separator:a57ce68053466bf5956e463a709a35c2c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a725a08b17701aa67394480bb450aa902"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_beeper.html#a725a08b17701aa67394480bb450aa902">schedule</a> () final</td></tr>
+<tr class="separator:a725a08b17701aa67394480bb450aa902"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-methods"></a>
 Private Member Functions</h2></td></tr>
-<tr class="memitem:a4c58e02ea235cbf87cc32acc437b1246"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_beeper.html#a4c58e02ea235cbf87cc32acc437b1246">beep</a> (uint8_t length)</td></tr>
-<tr class="separator:a4c58e02ea235cbf87cc32acc437b1246"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3ac21e30910ef9ece6f1a1451255f9ac"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_beeper.html#a3ac21e30910ef9ece6f1a1451255f9ac">beep</a> (uint8_t repeats)</td></tr>
+<tr class="separator:a3ac21e30910ef9ece6f1a1451255f9ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
+Private Attributes</h2></td></tr>
+<tr class="memitem:ad76472ecee46d81c0b05662ed0089dea"><td class="memItemLeft" align="right" valign="top"><a id="ad76472ecee46d81c0b05662ed0089dea"></a>
+BeepState&#160;</td><td class="memItemRight" valign="bottom"><b>m_currentState</b></td></tr>
+<tr class="separator:ad76472ecee46d81c0b05662ed0089dea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeb7807caeb9f6d71d58b13c07ad54413"><td class="memItemLeft" align="right" valign="top"><a id="aeb7807caeb9f6d71d58b13c07ad54413"></a>
+BeepState&#160;</td><td class="memItemRight" valign="bottom"><b>m_nextState</b></td></tr>
+<tr class="separator:aeb7807caeb9f6d71d58b13c07ad54413"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6acc4a5253c0c702feb8b1b568c6010b"><td class="memItemLeft" align="right" valign="top"><a id="a6acc4a5253c0c702feb8b1b568c6010b"></a>
+unsigned long&#160;</td><td class="memItemRight" valign="bottom"><b>m_nextTime</b></td></tr>
+<tr class="separator:a6acc4a5253c0c702feb8b1b568c6010b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a55a857d352cf094965cbd0436c149338"><td class="memItemLeft" align="right" valign="top"><a id="a55a857d352cf094965cbd0436c149338"></a>
+uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>m_repeat</b></td></tr>
+<tr class="separator:a55a857d352cf094965cbd0436c149338"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4ef15d775eea030b1544c9d173b49fe3"><td class="memItemLeft" align="right" valign="top"><a id="a4ef15d775eea030b1544c9d173b49fe3"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>m_enabled</b></td></tr>
+<tr class="separator:a4ef15d775eea030b1544c9d173b49fe3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Class to actuate a beeper connected to PIEZO_PIN. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="a4c58e02ea235cbf87cc32acc437b1246"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4c58e02ea235cbf87cc32acc437b1246">&#9670;&nbsp;</a></span>beep()</h2>
+<a id="a3ac21e30910ef9ece6f1a1451255f9ac"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3ac21e30910ef9ece6f1a1451255f9ac">&#9670;&nbsp;</a></span>beep()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -123,7 +150,7 @@ Private Member Functions</h2></td></tr>
           <td class="memname">void Beeper::beep </td>
           <td>(</td>
           <td class="paramtype">uint8_t&#160;</td>
-          <td class="paramname"><em>length</em></td><td>)</td>
+          <td class="paramname"><em>repeats</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -134,23 +161,51 @@ Private Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 <p>Generic beep function.</p>
-<p>/param length number of beeps </p>
+<p>/param repeats number of beeps </p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="class_beeper_a4c58e02ea235cbf87cc32acc437b1246_icgraph.png" border="0" usemap="#aclass_beeper_a4c58e02ea235cbf87cc32acc437b1246_icgraph" alt=""/></div>
-<map name="aclass_beeper_a4c58e02ea235cbf87cc32acc437b1246_icgraph" id="aclass_beeper_a4c58e02ea235cbf87cc32acc437b1246_icgraph">
+<div class="center"><img src="class_beeper_a3ac21e30910ef9ece6f1a1451255f9ac_icgraph.png" border="0" usemap="#aclass_beeper_a3ac21e30910ef9ece6f1a1451255f9ac_icgraph" alt=""/></div>
+<map name="aclass_beeper_a3ac21e30910ef9ece6f1a1451255f9ac_icgraph" id="aclass_beeper_a3ac21e30910ef9ece6f1a1451255f9ac_icgraph">
 <area shape="rect" title=" " alt="" coords="208,56,316,83"/>
-<area shape="rect" href="class_beeper.html#ad3f2def33d26e3b969b398c0fe0ca627" title=" " alt="" coords="16,5,149,32"/>
-<area shape="rect" href="class_beeper.html#aa5a848916d0ba5389038120bb0ac1e06" title=" " alt="" coords="5,56,160,83"/>
-<area shape="rect" href="class_beeper.html#a06ebbe1d989353b0c3f674fe5506efac" title=" " alt="" coords="26,107,139,133"/>
+<area shape="rect" href="class_beeper.html#a57ce68053466bf5956e463a709a35c2c" title=" " alt="" coords="16,5,149,32"/>
+<area shape="rect" href="class_beeper.html#a8c7bd6ecd048ab8f21858302da26cf55" title=" " alt="" coords="5,56,160,83"/>
+<area shape="rect" href="class_beeper.html#ada6d0ae8e4ca9ec3d41c5c86b9bbc598" title=" " alt="" coords="26,107,139,133"/>
 </map>
 </div>
 
 </div>
 </div>
-<a id="ad3f2def33d26e3b969b398c0fe0ca627"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad3f2def33d26e3b969b398c0fe0ca627">&#9670;&nbsp;</a></span>endWork()</h2>
+<a id="ad1be835732416646f28d3b8a4c2377ff"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad1be835732416646f28d3b8a4c2377ff">&#9670;&nbsp;</a></span>enabled()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Beeper::enabled </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">final</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Get beeper enabled flag </p>
+
+<p>Implements <a class="el" href="class_beeper_interface.html">BeeperInterface</a>.</p>
+
+</div>
+</div>
+<a id="a57ce68053466bf5956e463a709a35c2c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a57ce68053466bf5956e463a709a35c2c">&#9670;&nbsp;</a></span>endWork()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -167,7 +222,7 @@ Here is the caller graph for this function:</div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">final</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -175,21 +230,21 @@ Here is the caller graph for this function:</div>
 
 <p>Implements <a class="el" href="class_beeper_interface.html">BeeperInterface</a>.</p>
 
-<p class="reference">References <a class="el" href="class_beeper.html#a4c58e02ea235cbf87cc32acc437b1246">beep()</a>.</p>
+<p class="reference">References <a class="el" href="class_beeper.html#a3ac21e30910ef9ece6f1a1451255f9ac">beep()</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="class_beeper_ad3f2def33d26e3b969b398c0fe0ca627_cgraph.png" border="0" usemap="#aclass_beeper_ad3f2def33d26e3b969b398c0fe0ca627_cgraph" alt=""/></div>
-<map name="aclass_beeper_ad3f2def33d26e3b969b398c0fe0ca627_cgraph" id="aclass_beeper_ad3f2def33d26e3b969b398c0fe0ca627_cgraph">
+<div class="center"><img src="class_beeper_a57ce68053466bf5956e463a709a35c2c_cgraph.png" border="0" usemap="#aclass_beeper_a57ce68053466bf5956e463a709a35c2c_cgraph" alt=""/></div>
+<map name="aclass_beeper_a57ce68053466bf5956e463a709a35c2c_cgraph" id="aclass_beeper_a57ce68053466bf5956e463a709a35c2c_cgraph">
 <area shape="rect" title=" " alt="" coords="5,5,139,32"/>
-<area shape="rect" href="class_beeper.html#a4c58e02ea235cbf87cc32acc437b1246" title=" " alt="" coords="187,5,295,32"/>
+<area shape="rect" href="class_beeper.html#a3ac21e30910ef9ece6f1a1451255f9ac" title=" " alt="" coords="187,5,295,32"/>
 </map>
 </div>
 
 </div>
 </div>
-<a id="aa5a848916d0ba5389038120bb0ac1e06"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa5a848916d0ba5389038120bb0ac1e06">&#9670;&nbsp;</a></span>finishedLine()</h2>
+<a id="a8c7bd6ecd048ab8f21858302da26cf55"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8c7bd6ecd048ab8f21858302da26cf55">&#9670;&nbsp;</a></span>finishedLine()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -206,7 +261,7 @@ Here is the call graph for this function:</div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">final</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -214,21 +269,78 @@ Here is the call graph for this function:</div>
 
 <p>Implements <a class="el" href="class_beeper_interface.html">BeeperInterface</a>.</p>
 
-<p class="reference">References <a class="el" href="class_beeper.html#a4c58e02ea235cbf87cc32acc437b1246">beep()</a>.</p>
+<p class="reference">References <a class="el" href="class_beeper.html#a3ac21e30910ef9ece6f1a1451255f9ac">beep()</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="class_beeper_aa5a848916d0ba5389038120bb0ac1e06_cgraph.png" border="0" usemap="#aclass_beeper_aa5a848916d0ba5389038120bb0ac1e06_cgraph" alt=""/></div>
-<map name="aclass_beeper_aa5a848916d0ba5389038120bb0ac1e06_cgraph" id="aclass_beeper_aa5a848916d0ba5389038120bb0ac1e06_cgraph">
+<div class="center"><img src="class_beeper_a8c7bd6ecd048ab8f21858302da26cf55_cgraph.png" border="0" usemap="#aclass_beeper_a8c7bd6ecd048ab8f21858302da26cf55_cgraph" alt=""/></div>
+<map name="aclass_beeper_a8c7bd6ecd048ab8f21858302da26cf55_cgraph" id="aclass_beeper_a8c7bd6ecd048ab8f21858302da26cf55_cgraph">
 <area shape="rect" title=" " alt="" coords="5,5,160,32"/>
-<area shape="rect" href="class_beeper.html#a4c58e02ea235cbf87cc32acc437b1246" title=" " alt="" coords="208,5,316,32"/>
+<area shape="rect" href="class_beeper.html#a3ac21e30910ef9ece6f1a1451255f9ac" title=" " alt="" coords="208,5,316,32"/>
 </map>
 </div>
 
 </div>
 </div>
-<a id="a06ebbe1d989353b0c3f674fe5506efac"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a06ebbe1d989353b0c3f674fe5506efac">&#9670;&nbsp;</a></span>ready()</h2>
+<a id="a479e036d67f3991012c3f13d198488ae"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a479e036d67f3991012c3f13d198488ae">&#9670;&nbsp;</a></span>getState()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">BeepState Beeper::getState </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">final</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Get beeper state </p>
+
+<p>Implements <a class="el" href="class_beeper_interface.html">BeeperInterface</a>.</p>
+
+</div>
+</div>
+<a id="a828cd0ce729fc593c3b3b2c6fb669451"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a828cd0ce729fc593c3b3b2c6fb669451">&#9670;&nbsp;</a></span>init()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Beeper::init </td>
+          <td>(</td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>enabled</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">final</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Initialize beeper </p>
+
+<p>Implements <a class="el" href="class_beeper_interface.html">BeeperInterface</a>.</p>
+
+</div>
+</div>
+<a id="ada6d0ae8e4ca9ec3d41c5c86b9bbc598"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ada6d0ae8e4ca9ec3d41c5c86b9bbc598">&#9670;&nbsp;</a></span>ready()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -245,7 +357,7 @@ Here is the call graph for this function:</div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">final</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -253,16 +365,44 @@ Here is the call graph for this function:</div>
 
 <p>Implements <a class="el" href="class_beeper_interface.html">BeeperInterface</a>.</p>
 
-<p class="reference">References <a class="el" href="class_beeper.html#a4c58e02ea235cbf87cc32acc437b1246">beep()</a>.</p>
+<p class="reference">References <a class="el" href="class_beeper.html#a3ac21e30910ef9ece6f1a1451255f9ac">beep()</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="class_beeper_a06ebbe1d989353b0c3f674fe5506efac_cgraph.png" border="0" usemap="#aclass_beeper_a06ebbe1d989353b0c3f674fe5506efac_cgraph" alt=""/></div>
-<map name="aclass_beeper_a06ebbe1d989353b0c3f674fe5506efac_cgraph" id="aclass_beeper_a06ebbe1d989353b0c3f674fe5506efac_cgraph">
+<div class="center"><img src="class_beeper_ada6d0ae8e4ca9ec3d41c5c86b9bbc598_cgraph.png" border="0" usemap="#aclass_beeper_ada6d0ae8e4ca9ec3d41c5c86b9bbc598_cgraph" alt=""/></div>
+<map name="aclass_beeper_ada6d0ae8e4ca9ec3d41c5c86b9bbc598_cgraph" id="aclass_beeper_ada6d0ae8e4ca9ec3d41c5c86b9bbc598_cgraph">
 <area shape="rect" title=" " alt="" coords="5,5,119,32"/>
-<area shape="rect" href="class_beeper.html#a4c58e02ea235cbf87cc32acc437b1246" title=" " alt="" coords="167,5,275,32"/>
+<area shape="rect" href="class_beeper.html#a3ac21e30910ef9ece6f1a1451255f9ac" title=" " alt="" coords="167,5,275,32"/>
 </map>
 </div>
+
+</div>
+</div>
+<a id="a725a08b17701aa67394480bb450aa902"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a725a08b17701aa67394480bb450aa902">&#9670;&nbsp;</a></span>schedule()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Beeper::schedule </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">final</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Beep handler scheduled from main loop </p>
+
+<p>Implements <a class="el" href="class_beeper_interface.html">BeeperInterface</a>.</p>
 
 </div>
 </div>
@@ -277,7 +417,7 @@ Here is the call graph for this function:</div>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_beeper.html">Beeper</a></li>
-    <li class="footer">Generated on Wed Aug 2 2023 20:27:10 for AYAB Arduino Firmware by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Fri Dec 22 2023 22:16:23 for AYAB Arduino Firmware by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

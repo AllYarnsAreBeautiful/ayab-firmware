@@ -75,17 +75,21 @@ $(document).ready(function(){initNavTree('beeper__mock_8h_source.html',''); init
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160; </div>
 <div class="line"><a name="l00031"></a><span class="lineno"><a class="line" href="class_beeper_mock.html">   31</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_beeper_mock.html">BeeperMock</a> : <span class="keyword">public</span> <a class="code" href="class_beeper_interface.html">BeeperInterface</a> {</div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;  MOCK_METHOD0(ready, <span class="keywordtype">void</span>());</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;  MOCK_METHOD0(finishedLine, <span class="keywordtype">void</span>());</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;  MOCK_METHOD0(endWork, <span class="keywordtype">void</span>());</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;};</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160; </div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<a class="code" href="class_beeper_mock.html">BeeperMock</a> *beeperMockInstance();</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="keywordtype">void</span> releaseBeeperMock();</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160; </div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// BEEPER_MOCK_H_</span></div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;  MOCK_METHOD1(init, <span class="keywordtype">void</span>(<span class="keywordtype">bool</span>));</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;  MOCK_METHOD0(enabled, <span class="keywordtype">bool</span>());</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;  MOCK_METHOD0(getState, BeepState());</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;  MOCK_METHOD0(ready, <span class="keywordtype">void</span>());</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;  MOCK_METHOD0(finishedLine, <span class="keywordtype">void</span>());</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;  MOCK_METHOD0(endWork, <span class="keywordtype">void</span>());</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;  MOCK_METHOD0(schedule, <span class="keywordtype">void</span>());</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;};</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160; </div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<a class="code" href="class_beeper_mock.html">BeeperMock</a> *beeperMockInstance();</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="keywordtype">void</span> releaseBeeperMock();</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160; </div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// BEEPER_MOCK_H_</span></div>
 <div class="ttc" id="abeeper_8h_html"><div class="ttname"><a href="beeper_8h.html">beeper.h</a></div></div>
-<div class="ttc" id="aclass_beeper_interface_html"><div class="ttname"><a href="class_beeper_interface.html">BeeperInterface</a></div><div class="ttdef"><b>Definition:</b> beeper.h:39</div></div>
+<div class="ttc" id="aclass_beeper_interface_html"><div class="ttname"><a href="class_beeper_interface.html">BeeperInterface</a></div><div class="ttdef"><b>Definition:</b> beeper.h:41</div></div>
 <div class="ttc" id="aclass_beeper_mock_html"><div class="ttname"><a href="class_beeper_mock.html">BeeperMock</a></div><div class="ttdef"><b>Definition:</b> beeper_mock.h:31</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
@@ -93,7 +97,7 @@ $(document).ready(function(){initNavTree('beeper__mock_8h_source.html',''); init
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_13e138d54eb8818da29c3992edef070a.html">test</a></li><li class="navelem"><a class="el" href="dir_cdf6d930f2dcd230c29757233293cb63.html">mocks</a></li><li class="navelem"><a class="el" href="beeper__mock_8h.html">beeper_mock.h</a></li>
-    <li class="footer">Generated on Wed Aug 2 2023 20:27:10 for AYAB Arduino Firmware by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Fri Dec 22 2023 22:16:23 for AYAB Arduino Firmware by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

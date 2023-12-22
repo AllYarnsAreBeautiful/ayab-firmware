@@ -68,17 +68,26 @@ $(document).ready(function(){initNavTree('class_beeper.html',''); initResizable(
 
 <p>This is the complete list of members for <a class="el" href="class_beeper.html">Beeper</a>, including all inherited members.</p>
 <table class="directory">
-  <tr class="even"><td class="entry"><a class="el" href="class_beeper.html#a4c58e02ea235cbf87cc32acc437b1246">beep</a>(uint8_t length)</td><td class="entry"><a class="el" href="class_beeper.html">Beeper</a></td><td class="entry"><span class="mlabel">private</span></td></tr>
-  <tr><td class="entry"><a class="el" href="class_beeper.html#ad3f2def33d26e3b969b398c0fe0ca627">endWork</a>()</td><td class="entry"><a class="el" href="class_beeper.html">Beeper</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="class_beeper.html#aa5a848916d0ba5389038120bb0ac1e06">finishedLine</a>()</td><td class="entry"><a class="el" href="class_beeper.html">Beeper</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
-  <tr><td class="entry"><a class="el" href="class_beeper.html#a06ebbe1d989353b0c3f674fe5506efac">ready</a>()</td><td class="entry"><a class="el" href="class_beeper.html">Beeper</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
-  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>~BeeperInterface</b>() (defined in <a class="el" href="class_beeper_interface.html">BeeperInterface</a>)</td><td class="entry"><a class="el" href="class_beeper_interface.html">BeeperInterface</a></td><td class="entry"><span class="mlabel">inline</span><span class="mlabel">virtual</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_beeper.html#a3ac21e30910ef9ece6f1a1451255f9ac">beep</a>(uint8_t repeats)</td><td class="entry"><a class="el" href="class_beeper.html">Beeper</a></td><td class="entry"><span class="mlabel">private</span></td></tr>
+  <tr><td class="entry"><a class="el" href="class_beeper.html#ad1be835732416646f28d3b8a4c2377ff">enabled</a>() final</td><td class="entry"><a class="el" href="class_beeper.html">Beeper</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_beeper.html#a57ce68053466bf5956e463a709a35c2c">endWork</a>() final</td><td class="entry"><a class="el" href="class_beeper.html">Beeper</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
+  <tr><td class="entry"><a class="el" href="class_beeper.html#a8c7bd6ecd048ab8f21858302da26cf55">finishedLine</a>() final</td><td class="entry"><a class="el" href="class_beeper.html">Beeper</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_beeper.html#a479e036d67f3991012c3f13d198488ae">getState</a>() final</td><td class="entry"><a class="el" href="class_beeper.html">Beeper</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
+  <tr><td class="entry"><a class="el" href="class_beeper.html#a828cd0ce729fc593c3b3b2c6fb669451">init</a>(bool enabled) final</td><td class="entry"><a class="el" href="class_beeper.html">Beeper</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>m_currentState</b> (defined in <a class="el" href="class_beeper.html">Beeper</a>)</td><td class="entry"><a class="el" href="class_beeper.html">Beeper</a></td><td class="entry"><span class="mlabel">private</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>m_enabled</b> (defined in <a class="el" href="class_beeper.html">Beeper</a>)</td><td class="entry"><a class="el" href="class_beeper.html">Beeper</a></td><td class="entry"><span class="mlabel">private</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>m_nextState</b> (defined in <a class="el" href="class_beeper.html">Beeper</a>)</td><td class="entry"><a class="el" href="class_beeper.html">Beeper</a></td><td class="entry"><span class="mlabel">private</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>m_nextTime</b> (defined in <a class="el" href="class_beeper.html">Beeper</a>)</td><td class="entry"><a class="el" href="class_beeper.html">Beeper</a></td><td class="entry"><span class="mlabel">private</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>m_repeat</b> (defined in <a class="el" href="class_beeper.html">Beeper</a>)</td><td class="entry"><a class="el" href="class_beeper.html">Beeper</a></td><td class="entry"><span class="mlabel">private</span></td></tr>
+  <tr><td class="entry"><a class="el" href="class_beeper.html#ada6d0ae8e4ca9ec3d41c5c86b9bbc598">ready</a>() final</td><td class="entry"><a class="el" href="class_beeper.html">Beeper</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_beeper.html#a725a08b17701aa67394480bb450aa902">schedule</a>() final</td><td class="entry"><a class="el" href="class_beeper.html">Beeper</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>~BeeperInterface</b>()=default (defined in <a class="el" href="class_beeper_interface.html">BeeperInterface</a>)</td><td class="entry"><a class="el" href="class_beeper_interface.html">BeeperInterface</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
 </table></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Wed Aug 2 2023 20:27:10 for AYAB Arduino Firmware by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Fri Dec 22 2023 22:16:23 for AYAB Arduino Firmware by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>
