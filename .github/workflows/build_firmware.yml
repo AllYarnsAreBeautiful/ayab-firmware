@@ -22,7 +22,7 @@ jobs:
         pip install --upgrade platformio
     - name: Build for Arduino UNO
       run: |
-        platformio run --environment uno
+        platformio run --environment uno-avr
         mkdir -p build
         mv .pio/build/uno/firmware.hex build/ayab_monolithic_uno.hex
     - name: Cache build asset
