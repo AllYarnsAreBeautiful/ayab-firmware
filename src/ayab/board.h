@@ -54,7 +54,7 @@ constexpr uint16_t START_KNITTING_DELAY = 2000U;
 #if defined(__AVR_ATmega168__) || defined(__AVR_ATmega328P__)
 // Arduino Uno
 #else
-#error "untested board"
+#warning "untested board"
 #endif
 
 #endif // BOARD_H_
