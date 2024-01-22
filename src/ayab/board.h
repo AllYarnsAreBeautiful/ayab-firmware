@@ -26,20 +26,6 @@
 
 #include <Arduino.h>
 
-// Pin Assignments
-constexpr uint8_t EOL_PIN_R = A0; // Analog
-constexpr uint8_t EOL_PIN_L = A1; // Analog
-
-constexpr uint8_t ENC_PIN_A = 2;
-constexpr uint8_t ENC_PIN_B = 3;
-
-constexpr uint8_t ENC_PIN_C = 4;
-
-constexpr uint8_t LED_PIN_A = 5; // green LED
-constexpr uint8_t LED_PIN_B = 6; // yellow LED
-
-constexpr uint8_t PIEZO_PIN = 9;
-
 #ifdef DBG_NOMACHINE               // Turn on to use DBG_BTN_PIN as EOL Trigger
 constexpr uint8_t DBG_BTN_PIN = 7; // DEBUG BUTTON
 #endif
@@ -53,6 +39,36 @@ constexpr uint16_t START_KNITTING_DELAY = 2000U; // ms
 // Determine board type
 #if defined(__AVR_ATmega168__) || defined(__AVR_ATmega328P__)
 // Arduino Uno
+// Pin Assignments
+constexpr uint8_t EOL_PIN_R = A0; // Analog
+constexpr uint8_t EOL_PIN_L = A1; // Analog
+
+constexpr uint8_t ENC_PIN_A = 2;
+constexpr uint8_t ENC_PIN_B = 3;
+
+constexpr uint8_t ENC_PIN_C = 4;
+
+constexpr uint8_t LED_PIN_A = 5; // green LED
+constexpr uint8_t LED_PIN_B = 6; // yellow LED
+
+constexpr uint8_t PIEZO_PIN = 9;
+#elif defined(CONFIG_IDF_TARGET_ESP32S3)
+// ESP32-S3 (AYAB-ESP32)
+// Pin Assignments
+
+// TODO: FILL WITH ACTUAL VALUES OF AYAB-ESP32 BOARD
+constexpr uint8_t EOL_PIN_R = 0; // Analog
+constexpr uint8_t EOL_PIN_L = 0; // Analog
+
+constexpr uint8_t ENC_PIN_A = 0;
+constexpr uint8_t ENC_PIN_B = 0;
+
+constexpr uint8_t ENC_PIN_C = 0;
+
+constexpr uint8_t LED_PIN_A = 0; // green LED
+constexpr uint8_t LED_PIN_B = 0; // yellow LED
+
+constexpr uint8_t PIEZO_PIN = 0;
 #else
 #error "untested board"
 #endif
