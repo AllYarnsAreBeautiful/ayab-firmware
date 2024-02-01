@@ -52,23 +52,54 @@ constexpr uint8_t LED_PIN_A = 5; // green LED
 constexpr uint8_t LED_PIN_B = 6; // yellow LED
 
 constexpr uint8_t PIEZO_PIN = 9;
-#elif defined(CONFIG_IDF_TARGET_ESP32S3)
-// ESP32-S3 (AYAB-ESP32)
-// Pin Assignments
+#elif defined(CONFIG_IDF_TARGET_ESP32S3)// ESP32-S3 (AYAB-ESP32)
 
-// TODO: FILL WITH ACTUAL VALUES OF AYAB-ESP32 BOARD
-constexpr uint8_t EOL_PIN_R = 0; // Analog
-constexpr uint8_t EOL_PIN_L = 0; // Analog
+// Knitting machine control
+constexpr uint8_t EOL_PIN_R_N = 3;  // Right EOL marker, each polarity.
+constexpr uint8_t EOL_PIN_R_S = 4;
 
-constexpr uint8_t ENC_PIN_A = 0;
-constexpr uint8_t ENC_PIN_B = 0;
+constexpr uint8_t EOL_PIN_L_N = 1;  // Left EOL marker, each polarity.
+constexpr uint8_t EOL_PIN_L_S = 2; 
 
-constexpr uint8_t ENC_PIN_C = 0;
+constexpr uint8_t ENC_PIN_A = 5;    // Carriage movement A
+constexpr uint8_t ENC_PIN_B = 6;    // Carriage movement B
+constexpr uint8_t ENC_PIN_C = 7;    // Carriage belt phase alignment.
 
-constexpr uint8_t LED_PIN_A = 0; // green LED
-constexpr uint8_t LED_PIN_B = 0; // yellow LED
+constexpr uint8_t MCP_SDA_PIN = 8;  // Internal I2C bus with MCP GPIO expander.
+constexpr uint8_t MCP_SCL_PIN = 9;  // I2C0
 
-constexpr uint8_t PIEZO_PIN = 0;
+// Communication buses
+constexpr uint8_t SPI_PIN_COPI = 12; // Internal SPI bus for future display.
+constexpr uint8_t SPI_PIN_CIPO = 11; // SPI0
+constexpr uint8_t SPI_PIN_SCK = 13;
+constexpr uint8_t SPI_PIN_CS = 10;
+
+constexpr uint8_t UART_PIN_TX = 43;  // External bus for debugging and/or user.
+constexpr uint8_t UART_PIN_RX = 44;  // UART0
+
+constexpr uint8_t I2C_PIN_SDA = 15;  // External bus for user applications.
+constexpr uint8_t I2C_PIN_SCL = 16;  // I2C1
+
+// Misc I/O
+constexpr uint8_t LED_PIN_R = 33;  
+constexpr uint8_t LED_PIN_G = 34;   
+constexpr uint8_t LED_PIN_B = 35;    
+
+constexpr uint8_t PIEZO_PIN = 38;
+
+// User I/O
+constexpr uint8_t USER_BUTTON = 36;
+
+constexpr uint8_t USER_PIN_14 = 14; // Should these actually be like USER_0... etc?
+constexpr uint8_t USER_PIN_17 = 17; // And then on the silk/ enclosure we put friendly numbers (0..8) instead of GPIO name?
+constexpr uint8_t USER_PIN_18 = 18;
+constexpr uint8_t USER_PIN_21 = 21;
+
+constexpr uint8_t USER_PIN_39 = 39;
+constexpr uint8_t USER_PIN_40 = 40;
+constexpr uint8_t USER_PIN_41 = 41;
+constexpr uint8_t USER_PIN_42 = 42;
+
 #else
 #error "untested board"
 #endif
