@@ -81,6 +81,9 @@ constexpr uint8_t I2C_PIN_SDA = 15;  // External bus for user applications.
 constexpr uint8_t I2C_PIN_SCL = 16;  // I2C1
 
 // Misc I/O
+#define LED_PIN_A LED_PIN_G
+#define LED_PIN_B LED_PIN_R
+
 constexpr uint8_t LED_PIN_R = 33;  
 constexpr uint8_t LED_PIN_G = 34;   
 constexpr uint8_t LED_PIN_B = 35;    
