@@ -30,8 +30,8 @@
  */
 void Solenoids::init() {
   #ifdef HAS_MCP23008
-  mcp_0.begin(I2Caddr_sol1_8);
-  mcp_1.begin(I2Caddr_sol9_16);
+  mcp_0.begin_I2C(I2Caddr_sol1_8);
+  mcp_1.begin_I2C(I2Caddr_sol9_16);
 
   for (uint8_t i = 0; i < SOLENOID_BUFFER_SIZE / 2; i++) {
     mcp_0.pinMode(i, OUTPUT);
