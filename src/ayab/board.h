@@ -30,17 +30,17 @@
 constexpr uint8_t DBG_BTN_PIN = 7; // DEBUG BUTTON
 #endif
 
-constexpr uint8_t I2Caddr_sol1_8 = 0x0U;  ///< I2C Address of solenoids 1 - 8
-constexpr uint8_t I2Caddr_sol9_16 = 0x1U; ///< I2C Address of solenoids 9 - 16
-constexpr uint8_t MCP23017_ADDR_0 = 0x0U; // I2C address of expander on ayab-esp32 (16-wide)
-
 // TODO(Who?): Optimize Delay for various Arduino Models (does ESP32 need this? Probably no?)
 constexpr uint16_t START_KNITTING_DELAY = 2000U; // ms
 
 // Determine board type
 #if defined(__AVR_ATmega168__) || defined(__AVR_ATmega328P__)
-#define HAS_MCP23008
 // Arduino Uno
+
+#define HAS_MCP23008
+constexpr uint8_t I2Caddr_sol1_8 = 0x0U;  ///< I2C Address of solenoids 1 - 8
+constexpr uint8_t I2Caddr_sol9_16 = 0x1U; ///< I2C Address of solenoids 9 - 16
+
 // Pin Assignments
 constexpr uint8_t EOL_PIN_R = A0; // Analog
 constexpr uint8_t EOL_PIN_L = A1; // Analog
@@ -57,6 +57,7 @@ constexpr uint8_t PIEZO_PIN = 9;
 #elif defined(CONFIG_IDF_TARGET_ESP32S3)// ESP32-S3 (AYAB-ESP32)
 
 #define HAS_MCP23017
+constexpr uint8_t MCP23017_ADDR_0 = 0x0U; // I2C address of expander on ayab-esp32 (16-wide)
 
 // Knitting machine control
 constexpr uint8_t EOL_PIN_R_N = 3;  // Right EOL marker, each polarity.
@@ -72,7 +73,7 @@ constexpr uint8_t ENC_PIN_C = 7;    // Carriage belt phase alignment.
 constexpr uint8_t MCP_SDA_PIN = 8;  // Internal I2C bus with MCP GPIO expander.
 constexpr uint8_t MCP_SCL_PIN = 9;  // I2C0
 
-// Communication buses
+// Communication busses
 constexpr uint8_t SPI_PIN_COPI = 12; // Internal SPI bus for future display.
 constexpr uint8_t SPI_PIN_CIPO = 11; // SPI0
 constexpr uint8_t SPI_PIN_SCK = 13;
