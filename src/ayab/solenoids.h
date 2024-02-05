@@ -27,7 +27,7 @@
 #include "board.h"
 #include "encoders.h"
 #include <Arduino.h>
-#include <Adafruit_MCP23008.h>
+#include <Adafruit_MCP23X08.h>
 #include <Adafruit_MCP23X17.h>
 #include <Wire.h>
 
@@ -86,8 +86,8 @@ private:
   void write(uint16_t state);
 
   #if defined(HAS_MCP23008)
-  Adafruit_MCP23008 mcp_0 = Adafruit_MCP23008();
-  Adafruit_MCP23008 mcp_1 = Adafruit_MCP23008();
+  Adafruit_MCP23X08 mcp_0 = Adafruit_MCP23X08();
+  Adafruit_MCP23X08 mcp_1 = Adafruit_MCP23X08();
   #elif defined(HAS_MCP23017)
   Adafruit_MCP23X17 mcp = Adafruit_MCP23X17();
   #endif
