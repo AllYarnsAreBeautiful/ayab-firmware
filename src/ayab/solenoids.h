@@ -28,6 +28,7 @@
 #include "encoders.h"
 #include <Arduino.h>
 #include <Adafruit_MCP23008.h>
+#include <Adafruit_MCP23X17.h>
 #include <Wire.h>
 
 // Different machines have a different number of solenoids.
@@ -84,8 +85,12 @@ private:
   uint16_t solenoidState = 0x0000U;
   void write(uint16_t state);
 
+  #if defined(HAS_MCP23008)
   Adafruit_MCP23008 mcp_0 = Adafruit_MCP23008();
   Adafruit_MCP23008 mcp_1 = Adafruit_MCP23008();
+  #elif defined(HAS_MCP23017)
+  Adafruit_MCP23X17 mcp = Adafruit_MCP23X17();
+  #endif
 };
 
 #endif // SOLENOIDS_H_
