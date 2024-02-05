@@ -114,16 +114,15 @@ void Solenoids::write(uint16_t newState) {
   // GPA0..8 => solenoid 8-F
   // GPB0..8 => solenoid 7-0
   // Adafruit mapping: GPA0...8, GPB0..8 => 0..15
-  newState = (newState << 8);
+  uint16_t bankA = (newState >> 8); // map solenoids 8..F to 0..7 GPIO A
 
-  uint8_t reversedByte = 0;
+  uint16_t bankB = 0;
   for(uint8_t i = 0; i < 8; i++){
-    reversedByte[i] = (highByte(newState) >> (7-i)) & 0x01;
+    // Need to reverse the bits of the upper byte (which is located in the lower byte)
+    bankB[i+8] = (newState >> (7-i)) & 0x01;
   }
 
-  newState = newState & reversedByte;
-
-  mcp.writeGPIOAB(newState);
+  mcp.writeGPIOAB(bankA & bankB);
 
   #endif
 }
