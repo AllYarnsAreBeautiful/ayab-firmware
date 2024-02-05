@@ -23,9 +23,8 @@
  *    http://ayab-knitting.com
  */
 
-#include "board.h"
 #include <Arduino.h>
-
+#include "board.h"
 #include "encoders.h"
 
 

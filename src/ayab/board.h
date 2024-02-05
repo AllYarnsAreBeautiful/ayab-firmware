@@ -32,12 +32,14 @@ constexpr uint8_t DBG_BTN_PIN = 7; // DEBUG BUTTON
 
 constexpr uint8_t I2Caddr_sol1_8 = 0x0U;  ///< I2C Address of solenoids 1 - 8
 constexpr uint8_t I2Caddr_sol9_16 = 0x1U; ///< I2C Address of solenoids 9 - 16
+constexpr uint8_t MCP23017_ADDR_0 = 0x0U; // I2C address of expander on ayab-esp32 (16-wide)
 
-// TODO(Who?): Optimize Delay for various Arduino Models
+// TODO(Who?): Optimize Delay for various Arduino Models (does ESP32 need this? Probably no?)
 constexpr uint16_t START_KNITTING_DELAY = 2000U; // ms
 
 // Determine board type
 #if defined(__AVR_ATmega168__) || defined(__AVR_ATmega328P__)
+#define HAS_MCP23008
 // Arduino Uno
 // Pin Assignments
 constexpr uint8_t EOL_PIN_R = A0; // Analog
@@ -53,6 +55,8 @@ constexpr uint8_t LED_PIN_B = 6; // yellow LED
 
 constexpr uint8_t PIEZO_PIN = 9;
 #elif defined(CONFIG_IDF_TARGET_ESP32S3)// ESP32-S3 (AYAB-ESP32)
+
+#define HAS_MCP23017
 
 // Knitting machine control
 constexpr uint8_t EOL_PIN_R_N = 3;  // Right EOL marker, each polarity.
@@ -81,9 +85,6 @@ constexpr uint8_t I2C_PIN_SDA = 15;  // External bus for user applications.
 constexpr uint8_t I2C_PIN_SCL = 16;  // I2C1
 
 // Misc I/O
-#define LED_PIN_A LED_PIN_G
-#define LED_PIN_B LED_PIN_R
-
 constexpr uint8_t LED_PIN_R = 33;  
 constexpr uint8_t LED_PIN_G = 34;   
 constexpr uint8_t LED_PIN_B = 35;    

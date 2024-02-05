@@ -29,6 +29,7 @@
  * \brief Initialize I2C connection for solenoids.
  */
 void Solenoids::init() {
+  #ifdef HAS_MCP23008
   mcp_0.begin(I2Caddr_sol1_8);
   mcp_1.begin(I2Caddr_sol9_16);
 
@@ -36,6 +37,15 @@ void Solenoids::init() {
     mcp_0.pinMode(i, OUTPUT);
     mcp_1.pinMode(i, OUTPUT);
   }
+
+  #elif HAS_MCP23017
+  mcp.begin_I2C(MCP23017_ADDR_0);
+
+  for (uint8_t i = 0; i < SOLENOID_BUFFER_SIZE; i++){
+    mcp.pinMode(i, OUTPUT);
+  }
+
+  #endif
   solenoidState = 0x0000U;
 }
 
@@ -95,7 +105,26 @@ void Solenoids::setSolenoids(uint16_t state) {
 // GCOVR_EXCL_START
 void Solenoids::write(uint16_t newState) {
   (void)newState;
+  #if defined(HAS_MCP23008)
   mcp_0.writeGPIO(lowByte(newState));
   mcp_1.writeGPIO(highByte(newState));
+
+  #elif defined(HAS_MCP23017)
+  // We need to shuffle the bits around due to hardware layout. 
+  // GPA0..8 => solenoid 8-F
+  // GPB0..8 => solenoid 7-0
+  // Adafruit mapping: GPA0...8, GPB0..8 => 0..15
+  newState = (newState << 8);
+
+  uint8_t reversedByte = 0;
+  for(uint8_t i = 0; i < 8; i++){
+    reversedByte[i] = (highByte(newState) >> (7-i)) & 0x01;
+  }
+
+  newState = newState & reversedByte;
+
+  mcp.writeGPIOAB(newState);
+
+  #endif
 }
 // GCOVR_EXCL_STOP
