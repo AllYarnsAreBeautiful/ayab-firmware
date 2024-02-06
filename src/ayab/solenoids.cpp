@@ -29,7 +29,7 @@
  * \brief Initialize I2C connection for solenoids.
  */
 void Solenoids::init() {
-  #ifdef HAS_MCP23008
+  #if defined(HAS_MCP23008)
   mcp_0.begin_I2C(I2Caddr_sol1_8);
   mcp_1.begin_I2C(I2Caddr_sol9_16);
 
@@ -38,7 +38,7 @@ void Solenoids::init() {
     mcp_1.pinMode(i, OUTPUT);
   }
 
-  #elif HAS_MCP23017
+  #elif defined(HAS_MCP23017)
   mcp.begin_I2C(MCP23017_ADDR_0);
 
   for (uint8_t i = 0; i < SOLENOID_BUFFER_SIZE; i++){
@@ -117,12 +117,13 @@ void Solenoids::write(uint16_t newState) {
   uint16_t bankA = (newState >> 8); // map solenoids 8..F to 0..7 GPIO A
 
   uint16_t bankB = 0;
-  for(uint8_t i = 0; i < 8; i++){
+  for(uint16_t i = 0; i < 8; i++){
     // Need to reverse the bits of the upper byte (which is located in the lower byte)
-    bankB[i+8] = (newState >> (7-i)) & 0x01;
+    bankB |= (newState >> (7-i)) & 0x01;
+    bankB << 1;
   }
 
-  mcp.writeGPIOAB(bankA & bankB);
+  mcp.writeGPIOAB(bankA & (bankB << 8));
 
   #endif
 }

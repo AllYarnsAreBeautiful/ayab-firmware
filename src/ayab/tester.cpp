@@ -252,12 +252,25 @@ void Tester::readEncoders() const {
  * \brief Read the End of Line sensors.
  */
 void Tester::readEOLsensors() {
+  #if defined(EOL_ANALOG)
+
   auto hallSensor = static_cast<uint16_t>(analogRead(EOL_PIN_L));
   snprintf(buf, BUFFER_LEN, "  EOL_L: %hu", hallSensor);
   GlobalCom::sendMsg(AYAB_API::testRes, buf);
   hallSensor = static_cast<uint16_t>(analogRead(EOL_PIN_R));
   snprintf(buf, BUFFER_LEN, "  EOL_R: %hu", hallSensor);
   GlobalCom::sendMsg(AYAB_API::testRes, buf);
+
+  #elif defined (EOL_COMPARATOR)
+  // Not sure how we want to handle this. I think it's not a bad idea to just return whether the state is none, North, or South.
+  auto hallSensor = static_cast<uint16_t>(GlobalEncoders::getHallValue(Direction_t::Left));
+  snprintf(buf, BUFFER_LEN, "  EOL_L: %hu", hallSensor);
+  GlobalCom::sendMsg(AYAB_API::testRes, buf);
+  hallSensor = static_cast<uint16_t>(GlobalEncoders::getHallValue(Direction_t::Right));
+  snprintf(buf, BUFFER_LEN, "  EOL_R: %hu", hallSensor);
+  GlobalCom::sendMsg(AYAB_API::testRes, buf);
+
+  #endif
 }
 
 /*!
