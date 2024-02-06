@@ -123,7 +123,7 @@ void Solenoids::write(uint16_t newState) {
     bankB << 1;
   }
 
-  mcp.writeGPIOAB(bankA & bankB);
+  mcp.writeGPIOAB(bankA & (bankB << 8));
 
   #endif
 }
