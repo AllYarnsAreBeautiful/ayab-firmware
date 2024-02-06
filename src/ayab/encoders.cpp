@@ -51,15 +51,72 @@ void Encoders::encA_interrupt() {
  * \brief Read hall sensor on left and right.
  * \param pSensor Which sensor to read (left or right).
  */
-uint16_t Encoders::getHallValue(Direction_t pSensor) {
+HallState_t Encoders::getHallValue(Direction_t pSensor) {
+  #if defined(EOL_ANALOG)
+  // Need to check if the polarity matches with the correct voltage swing.
+  uint16_t sensorValue;
+  
   switch (pSensor) {
   case Direction_t::Left:
-    return analogRead(EOL_PIN_L);
+  
+    sensorValue = analogRead(EOL_PIN_L);
+    if(sensorValue < FILTER_L_MIN[static_cast<uint8_t>(m_machineType)]) {
+      return HallState_t::North;
+    }
+    else if (sensorValue > FILTER_L_MAX[static_cast<uint8_t>(m_machineType)]) {
+      return HallState_t::South;
+    }
+    else {
+      return HallState_t::None;
+    }
+
   case Direction_t::Right:
-    return analogRead(EOL_PIN_R);
+
+    sensorValue = analogRead(EOL_PIN_R);
+    if(sensorValue < FILTER_R_MIN[static_cast<uint8_t>(m_machineType)]) {
+      return HallState_t::North;
+    }
+    else if (sensorValue > FILTER_R_MAX[static_cast<uint8_t>(m_machineType)]) {
+      return HallState_t::South;
+    }
+    else {
+      return HallState_t::None;
+    }
+
   default:
-    return 0;
+    return HallState_t::Error;
   }
+
+  #elif defined(EOL_COMPARATOR)
+
+  switch (pSensor) {
+  case Direction_t::Left:
+    if(digitalRead(EOL_PIN_L_N)) {
+      return HallState_t::North;
+    }
+    else if(digitalRead(EOL_PIN_L_S)){
+      return HallState_t::South;
+    }
+    else {
+      return HallState::None;
+    }
+
+  case Direction_t::Right:
+    if(digitalRead(EOL_PIN_R_N)) {
+      return HallState_t::North;
+    }
+    else if(digitalRead(EOL_PIN_R_S)){
+      return HallState_t::South;
+    }
+    else {
+      return HallState::None;
+    }
+
+  default:
+    return HallState_t::Error;
+  }
+
+  #endif
 }
 
 /*!
@@ -149,15 +206,14 @@ void Encoders::encA_rising() {
   }
 
   // In front of Left Hall Sensor?
-  uint16_t hallValue = analogRead(EOL_PIN_L);
-  if ((hallValue < FILTER_L_MIN[static_cast<uint8_t>(m_machineType)]) ||
-      (hallValue > FILTER_L_MAX[static_cast<uint8_t>(m_machineType)])) {
+  HallState_t hallValue = getHallValue(Direction_t::Left);
+  if (hallValue ==  HallState_t::North || hallValue == HallState_t::South) {
     m_hallActive = Direction_t::Left;
 
     Carriage detected_carriage = Carriage_t::NoCarriage;
     uint8_t start_position = END_LEFT_PLUS_OFFSET[static_cast<uint8_t>(m_machineType)];
 
-    if (hallValue >= FILTER_L_MIN[static_cast<uint8_t>(m_machineType)]) {
+    if (hallValue == HallState_t::North) {
       detected_carriage = Carriage_t::Knit;
     } else {
       detected_carriage = Carriage_t::Lace;
@@ -207,21 +263,15 @@ void Encoders::encA_falling() {
   }
 
   // In front of Right Hall Sensor?
-  uint16_t hallValue = analogRead(EOL_PIN_R);
+  HallState_t hallValue = getHallValue(Direction_t::Right);
 
-  // Avoid 'comparison of unsigned expression < 0 is always false'
-  // by being explicit about that behaviour being expected.
-  bool hallValueSmall = false;
-
-  hallValueSmall = (hallValue < FILTER_R_MIN[static_cast<uint8_t>(m_machineType)]);
-
-  if (hallValueSmall || hallValue > FILTER_R_MAX[static_cast<uint8_t>(m_machineType)]) {
+  if (hallValue == HallState_t::North || hallValue == HallState_t::South) {
     m_hallActive = Direction_t::Right;
 
     // The garter carriage has a second set of magnets that are going to
     // pass the sensor and will reset state incorrectly if allowed to
     // continue.
-    if (hallValueSmall && (m_carriage != Carriage_t::Garter)) {
+    if ((hallValue == HallState_t::North) && (m_carriage != Carriage_t::Garter)) {
       m_carriage = Carriage_t::Knit;
     }
 

@@ -29,7 +29,7 @@ void GlobalEncoders::encA_interrupt() {
   m_instance->encA_interrupt();
 }
 
-uint16_t GlobalEncoders::getHallValue(Direction_t pSensor) {
+HallState_t GlobalEncoders::getHallValue(Direction_t pSensor) {
   return m_instance->getHallValue(pSensor);
 }
 

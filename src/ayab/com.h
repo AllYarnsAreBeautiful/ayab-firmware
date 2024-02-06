@@ -75,7 +75,7 @@ enum class AYAB_API : unsigned char {
 using AYAB_API_t = enum AYAB_API;
 
 // API constants
-constexpr uint8_t INDSTATE_LEN = 10U;
+constexpr uint8_t INDSTATE_LEN = 12U;
 constexpr uint8_t REQLINE_LEN = 3U;
 
 class ComInterface {

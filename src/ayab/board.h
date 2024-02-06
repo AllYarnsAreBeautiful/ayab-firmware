@@ -38,6 +38,8 @@ constexpr uint16_t START_KNITTING_DELAY = 2000U; // ms
 // Arduino Uno
 
 #define HAS_MCP23008
+#define EOL_ANALOG
+
 constexpr uint8_t I2Caddr_sol1_8 = 0x0U;  ///< I2C Address of solenoids 1 - 8
 constexpr uint8_t I2Caddr_sol9_16 = 0x1U; ///< I2C Address of solenoids 9 - 16
 
@@ -57,6 +59,8 @@ constexpr uint8_t PIEZO_PIN = 9;
 #elif defined(CONFIG_IDF_TARGET_ESP32S3)// ESP32-S3 (AYAB-ESP32)
 
 #define HAS_MCP23017
+#define EOL_COMPARATOR
+
 constexpr uint8_t MCP23017_ADDR_0 = 0x0U; // I2C address of expander on ayab-esp32 (16-wide)
 
 // Knitting machine control
@@ -87,7 +91,8 @@ constexpr uint8_t I2C_PIN_SCL = 16;  // I2C1
 
 // Misc I/O
 constexpr uint8_t LED_PIN_R = 33;  
-constexpr uint8_t LED_PIN_G = 34;   
+constexpr uint8_t LED_PIN_A = 33;
+constexpr uint8_t LED_PIN_G = 34;
 constexpr uint8_t LED_PIN_B = 35;    
 
 constexpr uint8_t PIEZO_PIN = 38;

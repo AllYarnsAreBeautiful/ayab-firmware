@@ -27,7 +27,13 @@
 #include <Arduino.h>
 
 // Enumerated constants
-
+enum class HallState : unsigned char {
+  None = 0,
+  North = 1,
+  South = 2,
+  Error = 0xFF
+};
+using HallState_t = enum HallState;
 
 enum class Direction : unsigned char {
   NoDirection = 0xFF,
@@ -123,7 +129,7 @@ public:
 
   // any methods that need to be mocked should go here
   virtual void encA_interrupt() = 0;
-  virtual uint16_t getHallValue(Direction_t pSensor) = 0;
+  virtual HallState_t getHallValue(Direction_t pSensor) = 0;
   virtual void init(Machine_t machineType) = 0;
   virtual Machine_t getMachineType() = 0;
   virtual BeltShift_t getBeltShift() = 0;
@@ -148,7 +154,7 @@ public:
   static EncodersInterface *m_instance;
 
   static void encA_interrupt();
-  static uint16_t getHallValue(Direction_t pSensor);
+  static HallState_t getHallValue(Direction_t pSensor);
   static void init(Machine_t machineType);
   static Machine_t getMachineType();
   static BeltShift_t getBeltShift();
@@ -163,7 +169,7 @@ public:
   Encoders() = default;
 
   void encA_interrupt() final;
-  uint16_t getHallValue(Direction_t pSensor) final;
+  HallState_t getHallValue(Direction_t pSensor) final;
   void init(Machine_t machineType) final;
   Machine_t getMachineType() final;
   BeltShift_t getBeltShift() final;
