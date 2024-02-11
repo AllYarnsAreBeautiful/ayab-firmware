@@ -388,6 +388,7 @@ void Knitter::reqLine(uint8_t lineNumber) {
  */
 bool Knitter::calculatePixelAndSolenoid() {
   uint8_t startOffset = 0;
+  uint8_t laceOffset = 0;
 
   switch (m_direction) {
   // calculate the solenoid and pixel to be set
@@ -395,16 +396,15 @@ bool Knitter::calculatePixelAndSolenoid() {
   // magic numbers from machine manual
   case Direction_t::Right:
     startOffset = getStartOffset(Direction_t::Left);
-    uint8_t pixelStartOffset = startOffset;
 
     // We have to start setting pixels earlier when the lace carriage is selected because we shift
     // the lace pixel selection up HALF_SOLENOIDS_NUM in this direction. Doesn't matter going back 
     // the other way.
     if (Carriage_t::Lace == m_carriage) {
-      pixelStartOffset = pixelStartOffset - HALF_SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];
+      laceOffset = HALF_SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];
     }
 
-    if (m_position >= pixelStartOffset) {
+    if (m_position >= startOffset - laceOffset) {
       m_pixelToSet = m_position - startOffset;
 
       if ((BeltShift::Regular == m_beltShift) || (m_machineType == Machine_t::Kh270)) {
