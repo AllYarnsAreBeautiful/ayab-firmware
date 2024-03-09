@@ -14,9 +14,10 @@ A tabular representation of state transitions follows.
 
 | Transition      | Function / condition |
               --: | :--
- `Init  -> Test`  | `Tester::startTest()`  
- `Ready -> Test`  | `Tester::startTest()`  
+ `Init  -> Test`  | `Tester::startTest()`
+ `Ready -> Test`  | `Tester::startTest()`
  `Test  -> Init`  | `Tester::quitCmd()`
+ `Knit  -> Init`  | `Knitter::quitCmd()`
  `Init  -> Ready` | `Knitter::isReady()`
  `Ready -> Knit`  | `Knitter::startKnitting()`
  `Knit  -> Ready` | `m_workedOnLine && m_lastLineFlag`
