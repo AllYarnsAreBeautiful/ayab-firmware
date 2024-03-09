@@ -737,9 +737,7 @@ TEST_F(KnitterTest, test_fsm_init_LR) {
 
 TEST_F(KnitterTest, test_quit) {
   get_to_knit(Machine_t::Kh910);
-  EXPECT_CALL(*fsmMock, setState(OpState::init));
+  //ASSERT_EQ(fsm->getState(), OpState::knit);
   knitter->quit();
-
-  // test expectations without destroying instance
-  ASSERT_TRUE(Mock::VerifyAndClear(fsmMock));
+  ASSERT_EQ(fsm->getState(), OpState::init);
 }

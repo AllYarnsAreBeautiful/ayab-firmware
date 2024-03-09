@@ -98,6 +98,14 @@ protected:
     EXPECT_CALL(*fsmMock, setState(OpState::init));
     expected_write_onPacketReceived(buffer, sizeof(buffer), true);
   }
+
+  void reqTest(Machine_t machine) {
+    uint8_t buffer[] = {static_cast<uint8_t>(AYAB_API::reqTest)};
+    EXPECT_CALL(*fsmMock, setState(OpState::test));
+    EXPECT_CALL(*knitterMock, setMachineType(Machine_t::Kh910));
+    EXPECT_CALL(*arduinoMock, millis);
+    expected_write_onPacketReceived(buffer, sizeof(buffer), false);
+  }
 };
 
 /*
@@ -247,7 +255,18 @@ TEST_F(ComTest, test_stopCmd) {
   com->onPacketReceived(buffer, sizeof(buffer));
 }
 
-TEST_F(ComTest, test_quitCmd) {
+TEST_F(ComTest, test_quitCmd_knit) {
+  fsmMock->setState(OpState::knit);
+  uint8_t buffer[] = {static_cast<uint8_t>(AYAB_API::quitCmd)};
+  EXPECT_CALL(*knitterMock, quit);
+  com->onPacketReceived(buffer, sizeof(buffer));
+
+  // test expectations without destroying instance
+  ASSERT_TRUE(Mock::VerifyAndClear(knitterMock));
+}
+
+TEST_F(ComTest, test_quitCmd_test) {
+  reqTest();
   uint8_t buffer[] = {static_cast<uint8_t>(AYAB_API::quitCmd)};
   EXPECT_CALL(*knitterMock, setUpInterrupt);
   EXPECT_CALL(*fsmMock, setState(OpState::init));
