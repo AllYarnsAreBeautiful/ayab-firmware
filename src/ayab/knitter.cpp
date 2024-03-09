@@ -371,6 +371,17 @@ void Knitter::setMachineType(Machine_t machineType) {
   m_machineType = machineType;
 }
 
+/*!
+ * \brief Cancel knitting procedure.
+ */
+void Knitter::quit() const {
+  GlobalFsm::setState(OpState::init);
+  GlobalSolenoids::setSolenoids(SOLENOIDS_BITMASK);
+
+  // detaching ENC_PIN_A, Interrupt #0
+  /* detachInterrupt(digitalPinToInterrupt(ENC_PIN_A)); */
+}
+
 // private methods
 
 /*!
