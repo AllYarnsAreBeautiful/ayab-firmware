@@ -87,3 +87,8 @@ void GlobalKnitter::setLastLine() {
 void GlobalKnitter::setMachineType(Machine_t machineType) {
   m_instance->setMachineType(machineType);
 }
+
+void GlobalKnitter::quit() {
+  m_instance->quit();
+}
+

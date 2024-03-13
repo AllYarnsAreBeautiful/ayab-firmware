@@ -23,6 +23,7 @@
  */
 
 #include "com.h"
+#include "fsm.h"
 #include "knitter.h"
 #include "tester.h"
 
@@ -184,8 +185,15 @@ void Com::onPacketReceived(const uint8_t *buffer, size_t size) {
     break;
 
    case static_cast<uint8_t>(AYAB_API::quitCmd):
-    GlobalTester::quitCmd();
-    break;
+    if (GlobalFsm::getState() == OpState::knit) {
+        GlobalKnitter::quit();
+        break;
+    }
+    if (GlobalFsm::getState() == OpState::test) {
+        GlobalTester::quitCmd();
+        break;
+    }
+    // fallthrough
 
   default:
     h_unrecognized();

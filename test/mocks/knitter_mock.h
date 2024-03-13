@@ -45,6 +45,7 @@ public:
   MOCK_METHOD1(setNextLine, bool(uint8_t lineNumber));
   MOCK_METHOD0(setLastLine, void());
   MOCK_METHOD1(setMachineType, void(Machine_t));
+  MOCK_CONST_METHOD0(quit, void());
 };
 
 KnitterMock *knitterMockInstance();

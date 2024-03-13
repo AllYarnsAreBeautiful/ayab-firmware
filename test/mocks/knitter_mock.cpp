@@ -109,5 +109,10 @@ void Knitter::setLastLine() {
 
 void Knitter::setMachineType(Machine_t machineType) {
   assert(gKnitterMock != nullptr);
-  return gKnitterMock->setMachineType(machineType);
+  gKnitterMock->setMachineType(machineType);
+}
+
+void Knitter::quit() const {
+  assert(gKnitterMock != nullptr);
+  gKnitterMock->quit();
 }

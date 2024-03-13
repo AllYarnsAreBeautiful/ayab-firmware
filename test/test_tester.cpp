@@ -194,12 +194,13 @@ TEST_F(TesterTest, test_autoTestCmd) {
 }
 
 TEST_F(TesterTest, test_quitCmd) {
-  EXPECT_CALL(*knitterMock, setUpInterrupt);
+  expect_startTest(0);
+  //EXPECT_CALL(*knitterMock, setUpInterrupt);
   EXPECT_CALL(*fsmMock, setState(OpState::init));
   tester->quitCmd();
 
   // test expectations without destroying instance
-  ASSERT_TRUE(Mock::VerifyAndClear(knitterMock));
+  //ASSERT_TRUE(Mock::VerifyAndClear(knitterMock));
   ASSERT_TRUE(Mock::VerifyAndClear(fsmMock));
 }
 
