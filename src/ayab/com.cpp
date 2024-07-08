@@ -122,6 +122,11 @@ void Com::send_indState(Carriage_t carriage, uint8_t position,
  * \param size The number of bytes in the data buffer.
  */
 void Com::onPacketReceived(const uint8_t *buffer, size_t size) {
+  // Ignore empty packets (sliplib in Python emits END bytes at the start of packets)
+  if (size <= 0) {
+    return;
+  }
+
   switch (buffer[0]) {
   case static_cast<uint8_t>(AYAB_API::reqInit):
     h_reqInit(buffer, size);

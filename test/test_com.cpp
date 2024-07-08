@@ -263,6 +263,13 @@ TEST_F(ComTest, test_unrecognized) {
   com->onPacketReceived(buffer, sizeof(buffer));
 }
 
+TEST_F(ComTest, test_empty_message_is_ignored) {
+  uint8_t buffer[] = {static_cast<uint8_t>(AYAB_API::reqInfo)};
+  EXPECT_CALL(*serialMock, write(_, _)).Times(0);
+
+  com->onPacketReceived(buffer, 0);
+}
+
 TEST_F(ComTest, test_cnfline_kh910) {
   // dummy pattern
   uint8_t pattern[] = {1};
