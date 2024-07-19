@@ -87,7 +87,6 @@ public:
   virtual void update() = 0;
   virtual void send(uint8_t *payload, size_t length) const = 0;
   virtual void sendMsg(AYAB_API_t id, const char *msg) = 0;
-  virtual void sendMsg(AYAB_API_t id, char *msg) = 0;
   virtual void send_reqLine(const uint8_t lineNumber,
                             Err_t error = ErrorCode::success) const = 0;
   virtual void send_indState(Carriage_t carriage, uint8_t position,
@@ -113,7 +112,6 @@ public:
   static void update();
   static void send(uint8_t *payload, size_t length);
   static void sendMsg(AYAB_API_t id, const char *msg);
-  static void sendMsg(AYAB_API_t id, char *msg);
   static void send_reqLine(const uint8_t lineNumber, Err_t error = ErrorCode::success);
   static void send_indState(Carriage_t carriage, uint8_t position,
                              Err_t error = ErrorCode::success);
@@ -129,7 +127,6 @@ public:
   void update() final;
   void send(uint8_t *payload, size_t length) const final;
   void sendMsg(AYAB_API_t id, const char *msg) final;
-  void sendMsg(AYAB_API_t id, char *msg) final;
   void send_reqLine(const uint8_t lineNumber, Err_t error = ErrorCode::success) const final;
   void send_indState(Carriage_t carriage, uint8_t position,
                              Err_t error = ErrorCode::success) const final;

@@ -73,10 +73,7 @@ void Com::sendMsg(AYAB_API_t id, const char *msg) {
   while (*msg) {
     msgBuffer[length++] = static_cast<uint8_t>(*msg++);
   }
-  m_packetSerial.send(msgBuffer, length);
-}
-void Com::sendMsg(AYAB_API_t id, char *msg) {
-  sendMsg(id, static_cast<const char *>(msg));
+  send(msgBuffer, length);
 }
 
 /*!
