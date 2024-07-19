@@ -34,7 +34,6 @@ public:
   MOCK_METHOD0(update, void());
   MOCK_CONST_METHOD2(send, void(uint8_t *payload, size_t length));
   MOCK_METHOD2(sendMsg, void(AYAB_API_t id, const char *msg));
-  MOCK_METHOD2(sendMsg, void(AYAB_API_t id, char *msg));
   MOCK_CONST_METHOD2(send_reqLine, void(const uint8_t lineNumber, Err_t error));
   MOCK_CONST_METHOD3(send_indState, void(Carriage_t carriage, uint8_t position,
                                    Err_t error));

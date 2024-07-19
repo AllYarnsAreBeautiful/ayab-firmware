@@ -44,10 +44,6 @@ void GlobalCom::sendMsg(AYAB_API_t id, const char *msg) {
   m_instance->sendMsg(id, msg);
 }
 
-void GlobalCom::sendMsg(AYAB_API_t id, char *msg) {
-  m_instance->sendMsg(id, msg);
-}
-
 // GCOVR_EXCL_START
 void GlobalCom::onPacketReceived(const uint8_t *buffer, size_t size) {
   m_instance->onPacketReceived(buffer, size);

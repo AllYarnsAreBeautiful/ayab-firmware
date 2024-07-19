@@ -60,11 +60,6 @@ void Com::sendMsg(AYAB_API_t id, const char *msg) {
   gComMock->sendMsg(id, msg);
 }
 
-void Com::sendMsg(AYAB_API_t id, char *msg) {
-  assert(gComMock != nullptr);
-  gComMock->sendMsg(id, msg);
-}
-
 void Com::send_reqLine(const uint8_t lineNumber, Err_t error) const {
   assert(gComMock != nullptr);
   gComMock->send_reqLine(lineNumber, error);
