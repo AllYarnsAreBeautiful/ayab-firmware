@@ -44,7 +44,7 @@ constexpr uint8_t API_VERSION = 6U;
 constexpr uint32_t SERIAL_BAUDRATE = 115200U;
 
 constexpr uint8_t MAX_LINE_BUFFER_LEN = 25U;
-constexpr uint8_t MAX_MSG_BUFFER_LEN = 255U;
+constexpr uint8_t MAX_MSG_BUFFER_LEN = 64U;
 
 enum class AYAB_API : unsigned char {
   reqStart = 0x01,
@@ -133,7 +133,7 @@ public:
   void onPacketReceived(const uint8_t *buffer, size_t size) final;
 
 private:
-  SLIPPacketSerial m_packetSerial;
+  PacketSerial_<SLIP, SLIP::END, MAX_MSG_BUFFER_LEN> m_packetSerial;
   uint8_t lineBuffer[MAX_LINE_BUFFER_LEN] = {0};
   uint8_t msgBuffer[MAX_MSG_BUFFER_LEN] = {0};
 
