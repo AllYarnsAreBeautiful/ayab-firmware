@@ -39,6 +39,16 @@ To set up a working development environment follow these steps:
     Please [download the PlatformIO plugin](https://platformio.org/install/integration) for your favorite IDE, i.e. VSCode.
     Then, open the ayab-firmware project and hit Build and/or Upload to compile and upload to hardware.
 
+### Enabling stack overflow detection
+
+You can build a version of the firmware that will try to detect memory corruption due to stack overflow as soon as it happens.
+
+ 1. Open the `platformio.ini` file and uncomment the line that contains `-DENABLE_STACK_CANARY=1`
+
+ 2. Build and upload the firmware to your Arduino board
+
+ 3. Use the firmware as you would normally. If at any point the firmware stops responding to the AYAB desktop application, and you see the yellow LED flashing repeatedly, congratulations: you have hit a stack overflow condition. Please open an issue in this repository describing what you were doing when the problem occurred.
+
 ### Unit tests and code analysis
 
  1. Install the [Arduino.mk](https://github.com/sudar/Arduino-Makefile) package and setup environment variables.
