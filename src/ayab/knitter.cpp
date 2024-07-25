@@ -239,8 +239,6 @@ bool Knitter::isReady() {
 void Knitter::knit() {
   if (m_firstRun) {
     m_firstRun = false;
-    // TODO(who?): optimize delay for various Arduino models
-    delay(START_KNITTING_DELAY);
     GlobalBeeper::finishedLine();
     ++m_currentLineNumber;
     reqLine(m_currentLineNumber);
