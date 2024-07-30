@@ -203,10 +203,9 @@ void Tester::encoderAChange() {
 void Tester::setUp() {
   // Print welcome message
   GlobalCom::sendMsg(AYAB_API::testRes, "AYAB Hardware Test, ");
-  snprintf(buf, BUFFER_LEN, "Firmware v%hhu", FW_VERSION_MAJ);
+  snprintf(buf, BUFFER_LEN, "Firmware v%hhu.%hhu.%hhu", FW_VERSION_MAJ, FW_VERSION_MIN, FW_VERSION_PATCH);
   GlobalCom::sendMsg(AYAB_API::testRes, buf);
-  snprintf(buf, BUFFER_LEN, ".%hhu", FW_VERSION_MIN);
-  GlobalCom::sendMsg(AYAB_API::testRes, buf);
+  GlobalCom::sendMsg(AYAB_API::testRes, FW_VERSION_SUFFIX);
   snprintf(buf, BUFFER_LEN, " API v%hhu\n\n", API_VERSION);
   GlobalCom::sendMsg(AYAB_API::testRes, buf);
   helpCmd();
