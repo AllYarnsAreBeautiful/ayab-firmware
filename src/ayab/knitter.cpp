@@ -413,7 +413,6 @@ bool Knitter::calculatePixelAndSolenoid() {
       if (Carriage_t::Lace == m_carriage) {
         m_pixelToSet = m_pixelToSet + HALF_SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];
       }
-
     } else {
       return false;
     }
@@ -421,7 +420,6 @@ bool Knitter::calculatePixelAndSolenoid() {
 
   case Direction_t::Left:
     startOffset = getStartOffset(Direction_t::Right);
-=
     if (m_position <= (END_RIGHT[static_cast<uint8_t>(m_machineType)] - startOffset)) {
       m_pixelToSet = m_position - startOffset;
 
