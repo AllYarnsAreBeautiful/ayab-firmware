@@ -269,10 +269,26 @@ void Knitter::knit() {
     indState(ErrorCode::success);
   }
 
-  if (!calculatePixelAndSolenoid()) {
+  if (!calculatePixelAndSolenoid() /*|| m_pixelToSet > 200 || m_pixelToSet < 0*/) {
     // no valid/useful position calculated
     return;
   }
+
+  if (m_position > (255)) {
+    GlobalBeeper::finishedLine();
+  }
+
+  //if (m_pixelToSet > 200) {
+  //  GlobalBeeper::endWork();
+  //}
+
+  /*if (m_pixelToSet == 100) {
+    GlobalBeeper::ready();
+  }*/
+
+  /*if (m_pixelToSet > 200 || m_pixelToSet < 0) {
+    GlobalBeeper::ready();
+  }*/
 
   // Desktop software is setting flanking needles so we need to set
   // these even outside of the working needles.
@@ -415,6 +431,7 @@ bool Knitter::calculatePixelAndSolenoid() {
       if (Carriage_t::Lace == m_carriage) {
         m_pixelToSet = m_pixelToSet + HALF_SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];
       }
+
     } else {
       return false;
     }
@@ -422,6 +439,7 @@ bool Knitter::calculatePixelAndSolenoid() {
 
   case Direction_t::Left:
     startOffset = getStartOffset(Direction_t::Right);
+
     if (m_position <= (END_RIGHT[static_cast<uint8_t>(m_machineType)] - startOffset)) {
       m_pixelToSet = m_position - startOffset;
 

@@ -83,8 +83,8 @@ constexpr uint8_t START_OFFSET[NUM_MACHINES][NUM_DIRECTIONS][NUM_CARRIAGES] = {
     // KH910
     {
         // K,   L,   G
-        {40U, 40U, 32U}, // Left
-        {16U, 16U, 56U} // Right
+        {40U, 40U, 16U}, // Left
+        {16U, 16U, 40U} // Right
     },
     // KH930
     {
@@ -111,6 +111,7 @@ constexpr uint16_t FILTER_R_MAX[NUM_MACHINES] = {1023U, 600U, 600U};
 constexpr uint16_t SOLENOIDS_BITMASK = 0xFFFFU;
 
 constexpr uint8_t MAGNET_DISTANCE_270 = 12U;
+constexpr uint8_t HALF_MAGNET_DISTANCE_G = 12U;
 
 /*!
  * \brief Encoder interface.
