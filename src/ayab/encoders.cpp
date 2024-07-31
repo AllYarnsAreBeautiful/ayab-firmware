@@ -225,15 +225,15 @@ void Encoders::encA_falling() {
   if (hallValueSmall || hallValue > FILTER_R_MAX[static_cast<uint8_t>(m_machineType)]) {
     m_hallActive = Direction_t::Right;
 
-    // Belt shift signal only decided in front of hall sensor
-    m_beltShift = digitalRead(ENC_PIN_C) != 0 ? BeltShift::Shifted : BeltShift::Regular;
-
     // The garter carriage has a second set of magnets that are going to
     // pass the sensor and will reset state incorrectly if allowed to
     // continue.
     if (hallValueSmall && (m_carriage != Carriage_t::Garter)) {
       m_carriage = Carriage_t::Knit;
     }
+
+    // Belt shift signal only decided in front of hall sensor
+    m_beltShift = digitalRead(ENC_PIN_C) != 0 ? BeltShift::Shifted : BeltShift::Regular;
 
     // Known position of the carriage -> overwrite position
     m_position = END_RIGHT_MINUS_OFFSET[static_cast<uint8_t>(m_machineType)];
