@@ -110,6 +110,7 @@ public:
 private:
   void reqLine(uint8_t lineNumber);
   bool calculatePixelAndSolenoid();
+  bool isLineFinished();
   void stopKnitting() const;
 
   // job parameters
@@ -128,11 +129,11 @@ private:
 
   bool m_lineRequested;
   uint8_t m_currentLineNumber;
+  Direction m_currentLineDirection;
   bool m_lastLineFlag;
 
   uint8_t m_sOldPosition;
   bool m_firstRun;
-  bool m_workedOnLine;
   Direction_t m_lastHall;
 #ifdef DBG_NOMACHINE
   bool m_prevState;
