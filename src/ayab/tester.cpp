@@ -223,6 +223,9 @@ void Tester::setUp() {
   m_autoTestOn = false;
   m_lastTime = millis();
   m_timerEventOdd = false;
+
+  // Enable beeper so that it can be tested
+  GlobalBeeper::init(true);
 }
 
 /*!
