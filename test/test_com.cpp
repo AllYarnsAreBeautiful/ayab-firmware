@@ -249,12 +249,10 @@ TEST_F(ComTest, test_stopCmd) {
 
 TEST_F(ComTest, test_quitCmd) {
   uint8_t buffer[] = {static_cast<uint8_t>(AYAB_API::quitCmd)};
-  EXPECT_CALL(*knitterMock, setUpInterrupt);
-  EXPECT_CALL(*fsmMock, setState(OpState::init));
+  EXPECT_CALL(*fsmMock, setState(OpState::wait_for_machine));
   com->onPacketReceived(buffer, sizeof(buffer));
 
   // test expectations without destroying instance
-  ASSERT_TRUE(Mock::VerifyAndClear(knitterMock));
   ASSERT_TRUE(Mock::VerifyAndClear(fsmMock));
 }
 
