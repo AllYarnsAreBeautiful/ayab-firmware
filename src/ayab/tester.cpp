@@ -155,8 +155,10 @@ void Tester::stopCmd() {
  * \brief Quit command handler.
  */
 void Tester::quitCmd() {
-  GlobalFsm::setState(OpState::init);
-  GlobalKnitter::setUpInterrupt();
+  detachInterrupt(digitalPinToInterrupt(ENC_PIN_A));
+  detachInterrupt(digitalPinToInterrupt(ENC_PIN_B));
+
+  GlobalFsm::setState(OpState::wait_for_machine);
 }
 
 /*!
@@ -190,8 +192,9 @@ void Tester::loop() {
 /*!
  * \brief Interrupt service routine for encoder A.
  */
-void Tester::encoderAChange() {
-  beep();
+void Tester::encoderChange() {
+  digitalWrite(LED_PIN_A, digitalRead(ENC_PIN_A));
+  digitalWrite(LED_PIN_B, digitalRead(ENC_PIN_B));
 }
 #endif // AYAB_TESTS
 
@@ -210,13 +213,10 @@ void Tester::setUp() {
   GlobalCom::sendMsg(AYAB_API::testRes, buf);
   helpCmd();
 
-  // attach interrupt for ENC_PIN_A(=2), interrupt #0
-  detachInterrupt(digitalPinToInterrupt(ENC_PIN_A));
 #ifndef AYAB_TESTS
-  // Attaching ENC_PIN_A, Interrupt #0
-  // This interrupt cannot be enabled until
-  // the machine type has been validated.
-  attachInterrupt(digitalPinToInterrupt(ENC_PIN_A), GlobalTester::encoderAChange, RISING);
+  // Attach interrupts for both encoder pins
+  attachInterrupt(digitalPinToInterrupt(ENC_PIN_A), GlobalTester::encoderChange, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(ENC_PIN_B), GlobalTester::encoderChange, CHANGE);
 #endif // AYAB_TESTS
 
   m_autoReadOn = false;

@@ -79,7 +79,7 @@ void GlobalTester::quitCmd() {
 }
 
 #ifndef AYAB_TESTS
-void GlobalTester::encoderAChange() {
-  m_instance->encoderAChange();
+void GlobalTester::encoderChange() {
+  m_instance->encoderChange();
 }
 #endif // AYAB_TESTS
