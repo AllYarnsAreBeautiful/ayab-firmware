@@ -271,7 +271,24 @@ void Knitter::knit() {
 
   if (!calculatePixelAndSolenoid()) {
     // no valid/useful position calculated
+    //GlobalBeeper::finishedLine();
     return;
+  }
+
+  /*if (m_position > 240) {
+    GlobalBeeper::finishedLine();
+  }
+
+  if (m_position < 15) {
+    GlobalBeeper::finishedLine();
+  }*/
+
+  if (m_pixelToSet == 0) {
+    GlobalBeeper::finishedLine();
+  }
+
+  if (m_pixelToSet == 200) {
+    GlobalBeeper::finishedLine();
   }
 
   // Desktop software is setting flanking needles so we need to set
@@ -279,6 +296,13 @@ void Knitter::knit() {
   // find the right byte from the currentLine array,
   // then read the appropriate Pixel(/Bit) for the current needle to set
   uint8_t currentByte = m_pixelToSet >> 3;
+  if (currentByte > 24) {
+    //GlobalBeeper::finishedLine();
+  }
+
+  if (currentByte < 1) {
+    //GlobalBeeper::finishedLine();
+  }
   bool pixelValue =
       bitRead(m_lineBuffer[currentByte], m_pixelToSet & 0x07);
   // write Pixel state to the appropriate needle
@@ -345,7 +369,7 @@ bool Knitter::setNextLine(uint8_t lineNumber) {
     // Is there even a need for a new line?
     if (lineNumber == m_currentLineNumber) {
       m_lineRequested = false;
-      GlobalBeeper::finishedLine();
+      //GlobalBeeper::finishedLine();
       return true;
     } else {
       // line numbers didn't match -> request again
@@ -404,38 +428,40 @@ bool Knitter::calculatePixelAndSolenoid() {
       laceOffset = HALF_SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];
     }
 
-    if (m_position >= startOffset - laceOffset) {
+    //if (m_position >= startOffset - laceOffset) {
       m_pixelToSet = m_position - startOffset;
 
-      if ((BeltShift::Regular == m_beltShift) || (m_machineType == Machine_t::Kh270)) {
-        m_solenoidToSet = m_position % SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];
-      } else if (BeltShift::Shifted == m_beltShift) {
-        m_solenoidToSet = (m_position - HALF_SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)]) % SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];
+      if ((BeltShift::Shifted == m_beltShift) || (m_machineType == Machine_t::Kh270) || (Carriage_t::Lace == m_carriage)) {
+        m_solenoidToSet = m_pixelToSet % SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];
+      } else if (BeltShift::Regular == m_beltShift) {
+        m_solenoidToSet = (m_pixelToSet + HALF_SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)]) % SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];
       }
-      if (Carriage_t::Lace == m_carriage) {
-        m_pixelToSet = m_pixelToSet + HALF_SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];
-      }
-    } else {
-      return false;
-    }
+
+    //} else {
+    //  return false;
+    //}
     break;
 
   case Direction_t::Left:
     startOffset = getStartOffset(Direction_t::Right);
-    if (m_position <= (END_RIGHT[static_cast<uint8_t>(m_machineType)] - startOffset)) {
+    //if (m_position <= (END_RIGHT[static_cast<uint8_t>(m_machineType)] - startOffset)) {
       m_pixelToSet = m_position - startOffset;
 
-      if ((BeltShift::Regular == m_beltShift) || (m_machineType == Machine_t::Kh270)) {
-        m_solenoidToSet = (m_position + HALF_SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)]) % SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];
-      } else if (BeltShift::Shifted == m_beltShift) {
-        m_solenoidToSet = m_position % SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];
+      if (((BeltShift::Regular == m_beltShift) || (m_machineType == Machine_t::Kh270)) && (Carriage_t::Lace != m_carriage)) {
+        m_solenoidToSet = (m_pixelToSet + HALF_SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)]) % SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];
+      } else {
+        m_solenoidToSet = m_pixelToSet % SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];
       }
-      if (Carriage_t::Lace == m_carriage) {
-        m_pixelToSet = m_pixelToSet - SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];
-      }
-    } else {
-      return false;
-    }
+      
+
+      // THIS WORKS with offset at 16
+      // But it's not clear why
+      //m_pixelToSet = m_pixelToSet - SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)] - HALF_SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)] - 8;
+
+      //m_pixelToSet = m_pixelToSet;
+    //} else {
+    //  return false;
+    //}
     break;
 
   default:
