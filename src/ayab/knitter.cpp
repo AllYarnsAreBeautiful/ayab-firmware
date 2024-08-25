@@ -269,24 +269,8 @@ void Knitter::knit() {
 
   if (!calculatePixelAndSolenoid()) {
     // no valid/useful position calculated
-    //GlobalBeeper::finishedLine();
+    GlobalBeeper::finishedLine();
     return;
-  }
-
-  /*if (m_position > 240) {
-    GlobalBeeper::finishedLine();
-  }
-
-  if (m_position < 15) {
-    GlobalBeeper::finishedLine();
-  }*/
-
-  if (m_pixelToSet == 0) {
-    GlobalBeeper::finishedLine();
-  }
-
-  if (m_pixelToSet == 200) {
-    GlobalBeeper::finishedLine();
   }
 
   // Desktop software is setting flanking needles so we need to set
@@ -294,13 +278,6 @@ void Knitter::knit() {
   // find the right byte from the currentLine array,
   // then read the appropriate Pixel(/Bit) for the current needle to set
   uint8_t currentByte = m_pixelToSet >> 3;
-  if (currentByte > 24) {
-    //GlobalBeeper::finishedLine();
-  }
-
-  if (currentByte < 1) {
-    //GlobalBeeper::finishedLine();
-  }
   bool pixelValue =
       bitRead(m_lineBuffer[currentByte], m_pixelToSet & 0x07);
   // write Pixel state to the appropriate needle
@@ -419,47 +396,24 @@ bool Knitter::calculatePixelAndSolenoid() {
   case Direction_t::Right:
     startOffset = getStartOffset(Direction_t::Left);
 
-    // We have to start setting pixels earlier when the lace carriage is selected because we shift
-    // the lace pixel selection up HALF_SOLENOIDS_NUM in this direction. Doesn't matter going back 
-    // the other way.
-    if (Carriage_t::Lace == m_carriage) {
-      laceOffset = HALF_SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];
+    m_pixelToSet = m_position - startOffset;
+
+    if ((BeltShift::Regular == m_beltShift)) {
+      m_solenoidToSet = m_pixelToSet % SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];
+    } else if (BeltShift::Shifted == m_beltShift) {
+      m_solenoidToSet = (m_pixelToSet + HALF_SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)]) % SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];
     }
-
-    //if (m_position >= startOffset - laceOffset) {
-      m_pixelToSet = m_position - startOffset;
-
-      if ((BeltShift::Shifted == m_beltShift) || (m_machineType == Machine_t::Kh270) || (Carriage_t::Lace == m_carriage)) {
-        m_solenoidToSet = m_pixelToSet % SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];
-      } else if (BeltShift::Regular == m_beltShift) {
-        m_solenoidToSet = (m_pixelToSet + HALF_SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)]) % SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];
-      }
-
-    //} else {
-    //  return false;
-    //}
     break;
 
   case Direction_t::Left:
     startOffset = getStartOffset(Direction_t::Right);
-    //if (m_position <= (END_RIGHT[static_cast<uint8_t>(m_machineType)] - startOffset)) {
-      m_pixelToSet = m_position - startOffset;
+    m_pixelToSet = m_position - startOffset;
 
-      if (((BeltShift::Regular == m_beltShift) || (m_machineType == Machine_t::Kh270)) && (Carriage_t::Lace != m_carriage)) {
-        m_solenoidToSet = (m_pixelToSet + HALF_SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)]) % SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];
-      } else {
-        m_solenoidToSet = m_pixelToSet % SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];
-      }
-      
-
-      // THIS WORKS with offset at 16
-      // But it's not clear why
-      //m_pixelToSet = m_pixelToSet - SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)] - HALF_SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)] - 8;
-
-      //m_pixelToSet = m_pixelToSet;
-    //} else {
-    //  return false;
-    //}
+    if (BeltShift::Regular == m_beltShift) {
+      m_solenoidToSet = (m_pixelToSet + HALF_SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)]) % SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];
+    } else if (BeltShift::Shifted == m_beltShift) {
+      m_solenoidToSet = m_pixelToSet % SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];
+    }
     break;
 
   default:
