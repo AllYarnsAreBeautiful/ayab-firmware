@@ -346,7 +346,7 @@ bool Knitter::setNextLine(uint8_t lineNumber) {
     // Is there even a need for a new line?
     if (lineNumber == m_currentLineNumber) {
       m_lineRequested = false;
-      //GlobalBeeper::finishedLine();
+      GlobalBeeper::finishedLine();
       return true;
     } else {
       // line numbers didn't match -> request again
@@ -389,7 +389,6 @@ void Knitter::reqLine(uint8_t lineNumber) {
  */
 bool Knitter::calculatePixelAndSolenoid() {
   uint8_t startOffset = 0;
-  uint8_t laceOffset = 0;
 
   bool beltShift = BeltShift_t::Shifted == m_beltShift;
 
@@ -399,10 +398,10 @@ bool Knitter::calculatePixelAndSolenoid() {
   // magic numbers from machine manual
   case Direction_t::Right:
     startOffset = getStartOffset(Direction_t::Left);
-
     m_pixelToSet = m_position - startOffset;
 
     // The Knit carriage is special
+    // See page 7 of the 930 service manual https://mkmanuals.com/downloadable/download/sample/sample_id/27/
     // It's probably more apt to say that the other carriages are special but the 
     // Knit carriage is outnumbered
     if (Carriage_t::Knit == m_carriage) {
