@@ -86,7 +86,7 @@ constexpr uint8_t START_OFFSET[NUM_MACHINES][NUM_DIRECTIONS][NUM_CARRIAGES] = {
     // KH910
     {
         // K,   L,   G
-        {40U, 32U, 32U}, // Left
+        {42U, 32U, 32U}, // Left
         {16U, 32U, 50U} // Right
     },
     // KH930

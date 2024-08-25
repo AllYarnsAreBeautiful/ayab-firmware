@@ -391,6 +391,8 @@ bool Knitter::calculatePixelAndSolenoid() {
   uint8_t startOffset = 0;
   uint8_t laceOffset = 0;
 
+  bool beltShift = BeltShift_t::Shifted == m_beltShift;
+
   switch (m_direction) {
   // calculate the solenoid and pixel to be set
   // implemented according to machine manual
@@ -400,9 +402,16 @@ bool Knitter::calculatePixelAndSolenoid() {
 
     m_pixelToSet = m_position - startOffset;
 
-    if ((BeltShift::Regular == m_beltShift)) {
+    // The Knit carriage is special
+    // It's probably more apt to say that the other carriages are special but the 
+    // Knit carriage is outnumbered
+    if (Carriage_t::Knit == m_carriage) {
+      beltShift = !beltShift;
+    }
+
+    if (!beltShift) {
       m_solenoidToSet = m_pixelToSet % SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];
-    } else if (BeltShift::Shifted == m_beltShift) {
+    } else {
       m_solenoidToSet = (m_pixelToSet + HALF_SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)]) % SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];
     }
     break;
@@ -411,9 +420,9 @@ bool Knitter::calculatePixelAndSolenoid() {
     startOffset = getStartOffset(Direction_t::Right);
     m_pixelToSet = m_position - startOffset;
 
-    if (BeltShift::Regular == m_beltShift) {
+    if (!beltShift) {
       m_solenoidToSet = (m_pixelToSet + HALF_SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)]) % SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];
-    } else if (BeltShift::Shifted == m_beltShift) {
+    } else {
       m_solenoidToSet = m_pixelToSet % SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];
     }
     break;
