@@ -46,6 +46,7 @@ protected:
   void SetUp() override {
     arduinoMock = arduinoMockInstance();
     serialMock = serialMockInstance();
+    wireMock = WireMockInstance();
     // serialCommandMock = serialCommandMockInstance();
 
     // pointers to global instances
@@ -64,12 +65,14 @@ protected:
   void TearDown() override {
     releaseArduinoMock();
     releaseSerialMock();
+    releaseWireMock();
   }
 
   ArduinoMock *arduinoMock;
   FsmMock *fsmMock;
   KnitterMock *knitterMock;
   SerialMock *serialMock;
+  WireMock *wireMock;
 
   void expect_startTest(unsigned long t) {
     EXPECT_CALL(*fsmMock, getState).WillOnce(Return(OpState::ready));

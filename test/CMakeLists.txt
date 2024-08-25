@@ -83,7 +83,7 @@ set(COMMON_LINKER_FLAGS
     ${ARDUINO_MOCK_LIBS_DIR}/dist/lib/libarduino_mock.a
     ${ARDUINO_MOCK_LIBS_DIR}/lib/gtest/gtest/src/gtest-build/lib/libgmock.a
     ${CMAKE_THREAD_LIBS_INIT}
-    -lgcov
+    --coverage
     )
 set(HARD_I2C_LIB
     ${LIBRARY_DIRECTORY}/Adafruit_MCP23008/Adafruit_MCP23008.cpp
@@ -166,7 +166,58 @@ target_link_libraries(${PROJECT_NAME}_knitter
 )
 add_dependencies(${PROJECT_NAME}_knitter arduino_mock)
 
+add_executable(${PROJECT_NAME}_e2e
+    ${PROJECT_SOURCE_DIR}/test_e2e.cpp
+    ${PROJECT_SOURCE_DIR}/test_knitting_machine.cpp
+    
+    ${PROJECT_SOURCE_DIR}/mocks/knitting_machine.cpp
+
+    ${PROJECT_SOURCE_DIR}/mocks/knitting_machine_adapter.cpp
+    ${PROJECT_SOURCE_DIR}/mocks/io_expanders_mock.cpp
+
+    ${SOURCE_DIRECTORY}/encoders.cpp
+    ${SOURCE_DIRECTORY}/global_encoders.cpp
+
+    ${SOURCE_DIRECTORY}/solenoids.cpp
+    ${SOURCE_DIRECTORY}/global_solenoids.cpp
+    ${HARD_I2C_LIB}
+
+    ${SOURCE_DIRECTORY}/beeper.cpp
+    ${SOURCE_DIRECTORY}/global_beeper.cpp
+
+    ${SOURCE_DIRECTORY}/com.cpp
+    ${SOURCE_DIRECTORY}/global_com.cpp
+
+    ${SOURCE_DIRECTORY}/tester.cpp
+    ${SOURCE_DIRECTORY}/global_tester.cpp
+    
+    ${SOURCE_DIRECTORY}/knitter.cpp
+    ${SOURCE_DIRECTORY}/global_knitter.cpp
+    
+    ${SOURCE_DIRECTORY}/fsm.cpp
+    ${SOURCE_DIRECTORY}/global_fsm.cpp
+)
+target_include_directories(${PROJECT_NAME}_e2e
+    PRIVATE
+    ${COMMON_INCLUDES}
+    ${EXTERNAL_LIB_INCLUDES}
+)
+target_compile_definitions(${PROJECT_NAME}_e2e
+    PRIVATE
+    ${COMMON_DEFINES}
+    __AVR_ATmega328P__
+)
+target_compile_options(${PROJECT_NAME}_e2e PRIVATE
+    ${COMMON_FLAGS}
+    -fno-inline
+)
+target_link_libraries(${PROJECT_NAME}_e2e
+    ${COMMON_LINKER_FLAGS}
+)
+add_dependencies(${PROJECT_NAME}_e2e arduino_mock)
+
 enable_testing()
 include(GoogleTest)
 gtest_discover_tests(${PROJECT_NAME}_uno TEST_PREFIX uno_ XML_OUTPUT_DIR ./xml_out)
 gtest_discover_tests(${PROJECT_NAME}_knitter TEST_PREFIX knitter_ XML_OUTPUT_DIR ./xml_out)
+gtest_discover_tests(${PROJECT_NAME}_e2e TEST_PREFIX e2e_ XML_OUTPUT_DIR ./xml_out)

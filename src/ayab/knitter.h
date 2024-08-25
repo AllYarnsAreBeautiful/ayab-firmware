@@ -70,9 +70,7 @@ public:
 
   static void init();
   static void setUpInterrupt();
-#ifndef AYAB_TESTS
   static void isr();
-#endif
   static Err_t startKnitting(uint8_t startNeedle,
                              uint8_t stopNeedle, uint8_t *pattern_start,
                              bool continuousReportingEnabled);

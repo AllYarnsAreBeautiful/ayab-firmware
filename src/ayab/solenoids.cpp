@@ -58,9 +58,7 @@ void Solenoids::setSolenoid(uint8_t solenoid, bool state) {
     bitClear(solenoidState, solenoid);
   }
   if (oldState != solenoidState) {
-#ifndef AYAB_TESTS
     write(solenoidState);
-#endif
   }
 }
 
@@ -73,9 +71,7 @@ void Solenoids::setSolenoid(uint8_t solenoid, bool state) {
 void Solenoids::setSolenoids(uint16_t state) {
   if (state != solenoidState) {
     solenoidState = state;
-#ifndef AYAB_TESTS
     write(state);
-#endif
   }
 }
 
