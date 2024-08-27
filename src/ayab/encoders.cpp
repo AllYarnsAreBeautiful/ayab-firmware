@@ -278,7 +278,8 @@ void Encoders::encA_falling() {
 
         // We need to set know what the belt shift will be when the point of work crosses 
         // needle 0.
-        if (((shift_distance / 8) % 2) != 0) {
+        // Belt shift is already swapped R -> L
+        if (((shift_distance / 8) % 2) != 1) {
           // If it's different, swap 'em.
           if (BeltShift::Regular == m_beltShift) {
             m_beltShift = BeltShift::Shifted;
