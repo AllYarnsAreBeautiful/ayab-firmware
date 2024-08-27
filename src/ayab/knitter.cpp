@@ -270,8 +270,8 @@ void Knitter::knit() {
   }
 
   if (!calculatePixelAndSolenoid()) {
-    // no valid/useful position calculated
-    GlobalBeeper::finishedLine();
+    // This will only happen if there's an error
+    GlobalBeeper::error();
     return;
   }
 
@@ -404,30 +404,24 @@ bool Knitter::calculatePixelAndSolenoid() {
     // See page 7 of the 930 service manual https://mkmanuals.com/downloadable/download/sample/sample_id/27/
     // It's probably more apt to say that the other carriages are special but the 
     // Knit carriage is outnumbered
-    if (Carriage_t::Knit == m_carriage) {
-      beltShift = !beltShift;
-    }
+    //if (Carriage_t::Knit == m_carriage) {
+    //  beltShift = !beltShift;
+    //}
 
-    if (!beltShift) {
-      m_solenoidToSet = m_pixelToSet % SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];
-    } else {
-      m_solenoidToSet = (m_pixelToSet + HALF_SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)]) % SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];
-    }
     break;
-
   case Direction_t::Left:
     startOffset = getStartOffset(Direction_t::Right);
     m_pixelToSet = m_position - startOffset;
 
-    if (!beltShift) {
-      m_solenoidToSet = (m_pixelToSet + HALF_SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)]) % SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];
-    } else {
-      m_solenoidToSet = m_pixelToSet % SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];
-    }
     break;
-
   default:
     return false;
+  }
+
+  if (!beltShift) {
+    m_solenoidToSet = m_pixelToSet % SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];
+  } else {
+    m_solenoidToSet = (m_pixelToSet + HALF_SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)]) % SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];
   }
 
   // The 270 has 12 solenoids but they get shifted over 3 bits
