@@ -493,7 +493,7 @@ TEST_F(KnitterTest, test_knit_line_request) {
   ASSERT_TRUE(Mock::VerifyAndClear(comMock));
 }
 
-TEST_F(KnitterTest, test_knit_lastLine) {  
+TEST_F(KnitterTest, test_knit_lastLine) {
   expected_dispatch_knit(true);
 
   // Run one knit inside the working needles.
@@ -732,4 +732,11 @@ TEST_F(KnitterTest, test_fsm_init_LR) {
   ASSERT_TRUE(Mock::VerifyAndClear(solenoidsMock));
   ASSERT_TRUE(Mock::VerifyAndClear(comMock));
   ASSERT_TRUE(Mock::VerifyAndClear(encodersMock));
+}
+
+TEST_F(KnitterTest, test_quit) {
+  get_to_knit(Machine_t::Kh910);
+  //ASSERT_EQ(fsm->getState(), OpState::knit);
+  knitter->quit();
+  ASSERT_EQ(fsm->getState(), OpState::init);
 }

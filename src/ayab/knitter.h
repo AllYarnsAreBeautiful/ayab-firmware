@@ -51,6 +51,7 @@ public:
   virtual bool setNextLine(uint8_t lineNumber) = 0;
   virtual void setLastLine() = 0;
   virtual void setMachineType(Machine_t) = 0;
+  virtual void quit() const = 0;
 };
 
 // Singleton container class for static methods.
@@ -86,6 +87,7 @@ public:
   static bool setNextLine(uint8_t lineNumber);
   static void setLastLine();
   static void setMachineType(Machine_t);
+  static void quit();
 };
 
 class Knitter : public KnitterInterface {
@@ -106,6 +108,7 @@ public:
   bool setNextLine(uint8_t lineNumber) final;
   void setLastLine() final;
   void setMachineType(Machine_t) final;
+  void quit() const final;
 
 private:
   void reqLine(uint8_t lineNumber);
