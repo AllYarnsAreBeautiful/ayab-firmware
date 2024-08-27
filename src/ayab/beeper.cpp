@@ -77,6 +77,12 @@ void Beeper::endWork() {
   }
 }
 
+void Beeper::error() {
+  if (m_enabled) {
+    beep(BEEP_NUM_ERROR);
+  }
+}
+
 /*!
  * Beep handler scheduled from main loop
  */

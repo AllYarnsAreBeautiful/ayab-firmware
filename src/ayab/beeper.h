@@ -33,6 +33,7 @@ constexpr unsigned int BEEP_DELAY = 50U; // ms
 constexpr uint8_t BEEP_NUM_READY = 5U;
 constexpr uint8_t BEEP_NUM_FINISHEDLINE = 3U;
 constexpr uint8_t BEEP_NUM_ENDWORK = 10U;
+constexpr uint8_t BEEP_NUM_ERROR = 15U;
 
 constexpr uint8_t BEEP_ON_DUTY = 0U;
 constexpr uint8_t BEEP_OFF_DUTY = 20U;
@@ -49,6 +50,7 @@ public:
   virtual void ready() = 0;
   virtual void finishedLine() = 0;
   virtual void endWork() = 0;
+  virtual void error() = 0;
   virtual void schedule() = 0;
 };
 
@@ -72,6 +74,7 @@ public:
   static void ready();
   static void finishedLine();
   static void endWork();
+  static void error();
   static void schedule();
 };
 
@@ -86,6 +89,7 @@ public:
   void ready() final;
   void finishedLine() final;
   void endWork() final;
+  void error() final;
   void schedule() final;
 
 private:

@@ -71,6 +71,7 @@ void Encoders::init(Machine_t machineType) {
   m_machineType = machineType;
   m_position = 0U;
   m_direction = Direction_t::NoDirection;
+  m_oldDirection == Direction_t::NoDirection;
   m_hallActive = Direction_t::NoDirection;
   m_beltShift = BeltShift::Unknown;
   m_carriage = Carriage_t::NoCarriage;
@@ -154,8 +155,24 @@ void Encoders::encA_rising() {
     // Headed to the right.
     if (!m_passedLeft && Direction_t::Right == m_direction) {
       // Belt shift signal only decided in front of hall sensor
-      m_beltShift = digitalRead(ENC_PIN_C) != 0 ? BeltShift::Regular : BeltShift::Shifted;
+      m_beltShift = digitalRead(ENC_PIN_C) != 0 ? BeltShift::Shifted : BeltShift::Regular;
       m_passedLeft = true;
+
+      if (Carriage_t::Garter == m_carriage) {
+        // m_position was initialized when the carraige was set on the first magnet passed.
+        uint8_t shift_distance = m_position - GARTER_POINT_OF_WORK_ZERO;
+
+        // We need to set know what the belt shift will be when the point of work crosses 
+        // needle 0.
+        if (((shift_distance / 8) % 2) != 0) {
+          // If it's different, swap 'em.
+          if (BeltShift::Regular == m_beltShift) {
+            m_beltShift = BeltShift::Shifted;
+          } else {
+            m_beltShift = BeltShift::Regular;
+          }
+        }
+      }
     }
 
     // The garter carriage has a second set of magnets that are going to
@@ -190,6 +207,18 @@ void Encoders::encA_rising() {
       m_carriage = detected_carriage;
     } else if (m_carriage != detected_carriage && m_position > start_position) {
       m_carriage = Carriage_t::Garter;
+
+      // We swap the belt shift for the g-carriage because the point of work for 
+      // the g-carraige is 13 needles behind the first magnet which puts it in a different
+      // belt shift.
+      // And we need to know the belt shift when the point of work is at needle 0.
+      // Conveniently, the magnet distance on the K and L carraiges puts the point of
+      // work within the same belt shift.
+      if (BeltShift::Regular == m_beltShift) {
+        m_beltShift = BeltShift::Shifted;
+      } else {
+        m_beltShift = BeltShift::Regular;
+      }
 
       // Belt shift and start position were set when the first magnet passed
       // the sensor and we assumed we were working with a standard carriage.
@@ -240,8 +269,24 @@ void Encoders::encA_falling() {
     // Headed to the left.
     if (!m_passedRight && Direction_t::Left == m_direction) {
       // Belt shift signal only decided in front of hall sensor
-      m_beltShift = digitalRead(ENC_PIN_C) != 0 ? BeltShift::Shifted : BeltShift::Regular;
+      m_beltShift = digitalRead(ENC_PIN_C) != 0 ? BeltShift::Regular : BeltShift::Shifted;
       m_passedRight = true;
+
+      if (Carriage_t::Garter == m_carriage) {
+        // m_position was initialized when the carraige was set on the first magnet passed.
+        uint8_t shift_distance = m_position - GARTER_POINT_OF_WORK_ZERO;
+
+        // We need to set know what the belt shift will be when the point of work crosses 
+        // needle 0.
+        if (((shift_distance / 8) % 2) != 0) {
+          // If it's different, swap 'em.
+          if (BeltShift::Regular == m_beltShift) {
+            m_beltShift = BeltShift::Shifted;
+          } else {
+            m_beltShift = BeltShift::Regular;
+          }
+        }
+      }
     }
 
     // The garter carriage has extra magnets that are going to

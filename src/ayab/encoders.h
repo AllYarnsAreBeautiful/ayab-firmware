@@ -80,7 +80,11 @@ constexpr uint8_t ALL_MAGNETS_CLEARED_RIGHT[NUM_MACHINES] = {199U, 199U, 130U};
 // The garter slop is needed to determine whether or not we have a garter carriage.
 // If we didn't have it, we'd decide which carriage we had when the first magnet passed the sensor.
 // For the garter carriage we need to see both magnets.
-constexpr uint16_t GARTER_SLOP = 2U;
+constexpr uint8_t GARTER_SLOP = 2U;
+
+// Assuming m_position is set to END_LEFT_PLUS_OFFSET when the first magnet crosses the turn mark,
+// this is what m_position should be when the point of work is at needle 0
+constexpr uint8_t GARTER_POINT_OF_WORK_ZERO = 15U;
 
 constexpr uint8_t START_OFFSET[NUM_MACHINES][NUM_DIRECTIONS][NUM_CARRIAGES] = {
     // KH910
@@ -181,6 +185,7 @@ private:
   volatile BeltShift_t m_beltShift;
   volatile Carriage_t m_carriage;
   volatile Direction_t m_direction;
+  volatile Direction_t m_oldDirection;
   volatile Direction_t m_hallActive;
   volatile uint8_t m_position;
   volatile bool m_oldState;
