@@ -71,7 +71,6 @@ void Encoders::init(Machine_t machineType) {
   m_machineType = machineType;
   m_position = 0U;
   m_direction = Direction_t::NoDirection;
-  m_oldDirection == Direction_t::NoDirection;
   m_hallActive = Direction_t::NoDirection;
   m_beltShift = BeltShift::Unknown;
   m_carriage = Carriage_t::NoCarriage;
