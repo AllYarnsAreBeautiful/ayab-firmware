@@ -204,7 +204,7 @@ void Encoders::encA_rising() {
       m_carriage = Carriage_t::Garter;
 
       // We swap the belt shift for the g-carriage because the point of work for 
-      // the g-carraige is 13 needles behind the first magnet which puts it in a different
+      // the g-carriage is 13 needles behind the first magnet which puts it in a different
       // belt shift.
       // And we need to know the belt shift when the point of work is at needle 0.
       // Conveniently, the magnet distance on the K and L carriages puts the point of
