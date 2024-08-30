@@ -181,7 +181,6 @@ private:
   volatile BeltShift_t m_beltShift;
   volatile Carriage_t m_carriage;
   volatile Direction_t m_direction;
-  volatile Direction_t m_oldDirection;
   volatile Direction_t m_hallActive;
   volatile uint8_t m_position;
   volatile bool m_oldState;
