@@ -398,13 +398,11 @@ bool Knitter::calculatePixelAndSolenoid() {
     startOffset = getStartOffset(Direction_t::Left);
     m_pixelToSet = m_position - startOffset;
 
-    // The Knit carriage is special
+    // The Lace carriage is special
     // See page 7 of the 930 service manual https://mkmanuals.com/downloadable/download/sample/sample_id/27/
-    // It's probably more apt to say that the other carriages are special but the 
-    // Knit carriage is outnumbered
-    //if (Carriage_t::Knit == m_carriage) {
-    //  beltShift = !beltShift;
-    //}
+    if (Carriage_t::Lace == m_carriage) {
+      beltShift = !beltShift;
+    }
 
     break;
   case Direction_t::Left:
