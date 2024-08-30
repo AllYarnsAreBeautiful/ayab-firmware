@@ -164,8 +164,8 @@ void Encoders::encA_rising() {
 
         // We need to set know what the belt shift will be when the point of work crosses 
         // needle 0.
-        if (((shift_distance / 8) % 2) != 0) {
-          // If it's different, swap 'em.
+        // This has to be the first magnet and the belt shift needs to be swapped
+        if (m_position < 30) {
           if (BeltShift::Regular == m_beltShift) {
             m_beltShift = BeltShift::Shifted;
           } else {
@@ -276,17 +276,7 @@ void Encoders::encA_falling() {
         // m_position was initialized when the carraige was set on the first magnet passed.
         uint8_t shift_distance = m_position - GARTER_POINT_OF_WORK_ZERO;
 
-        // We need to set know what the belt shift will be when the point of work crosses 
-        // needle 0.
-        // Belt shift is already swapped R -> L
-        if (((shift_distance / 8) % 2) != 1) {
-          // If it's different, swap 'em.
-          if (BeltShift::Regular == m_beltShift) {
-            m_beltShift = BeltShift::Shifted;
-          } else {
-            m_beltShift = BeltShift::Regular;
-          }
-        }
+        // Shift doesn't need to be swapped in this direction
       }
     }
 
