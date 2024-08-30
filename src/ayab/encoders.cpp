@@ -207,7 +207,7 @@ void Encoders::encA_rising() {
       // the g-carraige is 13 needles behind the first magnet which puts it in a different
       // belt shift.
       // And we need to know the belt shift when the point of work is at needle 0.
-      // Conveniently, the magnet distance on the K and L carraiges puts the point of
+      // Conveniently, the magnet distance on the K and L carriages puts the point of
       // work within the same belt shift.
       if (BeltShift::Regular == m_beltShift) {
         m_beltShift = BeltShift::Shifted;
