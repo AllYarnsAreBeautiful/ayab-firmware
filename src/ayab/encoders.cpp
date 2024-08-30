@@ -159,12 +159,8 @@ void Encoders::encA_rising() {
       m_passedLeft = true;
 
       if (Carriage_t::Garter == m_carriage) {
-        // m_position was initialized when the carraige was set on the first magnet passed.
-        uint8_t shift_distance = m_position - GARTER_POINT_OF_WORK_ZERO;
-
-        // We need to set know what the belt shift will be when the point of work crosses 
-        // needle 0.
         // This has to be the first magnet and the belt shift needs to be swapped
+        // But only for the G-carraige
         if (m_position < 30) {
           if (BeltShift::Regular == m_beltShift) {
             m_beltShift = BeltShift::Shifted;
@@ -272,12 +268,7 @@ void Encoders::encA_falling() {
       m_beltShift = digitalRead(ENC_PIN_C) != 0 ? BeltShift::Regular : BeltShift::Shifted;
       m_passedRight = true;
 
-      if (Carriage_t::Garter == m_carriage) {
-        // m_position was initialized when the carraige was set on the first magnet passed.
-        uint8_t shift_distance = m_position - GARTER_POINT_OF_WORK_ZERO;
-
-        // Shift doesn't need to be swapped in this direction
-      }
+      // Shift doens't need to be swapped for the g-carriage in this direction.
     }
 
     // The garter carriage has extra magnets that are going to

@@ -82,22 +82,18 @@ constexpr uint8_t ALL_MAGNETS_CLEARED_RIGHT[NUM_MACHINES] = {199U, 199U, 130U};
 // For the garter carriage we need to see both magnets.
 constexpr uint8_t GARTER_SLOP = 2U;
 
-// Assuming m_position is set to END_LEFT_PLUS_OFFSET when the first magnet crosses the turn mark,
-// this is what m_position should be when the point of work is at needle 0
-constexpr uint8_t GARTER_POINT_OF_WORK_ZERO = 16U;
-
 constexpr uint8_t START_OFFSET[NUM_MACHINES][NUM_DIRECTIONS][NUM_CARRIAGES] = {
     // KH910
     {
         // K,   L,   G
-        {42U, 30U, 32U}, // Left
-        {16U, 34U, 50U} // Right
+        {42U, 32U, 32U}, // Left
+        {16U, 32U, 50U} // Right
     },
     // KH930
     {
         // K,   L,   G
-        {42U, 30U, 32U}, // Left
-        {16U, 34U, 50U} // Right
+        {42U, 32U, 32U}, // Left
+        {16U, 32U, 50U} // Right
     },
     // KH270
     {
