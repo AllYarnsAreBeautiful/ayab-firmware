@@ -84,7 +84,7 @@ constexpr uint8_t GARTER_SLOP = 2U;
 
 // Assuming m_position is set to END_LEFT_PLUS_OFFSET when the first magnet crosses the turn mark,
 // this is what m_position should be when the point of work is at needle 0
-constexpr uint8_t GARTER_POINT_OF_WORK_ZERO = 15U;
+constexpr uint8_t GARTER_POINT_OF_WORK_ZERO = 16U;
 
 constexpr uint8_t START_OFFSET[NUM_MACHINES][NUM_DIRECTIONS][NUM_CARRIAGES] = {
     // KH910
