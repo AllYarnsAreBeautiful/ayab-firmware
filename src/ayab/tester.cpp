@@ -208,7 +208,10 @@ void Tester::setUp() {
   GlobalCom::sendMsg(AYAB_API::testRes, "AYAB Hardware Test, ");
   snprintf(buf, BUFFER_LEN, "Firmware v%hhu.%hhu.%hhu", FW_VERSION_MAJ, FW_VERSION_MIN, FW_VERSION_PATCH);
   GlobalCom::sendMsg(AYAB_API::testRes, buf);
-  GlobalCom::sendMsg(AYAB_API::testRes, FW_VERSION_SUFFIX);
+  if (*FW_VERSION_SUFFIX != '\0') {
+    snprintf(buf, BUFFER_LEN, "-%s", FW_VERSION_SUFFIX);
+    GlobalCom::sendMsg(AYAB_API::testRes, buf);
+  }
   snprintf(buf, BUFFER_LEN, " API v%hhu\n\n", API_VERSION);
   GlobalCom::sendMsg(AYAB_API::testRes, buf);
   helpCmd();
