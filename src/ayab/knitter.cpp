@@ -398,7 +398,7 @@ bool Knitter::calculatePixelAndSolenoid() {
   // magic numbers from machine manual
   case Direction_t::Right:
     startOffset = getStartOffset(Direction_t::Left);
-    m_pixelToSet = m_position - startOffset;
+    
 
     // The Lace carriage is special
     // See page 7 of the 930 service manual https://mkmanuals.com/downloadable/download/sample/sample_id/27/
@@ -409,12 +409,13 @@ bool Knitter::calculatePixelAndSolenoid() {
     break;
   case Direction_t::Left:
     startOffset = getStartOffset(Direction_t::Right);
-    m_pixelToSet = m_position - startOffset;
 
     break;
   default:
     return false;
   }
+
+  m_pixelToSet = m_position - startOffset;
 
   if (!beltShift) {
     m_solenoidToSet = m_pixelToSet % SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];

@@ -159,7 +159,7 @@ void Encoders::encA_rising() {
 
       if (Carriage_t::Garter == m_carriage) {
         // This has to be the first magnet and the belt shift needs to be swapped
-        // But only for the G-carraige
+        // But only for the G-carriage
         if (m_position < 30) {
           if (BeltShift::Regular == m_beltShift) {
             m_beltShift = BeltShift::Shifted;
@@ -173,12 +173,12 @@ void Encoders::encA_rising() {
     // The garter carriage has a second set of magnets that are going to
     // pass the sensor and will reset state incorrectly if allowed to
     // continue.
-    if (m_carriage == Carriage_t::Garter) {
+    if (Carriage_t::Garter == m_carriage) {
       return;
     }
 
     // If the carriage is already set, ignore the rest.
-    if ((m_carriage == Carriage_t::Knit) && (m_machineType == Machine_t::Kh270)) {
+    if ((Carriage_t::Knit == m_carriage) && (Machine_t::Kh270 == m_machineType)) {
       return;
     }
 
