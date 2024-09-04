@@ -11,6 +11,8 @@
 #include "machine.h"
 #include "solenoids.h"
 
+#define CARRIAGE_OVERFLOW 16
+
 #define BEEPER_INIT 3
 #define BEEPER_READY 2
 #define BEEPER_NEXT_LINE 1

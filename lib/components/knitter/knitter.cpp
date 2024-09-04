@@ -23,7 +23,7 @@ void Line::workedOn(bool isWorkedOn, Direction direction) {
     // Register direction when entering the active needle window
     if (_enterDirection == Direction::Unknown) {
       _enterDirection = direction;
-      _carriageOverflow = 16;
+      _carriageOverflow = CARRIAGE_OVERFLOW;
     }
   } else {
     // Exit direction has to match start direction (other end)
