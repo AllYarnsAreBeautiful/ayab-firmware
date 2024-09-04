@@ -251,7 +251,7 @@ void Knitter::_runMachine() {
             _machine->solenoidShift(solenoidToSet);
           }
           // Special handling for the L carriage
-          if ((_carriage->getType() == CarriageType::L) &&
+          if ((_carriage->getType() == CarriageType::Lace) &&
               (_direction == Direction::Left)) {
             _machine->solenoidShift(solenoidToSet);
           }

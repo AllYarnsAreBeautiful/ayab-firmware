@@ -10,7 +10,7 @@ Belt::Belt(hardwareAbstraction::HalInterface *hal, uint8_t pin) {
 
 void Belt::setshift(Direction direction, CarriageType carriageType) {
   _shift = _hal->digitalRead(_pin) == 0;
-  if ((carriageType == CarriageType::K) && (direction == Direction::Right)) {
+  if ((carriageType == CarriageType::Knit) && (direction == Direction::Right)) {
     // FIXME: K when moving to the right not super clear -> supply sensr label
     // instead ?
     _shift = !_shift;

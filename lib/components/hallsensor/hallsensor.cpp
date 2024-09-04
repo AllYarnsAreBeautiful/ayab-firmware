@@ -103,15 +103,15 @@ bool HallSensor::_detectCarriage() {
 
   // K Carriage (only a maximum/North pole)
   if (_minimum.value == NONE) {
-    _detectedCarriage = _isKasG ? CarriageType::G : CarriageType::K;
+    _detectedCarriage = _isKasG ? CarriageType::Gartner : CarriageType::Knit;
     _detectedPosition = _maximum.position;
     // L Carriage (only a minimum/South pole)
   } else if (_maximum.value == NONE) {
-    _detectedCarriage = CarriageType::L;
+    _detectedCarriage = CarriageType::Lace;
     _detectedPosition = _minimum.position;
     // G Carriage (maximum/North followed by minimum/South poles)
   } else if (_maximum.isFirst) {
-    _detectedCarriage = CarriageType::G;
+    _detectedCarriage = CarriageType::Gartner;
     _detectedPosition = (uint8_t)((((uint16_t)_minimum.position +
                                     (uint16_t)_maximum.position) >>
                                    1) &

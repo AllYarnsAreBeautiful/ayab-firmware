@@ -33,17 +33,17 @@ uint8_t Carriage::getSelectPosition(Direction direction) {
   // Selection you take place 12 before, 4 after the needle checker (NC)
   // position
   switch (_type) {
-    case CarriageType::G:
+    case CarriageType::Gartner:
       // G: NC @ +0/Left, -0/Right => selection @ -12/Left, +12Left
       return (direction == Direction::Left) ? (uint8_t)(_position - 12)
                                             : (uint8_t)(_position + 12);
       break;
-    case CarriageType::L:
+    case CarriageType::Lace:
       // L: NC @ +12/Left, -12/Right => selection @ +0/Left, -0/Left
       return (direction == Direction::Left) ? (uint8_t)(_position + 0)
                                             : (uint8_t)(_position - 0);
       break;
-    default:  // CarriageType::K
+    default:  // CarriageType::Knit
       // K: NC @ +24/Left, -24/Right => selection @ +12/Left, -12/Left
       return (direction == Direction::Left) ? (uint8_t)(_position + 12)
                                             : (uint8_t)(_position - 12);

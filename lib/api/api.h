@@ -16,7 +16,7 @@ enum class MachineType : uint8_t {
   Kh270 = 2
 };
 
-enum class CarriageType : uint8_t { NoCarriage = 0, K = 1, L = 2, G = 3 };
+enum class CarriageType : uint8_t { NoCarriage = 0, Knit = 1, Lace = 2, Gartner = 3 };
 
 enum class BeltShift : uint8_t { Unknown = 0, Regular = 1, Shifted = 2 };
 
