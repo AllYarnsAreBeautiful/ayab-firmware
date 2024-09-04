@@ -14,6 +14,7 @@ Beeper::Beeper(hardwareAbstraction::HalInterface *hal, uint8_t pin) {
   _hal->pinMode(_pin, OUTPUT);
 }
 
+// TODO: Verify if PWM is really required vs simple on/off for all HW
 void Beeper::_write(uint8_t value) { _hal->analogWrite(_pin, value); }
 
 void Beeper::beep(uint8_t number) {

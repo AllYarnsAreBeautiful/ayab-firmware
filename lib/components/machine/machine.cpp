@@ -34,8 +34,9 @@ HallSensor::Config *Machine::getSensorConfig(Direction direction) {
   sensor->thresholdLow = 200;
   sensor->thresholdHigh = 600;
   if ((_type == MachineType::Kh910) && (direction == Direction::Right)) {
+    // Incorrect shield implementation, only North pole can be detected as South
     sensor->thresholdLow = 100;
-    sensor->thresholdHigh = 900;
+    sensor->thresholdHigh = 1024;
   }
 
   return sensor;

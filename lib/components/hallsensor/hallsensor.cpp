@@ -6,10 +6,12 @@
 #define MAX_DET_NEEDLES 3
 #define NONE 0xffff
 
-// FIXME: Add digital type (esp32 & KH10 issue)
+// TODO: Add interfce for a "digital" type (ESP32 & KH910 issue)
 HallSensor::HallSensor(hardwareAbstraction::HalInterface *hal, uint8_t pin) {
   _hal = hal;
   _pin = pin;
+
+  _hal->pinMode(_pin, INPUT);  // TODO: INPUT_PULLUP for KH910 right sensor
 
   _detectedPosition = 255;
   _detectedCarriage = CarriageType::NoCarriage;

@@ -14,4 +14,5 @@ Async implementation of [AYAB Firmware](https://github.com/AllYarnsAreBeautiful/
 - Robust & dynamic (while knitting) carriage detection (K, L, G) from both sides.
 - No overhead for googletest support.
 
-**Warning**: Work in progress !
+## Warning
+Work in progress, not yet fully tested/validated !

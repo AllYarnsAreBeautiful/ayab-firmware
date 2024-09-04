@@ -241,6 +241,8 @@ void Knitter::_runMachine() {
           (_hall_right->isDetected(_encoder) &&
            _carriage->isCrossing(_hall_right, Direction::Left))) {
         _encoder->setPosition(_carriage->getPosition());
+        // Note: BP is read when the carriage is already a few needles further
+        // than the magnet position (BP is stable for 4 needles each side)
         _belt->setshift(_direction, _carriage->getType());
         _beeper->beep(BEEPER_READY);
       }
