@@ -128,7 +128,7 @@ void Knitter::schedule() {
       // FIXME: API should set 'machine' moving forward
       _machine->setType(MachineType::Kh910);
       _hall_left->config(_machine->getSensorConfig(Direction::Left));
-      _hall_right->config(_machine->getSensorConfig(Direction::Right), false);
+      _hall_right->config(_machine->getSensorConfig(Direction::Right));
 
       break;
 

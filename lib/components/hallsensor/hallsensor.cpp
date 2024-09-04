@@ -18,9 +18,8 @@ HallSensor::HallSensor(hardwareAbstraction::HalInterface *hal, uint8_t pin) {
   _readSensor();
 }
 
-void HallSensor::config(HallSensor::Config *config, bool isKasG) {
+void HallSensor::config(HallSensor::Config *config) {
   _config = config;
-  _isKasG = isKasG;
 }
 
 uint16_t HallSensor::getSensorValue() { return _sensorValue; }
@@ -103,14 +102,14 @@ bool HallSensor::_detectCarriage() {
 
   // K Carriage (only a maximum/North pole)
   if (_minimum.value == NONE) {
-    _detectedCarriage = _isKasG ? CarriageType::Gartner : CarriageType::Knit;
+    _detectedCarriage = CarriageType::Knit;
     _detectedPosition = _maximum.position;
     // L Carriage (only a minimum/South pole)
   } else if (_maximum.value == NONE) {
     _detectedCarriage = CarriageType::Lace;
     _detectedPosition = _minimum.position;
-    // G Carriage (maximum/North followed by minimum/South poles)
-  } else if (_maximum.isFirst) {
+    // G Carriage (minimum/South followed by maximum/North poles)
+  } else if (_minimum.isFirst) {
     _detectedCarriage = CarriageType::Gartner;
     _detectedPosition = (uint8_t)((((uint16_t)_minimum.position +
                                     (uint16_t)_maximum.position) >>

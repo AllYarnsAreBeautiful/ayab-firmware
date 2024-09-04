@@ -16,6 +16,10 @@ bool Carriage::isCrossing(HallSensor *sensor, Direction requestedDirection) {
   if (direction == requestedDirection) {
     _type = sensor->getDetectedCarriage();
     _position = sensor->getSensorPosition() + offset;
+    if (_type == CarriageType::Gartner) {
+      // Inner magnets are +/-12 needles fsrom the center
+      _position = direction == Direction::Left ? (uint8_t)(_position  + 12) : (uint8_t)(_position - 12);
+    }
     return true;
   }
   return false;

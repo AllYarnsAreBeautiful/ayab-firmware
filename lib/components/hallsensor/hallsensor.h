@@ -18,7 +18,7 @@ class HallSensor {
   ~HallSensor() = default;
 
   // Config sensor's position and thresholds
-  void config(Config *config, bool isKasG = false);
+  void config(Config *config);
 
   // Return last sensor value
   uint16_t getSensorValue();
