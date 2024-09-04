@@ -64,6 +64,7 @@ class Line {
   uint8_t _pattern[25];
   bool _isLast;
   Direction _enterDirection;
+  uint8_t _carriageOverflow;
 };
 
 //----------------------------------------------------------------------------

@@ -23,11 +23,15 @@ void Line::workedOn(bool isWorkedOn, Direction direction) {
     // Register direction when entering the active needle window
     if (_enterDirection == Direction::Unknown) {
       _enterDirection = direction;
+      _carriageOverflow = 16;
     }
   } else {
     // Exit direction has to match start direction (other end)
     if (_enterDirection == direction) {
-      finished = true;
+      // Extend by 16 needles to make sure NC handled the last active one
+      if (_carriageOverflow-- == 0) {
+        finished = true;
+      }
     }
   }
 }
@@ -244,29 +248,29 @@ void Knitter::_runMachine() {
       uint8_t solenoidToSet = _machine->solenoidToSet(selectPosition);
       // Set solenoid according to current machine state
       if (_carriage->isDefined() && (!_currentLine.finished)) {
+        // Belt shift handling
+        if (_belt->getShift() == BeltShift::Shifted) {
+          _machine->solenoidShift(solenoidToSet);
+        }
+        // Special handling for the L carriage
+        if ((_carriage->getType() == CarriageType::Lace) &&
+            (_direction == Direction::Left)) {
+          _machine->solenoidShift(solenoidToSet);
+        }
+#ifdef DEBUG
+        uint8_t message[] = {(uint8_t)AYAB_API::debugBase, selectPosition,
+                             solenoidToSet,
+                             _currentLine.getNeedleValue(selectPosition)};
+        _hal->packetSerial->send(message, sizeof(message));
+#endif
         if ((selectPosition >= _config.startNeedle) &&
             (selectPosition <= _config.stopNeedle)) {
-          // Belt shift handling
-          if (_belt->getShift() == BeltShift::Shifted) {
-            _machine->solenoidShift(solenoidToSet);
-          }
-          // Special handling for the L carriage
-          if ((_carriage->getType() == CarriageType::Lace) &&
-              (_direction == Direction::Left)) {
-            _machine->solenoidShift(solenoidToSet);
-          }
           _solenoids->set(solenoidToSet,
                           _currentLine.getNeedleValue(selectPosition));
-          // Update "finished" line state
           _currentLine.workedOn(true, _direction);
-#ifdef DEBUG
-          uint8_t message[] = {(uint8_t)AYAB_API::debugBase, selectPosition,
-                               _currentLine.getNeedleValue(selectPosition)};
-          _hal->packetSerial->send(message, sizeof(message));
-#endif
         } else {
           _solenoids->reset(solenoidToSet);
-          // Update "finished" line state
+          // Set _currentLine.finished once NC over the last active needle
           _currentLine.workedOn(false, _direction);
         }
       } else {
