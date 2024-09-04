@@ -118,8 +118,8 @@ void Knitter::schedule() {
 
       _solenoids->reset();
 
-      _led_a->off();
-      _led_b->off();
+      _led_a->on();
+      _led_b->on();
 
       _config.valid = false;
       _config.continuousReporting = false;
@@ -158,6 +158,7 @@ void Knitter::schedule() {
     case State::Operate:
       if (isStateChange) {
         _led_a->off();  // turn off, used for API Rx indication
+        _led_b->off();  // turn off, used for API Tx indication
       }
       if (_currentLine.finished) {
         if (_currentLine.isLastLine()) {
@@ -206,6 +207,8 @@ bool Knitter::_apiRxSetLine(uint8_t lineNumber, const uint8_t *pattern,
     success = _currentLine.setPattern(lineNumber, pattern, isLastLine);
     if (success) {
       _beeper->beep(BEEPER_NEXT_LINE);
+    } else {  // Request line again
+      _apiRequestLine(_currentLine.getNextLineNumber());
     }
   }
   return success;

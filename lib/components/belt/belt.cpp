@@ -5,7 +5,7 @@ Belt::Belt(hardwareAbstraction::HalInterface *hal, uint8_t pin) {
   _pin = pin;
   _shift = false;  // shouldn't matter
 
-  _hal->pinMode(pin, INPUT);
+  _hal->pinMode(_pin, INPUT);
 }
 
 void Belt::setshift(Direction direction, CarriageType carriageType) {
