@@ -51,7 +51,7 @@ public:
   virtual void stopCmd() = 0;
   virtual void quitCmd() = 0;
 #ifndef AYAB_TESTS
-  virtual void encoderAChange();
+  virtual void encoderChange();
 #endif
 };
 
@@ -84,7 +84,7 @@ public:
   static void stopCmd();
   static void quitCmd();
 #ifndef AYAB_TESTS
-  static void encoderAChange();
+  static void encoderChange();
 #endif
 };
 
@@ -104,7 +104,7 @@ public:
   void stopCmd() final;
   void quitCmd() final;
 #ifndef AYAB_TESTS
-  void encoderAChange() final;
+  void encoderChange() final;
 #endif
 
 private:

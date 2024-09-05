@@ -239,8 +239,6 @@ bool Knitter::isReady() {
 void Knitter::knit() {
   if (m_firstRun) {
     m_firstRun = false;
-    // TODO(who?): optimize delay for various Arduino models
-    delay(START_KNITTING_DELAY);
     GlobalBeeper::finishedLine();
     ++m_currentLineNumber;
     reqLine(m_currentLineNumber);
@@ -398,7 +396,6 @@ bool Knitter::calculatePixelAndSolenoid() {
   // magic numbers from machine manual
   case Direction_t::Right:
     startOffset = getStartOffset(Direction_t::Left);
-    
 
     // The Lace carriage is special
     // See page 7 of the 930 service manual https://mkmanuals.com/downloadable/download/sample/sample_id/27/

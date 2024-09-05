@@ -253,7 +253,6 @@ protected:
   }
 
   void expect_first_knit() {
-    EXPECT_CALL(*arduinoMock, delay(START_KNITTING_DELAY));
     EXPECT_CALL(*beeperMock, finishedLine);
     expect_reqLine();
   }
