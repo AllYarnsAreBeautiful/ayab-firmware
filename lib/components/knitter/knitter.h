@@ -11,7 +11,7 @@
 #include "machine.h"
 #include "solenoids.h"
 
-#define CARRIAGE_OVERFLOW 16
+#include "line.h"
 
 #define BEEPER_INIT 3
 #define BEEPER_READY 2
@@ -33,40 +33,6 @@ class Config {
   uint8_t startNeedle, stopNeedle;
   bool continuousReporting;
   bool valid;
-};
-
-//----------------------------------------------------------------------------
-// Line class
-//----------------------------------------------------------------------------
-
-class Line {
- public:
-  Line() = default;
-  ~Line() = default;
-
-  // Reset objet's state
-  void reset();
-
-  // Indicate if line is worked on
-  void workedOn(bool isWorkedOn, Direction direction);
-  // Set a new line pattern
-  bool setPattern(uint8_t number, const uint8_t *pattern, bool isLast);
-  // Get the needle value for the given position
-  bool getNeedleValue(uint8_t position);
-  // Return the next line number
-  uint8_t getNextLineNumber();
-  // Return true if the current line is the last one
-  bool isLastLine();
-
-  bool requested;  // setter/getter ?
-  bool finished;   // setter/getter ?
-
- private:
-  uint8_t _number;
-  uint8_t _pattern[25];
-  bool _isLast;
-  Direction _enterDirection;
-  uint8_t _carriageOverflow;
 };
 
 //----------------------------------------------------------------------------
