@@ -13,7 +13,6 @@ Knitter::Knitter(hardwareAbstraction::HalInterface *hal) : API(hal) {
 
   // Knitter hardware
   _encoder = new Encoder(_hal, ENC_PIN_A, ENC_PIN_B);
-  _belt = new Belt(_hal, ENC_PIN_C);
 
   _hall_left = new HallSensor(_hal, EOL_L_PIN);
   _hall_right = new HallSensor(_hal, EOL_R_PIN);
@@ -39,7 +38,6 @@ void Knitter::reset() { _state = State::Reset; }
 void Knitter::schedule() {
   API::schedule();
   _beeper->schedule();
-  _belt->schedule();
   _encoder->schedule();
   _led_a->schedule();
   _led_b->schedule();
@@ -175,7 +173,8 @@ void Knitter::_runMachine() {
 
       // When crossing left/right sensors towards the center, update carriage
       // (via isCrossing), encoder and beltshift states
-      if (_hall_left->isDetected(_encoder, _belt) &&
+      bool beltPhase = _hal->digitalRead(ENC_PIN_C);
+      if (_hall_left->isDetected(_encoder, beltPhase) &&
            _carriage->isCrossing(_hall_left, Direction::Right)) {
         _encoder->setPosition(_carriage->getPosition());
         if (_carriage->getType() == CarriageType::Knit) {
@@ -184,7 +183,7 @@ void Knitter::_runMachine() {
         _beltShift = _hall_left->getDetectedBeltPhase() == 0 ? BeltShift::Shifted: BeltShift::Regular;
         }
         _beeper->beep(BEEPER_READY);
-      } else if ((_hall_right->isDetected(_encoder, _belt) &&
+      } else if ((_hall_right->isDetected(_encoder, beltPhase) &&
            _carriage->isCrossing(_hall_right, Direction::Left))) {
         _encoder->setPosition(_carriage->getPosition());
         _beltShift = _hall_right->getDetectedBeltPhase() == 0 ? BeltShift::Shifted: BeltShift::Regular;

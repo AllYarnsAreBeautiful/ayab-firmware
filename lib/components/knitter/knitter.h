@@ -2,7 +2,6 @@
 #define KNITTER_H
 
 #include "beeper.h"
-#include "belt.h"
 #include "carriage.h"
 #include "encoder.h"
 #include "hal.h"
@@ -80,7 +79,6 @@ class Knitter : protected API {
 
   // Ayab Hardware
   Beeper *_beeper;
-  Belt *_belt;
   Encoder *_encoder;
   HallSensor *_hall_left, *_hall_right;
   Led *_led_a, *_led_b;

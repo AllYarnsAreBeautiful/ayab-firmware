@@ -2,7 +2,6 @@
 #define HALLSENSOR_H
 
 #include "api.h"
-#include "belt.h"
 #include "encoder.h"
 #include "hal.h"
 
@@ -36,7 +35,7 @@ class HallSensor {
   bool getDetectedBeltPhase();
 
   // Run internal detection state machine and return its status
-  bool isDetected(Encoder *encoder, Belt *belt);
+  bool isDetected(Encoder *encoder, bool beltPhase);
 
  private:
   class Extremum {

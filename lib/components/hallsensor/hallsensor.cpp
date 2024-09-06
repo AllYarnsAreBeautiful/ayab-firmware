@@ -1,5 +1,4 @@
 #include "hallsensor.h"
-#include "belt.h"
 
 #define ST_IDLE 0
 #define ST_HUNT 1
@@ -40,7 +39,7 @@ CarriageType HallSensor::getDetectedCarriage() { return _detectedCarriage; }
 
 bool HallSensor::getDetectedBeltPhase() { return _detectedBeltPhase; }
 
-bool HallSensor::isDetected(Encoder *encoder, Belt *belt) {
+bool HallSensor::isDetected(Encoder *encoder, bool beltPhase) {
   bool isDetected = false;
 
   _readSensor();
@@ -68,7 +67,7 @@ bool HallSensor::isDetected(Encoder *encoder, Belt *belt) {
         if ((_minimum.value == NONE) || (_sensorValue < _minimum.value)) {
           _minimum.value = _sensorValue;
           _minimum.position = encoder->getPosition();
-          _detectedBeltPhase = belt->getShift();
+          _detectedBeltPhase = beltPhase;
           if (_maximum.value ==
               NONE) {  // Adjust trigger position to the extremum
             _needlesToGo = MAX_DET_NEEDLES;
@@ -80,7 +79,7 @@ bool HallSensor::isDetected(Encoder *encoder, Belt *belt) {
         if ((_maximum.value == NONE) || (_sensorValue > _maximum.value)) {
           _maximum.value = _sensorValue;
           _maximum.position = encoder->getPosition();
-          _detectedBeltPhase = belt->getShift();
+          _detectedBeltPhase = beltPhase;
           if (_minimum.value ==
               NONE) {  // Adjust trigger position to the extremum
             _needlesToGo = MAX_DET_NEEDLES;
