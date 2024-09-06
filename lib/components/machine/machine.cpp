@@ -1,6 +1,6 @@
 #include "machine.h"
 
-HallSensor::Config leftSensor, rightSensor;
+HallSensor::Config leftSensorConfig, rightSensorConfig;
 
 Machine::Machine() { reset(); }
 
@@ -20,26 +20,26 @@ uint8_t Machine::getNumberofNeedles() {
 }
 
 HallSensor::Config *Machine::getSensorConfig(Direction direction) {
-  HallSensor::Config *sensor;
+  HallSensor::Config *sensorConfig;
 
   if (direction == Direction::Left) {
-    sensor = &leftSensor;
-    sensor->position = 0;
+    sensorConfig = &leftSensorConfig;
+    sensorConfig->position = 0;
   } else {
-    sensor = &rightSensor;
-    sensor->position = (uint8_t)(getNumberofNeedles() - 1);
+    sensorConfig = &rightSensorConfig;
+    sensorConfig->position = (uint8_t)(getNumberofNeedles() - 1);
   }
 
   // Default threshold settings
-  sensor->thresholdLow = 200;
-  sensor->thresholdHigh = 600;
+  sensorConfig->thresholdLow = 200;
+  sensorConfig->thresholdHigh = 600;
   // if ((_type == MachineType::Kh910) && (direction == Direction::Right)) {
   //   // Incorrect shield implementation, only North pole can be detected as South
   //   sensor->thresholdLow = 100;
   //   sensor->thresholdHigh = 1024;
   // }
 
-  return sensor;
+  return sensorConfig;
 }
 
 uint8_t Machine::solenoidToSet(uint8_t needleToSet) {
