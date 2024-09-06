@@ -8,15 +8,10 @@ Belt::Belt(hardwareAbstraction::HalInterface *hal, uint8_t pin) {
   _hal->pinMode(_pin, INPUT);
 }
 
-void Belt::setshift(Direction direction, CarriageType carriageType) {
-  _shift = _hal->digitalRead(_pin) == 0;
-  if ((carriageType == CarriageType::Knit) && (direction == Direction::Right)) {
-    // FIXME: K and "moving to the right" not super clear, use a "left side" enum
-    // instead ?
-    _shift = !_shift;
-  }
+void Belt::schedule() {
+  _shift = _hal->digitalRead(_pin);
 }
 
-BeltShift Belt::getShift() {
-  return _shift == 0 ? BeltShift::Regular : BeltShift::Shifted;
+bool Belt::getShift() {
+  return _shift;
 }

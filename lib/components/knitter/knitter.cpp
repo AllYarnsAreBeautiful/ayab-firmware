@@ -39,6 +39,7 @@ void Knitter::reset() { _state = State::Reset; }
 void Knitter::schedule() {
   API::schedule();
   _beeper->schedule();
+  _belt->schedule();
   _encoder->schedule();
   _led_a->schedule();
   _led_b->schedule();
@@ -159,7 +160,7 @@ void Knitter::_apiRxIndicateState() {
   _apiIndicateState(_hall_left->getSensorValue(), _hall_right->getSensorValue(),
                     _state != State::Init, _carriage->getType(),
                     _carriage->getPosition(), _direction, hallActive,
-                    _belt->getShift());
+                    _beltShift);
 }
 
 void Knitter::_runMachine() {
@@ -174,14 +175,19 @@ void Knitter::_runMachine() {
 
       // When crossing left/right sensors towards the center, update carriage
       // (via isCrossing), encoder and beltshift states
-      if ((_hall_left->isDetected(_encoder) &&
-           _carriage->isCrossing(_hall_left, Direction::Right)) ||
-          (_hall_right->isDetected(_encoder) &&
+      if (_hall_left->isDetected(_encoder, _belt) &&
+           _carriage->isCrossing(_hall_left, Direction::Right)) {
+        _encoder->setPosition(_carriage->getPosition());
+        if (_carriage->getType() == CarriageType::Knit) {
+        _beltShift = _hall_left->getDetectedBeltPhase() == 0 ? BeltShift::Regular: BeltShift::Shifted;
+        } else {
+        _beltShift = _hall_left->getDetectedBeltPhase() == 0 ? BeltShift::Shifted: BeltShift::Regular;
+        }
+        _beeper->beep(BEEPER_READY);
+      } else if ((_hall_right->isDetected(_encoder, _belt) &&
            _carriage->isCrossing(_hall_right, Direction::Left))) {
         _encoder->setPosition(_carriage->getPosition());
-        // Note: BP is read when the carriage is already a few needles further
-        // than the magnet position (BP is stable for 4 needles each side)
-        _belt->setshift(_direction, _carriage->getType());
+        _beltShift = _hall_right->getDetectedBeltPhase() == 0 ? BeltShift::Shifted: BeltShift::Regular;
         _beeper->beep(BEEPER_READY);
       }
 
@@ -192,7 +198,7 @@ void Knitter::_runMachine() {
       // Set solenoid according to current machine state
       if (_carriage->isDefined() && (!_currentLine.finished)) {
         // Belt shift handling
-        if (_belt->getShift() == BeltShift::Shifted) {
+        if (_beltShift == BeltShift::Shifted) {
           _machine->solenoidShift(solenoidToSet);
         }
         // Special handling for the L carriage
@@ -201,7 +207,9 @@ void Knitter::_runMachine() {
           _machine->solenoidShift(solenoidToSet);
         }
 #ifdef DEBUG
-        uint8_t message[] = {(uint8_t)AYAB_API::debugBase, selectPosition,
+        uint8_t message[] = {(uint8_t)AYAB_API::debugBase,
+                            (uint8_t) _hal->digitalRead(ENC_PIN_C) != 0,
+                             selectPosition,
                              solenoidToSet,
                              _currentLine.getNeedleValue(selectPosition)};
         _hal->packetSerial->send(message, sizeof(message));

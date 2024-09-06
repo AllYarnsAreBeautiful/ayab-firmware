@@ -2,6 +2,7 @@
 #define HALLSENSOR_H
 
 #include "api.h"
+#include "belt.h"
 #include "encoder.h"
 #include "hal.h"
 
@@ -31,9 +32,11 @@ class HallSensor {
   uint8_t getDetectedPosition();
   // Return detected carriage type
   CarriageType getDetectedCarriage();
+  // Return detected belt phase
+  bool getDetectedBeltPhase();
 
   // Run internal detection state machine and return its status
-  bool isDetected(Encoder *encoder);
+  bool isDetected(Encoder *encoder, Belt *belt);
 
  private:
   class Extremum {
@@ -63,6 +66,7 @@ class HallSensor {
 
   uint8_t _detectedPosition;
   CarriageType _detectedCarriage;
+  bool _detectedBeltPhase;
 
   uint8_t _state;
   Extremum _minimum;

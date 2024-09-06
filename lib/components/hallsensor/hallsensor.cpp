@@ -1,4 +1,5 @@
 #include "hallsensor.h"
+#include "belt.h"
 
 #define ST_IDLE 0
 #define ST_HUNT 1
@@ -15,6 +16,7 @@ HallSensor::HallSensor(hardwareAbstraction::HalInterface *hal, uint8_t pin) {
 
   _detectedPosition = 255;
   _detectedCarriage = CarriageType::NoCarriage;
+  _detectedBeltPhase = false;
 
   _resetDetector();
   _readSensor();
@@ -36,7 +38,9 @@ uint8_t HallSensor::getDetectedPosition() { return _detectedPosition; }
 
 CarriageType HallSensor::getDetectedCarriage() { return _detectedCarriage; }
 
-bool HallSensor::isDetected(Encoder *encoder) {
+bool HallSensor::getDetectedBeltPhase() { return _detectedBeltPhase; }
+
+bool HallSensor::isDetected(Encoder *encoder, Belt *belt) {
   bool isDetected = false;
 
   _readSensor();
@@ -45,7 +49,6 @@ bool HallSensor::isDetected(Encoder *encoder) {
     case ST_IDLE:
       _state = ST_HUNT;
       _needlesToGo = MAX_DET_NEEDLES;
-
       if (_sensorValue < _config->thresholdLow) {
         _minimum = {.value = _sensorValue,
                     .position = encoder->getPosition(),
@@ -65,6 +68,7 @@ bool HallSensor::isDetected(Encoder *encoder) {
         if ((_minimum.value == NONE) || (_sensorValue < _minimum.value)) {
           _minimum.value = _sensorValue;
           _minimum.position = encoder->getPosition();
+          _detectedBeltPhase = belt->getShift();
           if (_maximum.value ==
               NONE) {  // Adjust trigger position to the extremum
             _needlesToGo = MAX_DET_NEEDLES;
@@ -76,6 +80,7 @@ bool HallSensor::isDetected(Encoder *encoder) {
         if ((_maximum.value == NONE) || (_sensorValue > _maximum.value)) {
           _maximum.value = _sensorValue;
           _maximum.position = encoder->getPosition();
+          _detectedBeltPhase = belt->getShift();
           if (_minimum.value ==
               NONE) {  // Adjust trigger position to the extremum
             _needlesToGo = MAX_DET_NEEDLES;

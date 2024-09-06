@@ -9,10 +9,10 @@ class Belt {
   Belt(hardwareAbstraction::HalInterface *hal, uint8_t pin);
   ~Belt() = default;
 
-  // Set belt shift (phase)
-  void setshift(Direction direction, CarriageType carriageType);
-  // Get current belt shift (phase)
-  BeltShift getShift();
+  void schedule();
+
+  // Get current belt phase signal
+  bool getShift();
 
  private:
   hardwareAbstraction::HalInterface *_hal;

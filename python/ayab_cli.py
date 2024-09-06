@@ -105,3 +105,6 @@ def api_poke(address, value):
    address_high = (address >> 8) & 0xff
    value = value & 0xff
    ayab.send_msg(API_DEBUG_REQUEST_POKE, bytes([address_low, address_high, value]));
+
+oddPattern = [x for x in range(200) if (x%2) != 0]
+evenPattern = [x for x in range(200) if (x%2) == 0]

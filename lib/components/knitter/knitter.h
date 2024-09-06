@@ -89,6 +89,7 @@ class Knitter : protected API {
   // Knitter objets
   Machine *_machine;
   Carriage *_carriage;
+  BeltShift _beltShift;
   Direction _direction;
 
   // Ayab Firmware
