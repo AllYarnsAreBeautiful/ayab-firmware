@@ -106,16 +106,24 @@ void HallSensor::_resetDetector() {
 bool HallSensor::_detectCarriage() {
   bool isDetected = true;
 
-  // K Carriage (only a maximum/North pole)
   if (_minimum.value == NONE) {
+  // K Carriage (only a maximum/North pole)
     _detectedCarriage = CarriageType::Knit;
     _detectedPosition = _maximum.position;
-    // L Carriage (only a minimum/South pole)
+    if ((_config->flags & HALLSENSOR_L_HIGH) != 0) {
+      // Digital signal for L is active high (KH910 RHS)
+      _detectedCarriage = CarriageType::Lace;
+    }
   } else if (_maximum.value == NONE) {
+    // L Carriage (only a minimum/South pole)
     _detectedCarriage = CarriageType::Lace;
     _detectedPosition = _minimum.position;
-    // G Carriage (minimum/South followed by maximum/North poles)
+    if ((_config->flags & HALLSENSOR_K_LOW) != 0) {
+      // Digital signal for K is active Low (KH910 RHS)
+      _detectedCarriage = CarriageType::Knit;
+    }
   } else if (_minimum.isFirst) {
+    // G Carriage (minimum/South followed by maximum/North poles)
     _detectedCarriage = CarriageType::Gartner;
     _detectedPosition = (uint8_t)((((uint16_t)_minimum.position +
                                     (uint16_t)_maximum.position) >>
@@ -128,4 +136,5 @@ bool HallSensor::_detectCarriage() {
   return isDetected;
 }
 
+//TODO: Move analog or single/dual digital read here
 void HallSensor::_readSensor() { _sensorValue = _hal->analogRead(_pin); }

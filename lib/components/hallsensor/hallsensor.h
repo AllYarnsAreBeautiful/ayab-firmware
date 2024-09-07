@@ -5,6 +5,9 @@
 #include "encoder.h"
 #include "hal.h"
 
+#define HALLSENSOR_K_LOW  (1<<0)
+#define HALLSENSOR_L_HIGH (1<<1)
+
 class HallSensor {
  public:
   class Config {
@@ -12,6 +15,7 @@ class HallSensor {
     uint8_t position;
     uint16_t thresholdLow;
     uint16_t thresholdHigh;
+    uint8_t flags;
   };
 
   HallSensor(hardwareAbstraction::HalInterface *hal, uint8_t pin);
