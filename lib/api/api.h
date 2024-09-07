@@ -5,8 +5,6 @@
 
 #include "hal.h"
 
-#define FW_VERSION_MAJ 0
-#define FW_VERSION_MIN 99
 #define API_VERSION 5
 
 enum class MachineType : uint8_t {
