@@ -19,10 +19,10 @@ uint8_t Machine::getNumberofNeedles() {
   }
 }
 
-HallSensor::Config *Machine::getSensorConfig(Direction direction) {
+HallSensor::Config *Machine::getSensorConfig(Side side) {
   HallSensor::Config *sensorConfig;
 
-  if (direction == Direction::Left) {
+  if (side == Side::Left) {
     sensorConfig = &leftSensorConfig;
     sensorConfig->position = 0;
   } else {

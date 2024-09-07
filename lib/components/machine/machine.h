@@ -6,6 +6,8 @@
 #include "api.h"
 #include "hallsensor.h"
 
+enum class Side {Left, Right};
+
 class Machine {
  public:
   Machine();
@@ -20,7 +22,7 @@ class Machine {
   // Return number of needles for the machine
   uint8_t getNumberofNeedles();
   // Return characteristics of the left or right sensor
-  HallSensor::Config* getSensorConfig(Direction direction);
+  HallSensor::Config* getSensorConfig(Side side);
   // Compute solenoid to set for a given needle position
   uint8_t solenoidToSet(uint8_t needleToSet);
   // Shift solenoid bank
