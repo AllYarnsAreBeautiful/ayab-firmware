@@ -182,15 +182,15 @@ void Knitter::_runMachine() {
            _carriage->isCrossing(_hall_left, Direction::Right)) {
         _encoder->setPosition(_carriage->getPosition());
         if (_carriage->getType() == CarriageType::Knit) {
-        _beltShift = _hall_left->getDetectedBeltPhase() == 0 ? BeltShift::Regular: BeltShift::Shifted;
+        _beltShift = _hall_left->getDetectedBeltPhase() == LOW ? BeltShift::Regular: BeltShift::Shifted;
         } else {
-        _beltShift = _hall_left->getDetectedBeltPhase() == 0 ? BeltShift::Shifted: BeltShift::Regular;
+        _beltShift = _hall_left->getDetectedBeltPhase() == LOW ? BeltShift::Shifted: BeltShift::Regular;
         }
         _beeper->beep(BEEPER_READY);
       } else if ((_hall_right->isDetected(_encoder, beltPhase) &&
            _carriage->isCrossing(_hall_right, Direction::Left))) {
         _encoder->setPosition(_carriage->getPosition());
-        _beltShift = _hall_right->getDetectedBeltPhase() == 0 ? BeltShift::Shifted: BeltShift::Regular;
+        _beltShift = _hall_right->getDetectedBeltPhase() == LOW ? BeltShift::Shifted: BeltShift::Regular;
         _beeper->beep(BEEPER_READY);
       }
 
@@ -217,6 +217,7 @@ void Knitter::_runMachine() {
                              _currentLine.getNeedleValue(selectPosition)};
         _hal->packetSerial->send(message, sizeof(message));
 #endif
+        // Set solenoid
         if ((selectPosition >= _config.startNeedle) &&
             (selectPosition <= _config.stopNeedle)) {
           _solenoids->set(solenoidToSet,
@@ -224,7 +225,7 @@ void Knitter::_runMachine() {
           _currentLine.workedOn(true, _direction);
         } else {
           _solenoids->reset(solenoidToSet);
-          // Set _currentLine.finished once NC over the last active needle
+          // Set _currentLine.finished once last needle selected
           _currentLine.workedOn(false, _direction);
         }
       } else {
