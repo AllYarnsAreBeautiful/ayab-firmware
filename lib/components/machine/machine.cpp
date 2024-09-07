@@ -33,11 +33,12 @@ HallSensor::Config *Machine::getSensorConfig(Side side) {
   // Default threshold settings
   sensorConfig->thresholdLow = 200;
   sensorConfig->thresholdHigh = 600;
-  // if ((_type == MachineType::Kh910) && (direction == Direction::Right)) {
-  //   // Incorrect shield implementation, only North pole can be detected as South
-  //   sensor->thresholdLow = 100;
-  //   sensor->thresholdHigh = 1024;
-  // }
+  if ((_type == MachineType::Kh910) && (side == Side::Right)) {
+    // KH910 unmodified; incorrect shield implementation, only North pole as digital low
+    sensorConfig->thresholdLow = 100;
+    sensorConfig->thresholdHigh = 1024;
+    sensorConfig->flags |= HALLSENSOR_K_LOW;
+  }
 
   return sensorConfig;
 }
