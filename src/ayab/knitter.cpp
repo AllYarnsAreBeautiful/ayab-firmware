@@ -73,7 +73,6 @@ void Knitter::init() {
   m_lastLineFlag = false;
   m_sOldPosition = 0U;
   m_firstRun = true;
-  m_workedOnLine = false;
   m_lastHall = Direction_t::NoDirection;
   m_position = 0U;
   m_hallActive = Direction_t::NoDirection;
@@ -167,6 +166,7 @@ Err_t Knitter::startKnitting(uint8_t startNeedle,
   // reset variables to start conditions
   m_currentLineNumber = UINT8_MAX; // because counter will
                                    // be incremented before request
+  m_currentLineDirection = Direction::NoDirection;
   m_lineRequested = false;
   m_lastLineFlag = false;
 
@@ -241,6 +241,9 @@ void Knitter::knit() {
     m_firstRun = false;
     GlobalBeeper::finishedLine();
     ++m_currentLineNumber;
+    // first line direction is based on which Hall sensor was passed
+    m_currentLineDirection =
+        m_lastHall == Direction::Left ? Direction::Right : Direction::Left;
     reqLine(m_currentLineNumber);
   }
 
@@ -249,8 +252,8 @@ void Knitter::knit() {
   bool state = digitalRead(DBG_BTN_PIN);
 
   if (m_prevState && !state && !m_lineRequested) {
-      ++m_currentLineNumber;
-      reqLine(m_currentLineNumber);
+    ++m_currentLineNumber;
+    reqLine(m_currentLineNumber);
   }
   m_prevState = state;
 #else
@@ -282,18 +285,12 @@ void Knitter::knit() {
   // write Pixel state to the appropriate needle
   GlobalSolenoids::setSolenoid(m_solenoidToSet, pixelValue);
 
-  if ((m_pixelToSet >= m_startNeedle) && (m_pixelToSet <= m_stopNeedle)) {
-    m_workedOnLine = true;
-  }
-
-  if (((m_pixelToSet < m_startNeedle - END_OF_LINE_OFFSET_L[static_cast<uint8_t>(m_machineType)]) ||
-       (m_pixelToSet > m_stopNeedle + END_OF_LINE_OFFSET_R[static_cast<uint8_t>(m_machineType)])) &&
-      m_workedOnLine) {
-    // outside of the active needles and
-    // already worked on the current line -> finished the line
-    m_workedOnLine = false;
-
+  if (isLineFinished()) {
     if (!m_lineRequested && !m_lastLineFlag) {
+      // flip line direction
+      m_currentLineDirection = m_currentLineDirection == Direction::Left
+                                   ? Direction::Right
+                                   : Direction::Left;
       // request new line from host
       ++m_currentLineNumber;
       reqLine(m_currentLineNumber);
@@ -388,7 +385,7 @@ bool Knitter::calculatePixelAndSolenoid() {
   uint8_t startOffset = 0;
   uint8_t laceOffset = 0;
 
-  switch (m_direction) {
+  switch (m_currentLineDirection) {
   // calculate the solenoid and pixel to be set
   // implemented according to machine manual
   // magic numbers from machine manual
@@ -445,6 +442,36 @@ bool Knitter::calculatePixelAndSolenoid() {
     m_solenoidToSet = m_solenoidToSet + 3;
   }
   return true;
+}
+
+/*!
+ * \brief Assess whether the current line is done being knitted, based on the
+ * position of the carriage.
+ * \return `true` if the line is finished, `false` * otherwise.
+ */
+bool Knitter::isLineFinished() {
+  // Compute the position of both "needle selectors" as they both need to clear
+  // the last needle before the carriage can safely turn around.
+  // Using `int` here as the results may be negative.
+  int leftSelectorPosition = m_position - getStartOffset(Direction::Left);
+  int rightSelectorPosition = m_position - getStartOffset(Direction::Right);
+
+  // The limits we are testing against are the working needles plus a safety
+  // margin
+  int leftLimit =
+      m_startNeedle - END_OF_LINE_OFFSET_L[static_cast<uint8_t>(m_machineType)];
+  int rightLimit =
+      m_stopNeedle + END_OF_LINE_OFFSET_R[static_cast<uint8_t>(m_machineType)];
+
+  // If going left, both selectors must have cleared the left limit before we
+  // consider the row done; if going right, both selectors must have cleared the
+  // right limit.
+  return ((m_currentLineDirection == Direction::Left &&
+           leftSelectorPosition < leftLimit &&
+           rightSelectorPosition < leftLimit) ||
+          (m_currentLineDirection == Direction::Right &&
+           leftSelectorPosition > rightLimit &&
+           rightSelectorPosition > rightLimit));
 }
 
 /*!
