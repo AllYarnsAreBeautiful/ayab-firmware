@@ -74,6 +74,9 @@ constexpr uint8_t END_OFFSET[NUM_MACHINES] = {28U, 28U, 5U};
 constexpr uint8_t END_LEFT_PLUS_OFFSET[NUM_MACHINES] = {28U, 28U, 5U};
 constexpr uint8_t END_RIGHT_MINUS_OFFSET[NUM_MACHINES] = {227U, 227U, 135U};
 
+constexpr uint8_t ALL_MAGNETS_CLEARED_LEFT[NUM_MACHINES] = {56U, 56U, 10U};
+constexpr uint8_t ALL_MAGNETS_CLEARED_RIGHT[NUM_MACHINES] = {199U, 199U, 130U};
+
 // The garter slop is needed to determine whether or not we have a garter carriage.
 // If we didn't have it, we'd decide which carriage we had when the first magnet passed the sensor.
 // For the garter carriage we need to see both magnets.
@@ -83,14 +86,14 @@ constexpr uint8_t START_OFFSET[NUM_MACHINES][NUM_DIRECTIONS][NUM_CARRIAGES] = {
     // KH910
     {
         // K,   L,   G
-        {40U, 40U, 32U}, // Left
-        {16U, 16U, 56U} // Right
+        {42U, 32U, 32U}, // Left
+        {16U, 32U, 50U} // Right
     },
     // KH930
     {
         // K,   L,   G
-        {40U, 40U, 32U}, // Left
-        {16U, 16U, 56U} // Right
+        {42U, 32U, 32U}, // Left
+        {16U, 32U, 50U} // Right
     },
     // KH270
     {
@@ -181,6 +184,8 @@ private:
   volatile Direction_t m_hallActive;
   volatile uint8_t m_position;
   volatile bool m_oldState;
+  volatile bool m_passedLeft;
+  volatile bool m_passedRight;
 
   void encA_rising();
   void encA_falling();

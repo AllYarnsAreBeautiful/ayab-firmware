@@ -47,6 +47,10 @@ void GlobalBeeper::endWork() {
   m_instance->endWork();
 }
 
+void GlobalBeeper::error() {
+  m_instance->error();
+}
+
 void GlobalBeeper::schedule() {
   m_instance->schedule();
 }

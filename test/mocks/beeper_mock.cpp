@@ -63,6 +63,11 @@ void Beeper::finishedLine() {
   gBeeperMock->finishedLine();
 }
 
+void Beeper::error() {
+  assert(gBeeperMock != nullptr);
+  gBeeperMock->error();
+}
+
 void Beeper::endWork() {
   assert(gBeeperMock != nullptr);
   gBeeperMock->endWork();
