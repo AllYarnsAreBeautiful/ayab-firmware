@@ -6,6 +6,5 @@ var class_com_mock =
     [ "MOCK_METHOD0", "class_com_mock.html#a53d5a94cffcfe016a24679a22884ccee", null ],
     [ "MOCK_METHOD0", "class_com_mock.html#a4e45082030c41c4942ea34b03bfc3a37", null ],
     [ "MOCK_METHOD2", "class_com_mock.html#afd511184f5ebc95a5040892db28d819e", null ],
-    [ "MOCK_METHOD2", "class_com_mock.html#abd67c9a8928cfa786a3b32840e21594f", null ],
     [ "MOCK_METHOD2", "class_com_mock.html#ae76b54f3e3508d9f67fb9af5b721e253", null ]
 ];

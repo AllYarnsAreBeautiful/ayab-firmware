@@ -7,7 +7,7 @@ var class_tester =
     [ "autoTestOdd", "class_tester.html#aac8b1d69f6a5817592c12d63a0af56c3", null ],
     [ "beep", "class_tester.html#a79718383fe929c06ab2931fa301f9627", null ],
     [ "beepCmd", "class_tester.html#a8c54f91ef17dfa1ceab5f98809b078a3", null ],
-    [ "encoderAChange", "class_tester.html#a4e4ea67945a05ac9a52950c158abb9d2", null ],
+    [ "encoderChange", "class_tester.html#a4f84a7c505e7167514633c01894ce35a", null ],
     [ "handleTimerEvent", "class_tester.html#a2f4e999c635ddcb9caf373eb7e80cc19", null ],
     [ "helpCmd", "class_tester.html#a0e5ffdd06b9e274843a6d52d081204ce", null ],
     [ "loop", "class_tester.html#a5d81f67b6b335a4eb0037be6338646ca", null ],

@@ -12,6 +12,7 @@ var beeper_8h =
     [ "BEEP_DELAY", "beeper_8h.html#af451b42572eef293ed9a87468af671ef", null ],
     [ "BEEP_NO_DUTY", "beeper_8h.html#ac3b2ce5e0c7b49b047a364b6e51c033f", null ],
     [ "BEEP_NUM_ENDWORK", "beeper_8h.html#ab10009608cdaf3894242d783f49bebc3", null ],
+    [ "BEEP_NUM_ERROR", "beeper_8h.html#acbc610ae2f9266dbeec7f7276a6d78ee", null ],
     [ "BEEP_NUM_FINISHEDLINE", "beeper_8h.html#a2b7b5ea69975dda01ae8dda6dcc10956", null ],
     [ "BEEP_NUM_READY", "beeper_8h.html#ad8f1dfb2b0245c973a6d75c1bb274e19", null ],
     [ "BEEP_OFF_DUTY", "beeper_8h.html#acc2a5430a96502f0085b6d648ada8a5c", null ],

@@ -30,7 +30,7 @@ var hierarchy =
       [ "KnitterMock", "class_knitter_mock.html", null ]
     ] ],
     [ "PacketSerial_< EncoderType, PacketMarker, BufferSize >", "class_packet_serial__.html", null ],
-    [ "PacketSerial_< SLIP, SLIP::END >", "class_packet_serial__.html", null ],
+    [ "PacketSerial_< SLIP, SLIP::END, MAX_MSG_BUFFER_LEN >", "class_packet_serial__.html", null ],
     [ "SLIP", "class_s_l_i_p.html", null ],
     [ "SolenoidsInterface", "class_solenoids_interface.html", [
       [ "Solenoids", "class_solenoids.html", null ],

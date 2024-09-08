@@ -16,10 +16,9 @@ var class_com =
     [ "send_cnfTest", "class_com.html#afcf93b7606c1d106e60f01d4d2fdb400", null ],
     [ "send_indState", "class_com.html#a059ee1a6294dfcbe978e264834cfc872", null ],
     [ "send_reqLine", "class_com.html#a9f9a69775fea69afe3eecba5c808b87f", null ],
-    [ "sendMsg", "class_com.html#a07fe2e6ad05462db169dc6a08e1abb7f", null ],
     [ "sendMsg", "class_com.html#a92e9e273dac0e32b45728411fdeec949", null ],
     [ "update", "class_com.html#aaec04d044e5752da37024e9b3285113d", null ],
     [ "lineBuffer", "class_com.html#a50ba98468a745745c7bc43bc23fefbd2", null ],
-    [ "m_packetSerial", "class_com.html#a8d6402a0c0aadc258af978956492d95f", null ],
+    [ "m_packetSerial", "class_com.html#a0c10bcb72631b0fa0a3952e821a2c25f", null ],
     [ "msgBuffer", "class_com.html#ac5295a7c24653ce3812426c079a71c3a", null ]
 ];

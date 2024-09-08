@@ -31,6 +31,8 @@ var encoders_8h =
       [ "Kh930", "encoders_8h.html#a5d0efd33f5d71af18a23ff28d3aa7bcda7b379fc45c349a2380d01659209c3a82", null ],
       [ "Kh270", "encoders_8h.html#a5d0efd33f5d71af18a23ff28d3aa7bcdafe7f068a9ead68b93abc7af56fedb34d", null ]
     ] ],
+    [ "ALL_MAGNETS_CLEARED_LEFT", "encoders_8h.html#aee673a0de9026a337f52e01971eddab7", null ],
+    [ "ALL_MAGNETS_CLEARED_RIGHT", "encoders_8h.html#aea9d9428fafadc62bd0111cf222af3d3", null ],
     [ "END_LEFT", "encoders_8h.html#ae720828e0a6f53d152aea243cfc0068f", null ],
     [ "END_LEFT_PLUS_OFFSET", "encoders_8h.html#a5ef66d5a645aee185e6cd4a60520f75a", null ],
     [ "END_OF_LINE_OFFSET_L", "encoders_8h.html#a56123ce600433594451931230c1fe9ef", null ],

@@ -6,7 +6,6 @@ var class_com_interface =
     [ "send", "class_com_interface.html#a0df2c652619d24f245d89d6595e6372a", null ],
     [ "send_indState", "class_com_interface.html#a5eff91d349a83563edf96e19eae9c90f", null ],
     [ "send_reqLine", "class_com_interface.html#a43df75c9520a83c19c002daf81442712", null ],
-    [ "sendMsg", "class_com_interface.html#aa654c26843f09f5d7c8c60af5aec6b9d", null ],
     [ "sendMsg", "class_com_interface.html#a8002b3fd50904a88a98ee1b32fb24c24", null ],
     [ "update", "class_com_interface.html#a2833b36f7ccf333e3e150e64c0c906b5", null ]
 ];

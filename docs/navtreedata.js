@@ -96,7 +96,8 @@ var NAVTREE =
       [ "File Members", "globals.html", [
         [ "All", "globals.html", null ],
         [ "Functions", "globals_func.html", null ],
-        [ "Variables", "globals_vars.html", null ]
+        [ "Variables", "globals_vars.html", null ],
+        [ "Macros", "globals_defs.html", null ]
       ] ]
     ] ]
   ] ]
@@ -105,9 +106,9 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "_adafruit___m_c_p23008_8h_source.html",
-"class_fsm_test.html#a60fc9b74b305b3490175412e93307cc3",
-"class_tester.html#a07f302da1ea93e4e104aa93f7bebd805",
-"index.html#autotoc_md32"
+"class_fsm_test.html#a1a6a3438efb2b76f801ed29d7ffa81f6",
+"class_solenoids_test.html#aed17c74d2af395a9be47a3ad3194ef9a",
+"index.html#autotoc_md27"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

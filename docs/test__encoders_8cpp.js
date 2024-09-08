@@ -1,9 +1,7 @@
 var test__encoders_8cpp =
 [
     [ "EncodersTest", "class_encoders_test.html", "class_encoders_test" ],
-    [ "TEST_F", "test__encoders_8cpp.html#ae561c2f9729a14cc45d6bbb0327627bf", null ],
     [ "TEST_F", "test__encoders_8cpp.html#a00ac53e83d5dba11193065e497c49185", null ],
-    [ "TEST_F", "test__encoders_8cpp.html#a6587949485686c57864d9bbecc9f758a", null ],
     [ "TEST_F", "test__encoders_8cpp.html#aaddc8f176d899264ba7de9721d94f047", null ],
     [ "TEST_F", "test__encoders_8cpp.html#a006e41aedc0cd0e6e94c0fa23c20208b", null ],
     [ "TEST_F", "test__encoders_8cpp.html#a8d573d983329bd66cfb7c697b1aee3b6", null ],

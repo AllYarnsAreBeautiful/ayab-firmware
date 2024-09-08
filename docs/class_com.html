@@ -75,8 +75,8 @@ Inheritance diagram for Com:</div>
 <div class="dyncontent">
 <div class="center"><img src="class_com__inherit__graph.png" border="0" usemap="#a_com_inherit__map" alt="Inheritance graph"/></div>
 <map name="a_com_inherit__map" id="a_com_inherit__map">
-<area shape="rect" title=" " alt="" coords="5,248,171,619"/>
-<area shape="rect" href="class_com_interface.html" title=" " alt="" coords="5,5,171,200"/>
+<area shape="rect" title=" " alt="" coords="5,233,171,589"/>
+<area shape="rect" href="class_com_interface.html" title=" " alt="" coords="5,5,171,185"/>
 </map>
 </div>
 <div class="dynheader">
@@ -84,9 +84,9 @@ Collaboration diagram for Com:</div>
 <div class="dyncontent">
 <div class="center"><img src="class_com__coll__graph.png" border="0" usemap="#a_com_coll__map" alt="Collaboration graph"/></div>
 <map name="a_com_coll__map" id="a_com_coll__map">
-<area shape="rect" title=" " alt="" coords="115,380,280,736"/>
-<area shape="rect" href="class_com_interface.html" title=" " alt="" coords="5,64,171,259"/>
-<area shape="rect" href="class_packet_serial__.html" title=" " alt="" coords="195,5,421,317"/>
+<area shape="rect" title=" " alt="" coords="115,395,280,736"/>
+<area shape="rect" href="class_com_interface.html" title=" " alt="" coords="5,79,171,259"/>
+<area shape="rect" href="class_packet_serial__.html" title=" " alt="" coords="195,5,421,332"/>
 </map>
 </div>
 <table class="memberdecls">
@@ -106,9 +106,6 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memitem:a92e9e273dac0e32b45728411fdeec949"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_com.html#a92e9e273dac0e32b45728411fdeec949">sendMsg</a> (AYAB_API_t id, const char *msg) final</td></tr>
 <tr class="memdesc:a92e9e273dac0e32b45728411fdeec949"><td class="mdescLeft">&#160;</td><td class="mdescRight">send initial msgid followed by null-terminated string  <a href="class_com.html#a92e9e273dac0e32b45728411fdeec949">More...</a><br /></td></tr>
 <tr class="separator:a92e9e273dac0e32b45728411fdeec949"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a07fe2e6ad05462db169dc6a08e1abb7f"><td class="memItemLeft" align="right" valign="top"><a id="a07fe2e6ad05462db169dc6a08e1abb7f"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>sendMsg</b> (AYAB_API_t id, char *msg) final</td></tr>
-<tr class="separator:a07fe2e6ad05462db169dc6a08e1abb7f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9f9a69775fea69afe3eecba5c808b87f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_com.html#a9f9a69775fea69afe3eecba5c808b87f">send_reqLine</a> (const uint8_t lineNumber, Err_t error=ErrorCode::success) const final</td></tr>
 <tr class="memdesc:a9f9a69775fea69afe3eecba5c808b87f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send <code>reqLine</code> message.  <a href="class_com.html#a9f9a69775fea69afe3eecba5c808b87f">More...</a><br /></td></tr>
 <tr class="separator:a9f9a69775fea69afe3eecba5c808b87f"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -159,9 +156,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
-<tr class="memitem:a8d6402a0c0aadc258af978956492d95f"><td class="memItemLeft" align="right" valign="top"><a id="a8d6402a0c0aadc258af978956492d95f"></a>
-<a class="el" href="class_packet_serial__.html">SLIPPacketSerial</a>&#160;</td><td class="memItemRight" valign="bottom"><b>m_packetSerial</b></td></tr>
-<tr class="separator:a8d6402a0c0aadc258af978956492d95f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0c10bcb72631b0fa0a3952e821a2c25f"><td class="memItemLeft" align="right" valign="top"><a id="a0c10bcb72631b0fa0a3952e821a2c25f"></a>
+<a class="el" href="class_packet_serial__.html">PacketSerial_</a>&lt; <a class="el" href="class_s_l_i_p.html">SLIP</a>, SLIP::END, MAX_MSG_BUFFER_LEN &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_packetSerial</b></td></tr>
+<tr class="separator:a0c10bcb72631b0fa0a3952e821a2c25f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a50ba98468a745745c7bc43bc23fefbd2"><td class="memItemLeft" align="right" valign="top"><a id="a50ba98468a745745c7bc43bc23fefbd2"></a>
 uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>lineBuffer</b> [MAX_LINE_BUFFER_LEN] = {0}</td></tr>
 <tr class="separator:a50ba98468a745745c7bc43bc23fefbd2"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -580,6 +577,15 @@ Here is the call graph for this function:</div>
 <area shape="rect" href="class_packet_serial__.html#aa3386c597cbf0a0a287e5a084c85f399" title="Set a packet of data." alt="" coords="144,5,291,32"/>
 </map>
 </div>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="class_com_a26feaec90f04f0920d5969abf529705b_icgraph.png" border="0" usemap="#aclass_com_a26feaec90f04f0920d5969abf529705b_icgraph" alt=""/></div>
+<map name="aclass_com_a26feaec90f04f0920d5969abf529705b_icgraph" id="aclass_com_a26feaec90f04f0920d5969abf529705b_icgraph">
+<area shape="rect" title="Send a packet of data." alt="" coords="172,5,263,32"/>
+<area shape="rect" href="class_com.html#a92e9e273dac0e32b45728411fdeec949" title="send initial msgid followed by null&#45;terminated string" alt="" coords="5,5,124,32"/>
+</map>
+</div>
 
 </div>
 </div>
@@ -850,14 +856,15 @@ Here is the caller graph for this function:</div>
 
 <p>Implements <a class="el" href="class_com_interface.html">ComInterface</a>.</p>
 
-<p class="reference">References <a class="el" href="class_packet_serial__.html#aa3386c597cbf0a0a287e5a084c85f399">PacketSerial_&lt; EncoderType, PacketMarker, BufferSize &gt;::send()</a>.</p>
+<p class="reference">References <a class="el" href="class_com.html#a26feaec90f04f0920d5969abf529705b">send()</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="class_com_a92e9e273dac0e32b45728411fdeec949_cgraph.png" border="0" usemap="#aclass_com_a92e9e273dac0e32b45728411fdeec949_cgraph" alt=""/></div>
 <map name="aclass_com_a92e9e273dac0e32b45728411fdeec949_cgraph" id="aclass_com_a92e9e273dac0e32b45728411fdeec949_cgraph">
 <area shape="rect" title="send initial msgid followed by null&#45;terminated string" alt="" coords="5,5,124,32"/>
-<area shape="rect" href="class_packet_serial__.html#aa3386c597cbf0a0a287e5a084c85f399" title="Set a packet of data." alt="" coords="172,5,319,32"/>
+<area shape="rect" href="class_com.html#a26feaec90f04f0920d5969abf529705b" title="Send a packet of data." alt="" coords="172,5,263,32"/>
+<area shape="rect" href="class_packet_serial__.html#aa3386c597cbf0a0a287e5a084c85f399" title="Set a packet of data." alt="" coords="311,5,457,32"/>
 </map>
 </div>
 
@@ -874,7 +881,7 @@ Here is the call graph for this function:</div>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_com.html">Com</a></li>
-    <li class="footer">Generated on Sun Feb 25 2024 23:07:46 for AYAB Arduino Firmware by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Sun Sep 8 2024 20:37:10 for AYAB Arduino Firmware by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

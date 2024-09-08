@@ -1,0 +1,4 @@
+<map id="Com::send" name="Com::send">
+<area shape="rect" id="node1" title="Send a packet of data." alt="" coords="172,5,263,32"/>
+<area shape="rect" id="node2" href="$class_com.html#a92e9e273dac0e32b45728411fdeec949" title="send initial msgid followed by null&#45;terminated string" alt="" coords="5,5,124,32"/>
+</map>

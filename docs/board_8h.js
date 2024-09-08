@@ -9,6 +9,5 @@ var board_8h =
     [ "I2Caddr_sol9_16", "board_8h.html#ad994c28236a04e4b1a1f2fb01e36f38a", null ],
     [ "LED_PIN_A", "board_8h.html#a258f8ccc29df1f9cd26abacf7d47d835", null ],
     [ "LED_PIN_B", "board_8h.html#a676e8045b15882b0e2696b0f153b9007", null ],
-    [ "PIEZO_PIN", "board_8h.html#a0f9dbf620ddd0ff1fd93426350137dce", null ],
-    [ "START_KNITTING_DELAY", "board_8h.html#af729585060fa154ab03de5e507421904", null ]
+    [ "PIEZO_PIN", "board_8h.html#a0f9dbf620ddd0ff1fd93426350137dce", null ]
 ];

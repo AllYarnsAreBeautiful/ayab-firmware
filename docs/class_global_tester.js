@@ -4,7 +4,7 @@ var class_global_tester =
     [ "autoReadCmd", "class_global_tester.html#a6d7978b832d50c5270e479f25590014e", null ],
     [ "autoTestCmd", "class_global_tester.html#a1d02747e57ecb01ab1f9e3f09f544b2f", null ],
     [ "beepCmd", "class_global_tester.html#a0583941f9b2d6b1e141adfaa727d773a", null ],
-    [ "encoderAChange", "class_global_tester.html#a2eaf2366f563aeba752ca8b8049a42e4", null ],
+    [ "encoderChange", "class_global_tester.html#a950eb16d466fd747c4d05d2faf71a7bd", null ],
     [ "helpCmd", "class_global_tester.html#afbc83c10c093c6d5349a5b7ea73f1e14", null ],
     [ "loop", "class_global_tester.html#a821f8210cba929ef4053bd1062e243b7", null ],
     [ "quitCmd", "class_global_tester.html#a144cb1944c9cbab64fac53f683826717", null ],

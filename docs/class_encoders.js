@@ -18,5 +18,7 @@ var class_encoders =
     [ "m_hallActive", "class_encoders.html#afcb4a53c140a70b6794f5a1826063cae", null ],
     [ "m_machineType", "class_encoders.html#af03c9a0aeb138b3ae792ed1a395d68f7", null ],
     [ "m_oldState", "class_encoders.html#a6b7ba8c4daee3586f24706d69ac2271a", null ],
+    [ "m_passedLeft", "class_encoders.html#a82bf3c93e7b73a3b64199883a57aa961", null ],
+    [ "m_passedRight", "class_encoders.html#a87d2907eac4a2dd7e9a4a761f9b10544", null ],
     [ "m_position", "class_encoders.html#a5e5c490d5fc1e65e9080301b57b746cd", null ]
 ];

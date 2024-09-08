@@ -75,9 +75,9 @@ Collaboration diagram for GlobalCom:</div>
 <div class="dyncontent">
 <div class="center"><img src="class_global_com__coll__graph.png" border="0" usemap="#a_global_com_coll__map" alt="Collaboration graph"/></div>
 <map name="a_global_com_coll__map" id="a_global_com_coll__map">
-<area shape="rect" title=" " alt="" coords="115,380,280,575"/>
-<area shape="rect" href="class_com_interface.html" title=" " alt="" coords="5,64,171,259"/>
-<area shape="rect" href="class_packet_serial__.html" title=" " alt="" coords="195,5,421,317"/>
+<area shape="rect" title=" " alt="" coords="145,380,311,560"/>
+<area shape="rect" href="class_packet_serial__.html" title="A template class enabling packet&#45;based Serial communication." alt="" coords="5,5,232,317"/>
+<area shape="rect" href="class_com_interface.html" title=" " alt="" coords="256,71,421,251"/>
 </map>
 </div>
 <table class="memberdecls">
@@ -95,9 +95,6 @@ static void&#160;</td><td class="memItemRight" valign="bottom"><b>send</b> (uint
 <tr class="memitem:ab0daf555cd155558be86b7b3ee0cf514"><td class="memItemLeft" align="right" valign="top"><a id="ab0daf555cd155558be86b7b3ee0cf514"></a>
 static void&#160;</td><td class="memItemRight" valign="bottom"><b>sendMsg</b> (AYAB_API_t id, const char *msg)</td></tr>
 <tr class="separator:ab0daf555cd155558be86b7b3ee0cf514"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a65920ec61c596d575fc2d863822014cb"><td class="memItemLeft" align="right" valign="top"><a id="a65920ec61c596d575fc2d863822014cb"></a>
-static void&#160;</td><td class="memItemRight" valign="bottom"><b>sendMsg</b> (AYAB_API_t id, char *msg)</td></tr>
-<tr class="separator:a65920ec61c596d575fc2d863822014cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad420f03674b8bfd2addb931970cfe3df"><td class="memItemLeft" align="right" valign="top"><a id="ad420f03674b8bfd2addb931970cfe3df"></a>
 static void&#160;</td><td class="memItemRight" valign="bottom"><b>send_reqLine</b> (const uint8_t lineNumber, Err_t error=ErrorCode::success)</td></tr>
 <tr class="separator:ad420f03674b8bfd2addb931970cfe3df"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -111,7 +108,7 @@ static void&#160;</td><td class="memItemRight" valign="bottom"><b>onPacketReceiv
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
 <tr class="memitem:a26b348147544e6ec34eb7254936af3e8"><td class="memItemLeft" align="right" valign="top"><a id="a26b348147544e6ec34eb7254936af3e8"></a>
-static <a class="el" href="class_com_interface.html">ComInterface</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>m_instance</b> = new <a class="el" href="class_com.html">Com</a>()</td></tr>
+static <a class="el" href="class_com_interface.html">ComInterface</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>m_instance</b> = &amp;_Com</td></tr>
 <tr class="separator:a26b348147544e6ec34eb7254936af3e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-static-attribs"></a>
@@ -133,7 +130,7 @@ static <a class="el" href="class_packet_serial__.html">SLIPPacketSerial</a>&#160
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_global_com.html">GlobalCom</a></li>
-    <li class="footer">Generated on Sun Feb 25 2024 23:07:46 for AYAB Arduino Firmware by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Sun Sep 8 2024 20:37:10 for AYAB Arduino Firmware by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

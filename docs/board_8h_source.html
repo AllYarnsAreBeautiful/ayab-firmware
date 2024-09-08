@@ -92,17 +92,14 @@ $(document).ready(function(){initNavTree('board_8h_source.html',''); initResizab
 <div class="line"><a name="l00047"></a><span class="lineno"><a class="line" href="board_8h.html#adcffbb74c2e8e5e2884117e9b0b788b0">   47</a></span>&#160;constexpr uint8_t <a class="code" href="board_8h.html#adcffbb74c2e8e5e2884117e9b0b788b0">I2Caddr_sol1_8</a> = 0x0U;  </div>
 <div class="line"><a name="l00048"></a><span class="lineno"><a class="line" href="board_8h.html#ad994c28236a04e4b1a1f2fb01e36f38a">   48</a></span>&#160;constexpr uint8_t <a class="code" href="board_8h.html#ad994c28236a04e4b1a1f2fb01e36f38a">I2Caddr_sol9_16</a> = 0x1U; </div>
 <div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160; </div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="comment">// TODO(Who?): Optimize Delay for various Arduino Models</span></div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;constexpr uint16_t START_KNITTING_DELAY = 2000U; <span class="comment">// ms</span></div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160; </div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;<span class="comment">// Determine board type</span></div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;<span class="preprocessor">#if defined(__AVR_ATmega168__) || defined(__AVR_ATmega328P__)</span></div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="comment">// Arduino Uno</span></div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;<span class="preprocessor">#else</span></div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;<span class="preprocessor">#error &quot;untested board&quot;</span></div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160; </div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// BOARD_H_</span></div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="comment">// Determine board type</span></div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;<span class="preprocessor">#if defined(__AVR_ATmega168__) || defined(__AVR_ATmega328P__)</span></div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="comment">// Arduino Uno</span></div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;<span class="preprocessor">#else</span></div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;<span class="preprocessor">#error &quot;untested board&quot;</span></div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160; </div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// BOARD_H_</span></div>
 <div class="ttc" id="a_arduino_8h_html"><div class="ttname"><a href="_arduino_8h.html">Arduino.h</a></div></div>
 <div class="ttc" id="aboard_8h_html_ad994c28236a04e4b1a1f2fb01e36f38a"><div class="ttname"><a href="board_8h.html#ad994c28236a04e4b1a1f2fb01e36f38a">I2Caddr_sol9_16</a></div><div class="ttdeci">constexpr uint8_t I2Caddr_sol9_16</div><div class="ttdoc">I2C Address of solenoids 9 - 16.</div><div class="ttdef"><b>Definition:</b> board.h:48</div></div>
 <div class="ttc" id="aboard_8h_html_adcffbb74c2e8e5e2884117e9b0b788b0"><div class="ttname"><a href="board_8h.html#adcffbb74c2e8e5e2884117e9b0b788b0">I2Caddr_sol1_8</a></div><div class="ttdeci">constexpr uint8_t I2Caddr_sol1_8</div><div class="ttdoc">I2C Address of solenoids 1 - 8.</div><div class="ttdef"><b>Definition:</b> board.h:47</div></div>
@@ -112,7 +109,7 @@ $(document).ready(function(){initNavTree('board_8h_source.html',''); initResizab
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_438f4a02a1d99eec8e3376e0c84be64f.html">ayab</a></li><li class="navelem"><a class="el" href="board_8h.html">board.h</a></li>
-    <li class="footer">Generated on Sun Feb 25 2024 23:07:46 for AYAB Arduino Firmware by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Sun Sep 8 2024 20:37:10 for AYAB Arduino Firmware by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

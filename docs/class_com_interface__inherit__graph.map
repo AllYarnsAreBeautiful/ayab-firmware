@@ -1,5 +1,5 @@
 <map id="ComInterface" name="ComInterface">
-<area shape="rect" id="node1" title=" " alt="" coords="112,5,277,200"/>
-<area shape="rect" id="node2" href="$class_com.html" title=" " alt="" coords="5,248,171,619"/>
-<area shape="rect" id="node3" href="$class_com_mock.html" title=" " alt="" coords="195,343,407,523"/>
+<area shape="rect" id="node1" title=" " alt="" coords="112,5,277,185"/>
+<area shape="rect" id="node2" href="$class_com.html" title=" " alt="" coords="5,233,171,589"/>
+<area shape="rect" id="node3" href="$class_com_mock.html" title=" " alt="" coords="195,329,407,494"/>
 </map>
