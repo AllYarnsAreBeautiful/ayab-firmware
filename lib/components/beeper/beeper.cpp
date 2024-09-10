@@ -22,6 +22,10 @@ void Beeper::beep(uint8_t number) {
   _state = State::On;
 }
 
+bool Beeper::busy() {
+  return _state != State::Idle;
+}
+
 void Beeper::schedule() {
   switch (_state) {
     case State::On:

@@ -9,6 +9,7 @@ class Beeper {
   ~Beeper() = default;
 
   void beep(uint8_t number);
+  bool busy();
   void schedule();
 
  private:
