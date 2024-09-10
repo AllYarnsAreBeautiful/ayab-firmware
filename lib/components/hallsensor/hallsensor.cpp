@@ -48,6 +48,7 @@ bool HallSensor::isDetected(Encoder *encoder, bool beltPhase) {
     case ST_IDLE:
       _state = ST_HUNT;
       _needlesToGo = MAX_DET_NEEDLES;
+      _detectedBeltPhase = beltPhase;
       if (_sensorValue < _config->thresholdLow) {
         _minimum = {.value = _sensorValue,
                     .position = encoder->getPosition(),
