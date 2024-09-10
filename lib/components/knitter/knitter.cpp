@@ -13,6 +13,7 @@ Knitter::Knitter(hardwareAbstraction::HalInterface *hal) : API(hal) {
 
   // Knitter hardware
   _encoder = new Encoder(_hal, ENC_PIN_A, ENC_PIN_B);
+  _hal->pinMode(ENC_PIN_C, INPUT);
 
   _hall_left = new HallSensor(_hal, EOL_L_PIN);
   _hall_right = new HallSensor(_hal, EOL_R_PIN);
@@ -93,8 +94,8 @@ void Knitter::schedule() {
       if (_config.valid) {
         // Wait for beep to finish
         if (!_beeper->busy()) {
-        _state = State::Operate;
-        _currentLine.reset();
+          _state = State::Operate;
+          _currentLine.reset();
         }
       }
       break;
@@ -180,21 +181,23 @@ void Knitter::_runMachine() {
 
       // When crossing left/right sensors towards the center, update carriage
       // (via isCrossing), encoder and beltshift states
-      bool beltPhase = _hal->digitalRead(ENC_PIN_C);
-      if (_hall_left->isDetected(_encoder, beltPhase) &&
-           _carriage->isCrossing(_hall_left, Direction::Right)) {
-        _encoder->setPosition(_carriage->getPosition());
-        if (_carriage->getType() == CarriageType::Knit) {
-        _beltShift = _hall_left->getDetectedBeltPhase() == LOW ? BeltShift::Regular: BeltShift::Shifted;
-        } else {
-        _beltShift = _hall_left->getDetectedBeltPhase() == LOW ? BeltShift::Shifted: BeltShift::Regular;
+      bool beltPhase = _hal->digitalRead(ENC_PIN_C) != 0;
+      if (_hall_left->isDetected(_encoder, beltPhase)) {
+        if (_carriage->isCrossing(_hall_left, Direction::Right)) {
+          _encoder->setPosition(_carriage->getPosition());
+          if (_carriage->getType() == CarriageType::Knit) {
+            _beltShift = _hall_left->getDetectedBeltPhase() ? BeltShift::Shifted: BeltShift::Regular;
+          } else {
+            _beltShift = _hall_left->getDetectedBeltPhase() ? BeltShift::Regular: BeltShift::Shifted;
+          }
+          _beeper->beep(BEEPER_READY);
         }
-        _beeper->beep(BEEPER_READY);
-      } else if ((_hall_right->isDetected(_encoder, beltPhase) &&
-           _carriage->isCrossing(_hall_right, Direction::Left))) {
-        _encoder->setPosition(_carriage->getPosition());
-        _beltShift = _hall_right->getDetectedBeltPhase() == LOW ? BeltShift::Shifted: BeltShift::Regular;
-        _beeper->beep(BEEPER_READY);
+      } else if (_hall_right->isDetected(_encoder, beltPhase)) {
+        if (_carriage->isCrossing(_hall_right, Direction::Left)) {
+          _encoder->setPosition(_carriage->getPosition());
+          _beltShift = _hall_right->getDetectedBeltPhase() ? BeltShift::Regular: BeltShift::Shifted;
+          _beeper->beep(BEEPER_READY);
+        }
       }
 
       // Get needle to set given current carriage position/type/direction
