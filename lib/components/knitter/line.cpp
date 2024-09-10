@@ -23,8 +23,8 @@ void Line::workedOn(bool isWorkedOn, Direction direction) {
   } else {
     // Exit direction has to match start direction (other end)
     if (_enterDirection == direction) {
-      // Extend by 16 needles to make sure NC handled the last active one
-      if (_carriageOverflow-- == 0) {
+      // Extend by CARRIAGE_OVERFLOW needles to make secure last active ones
+      if (--_carriageOverflow == 0) {
         finished = true;
       }
     }
