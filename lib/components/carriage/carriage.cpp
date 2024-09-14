@@ -38,17 +38,25 @@ uint8_t Carriage::getSelectPosition(Direction direction) {
   // position
   switch (_type) {
     case CarriageType::Gartner:
-      // G: NC @ +0/Left, -0/Right => selection @ -12/Left, +12Left
-      return (direction == Direction::Left) ? (uint8_t)(_position - 12)
-                                            : (uint8_t)(_position + 12);
+      // G: NC @ +0/Left, -0/Right and magnets @-12 and +12
+      // selection @ -12/Left, +12/Right NOK as it may overlap with
+      // carriage detection for wide patterns using needles -100/-99/99/100
+      // 8 looks marginal => selection @ -6/Left, +6/Right (head/6 tail/10)
+      return (direction == Direction::Left) ? (uint8_t)(_position - 6)
+                                            : (uint8_t)(_position + 6);
       break;
     case CarriageType::Lace:
-      // L: NC @ +12/Left, -12/Right => selection @ +0/Left, -0/Left
-      return (direction == Direction::Left) ? (uint8_t)(_position + 0)
-                                            : (uint8_t)(_position - 0);
+      // L: NC @ +12/Left, -12/Right and magnet @ 0
+      // selection @ -0/Left, +0/Right NOK as it may overlap with
+      // carriage detection for wide patterns using needles -100/-99/99/100
+      // => selection @ +4/Left, -4/Right (head/8 tail/8)
+      return (direction == Direction::Left) ? (uint8_t)(_position + 4)
+                                            : (uint8_t)(_position - 4);
       break;
     default:  // CarriageType::Knit
-      // K: NC @ +24/Left, -24/Right => selection @ +12/Left, -12/Left
+      // K: NC @ +24/Left, -24/Right and magnet @ 0
+      // carriage detection always far away from NC
+      // => selection @ +12/Left, -12/Right (head/12 tail/4)
       return (direction == Direction::Left) ? (uint8_t)(_position + 12)
                                             : (uint8_t)(_position - 12);
       break;
