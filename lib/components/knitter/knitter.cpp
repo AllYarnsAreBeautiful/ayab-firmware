@@ -187,7 +187,7 @@ void Knitter::_runMachine() {
           _encoder->setPosition(_carriage->getPosition());
           if (_carriage->getType() == CarriageType::Knit) {
             _beltShift = _hall_left->getDetectedBeltPhase() ? BeltShift::Shifted: BeltShift::Regular;
-          } else {
+          } else { // CarriageType::Lace and CarriageType::Gartner
             _beltShift = _hall_left->getDetectedBeltPhase() ? BeltShift::Regular: BeltShift::Shifted;
           }
           _beeper->beep(BEEPER_READY);
@@ -195,7 +195,11 @@ void Knitter::_runMachine() {
       } else if (_hall_right->isDetected(_encoder, beltPhase)) {
         if (_carriage->isCrossing(_hall_right, Direction::Left)) {
           _encoder->setPosition(_carriage->getPosition());
-          _beltShift = _hall_right->getDetectedBeltPhase() ? BeltShift::Regular: BeltShift::Shifted;
+          if (_carriage->getType() == CarriageType::Lace) {
+            _beltShift = _hall_right->getDetectedBeltPhase() ? BeltShift::Shifted: BeltShift::Regular;
+          } else { // CarriageType::Knit and CarriageType::Gartner
+            _beltShift = _hall_right->getDetectedBeltPhase() ? BeltShift::Regular: BeltShift::Shifted;
+          }
           _beeper->beep(BEEPER_READY);
         }
       }
