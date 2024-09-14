@@ -51,6 +51,8 @@ class Knitter : protected API {
  private:
   enum class State { Reset, Init, Ready, Operate };
 
+  // (Re)set carriage type/position and beltshift when crossing one sensor 
+  void _checkHallSensors();
   // Set solenoids based on current machine state
   void _runMachine();
 

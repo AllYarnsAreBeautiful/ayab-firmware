@@ -169,6 +169,34 @@ void Knitter::_apiRxIndicateState() {
                     _beltShift);
 }
 
+// (Re)set carriage type/position and beltshift when crossing one sensor 
+void Knitter::_checkHallSensors() {
+  // When crossing left/right sensors towards the center, update carriage
+  // (via isCrossing), encoder and beltshift states
+  bool beltPhase = _hal->digitalRead(ENC_PIN_C) != 0;
+  if (_hall_left->isDetected(_encoder, beltPhase)) {
+    if (_carriage->isCrossing(_hall_left, Direction::Right)) {
+      _encoder->setPosition(_carriage->getPosition());
+      if (_carriage->getType() == CarriageType::Knit) {
+        _beltShift = _hall_left->getDetectedBeltPhase() ? BeltShift::Shifted: BeltShift::Regular;
+      } else { // CarriageType::Lace and CarriageType::Gartner
+        _beltShift = _hall_left->getDetectedBeltPhase() ? BeltShift::Regular: BeltShift::Shifted;
+      }
+      _beeper->beep(BEEPER_READY);
+    }
+  } else if (_hall_right->isDetected(_encoder, beltPhase)) {
+    if (_carriage->isCrossing(_hall_right, Direction::Left)) {
+      _encoder->setPosition(_carriage->getPosition());
+      if (_carriage->getType() == CarriageType::Lace) {
+        _beltShift = _hall_right->getDetectedBeltPhase() ? BeltShift::Shifted: BeltShift::Regular;
+      } else { // CarriageType::Knit and CarriageType::Gartner
+        _beltShift = _hall_right->getDetectedBeltPhase() ? BeltShift::Regular: BeltShift::Shifted;
+      }
+      _beeper->beep(BEEPER_READY);
+    }
+  }
+}
+
 void Knitter::_runMachine() {
   if (_machine->isDefined()) {
     uint8_t newPosition = _encoder->getPosition();
@@ -179,30 +207,7 @@ void Knitter::_runMachine() {
                        : Direction::Left;
       _carriage->setPosition(newPosition);
 
-      // When crossing left/right sensors towards the center, update carriage
-      // (via isCrossing), encoder and beltshift states
-      bool beltPhase = _hal->digitalRead(ENC_PIN_C) != 0;
-      if (_hall_left->isDetected(_encoder, beltPhase)) {
-        if (_carriage->isCrossing(_hall_left, Direction::Right)) {
-          _encoder->setPosition(_carriage->getPosition());
-          if (_carriage->getType() == CarriageType::Knit) {
-            _beltShift = _hall_left->getDetectedBeltPhase() ? BeltShift::Shifted: BeltShift::Regular;
-          } else { // CarriageType::Lace and CarriageType::Gartner
-            _beltShift = _hall_left->getDetectedBeltPhase() ? BeltShift::Regular: BeltShift::Shifted;
-          }
-          _beeper->beep(BEEPER_READY);
-        }
-      } else if (_hall_right->isDetected(_encoder, beltPhase)) {
-        if (_carriage->isCrossing(_hall_right, Direction::Left)) {
-          _encoder->setPosition(_carriage->getPosition());
-          if (_carriage->getType() == CarriageType::Lace) {
-            _beltShift = _hall_right->getDetectedBeltPhase() ? BeltShift::Shifted: BeltShift::Regular;
-          } else { // CarriageType::Knit and CarriageType::Gartner
-            _beltShift = _hall_right->getDetectedBeltPhase() ? BeltShift::Regular: BeltShift::Shifted;
-          }
-          _beeper->beep(BEEPER_READY);
-        }
-      }
+      _checkHallSensors();
 
       // Get needle to set given current carriage position/type/direction
       uint8_t selectPosition = _carriage->getSelectPosition(_direction);
