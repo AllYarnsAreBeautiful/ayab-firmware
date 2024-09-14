@@ -4,7 +4,7 @@
 #include "hal.h"
 #include "mcp23008.h"
 
-#define SOLENOID_RESET_STATE 0x0000
+#define SOLENOID_RESET_STATE 0xffff
 
 class Solenoids {
  public:
