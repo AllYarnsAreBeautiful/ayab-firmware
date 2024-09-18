@@ -1,7 +1,7 @@
 # AYAB Async Firmware
 Async implementation of [AYAB Firmware](https://github.com/AllYarnsAreBeautiful/ayab-firmware) (main branch).
 ## Main differences
-- Compatible with ayab desktop software (API v5).
+- Compatible with ayab desktop software (API v6).
 - Async implementation, no blocking calls.
    - beeper, encoder, knitter, led, ... async scheduling ("event loop")
    - faster & lower latency than legacy implementation
@@ -15,4 +15,4 @@ Async implementation of [AYAB Firmware](https://github.com/AllYarnsAreBeautiful/
 - No overhead for googletest support.
 
 ## Warning
-Work in progress, not yet fully tested/validated !
+Work in progress, not yet fully tested/validated (not tested against KH270)!
