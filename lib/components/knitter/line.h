@@ -1,3 +1,6 @@
+#ifndef LINE_H
+#define LINE_H
+
 #include "api.h"
 
 class Line {
@@ -29,3 +32,5 @@ class Line {
   Direction _enterDirection;
   uint8_t _carriageOverflow;
 };
+
+#endif

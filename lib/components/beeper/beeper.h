@@ -9,6 +9,7 @@ class Beeper {
   ~Beeper() = default;
 
   void beep(uint8_t number);
+  void config(bool beeperEnabled);
   bool busy();
   void schedule();
 
@@ -18,6 +19,7 @@ class Beeper {
   hardwareAbstraction::HalInterface *_hal;
   uint8_t _pin;
   uint8_t _number;
+  bool _enabled;
   State _state, _nextState;
   unsigned long _nextTime;
 

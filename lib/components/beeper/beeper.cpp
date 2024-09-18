@@ -9,6 +9,7 @@ Beeper::Beeper(hardwareAbstraction::HalInterface *hal, uint8_t pin) {
   _hal = hal;
   _pin = pin;
   _state = State::Idle;
+  _enabled = true;
 
   _write(BEEP_VALUE_OFF);
   _hal->pinMode(_pin, OUTPUT);
@@ -18,13 +19,15 @@ Beeper::Beeper(hardwareAbstraction::HalInterface *hal, uint8_t pin) {
 void Beeper::_write(uint8_t value) { _hal->analogWrite(_pin, value); }
 
 void Beeper::beep(uint8_t number) {
-  _number = number;
-  _state = State::On;
+  if (_enabled) {
+    _number = number;
+    _state = State::On;
+  }
 }
 
-bool Beeper::busy() {
-  return _state != State::Idle;
-}
+void Beeper::config(bool beeperEnabled) { _enabled = beeperEnabled; }
+
+bool Beeper::busy() { return _state != State::Idle; }
 
 void Beeper::schedule() {
   switch (_state) {

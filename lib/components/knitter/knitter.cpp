@@ -34,7 +34,7 @@ Knitter::Knitter(hardwareAbstraction::HalInterface *hal) : API(hal) {
   reset();
 }
 
-void Knitter::reset() { _state = State::Reset; }
+void Knitter::reset() { _state = KnitterState::Reset; }
 
 void Knitter::schedule() {
   API::schedule();
@@ -49,7 +49,7 @@ void Knitter::schedule() {
   bool isStateChange = _state != _lastState;
   _lastState = _state;
   switch (_state) {
-    case State::Reset:
+    case KnitterState::Reset:
       _machine->reset();
       _carriage->reset();
       _carriage->setPosition(_encoder->getPosition());
@@ -61,32 +61,23 @@ void Knitter::schedule() {
 
       _config.valid = false;
       _config.continuousReporting = false;
-      _state = State::Init;
-
-      // FIXME: API should set 'machine' moving forward
-#ifdef KH910
-      _machine->setType(MachineType::Kh910);
-#else
-      _machine->setType(MachineType::Kh930);
-#endif
-      _hall_left->config(_machine->getSensorConfig(Side::Left));
-      _hall_right->config(_machine->getSensorConfig(Side::Right));
+      _state = KnitterState::Init;
 
       break;
 
-    case State::Init:
+    case KnitterState::Init:
       if (isStateChange) {
         _led_a->blink(LED_SLOW_ON, LED_SLOW_OFF);
         _beeper->beep(BEEPER_INIT);
       }
       if (_machine->isDefined() && _carriage->isDefined()) {
-        _state = State::Ready;
+        _state = KnitterState::Ready;
         _apiRxIndicateState();
         _config.valid = false;
       }
       break;
 
-    case State::Ready:
+    case KnitterState::Ready:
       if (isStateChange) {
         _led_a->blink(LED_FAST_ON, LED_FAST_OFF);
         _beeper->beep(BEEPER_READY);
@@ -94,30 +85,31 @@ void Knitter::schedule() {
       if (_config.valid) {
         // Wait for beep to finish
         if (!_beeper->busy()) {
-          _state = State::Operate;
+          _state = KnitterState::Operate;
           _currentLine.reset();
         }
       }
       break;
 
-    case State::Operate:
+    case KnitterState::Operate:
       if (isStateChange) {
         _led_a->off();  // turn off, used for API Rx indication
         _led_b->off();  // turn off, used for API Tx indication
       }
       if (_currentLine.finished) {
         if (_currentLine.isLastLine()) {
-          _state = State::Reset;
+          _state = KnitterState::Reset;
         }
-        if (!_currentLine.requested) {  // Implement a timeout/retry mechanism ?
-          _apiRequestLine(_currentLine.getNextLineNumber());
+        if (!_currentLine.requested) {
+          // TODO: Implement a timeout/retry mechanism ?
+          _apiRequestLine(_currentLine.getNextLineNumber(), ErrorCode::Success);
           _currentLine.requested = true;
         }
       }
       break;
 
     default:
-      _state = State::Reset;
+      _state = KnitterState::Reset;
       break;
   }
 }
@@ -128,48 +120,62 @@ void Knitter::_apiTxTrafficIndication() { _led_b->flash(LED_FLASH_DURATION); }
 
 void Knitter::_apiRequestReset() { reset(); }
 
-bool Knitter::_apiRxSetConfig(uint8_t startNeedle, uint8_t stopNeedle,
-                              bool continuousReporting) {
-  _config.valid = false;
-  if (_state == State::Ready) {
-    _config = {.startNeedle = startNeedle,
-               .stopNeedle = stopNeedle,
-               .continuousReporting = continuousReporting};
-
-    if ((_config.startNeedle >= 0) &&
-        (_config.stopNeedle < _machine->getNumberofNeedles()) &&
-        (_config.startNeedle < _config.stopNeedle)) {
-      _config.valid = true;
-    }
+ErrorCode Knitter::_apiRequestInit(MachineType machine) {
+  if (_state == KnitterState::Init) {
+    _machine->setType(machine);
+    _hall_left->config(_machine->getSensorConfig(MachineSide::Left));
+    _hall_right->config(_machine->getSensorConfig(MachineSide::Right));
+    return ErrorCode::Success;
   }
-  return _config.valid;
+  return ErrorCode::MachineInvalidState;
 }
 
-bool Knitter::_apiRxSetLine(uint8_t lineNumber, const uint8_t *pattern,
-                            bool isLastLine) {
+ErrorCode Knitter::_apiRxSetConfig(uint8_t startNeedle, uint8_t stopNeedle,
+                                   bool continuousReporting,
+                                   bool beeperEnabled) {
+  _config.valid = false;
+  if (_state == KnitterState::Ready) {
+    if ((startNeedle >= 0) && (stopNeedle < _machine->getNumberofNeedles()) &&
+        (startNeedle < stopNeedle)) {
+      _config = {.startNeedle = startNeedle,
+                 .stopNeedle = stopNeedle,
+                 .continuousReporting = continuousReporting};
+      _beeper->config(beeperEnabled);
+      _config.valid = true;
+      return ErrorCode::Success;
+    }
+    return ErrorCode::MessageInvalidArguments;
+  }
+  return ErrorCode::MachineInvalidState;
+}
+
+ErrorCode Knitter::_apiRxSetLine(uint8_t lineNumber, const uint8_t *pattern,
+                                 bool isLastLine) {
   bool success = false;
-  if (_state == State::Operate) {
+  if (_state == KnitterState::Operate) {
     success = _currentLine.setPattern(lineNumber, pattern, isLastLine);
     if (success) {
       _beeper->beep(BEEPER_NEXT_LINE);
-    } else {  // Request line again
-      _apiRequestLine(_currentLine.getNextLineNumber());
+      return ErrorCode::Success;
+    } else {  // Request line again, TODO: Use a different error code
+      _apiRequestLine(_currentLine.getNextLineNumber(), ErrorCode::Success);
+      return ErrorCode::MessageInvalidArguments;
     }
   }
-  return success;
+  return ErrorCode::MachineInvalidState;
 }
 
 void Knitter::_apiRxIndicateState() {
-  Direction hallActive = _hall_left->isActive()    ? Direction::Left
-                         : _hall_right->isActive() ? Direction::Right
-                                                   : Direction::Unknown;
-  _apiIndicateState(_hall_left->getSensorValue(), _hall_right->getSensorValue(),
-                    _state != State::Init, _carriage->getType(),
+  MachineSide hallActive = _hall_left->isActive()    ? MachineSide::Left
+                           : _hall_right->isActive() ? MachineSide::Right
+                                                     : MachineSide::None;
+  _apiIndicateState(_state, _hall_left->getSensorValue(),
+                    _hall_right->getSensorValue(), _carriage->getType(),
                     _carriage->getPosition(), _direction, hallActive,
                     _beltShift);
 }
 
-// (Re)set carriage type/position and beltshift when crossing one sensor 
+// (Re)set carriage type/position and beltshift when crossing one sensor
 void Knitter::_checkHallSensors() {
   // When crossing left/right sensors towards the center, update carriage
   // (via isCrossing), encoder and beltshift states
@@ -178,9 +184,11 @@ void Knitter::_checkHallSensors() {
     if (_carriage->isCrossing(_hall_left, Direction::Right)) {
       _encoder->setPosition(_carriage->getPosition());
       if (_carriage->getType() == CarriageType::Knit) {
-        _beltShift = _hall_left->getDetectedBeltPhase() ? BeltShift::Shifted: BeltShift::Regular;
-      } else { // CarriageType::Lace and CarriageType::Gartner
-        _beltShift = _hall_left->getDetectedBeltPhase() ? BeltShift::Regular: BeltShift::Shifted;
+        _beltShift = _hall_left->getDetectedBeltPhase() ? BeltShift::Shifted
+                                                        : BeltShift::Regular;
+      } else {  // CarriageType::Lace and CarriageType::Gartner
+        _beltShift = _hall_left->getDetectedBeltPhase() ? BeltShift::Regular
+                                                        : BeltShift::Shifted;
       }
       _beeper->beep(BEEPER_READY);
     }
@@ -188,9 +196,11 @@ void Knitter::_checkHallSensors() {
     if (_carriage->isCrossing(_hall_right, Direction::Left)) {
       _encoder->setPosition(_carriage->getPosition());
       if (_carriage->getType() == CarriageType::Lace) {
-        _beltShift = _hall_right->getDetectedBeltPhase() ? BeltShift::Shifted: BeltShift::Regular;
-      } else { // CarriageType::Knit and CarriageType::Gartner
-        _beltShift = _hall_right->getDetectedBeltPhase() ? BeltShift::Regular: BeltShift::Shifted;
+        _beltShift = _hall_right->getDetectedBeltPhase() ? BeltShift::Shifted
+                                                         : BeltShift::Regular;
+      } else {  // CarriageType::Knit and CarriageType::Gartner
+        _beltShift = _hall_right->getDetectedBeltPhase() ? BeltShift::Regular
+                                                         : BeltShift::Shifted;
       }
       _beeper->beep(BEEPER_READY);
     }
@@ -226,9 +236,8 @@ void Knitter::_runMachine() {
         }
 #ifdef DEBUG
         uint8_t message[] = {(uint8_t)AYAB_API::debugBase,
-                            (uint8_t) _hal->digitalRead(ENC_PIN_C) != 0,
-                             selectPosition,
-                             solenoidToSet,
+                             (uint8_t)_hal->digitalRead(ENC_PIN_C) != 0,
+                             selectPosition, solenoidToSet,
                              _currentLine.getNeedleValue(selectPosition)};
         _hal->packetSerial->send(message, sizeof(message));
 #endif

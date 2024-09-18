@@ -19,10 +19,10 @@ uint8_t Machine::getNumberofNeedles() {
   }
 }
 
-HallSensor::Config *Machine::getSensorConfig(Side side) {
+HallSensor::Config *Machine::getSensorConfig(MachineSide side) {
   HallSensor::Config *sensorConfig;
 
-  if (side == Side::Left) {
+  if (side == MachineSide::Left) {
     sensorConfig = &leftSensorConfig;
     sensorConfig->position = 0;
   } else {
@@ -33,7 +33,7 @@ HallSensor::Config *Machine::getSensorConfig(Side side) {
   // Default threshold settings
   sensorConfig->thresholdLow = 200;
   sensorConfig->thresholdHigh = 600;
-  if ((_type == MachineType::Kh910) && (side == Side::Right)) {
+  if ((_type == MachineType::Kh910) && (side == MachineSide::Right)) {
     // KH910 unmodified; incorrect shield implementation, only North pole as digital low
     sensorConfig->thresholdLow = 100;
     sensorConfig->thresholdHigh = 1024;

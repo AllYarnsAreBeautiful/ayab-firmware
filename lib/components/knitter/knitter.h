@@ -7,10 +7,9 @@
 #include "hal.h"
 #include "hallsensor.h"
 #include "led.h"
+#include "line.h"
 #include "machine.h"
 #include "solenoids.h"
-
-#include "line.h"
 
 #define BEEPER_INIT 3
 #define BEEPER_READY 2
@@ -49,9 +48,7 @@ class Knitter : protected API {
   void schedule();
 
  private:
-  enum class State { Reset, Init, Ready, Operate };
-
-  // (Re)set carriage type/position and beltshift when crossing one sensor 
+  // (Re)set carriage type/position and beltshift when crossing one sensor
   void _checkHallSensors();
   // Set solenoids based on current machine state
   void _runMachine();
@@ -67,12 +64,15 @@ class Knitter : protected API {
 
   // Call derived class method to reset the machine
   void _apiRequestReset() override;
+  // Derived class method to set the machine type
+  ErrorCode _apiRequestInit(MachineType machine) override;
   // Derived class method to set the machine's configuration
-  bool _apiRxSetConfig(uint8_t startNeedle, uint8_t stopNeedle,
-                       bool continuousReporting) override;
+  ErrorCode _apiRxSetConfig(uint8_t startNeedle, uint8_t stopNeedle,
+                            bool continuousReporting,
+                            bool beeperEnabled) override;
   // Derived class method to set the line pattern
-  bool _apiRxSetLine(uint8_t lineNumber, const uint8_t *pattern,
-                     bool isLastLine) override;
+  ErrorCode _apiRxSetLine(uint8_t lineNumber, const uint8_t *pattern,
+                          bool isLastLine) override;
   // Call derived class method to report knitter state
   void _apiRxIndicateState() override;
 
@@ -93,7 +93,7 @@ class Knitter : protected API {
   Direction _direction;
 
   // Ayab Firmware
-  State _state, _lastState;
+  KnitterState _state, _lastState;
   Config _config;
   Line _currentLine;
 };

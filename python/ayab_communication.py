@@ -1,6 +1,7 @@
 import logging
 import serial
 import sliplib
+from crc8 import crc8
 
 class AyabCommunication(object):
   """Class Handling the serial communication protocol."""
@@ -56,6 +57,8 @@ class AyabCommunication(object):
       data = bytearray()
       data.append(id)
       data.extend(payload)
+      crc = crc8(0,data)
+      data.append(crc)
       self.__logger.debug(f"Tx msg:{data.hex(' ')}")
       data = self.__driver.send(bytes(data))
       self.__ser.write(data)
