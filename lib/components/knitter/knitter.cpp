@@ -83,11 +83,8 @@ void Knitter::schedule() {
         _beeper->beep(BEEPER_READY);
       }
       if (_config.valid) {
-        // Wait for beep to finish
-        if (!_beeper->busy()) {
-          _state = KnitterState::Operate;
-          _currentLine.reset();
-        }
+        _state = KnitterState::Operate;
+        _currentLine.reset();
       }
       break;
 
