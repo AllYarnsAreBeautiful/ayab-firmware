@@ -31,9 +31,6 @@ set(COMMON_INCLUDES
     ${SOURCE_DIRECTORY}
     ${LIBRARY_DIRECTORY}/PacketSerial/src
     )
-set(EXTERNAL_LIB_INCLUDES
-    ${LIBRARY_DIRECTORY}/Adafruit_MCP23008
-    )
 set(COMMON_SOURCES
     ${PROJECT_SOURCE_DIR}/test_boards.cpp
 
@@ -85,20 +82,12 @@ set(COMMON_LINKER_FLAGS
     ${CMAKE_THREAD_LIBS_INIT}
     -lgcov
     )
-set(HARD_I2C_LIB
-    ${LIBRARY_DIRECTORY}/Adafruit_MCP23008/Adafruit_MCP23008.cpp
-    )
 function(add_board board)
     set(processor # uno
         __AVR_ATmega168__
         )
-    set(I2C_LIB
-        ${HARD_I2C_LIB}
-        )
     add_executable(${PROJECT_NAME}_${board}
         ${COMMON_SOURCES}
-        # External libraries
-        ${I2C_LIB}
         )
     target_include_directories(${PROJECT_NAME}_${board}
         PRIVATE

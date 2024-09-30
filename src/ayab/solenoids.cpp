@@ -1,4 +1,4 @@
-/*!
+ /*!
  * \file solenoids.cpp
  * \brief Class containing methods that control the needles
  *    via solenoids connected to IO expanders on the device.
@@ -25,18 +25,29 @@
 
 #include "solenoids.h"
 
+// Minimal required constants from the MCP23008 datasheet:
+// - fixed I2C address bits
+#define MCP23008_ADDRESS 0x20
+// - used register addresses
+#define MCP23008_IODIR 0x00
+#define MCP23008_OLAT 0x0A
+
 /*!
  * \brief Initialize I2C connection for solenoids.
  */
 void Solenoids::init() {
-  mcp_0.begin(I2Caddr_sol1_8);
-  mcp_1.begin(I2Caddr_sol9_16);
+  Wire.begin();
 
-  for (uint8_t i = 0; i < SOLENOID_BUFFER_SIZE / 2; i++) {
-    mcp_0.pinMode(i, OUTPUT);
-    mcp_1.pinMode(i, OUTPUT);
-  }
-  solenoidState = 0x0000U;
+  // Default to all solenoids ON
+  // This mimicks the behavior of Brother electronics and is done
+  // to avoid a "clunking" sound that occurs if solenoids are turned
+  // OFF after having been ON while the carriage was moving.
+  solenoidState = 0xffffU;
+  writeGPIO(solenoidState);
+
+  // Configure all MCP23008 pins as outputs
+  writeRegister(I2Caddr_sol1_8, MCP23008_IODIR, 0x00);
+  writeRegister(I2Caddr_sol9_16, MCP23008_IODIR, 0x00);
 }
 
 /*!
@@ -59,7 +70,7 @@ void Solenoids::setSolenoid(uint8_t solenoid, bool state) {
   }
   if (oldState != solenoidState) {
 #ifndef AYAB_TESTS
-    write(solenoidState);
+    writeGPIO(solenoidState);
 #endif
   }
 }
@@ -74,7 +85,7 @@ void Solenoids::setSolenoids(uint16_t state) {
   if (state != solenoidState) {
     solenoidState = state;
 #ifndef AYAB_TESTS
-    write(state);
+    writeGPIO(state);
 #endif
   }
 }
@@ -93,9 +104,23 @@ void Solenoids::setSolenoids(uint16_t state) {
  * one bit per solenoid.
  */
 // GCOVR_EXCL_START
-void Solenoids::write(uint16_t newState) {
-  (void)newState;
-  mcp_0.writeGPIO(lowByte(newState));
-  mcp_1.writeGPIO(highByte(newState));
+void Solenoids::writeGPIO(uint16_t newState) {
+  writeRegister(I2Caddr_sol1_8, MCP23008_OLAT, lowByte(newState));
+  writeRegister(I2Caddr_sol9_16, MCP23008_OLAT, highByte(newState));
+}
+
+/*!
+ * Write to an MCP23008 register via I2C
+ *
+ * \param i2caddr Address of the I/O expander, only the 3 lowest bits are
+ * used, mapping to the A0..A2 address pins on MCP23008
+ * \param reg Register address (see MCP23008 datasheet)
+ * \param value Value to set the register to
+ */
+void Solenoids::writeRegister(uint8_t i2caddr, uint8_t reg, uint8_t value) {
+  Wire.beginTransmission(MCP23008_ADDRESS | (i2caddr & 7));
+  Wire.write(reg);
+  Wire.write(value);
+  Wire.endTransmission();
 }
 // GCOVR_EXCL_STOP
