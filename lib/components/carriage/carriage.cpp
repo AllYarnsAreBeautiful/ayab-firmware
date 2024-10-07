@@ -17,8 +17,11 @@ bool Carriage::isCrossing(HallSensor *sensor, Direction requestedDirection) {
     _type = sensor->getDetectedCarriage();
     _position = sensor->getSensorPosition() + offset;
     if (_type == CarriageType::Gartner) {
-      // Inner magnets are +/-12 needles fsrom the center
+      // Inner magnets are +/-12 needles from the center
       _position = direction == Direction::Left ? (uint8_t)(_position  + 12) : (uint8_t)(_position - 12);
+     } else if (_type == CarriageType::Knit270) {
+       // Inner magnet is +/-3 needles from the center, sensors are at -3 and 114
+       _position = direction == Direction::Left ? (uint8_t)(_position  + 6) : (uint8_t)(_position - 6);
     }
     return true;
   }
@@ -52,6 +55,12 @@ uint8_t Carriage::getSelectPosition(Direction direction) {
       // => selection @ +4/Left, -4/Right (head/8 tail/8)
       return (direction == Direction::Left) ? (uint8_t)(_position + 4)
                                             : (uint8_t)(_position - 4);
+      break;
+    case CarriageType::Knit270:
+      // K on KH270: NC @ +12/Left, -12/Right and magnets active @0
+      // selection @ -8/Left, +8/Right (or same as G ? ... TBC)
+      return (direction == Direction::Left) ? (uint8_t)(_position + 6)
+                                            : (uint8_t)(_position - 6);
       break;
     default:  // CarriageType::Knit
       // K: NC @ +24/Left, -24/Right and magnet @ 0

@@ -25,6 +25,8 @@ class Machine {
   uint8_t solenoidToSet(uint8_t needleToSet);
   // Shift solenoid bank
   void solenoidShift(uint8_t& solenoid);
+  // Map solenoids to driver outputs
+  void solenoidMap(uint8_t &solenoid);
 
  private:
   MachineType _type;

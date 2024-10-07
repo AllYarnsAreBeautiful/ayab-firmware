@@ -34,15 +34,16 @@ enum class KnitterState : uint8_t {
 };
 
 enum class CarriageType : uint8_t {
-  NoCarriage = 3,
+  NoCarriage = 0xff,
   Knit = 0,
   Lace = 1,
-  Gartner = 2
+  Gartner = 2,
+  Knit270 = 3
 };
 
 enum class BeltShift : uint8_t { Unknown = 0, Regular = 1, Shifted = 2 };
 
-enum class Direction : uint8_t { Unknown = 2, Left = 0, Right = 1 };
+enum class Direction : uint8_t { Unknown = 0xff, Left = 0, Right = 1 };
 
 enum class AYAB_API : uint8_t {
   requestReset = 0x00,
@@ -94,7 +95,7 @@ class API {
                                     bool beeperEnabled) = 0;
   // Call derived class method to set the line pattern
   ErrorCode virtual _apiRxSetLine(uint8_t lineNumber, const uint8_t *pattern,
-                                  bool isLastLine) = 0;
+                                  uint8_t size, bool isLastLine) = 0;
   // Call derived class method to report knitter state
   void virtual _apiRxIndicateState() = 0;
 

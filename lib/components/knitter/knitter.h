@@ -72,7 +72,7 @@ class Knitter : protected API {
                             bool beeperEnabled) override;
   // Derived class method to set the line pattern
   ErrorCode _apiRxSetLine(uint8_t lineNumber, const uint8_t *pattern,
-                          bool isLastLine) override;
+                          uint8_t size, bool isLastLine) override;
   // Call derived class method to report knitter state
   void _apiRxIndicateState() override;
 

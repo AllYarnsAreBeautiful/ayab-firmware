@@ -147,9 +147,12 @@ ErrorCode Knitter::_apiRxSetConfig(uint8_t startNeedle, uint8_t stopNeedle,
 }
 
 ErrorCode Knitter::_apiRxSetLine(uint8_t lineNumber, const uint8_t *pattern,
-                                 bool isLastLine) {
+                                 uint8_t size, bool isLastLine) {
   bool success = false;
   if (_state == KnitterState::Operate) {
+    if (size != _machine->getNumberofNeedles() >> 3) {
+      return ErrorCode::MessageIncorrectLenght;
+    }
     success = _currentLine.setPattern(lineNumber, pattern, isLastLine);
     if (success) {
       _beeper->beep(BEEPER_NEXT_LINE);
@@ -166,8 +169,13 @@ void Knitter::_apiRxIndicateState() {
   MachineSide hallActive = _hall_left->isActive()    ? MachineSide::Left
                            : _hall_right->isActive() ? MachineSide::Right
                                                      : MachineSide::None;
+  CarriageType carriage = _carriage->getType();
+  if (carriage == CarriageType::Knit270) {
+    // FIXME: APIv6 doesn't know about Knit270
+    carriage = CarriageType::Knit;
+  }
   _apiIndicateState(_state, _hall_left->getSensorValue(),
-                    _hall_right->getSensorValue(), _carriage->getType(),
+                    _hall_right->getSensorValue(), carriage,
                     _carriage->getPosition(), _direction, hallActive,
                     _beltShift);
 }
@@ -183,6 +191,8 @@ void Knitter::_checkHallSensors() {
       if (_carriage->getType() == CarriageType::Knit) {
         _beltShift = _hall_left->getDetectedBeltPhase() ? BeltShift::Shifted
                                                         : BeltShift::Regular;
+      } else if (_carriage->getType() == CarriageType::Knit270) {
+        _beltShift = BeltShift::Regular;
       } else {  // CarriageType::Lace and CarriageType::Gartner
         _beltShift = _hall_left->getDetectedBeltPhase() ? BeltShift::Regular
                                                         : BeltShift::Shifted;
@@ -195,6 +205,8 @@ void Knitter::_checkHallSensors() {
       if (_carriage->getType() == CarriageType::Lace) {
         _beltShift = _hall_right->getDetectedBeltPhase() ? BeltShift::Shifted
                                                          : BeltShift::Regular;
+      } else if (_carriage->getType() == CarriageType::Knit270) {
+        _beltShift = BeltShift::Regular;
       } else {  // CarriageType::Knit and CarriageType::Gartner
         _beltShift = _hall_right->getDetectedBeltPhase() ? BeltShift::Regular
                                                          : BeltShift::Shifted;
@@ -231,6 +243,7 @@ void Knitter::_runMachine() {
             (_direction == Direction::Left)) {
           _machine->solenoidShift(solenoidToSet);
         }
+        _machine->solenoidMap(solenoidToSet);
 #ifdef DEBUG
         uint8_t message[] = {(uint8_t)AYAB_API::debugBase,
                              (uint8_t)_hal->digitalRead(ENC_PIN_C) != 0,

@@ -72,10 +72,10 @@ void API::rxMessageHandler(const uint8_t *buffer, size_t size) {
     case AYAB_API::confirmLine:
       // buffer[1] = linenumber, buffer[2] = color, buffer[3] = flags (.0=last
       // line) buffer[4:28] = line pattern, buffer[29] = crc8
-      if (size == 30) {
+      if (size <= 30) {
         _error = ErrorCode::MessageChecksum;
-        if (crc8(buffer, 29) == buffer[29]) {
-          _error = _apiRxSetLine(buffer[1], buffer + 4, (buffer[3] & 1) != 0);
+        if (crc8(buffer, size-1) == buffer[size-1]) {
+          _error = _apiRxSetLine(buffer[1], buffer + 4, size - 5, (buffer[3] & 1) != 0);
         }
       }
       _apiRxIndicateState();

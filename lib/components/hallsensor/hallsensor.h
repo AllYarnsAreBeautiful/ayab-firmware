@@ -7,6 +7,8 @@
 
 #define HALLSENSOR_K_LOW  (1<<0)
 #define HALLSENSOR_L_HIGH (1<<1)
+#define HALLSENSOR_K270_K (1<<2)
+#define HALLSENSOR_K270_L (1<<3)
 
 class HallSensor {
  public:

@@ -1,4 +1,5 @@
 .pio
 .vscode
+python/
 __pycache__/
 *.py[cod]
