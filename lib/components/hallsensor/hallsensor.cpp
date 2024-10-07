@@ -1,4 +1,5 @@
 #include "hallsensor.h"
+#include <stdlib.h>
 
 #define ST_IDLE 0
 #define ST_HUNT 1
@@ -41,6 +42,7 @@ bool HallSensor::getDetectedBeltPhase() { return _detectedBeltPhase; }
 
 bool HallSensor::isDetected(Encoder *encoder, bool beltPhase) {
   bool isDetected = false;
+  uint8_t encoder_position = encoder->getPosition();
 
   _readSensor();
 
@@ -49,13 +51,14 @@ bool HallSensor::isDetected(Encoder *encoder, bool beltPhase) {
       _state = ST_HUNT;
       _needlesToGo = MAX_DET_NEEDLES;
       _detectedBeltPhase = beltPhase;
+      _detectedPosition = encoder_position;
       if (_sensorValue < _config->thresholdLow) {
         _minimum = {.value = _sensorValue,
-                    .position = encoder->getPosition(),
+                    .position = _detectedPosition,
                     .isFirst = true};
       } else if (_sensorValue > _config->thresholdHigh) {
         _maximum = {.value = _sensorValue,
-                    .position = encoder->getPosition(),
+                    .position = _detectedPosition,
                     .isFirst = true};
       } else {
         _state = ST_IDLE;
@@ -67,11 +70,12 @@ bool HallSensor::isDetected(Encoder *encoder, bool beltPhase) {
       if (_sensorValue < _config->thresholdLow) {
         if ((_minimum.value == NONE) || (_sensorValue < _minimum.value)) {
           _minimum.value = _sensorValue;
-          _minimum.position = encoder->getPosition();
+          _minimum.position = encoder_position;
           _detectedBeltPhase = beltPhase;
           if (_maximum.value ==
               NONE) {  // Adjust trigger position to the extremum
             _needlesToGo = MAX_DET_NEEDLES;
+            _detectedPosition = _minimum.position;
           }
         }
       }
@@ -79,11 +83,12 @@ bool HallSensor::isDetected(Encoder *encoder, bool beltPhase) {
       if (_sensorValue > _config->thresholdHigh) {
         if ((_maximum.value == NONE) || (_sensorValue > _maximum.value)) {
           _maximum.value = _sensorValue;
-          _maximum.position = encoder->getPosition();
+          _maximum.position = encoder_position;
           _detectedBeltPhase = beltPhase;
           if (_minimum.value ==
               NONE) {  // Adjust trigger position to the extremum
             _needlesToGo = MAX_DET_NEEDLES;
+            _detectedPosition = _maximum.position;
           }
         }
       }
@@ -91,7 +96,10 @@ bool HallSensor::isDetected(Encoder *encoder, bool beltPhase) {
       // Select carriage once max. needles passed
       _needlesToGo--;
       if (_needlesToGo == 0) {
-        isDetected = _detectCarriage();
+        // Detect only if carriage didn't change direction since first detection
+        if (abs(encoder_position - _detectedPosition) == MAX_DET_NEEDLES) {
+          isDetected = _detectCarriage();
+        } 
         _resetDetector();
       }
   }
