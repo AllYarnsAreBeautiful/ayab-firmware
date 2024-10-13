@@ -74,7 +74,8 @@ void Encoders::init(Machine_t machineType) {
   m_hallActive = Direction_t::NoDirection;
   m_beltShift = BeltShift::Unknown;
   m_carriage = Carriage_t::NoCarriage;
-  m_previousDetectedCarriageLeft = detectCarriageLeft();
+  m_previousDetectedCarriageLeft = Carriage_t::NoCarriage;
+  m_previousDetectedCarriageRight = Carriage_t::NoCarriage;
   m_oldState = false;
   m_passedLeft = false;
   m_passedRight = false;
@@ -134,6 +135,25 @@ Carriage_t Encoders::detectCarriageLeft() {
   return Carriage_t::NoCarriage;
 }
 
+Carriage_t Encoders::detectCarriageRight() {
+  uint16_t hallValue = analogRead(EOL_PIN_R);
+  if (m_machineType == MachineType::Kh910) {
+    // Due to an error in wiring on the shield, the KH910/KH950 right sensor
+    // only triggers for the K carriage, and with a low voltage so we can't 
+    // use the same logic as for other machines.
+    if (hallValue < FILTER_R_MIN[static_cast<uint8_t>(m_machineType)]) {
+      return Carriage_t::Knit;
+    }
+  } else {
+    if (hallValue > FILTER_R_MAX[static_cast<uint8_t>(m_machineType)]) {
+      return Carriage_t::Knit;
+    } else if (hallValue < FILTER_R_MIN[static_cast<uint8_t>(m_machineType)]){
+      return Carriage_t::Lace;
+    }
+  }
+  return Carriage_t::NoCarriage;
+}
+
 /*!
  * \brief Interrupt service subroutine.
  *
@@ -166,26 +186,6 @@ void Encoders::encA_rising() {
       detected_carriage != previous_detected_carriage) {
     m_hallActive = Direction_t::Left;
 
-    // Only set the belt shift the first time a magnet passes the turn mark.
-    // Headed to the right.
-    if (!m_passedLeft && Direction_t::Right == m_direction) {
-      // Belt shift signal only decided in front of hall sensor
-      m_beltShift = digitalRead(ENC_PIN_C) != 0 ? BeltShift::Shifted : BeltShift::Regular;
-      m_passedLeft = true;
-
-      if (Carriage_t::Garter == m_carriage) {
-        // This has to be the first magnet and the belt shift needs to be swapped
-        // But only for the G-carriage
-        if (m_position < 30) {
-          if (BeltShift::Regular == m_beltShift) {
-            m_beltShift = BeltShift::Shifted;
-          } else {
-            m_beltShift = BeltShift::Regular;
-          }
-        }
-      }
-    }
-
     // The garter carriage has a second set of magnets that are going to
     // pass the sensor and will reset state incorrectly if allowed to
     // continue.
@@ -193,9 +193,17 @@ void Encoders::encA_rising() {
       return;
     }
 
-    // If the carriage is already set, ignore the rest.
-    if ((Carriage_t::Knit == m_carriage) && (Machine_t::Kh270 == m_machineType)) {
+    // For KH-270, if the carriage is already set, ignore the rest.
+    if (Machine_t::Kh270 == m_machineType && Carriage_t::Knit == m_carriage) {
       return;
+    }
+
+    // Only set the belt shift the first time a magnet passes the turn mark.
+    // Headed to the right.
+    if (!m_passedLeft && Direction_t::Right == m_direction) {
+      // Belt shift signal only decided in front of hall sensor
+      m_beltShift = digitalRead(ENC_PIN_C) != 0 ? BeltShift::Shifted : BeltShift::Regular;
+      m_passedLeft = true;
     }
 
     uint8_t start_position = END_LEFT_PLUS_OFFSET[static_cast<uint8_t>(m_machineType)];
@@ -203,13 +211,11 @@ void Encoders::encA_rising() {
     if (m_machineType == Machine_t::Kh270) {
       m_carriage = Carriage_t::Knit;
 
-      // The first magnet on the carriage looks like Lace, the second looks like Knit
-      if (detected_carriage == Carriage_t::Knit) {
-        start_position = start_position + MAGNET_DISTANCE_270;
-      }
-    } else if (m_carriage == Carriage_t::NoCarriage) {
-      m_carriage = detected_carriage;
-    } else if (m_carriage != detected_carriage && m_position > start_position) {
+      // Assume the rightmost magnet was detected
+      start_position = start_position + MAGNET_DISTANCE_270;
+    } else if (m_carriage == Carriage_t::Lace &&
+               detected_carriage == Carriage_t::Knit &&
+               m_position > start_position) {
       m_carriage = Carriage_t::Garter;
 
       // We swap the belt shift for the g-carriage because the point of work for 
@@ -257,40 +263,63 @@ void Encoders::encA_falling() {
     }
   }
 
-  // In front of Right Hall Sensor?
-  uint16_t hallValue = analogRead(EOL_PIN_R);
+  // Scan for carriage in front of right Hall sensor
+  Carriage_t detected_carriage = detectCarriageRight();
+  Carriage_t previous_detected_carriage = m_previousDetectedCarriageRight;
+  m_previousDetectedCarriageRight = detected_carriage;
 
-  // Avoid 'comparison of unsigned expression < 0 is always false'
-  // by being explicit about that behaviour being expected.
-  bool hallValueSmall = false;
-
-  hallValueSmall = (hallValue < FILTER_R_MIN[static_cast<uint8_t>(m_machineType)]);
-
-  if (hallValueSmall || hallValue > FILTER_R_MAX[static_cast<uint8_t>(m_machineType)]) {
+  // New carriage detected and headed to the left?
+  if (Direction_t::Left == m_direction &&
+      detected_carriage != Carriage_t::NoCarriage &&
+      detected_carriage != previous_detected_carriage) {
     m_hallActive = Direction_t::Right;
 
-    // Only set the belt shift when the first magnet passes the turn mark.
+    // The garter carriage has a second set of magnets that are going to
+    // pass the sensor and will reset state incorrectly if allowed to
+    // continue.
+    if (Carriage_t::Garter == m_carriage) {
+      return;
+    }
+
+    // For KH-270, if the carriage is already set, ignore the rest.
+    if (Machine_t::Kh270 == m_machineType && Carriage_t::Knit == m_carriage) {
+      return;
+    }
+
+    // Only set the belt shift the first time a magnet passes the turn mark.
     // Headed to the left.
     if (!m_passedRight && Direction_t::Left == m_direction) {
       // Belt shift signal only decided in front of hall sensor
       m_beltShift = digitalRead(ENC_PIN_C) != 0 ? BeltShift::Regular : BeltShift::Shifted;
       m_passedRight = true;
 
-      // Shift doens't need to be swapped for the g-carriage in this direction.
+      // Shift doesn't need to be swapped for the g-carriage in this direction.
     }
 
-    // The garter carriage has extra magnets that are going to
-    // pass the sensor and will reset state incorrectly if allowed to
-    // continue.
-    if (m_carriage == Carriage_t::Garter) {
-      return;
-    }
+    uint8_t start_position = END_RIGHT_MINUS_OFFSET[static_cast<uint8_t>(m_machineType)];
 
-    if (hallValueSmall) {
+    if (m_machineType == Machine_t::Kh270) {
       m_carriage = Carriage_t::Knit;
+
+      // Assume the leftmost magnet was detected
+      start_position = start_position; // FIXME
+    } else if (m_carriage == Carriage_t::Lace &&
+               detected_carriage == Carriage_t::Knit &&
+               m_position < start_position) {
+      m_carriage = Carriage_t::Garter;
+
+      // Belt shift and start position were set when the first magnet passed
+      // the sensor and we assumed we were working with a standard carriage.
+
+      // Because we detected the leftmost magnet on the G-carriage first,
+      // for consistency with the left side where we detect the rightmost magnet
+      // first, we need to adjust the carriage position.
+      start_position = m_position + GARTER_L_MAGNET_SPACING;
+    } else {
+      m_carriage = detected_carriage;
     }
 
     // Known position of the carriage -> overwrite position
-    m_position = END_RIGHT_MINUS_OFFSET[static_cast<uint8_t>(m_machineType)];
+    m_position = start_position;
   }
 }

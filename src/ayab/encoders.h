@@ -81,19 +81,23 @@ constexpr uint8_t ALL_MAGNETS_CLEARED_RIGHT[NUM_MACHINES] = {199U, 199U, 130U};
 // If we didn't have it, we'd decide which carriage we had when the first magnet passed the sensor.
 // For the garter carriage we need to see both magnets.
 constexpr uint8_t GARTER_SLOP = 2U;
+// Spacing between a garter carriage's outer (L-carriage-like) magnets.
+// For consistency between a garter carriage starting on the left or the right,
+// we need to adjust the position by this distance when starting from the right.
+constexpr uint8_t GARTER_L_MAGNET_SPACING = 24U;
 
 constexpr uint8_t START_OFFSET[NUM_MACHINES][NUM_DIRECTIONS][NUM_CARRIAGES] = {
     // KH910
     {
         // K,   L,   G
         {42U, 32U, 32U}, // Left
-        {16U, 32U, 50U} // Right
+        {16U, 24U, 48U} // Right
     },
     // KH930
     {
         // K,   L,   G
         {42U, 32U, 32U}, // Left
-        {16U, 32U, 50U} // Right
+        {16U, 24U, 48U} // Right
     },
     // KH270
     {
@@ -108,7 +112,7 @@ constexpr uint8_t START_OFFSET[NUM_MACHINES][NUM_DIRECTIONS][NUM_CARRIAGES] = {
 //                                               KH910 KH930 KH270
 constexpr uint16_t FILTER_L_MIN[NUM_MACHINES] = { 200U, 200U, 200U};
 constexpr uint16_t FILTER_L_MAX[NUM_MACHINES] = { 600U, 600U, 600U};
-constexpr uint16_t FILTER_R_MIN[NUM_MACHINES] = { 200U,   0U,   0U};
+constexpr uint16_t FILTER_R_MIN[NUM_MACHINES] = { 200U, 200U, 200U};
 constexpr uint16_t FILTER_R_MAX[NUM_MACHINES] = {1023U, 600U, 600U};
 
 constexpr uint16_t SOLENOIDS_BITMASK = 0xFFFFU;
@@ -181,6 +185,7 @@ private:
   volatile BeltShift_t m_beltShift;
   volatile Carriage_t m_carriage;
   volatile Carriage_t m_previousDetectedCarriageLeft;
+  volatile Carriage_t m_previousDetectedCarriageRight;
   volatile Direction_t m_direction;
   volatile Direction_t m_hallActive;
   volatile uint8_t m_position;
@@ -189,6 +194,7 @@ private:
   volatile bool m_passedRight;
 
   Carriage_t detectCarriageLeft();
+  Carriage_t detectCarriageRight();
   void encA_rising();
   void encA_falling();
 };
