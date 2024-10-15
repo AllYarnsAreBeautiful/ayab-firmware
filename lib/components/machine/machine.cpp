@@ -39,13 +39,7 @@ HallSensor::Config *Machine::getSensorConfig(MachineSide side) {
     sensorConfig->thresholdHigh = 1024;
     sensorConfig->flags |= HALLSENSOR_K_LOW;
   } else if (_type == MachineType::Kh270) {
-    if (side == MachineSide::Left) {
-      // Use right/K magnet for the left sensor
-      sensorConfig->flags |= HALLSENSOR_K270_K;
-    } else {
-      // Use left/L magnet for the right sensor
-      sensorConfig->flags |= HALLSENSOR_K270_L;
-    }
+    sensorConfig->flags |= HALLSENSOR_K270_K;
   }
 
   return sensorConfig;

@@ -13,7 +13,9 @@ bool Carriage::isCrossing(HallSensor *sensor, Direction requestedDirection) {
   // direction derived from offset (manipulated as int8)
   Direction direction = (offset < 128) ? Direction::Right : Direction::Left;
 
-  if (direction == requestedDirection) {
+  // Update carriage type & position if sensor is passed in the requested direction
+  // and type is not KH270 (only detected once)
+  if ((direction == requestedDirection) && (_type != CarriageType::Knit270)) {
     _type = sensor->getDetectedCarriage();
     _position = sensor->getSensorPosition() + offset;
     if (_type == CarriageType::Gartner) {
