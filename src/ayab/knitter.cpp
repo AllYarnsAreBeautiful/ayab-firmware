@@ -390,6 +390,14 @@ bool Knitter::calculatePixelAndSolenoid() {
 
   bool beltShift = BeltShift_t::Shifted == m_beltShift;
 
+  // 270 Doesn't care about belt shift
+  if (Machine_t::Kh270 == m_machineType) {
+    beltShift = false;
+  }
+
+  // 270 needs additional start offsets because of it's wierdness
+  uint8_t bulkyOffset = 0;
+
   switch (m_direction) {
   // calculate the solenoid and pixel to be set
   // implemented according to machine manual
@@ -403,9 +411,21 @@ bool Knitter::calculatePixelAndSolenoid() {
       beltShift = !beltShift;
     }
 
+    // Page 6 of the 270 service manual: https://mostlyknittingmachines.weebly.com/uploads/8/4/6/7/846749/brother_kh270_service_manual.pdf
+    // Pixel 0 needs to be written into solenoid 4 (indexed from 0) L -> R
+    if (Machine_t::Kh270 == m_machineType) {
+      bulkyOffset = 4;
+    }
+
     break;
   case Direction_t::Left:
     startOffset = getStartOffset(Direction_t::Right);
+
+    // Page 6 of the 270 service manual: https://mostlyknittingmachines.weebly.com/uploads/8/4/6/7/846749/brother_kh270_service_manual.pdf
+    // Pixel 0 needs to be written into solenoid 10 (indexed from 0) R -> L
+    if (Machine_t::Kh270 == m_machineType) {
+      bulkyOffset = 10;
+    }
 
     break;
   default:
@@ -415,7 +435,7 @@ bool Knitter::calculatePixelAndSolenoid() {
   m_pixelToSet = m_position - startOffset;
 
   if (!beltShift) {
-    m_solenoidToSet = m_pixelToSet % SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];
+    m_solenoidToSet = (m_pixelToSet + bulkyOffset) % SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];
   } else {
     m_solenoidToSet = (m_pixelToSet + HALF_SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)]) % SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];
   }
