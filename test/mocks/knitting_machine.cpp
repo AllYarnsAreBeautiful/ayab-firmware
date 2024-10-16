@@ -114,6 +114,8 @@ void KnittingMachine::moveCarriageRight() {
     moveBeltRight();
   }
   ++m_carriagePosition;
+
+  updateNeedles();
 }
 
 void KnittingMachine::moveCarriageLeft() {
@@ -121,6 +123,8 @@ void KnittingMachine::moveCarriageLeft() {
     moveBeltLeft();
   }
   --m_carriagePosition;
+
+  updateNeedles();
 }
 
 int KnittingMachine::beltPeriod() const {
@@ -138,4 +142,40 @@ bool KnittingMachine::moveCarriageCenterTowardsNeedle(int position) {
     moveCarriageLeft();
   }
   return true;
+}
+
+void KnittingMachine::setNeedleCount(int count) {
+  m_needles.clear();
+  for (int n = 0; n < count; n++) {
+    m_needles.push_back(Needle{.index = n, .position = NeedlePosition::A});
+  }
+}
+
+void KnittingMachine::setNeedlePosition(int needle, NeedlePosition position) {
+  m_needles[needle].position = position;
+}
+
+KnittingMachine::NeedlePosition KnittingMachine::getNeedlePosition(int needle) {
+  return m_needles[needle].position;
+}
+
+void KnittingMachine::setSolenoid(int solenoid, bool state) {
+  (void)state;
+  (void)solenoid;
+}
+
+void KnittingMachine::updateNeedles() {
+  for (auto& needle : m_needles) {
+    needle.update();
+  }
+}
+
+void KnittingMachine::Needle::update() {
+  switch (position) {
+  case B:
+    position = D;
+    break;
+  default:
+    break;
+  }
 }

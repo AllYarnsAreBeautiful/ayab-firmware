@@ -135,6 +135,45 @@ public:
    */
   bool moveCarriageCenterTowardsNeedle(int position);
 
+  /**
+   * Initialize the needle bed with the given needle count
+   *
+   * \param count Count of (programmable) needles
+   */
+  void setNeedleCount(int count);
+
+  /**
+   * Needle positions
+   *
+   * Position "C" is not indicated on the machine nor referenced
+   * in the manual but is useful to represent an intermediate
+   * position of the needle during the selection process.
+   */
+  enum NeedlePosition { A = 0, B, C, D, E };
+
+  /**
+   * Set a needle's position
+   *
+   * \param needle the needle index (e.g. 0 to 199 on a KH-9xx)
+   * \param position the needle position (A, B…)
+   */
+  void setNeedlePosition(int needle, NeedlePosition position);
+
+  /**
+   * Get a needle's position
+   *
+   * \param needle the needle index (e.g. 0 to 199 on a KH-9xx)
+   * \returns the needle's position (A, B…)
+   */
+  NeedlePosition getNeedlePosition(int needle);
+
+  /**
+   * Set a solenoid's state
+   *
+   * \param state the solenoid's power state (true = powered)
+   */
+  void setSolenoid(int solenoid, bool state);
+
 private:
   static constexpr int STEPS_PER_NEEDLE = 4;
   static constexpr float POSITION_SENSOR_LOW_VOLTAGE = 0.2f;
@@ -251,6 +290,33 @@ private:
    * center and their polarity. \see addCarriageMagnet()
    */
   std::vector<std::pair<float, bool>> m_carriageMagnets;
+
+  /**
+   * A single needle
+   */
+  struct Needle {
+    /**
+     * Needle index (0 to needle count - 1)
+     */
+    int index;
+    /**
+     * Current needle position (A, B…)
+     */
+    NeedlePosition position;
+
+    void update();
+  };
+
+  /**
+   * Needles on the bed
+   */
+  std::vector<Needle> m_needles;
+
+  /**
+   * Update the state of all the needles.
+   * Called after every carriage movement.
+   */
+  void updateNeedles();
 };
 
 #endif // KNITTINGMACHINE_H_

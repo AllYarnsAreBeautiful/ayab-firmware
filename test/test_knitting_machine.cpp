@@ -263,3 +263,28 @@ TEST(KnittingMachine, KCarriageScanBed) {
   km.addCarriageMagnet(0, true);
   doBedScan(km);
 }
+
+TEST(KnittingMachine, NeedleSelection) {
+  KnittingMachine km;
+
+  const int testNeedle = 47;
+  const int testSolenoid = 0;
+
+  km.setNeedleCount(200);
+  EXPECT_EQ(km.getNeedlePosition(testNeedle), KnittingMachine::A);
+
+  km.setNeedlePosition(testNeedle, KnittingMachine::B);
+  EXPECT_EQ(km.getNeedlePosition(testNeedle), KnittingMachine::B);
+  km.setSolenoid(testSolenoid, true);
+  km.putCarriageCenterInFrontOfNeedle(0);
+  while (km.moveCarriageCenterTowardsNeedle(100)) {
+  }
+
+  for (int n = 0; n < 100; n++) {
+    if (n == testNeedle) {
+      EXPECT_EQ(km.getNeedlePosition(n), KnittingMachine::D);
+    } else {
+      EXPECT_EQ(km.getNeedlePosition(n), KnittingMachine::A);
+    }
+  }
+}
