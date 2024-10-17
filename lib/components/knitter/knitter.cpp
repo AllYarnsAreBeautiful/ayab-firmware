@@ -235,7 +235,9 @@ void Knitter::_runMachine() {
       // Set solenoid according to current machine state
       if (_carriage->isDefined() && (!_currentLine.finished)) {
         // Belt shift handling
-        if (_beltShift == BeltShift::Shifted) {
+        if ((_beltShift == BeltShift::Shifted) ||
+          ((_machine->getType() == MachineType::Kh270) && (_direction == Direction::Left))
+        ){
           _machine->solenoidShift(solenoidToSet);
         }
         // Special handling for the L carriage

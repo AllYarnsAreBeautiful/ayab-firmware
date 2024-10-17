@@ -8,6 +8,8 @@ void Machine::reset() { _type = MachineType::NoMachine; }
 
 void Machine::setType(MachineType type) { _type = type; }
 
+MachineType Machine::getType() { return _type; }
+
 bool Machine::isDefined() { return _type != MachineType::NoMachine; }
 
 uint8_t Machine::getNumberofNeedles() {
@@ -48,7 +50,7 @@ HallSensor::Config *Machine::getSensorConfig(MachineSide side) {
 uint8_t Machine::solenoidToSet(uint8_t needleToSet) {
   switch (_type) {
     case MachineType::Kh270:
-      return needleToSet % 12;
+      return (needleToSet + 4) % 12;
     default:
       return needleToSet % 16;
   }

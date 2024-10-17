@@ -14,7 +14,7 @@ bool Carriage::isCrossing(HallSensor *sensor, Direction requestedDirection) {
   Direction direction = (offset < 128) ? Direction::Right : Direction::Left;
 
   // Update carriage type & position if sensor is passed in the requested direction
-  // and type is not KH270 (only detected once)
+  // and type is not KH270 (only detected once - FIXME: remove this constraint)
   if ((direction == requestedDirection) && (_type != CarriageType::Knit270)) {
     _type = sensor->getDetectedCarriage();
     _position = sensor->getSensorPosition() + offset;
@@ -22,8 +22,8 @@ bool Carriage::isCrossing(HallSensor *sensor, Direction requestedDirection) {
       // Inner magnets are +/-12 needles from the center
       _position = direction == Direction::Left ? (uint8_t)(_position  + 12) : (uint8_t)(_position - 12);
      } else if (_type == CarriageType::Knit270) {
-       // Inner magnet is +/-3 needles from the center, sensors are at -3 and 114
-       _position = direction == Direction::Left ? (uint8_t)(_position  + 6) : (uint8_t)(_position - 6);
+      // Inner magnet is +/-3 needles from the center, sensors are at -3 and 114
+      _position = direction == Direction::Left ? (uint8_t)(_position  + 6) : (uint8_t)(_position - 6);
     }
     return true;
   }
