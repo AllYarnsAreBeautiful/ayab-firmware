@@ -1,6 +1,7 @@
 # AYAB Async Firmware
 Async implementation of [AYAB Firmware](https://github.com/AllYarnsAreBeautiful/ayab-firmware) (main branch).
 ## Main differences
+- Support for ATMEGA2560, UNO and UNO R4 Hardware
 - Compatible with ayab desktop software (API v6).
 - Async implementation, no blocking calls.
    - beeper, encoder, knitter, led, ... async scheduling ("event loop")
@@ -12,6 +13,7 @@ Async implementation of [AYAB Firmware](https://github.com/AllYarnsAreBeautiful/
 - Simplified needle selection algorithm.
    - Using carriage center and position of the 'needle checker'.
 - Robust & dynamic (while knitting) carriage detection (K, L, G) from both sides.
+- Support for KH270, 910, 930 machines
 - No overhead for googletest support.
 
 ## Warning

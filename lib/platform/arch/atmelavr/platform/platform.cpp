@@ -1,6 +1,6 @@
 #include "platform.h"
-#include "packetSerial/packetSerial.h"
-#include "i2c/i2c.h"
+#include "packetSerial.h"
+#include "i2c.h"
 
 namespace hardwareAbstraction {
 

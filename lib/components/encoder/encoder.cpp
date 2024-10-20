@@ -1,6 +1,5 @@
 #include "encoder.h"
-
-#include <util/atomic.h>
+#include "atomic.h"
 
 Encoder *encoderInstance;
 void staticInterruptHandler() { encoderInstance->interruptHandler(); }

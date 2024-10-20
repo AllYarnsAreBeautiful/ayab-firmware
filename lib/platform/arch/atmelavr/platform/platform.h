@@ -23,4 +23,4 @@ class Platform : public HalInterface {
 };
 }  // namespace hardwareAbstraction
 
-#endif  // HAL_H
+#endif  // PLATFORM_H

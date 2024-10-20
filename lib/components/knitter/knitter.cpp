@@ -1,7 +1,7 @@
 #include "knitter.h"
 
 #include "api.h"
-#include "board.h"
+#include "shield.h"
 
 //----------------------------------------------------------------------------
 // Knitter class

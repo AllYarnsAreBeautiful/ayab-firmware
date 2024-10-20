@@ -16,7 +16,6 @@
 #endif
 
 #include <SoftI2CMaster.h>
-// #include <Wire.h>
 
 namespace hardwareAbstraction {
 

@@ -5,8 +5,8 @@
 #include <stdint.h>
 
 // digital pin levels
-#define HIGH 0x1
 #define LOW 0x0
+#define HIGH 0x1
 
 // pin mode
 #define INPUT 0x0

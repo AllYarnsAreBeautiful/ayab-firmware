@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <list>
 
-#include "board.h"
+#include "shield.h"
 #include "led.h"
 #include "mocks/hal_mock.h"
 
