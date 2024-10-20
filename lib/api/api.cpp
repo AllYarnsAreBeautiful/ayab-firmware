@@ -144,10 +144,10 @@ void API::_apiIndicateState(KnitterState state, uint16_t hallValueLeft,
   uint8_t message[] = {(uint8_t)AYAB_API::indicateState,
                        (uint8_t)_error,
                        (uint8_t)state,
-                       (uint8_t)(hallValueLeft & 0xff),
                        (uint8_t)((hallValueLeft >> 8) & 0xff),
-                       (uint8_t)(hallValueRight & 0xff),
+                       (uint8_t)(hallValueLeft & 0xff),
                        (uint8_t)((hallValueRight >> 8) & 0xff),
+                       (uint8_t)(hallValueRight & 0xff),
                        (uint8_t)carriageType,
                        carriagePosition,
                        (uint8_t)carriageDirection,
@@ -185,6 +185,7 @@ void API::_apiRequestLine(uint8_t rowNumber, ErrorCode error) {
   _apiTxTrafficIndication();
 }
 
+// TODO: Add report of HW variant
 // TODO: Handle this with a prebuild script ?
 #define STRINGIZE(x) #x
 #define STR(x) STRINGIZE(x)
