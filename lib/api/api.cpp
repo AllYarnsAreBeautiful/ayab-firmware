@@ -186,14 +186,11 @@ void API::_apiRequestLine(uint8_t rowNumber, ErrorCode error) {
 }
 
 // TODO: Add report of HW variant
-// TODO: Handle this with a prebuild script ?
-#define STRINGIZE(x) #x
-#define STR(x) STRINGIZE(x)
 void API::_apiConfirmInfo() {
   uint8_t message[22] = {(uint8_t)AYAB_API::confirmInfo, API_VERSION,
                          FW_VERSION_MAJ, FW_VERSION_MIN, FW_VERSION_PATCH};
   size_t size = sizeof(message);
-  strncpy((char *)message + 5, STR(FW_VERSION_SUFFIX), 16);
+  strncpy((char *)message + 5, FW_VERSION_SUFFIX, 16);
   message[size - 1] = crc8(message, size - 1);
   _hal->packetSerial->send(message, sizeof(message));
   _apiTxTrafficIndication();

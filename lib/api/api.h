@@ -4,6 +4,7 @@
 #include <stdint.h>
 
 #include "hal.h"
+#include "version.h"
 
 #define API_VERSION 6
 
