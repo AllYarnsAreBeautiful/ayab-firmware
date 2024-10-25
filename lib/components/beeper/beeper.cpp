@@ -23,6 +23,7 @@ void Beeper::_on() {
 void Beeper::_off() {
 // WA: UNO R4 analogWrite generates a 255/256 PWM signal iso 255/255=HIGH
 #if defined(ARDUINO_UNOR4_WIFI) || defined(ARDUINO_UNOR4_MINIMA)
+  _hal->pinMode(_pin, OUTPUT);
   _hal->digitalWrite(_pin, HIGH);
 #else
   _hal->analogWrite(_pin, BEEP_VALUE_OFF);
