@@ -23,7 +23,8 @@ class Beeper {
   State _state, _nextState;
   unsigned long _nextTime;
 
-  void _write(uint8_t value);
+  void _on();
+  void _off();
 };
 
 #endif

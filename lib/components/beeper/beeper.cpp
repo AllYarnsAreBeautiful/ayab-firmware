@@ -11,12 +11,23 @@ Beeper::Beeper(hardwareAbstraction::HalInterface *hal, uint8_t pin) {
   _state = State::Idle;
   _enabled = true;
 
-  _write(BEEP_VALUE_OFF);
+  _off();
   _hal->pinMode(_pin, OUTPUT);
 }
 
 // TODO: Verify if PWM is really required vs simple on/off for all HW
-void Beeper::_write(uint8_t value) { _hal->analogWrite(_pin, value); }
+void Beeper::_on() {
+  _hal->analogWrite(_pin, BEEP_VALUE_ON);
+}
+
+void Beeper::_off() {
+// WA: UNO R4 analogWrite generates a 255/256 PWM signal iso 255/255=HIGH
+#if defined(ARDUINO_UNOR4_WIFI) || defined(ARDUINO_UNOR4_MINIMA)
+  _hal->digitalWrite(_pin, HIGH);
+#else
+  _hal->analogWrite(_pin, BEEP_VALUE_OFF);
+#endif
+}
 
 void Beeper::beep(uint8_t number) {
   if (_enabled && !busy()) {
@@ -32,14 +43,14 @@ bool Beeper::busy() { return _state != State::Idle; }
 void Beeper::schedule() {
   switch (_state) {
     case State::On:
-      _write(BEEP_VALUE_ON);
+      _on();
       _state = State::Wait;
       _nextState = State::Off;
       _nextTime = _hal->millis() + BEEP_TIME_ON;
       break;
 
     case State::Off:
-      _write(BEEP_VALUE_OFF);
+      _off();
       _state = State::Wait;
       _nextState = State::On;
       _nextTime = _hal->millis() + BEEP_TIME_OFF;
@@ -49,7 +60,7 @@ void Beeper::schedule() {
     case State::Wait:
       if (_hal->millis() > _nextTime) {
         if (_number == 0) {
-          _write(BEEP_VALUE_OFF);
+          _off();
           _state = State::Idle;
         } else {
           _state = _nextState;

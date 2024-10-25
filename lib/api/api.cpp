@@ -58,7 +58,7 @@ void API::rxMessageHandler(const uint8_t *buffer, size_t size) {
       break;
 
     case AYAB_API::requestStart:
-      // buffer[1:4] = {startNeedle, stopNeedle, continuousReporting, crc8}
+      // buffer[1:4] = {startNeedle, stopNeedle, 1:beeper enabled, 0:continuousReporting, crc8}
       if (size == 5) {
         _error = ErrorCode::MessageChecksum;
         if (crc8(buffer, 4) == buffer[4]) {
