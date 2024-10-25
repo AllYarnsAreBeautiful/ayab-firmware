@@ -36,7 +36,7 @@ HallSensor::Config *Machine::getSensorConfig(MachineSide side) {
   sensorConfig->thresholdLow = 200;
   sensorConfig->thresholdHigh = 600;
   sensorConfig->flags = 0;
-  
+
   if ((_type == MachineType::Kh910) && (side == MachineSide::Right)) {
     // KH910 unmodified; incorrect shield implementation, only North pole as digital low
     sensorConfig->thresholdLow = 100;

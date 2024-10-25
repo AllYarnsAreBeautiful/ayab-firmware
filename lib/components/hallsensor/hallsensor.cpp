@@ -66,6 +66,8 @@ bool HallSensor::isDetected(Encoder *encoder, bool beltPhase) {
       break;
 
     default:  // ST_HUNT
+      _needlesToGo--;
+
       // Record minimum position
       if (_sensorValue < _config->thresholdLow) {
         if ((_minimum.value == NONE) || (_sensorValue < _minimum.value)) {
@@ -94,7 +96,6 @@ bool HallSensor::isDetected(Encoder *encoder, bool beltPhase) {
       }
 
       // Select carriage once max. needles passed
-      _needlesToGo--;
       if (_needlesToGo == 0) {
         // Detect only if carriage didn't change direction since first detection
         if (abs(encoder_position - _detectedPosition) == MAX_DET_NEEDLES) {
