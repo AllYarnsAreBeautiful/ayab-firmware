@@ -96,11 +96,12 @@ void Knitter::schedule() {
       if (_currentLine.finished) {
         if (_currentLine.isLastLine()) {
           _state = KnitterState::Reset;
-        }
-        if (!_currentLine.requested) {
-          // TODO: Implement a timeout/retry mechanism ?
-          _apiRequestLine(_currentLine.getNextLineNumber(), ErrorCode::Success);
-          _currentLine.requested = true;
+        } else {
+          if (!_currentLine.requested) {
+            // TODO: Implement a timeout/retry mechanism ?
+            _apiRequestLine(_currentLine.getNextLineNumber(), ErrorCode::Success);
+            _currentLine.requested = true;
+          }
         }
       }
       break;
