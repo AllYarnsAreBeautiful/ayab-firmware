@@ -2,7 +2,7 @@
 
 #include "line.h"
 
-#define CARRIAGE_OVERFLOW 16
+#define CARRIAGE_OVERFLOW 15
 
 void Line::reset() {
   memset(_pattern, 0xff, sizeof(_pattern));
