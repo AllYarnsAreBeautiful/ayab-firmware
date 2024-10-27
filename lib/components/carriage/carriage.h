@@ -20,15 +20,15 @@ class Carriage {
   // Return current carriage type
   CarriageType getType();
   // Define carriage position
-  void setPosition(uint8_t position);
+  void setPosition(int16_t position);
   // Return current carriage position
-  uint8_t getPosition();
+  int16_t getPosition();
   // Return the needle to select given current carriage state
-  uint8_t getSelectPosition(Direction direction);
+  int16_t getSelectPosition(Direction direction);
 
  private:
   CarriageType _type;
-  uint8_t _position;
+  int16_t _position;
 };
 
 #endif

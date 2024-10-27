@@ -16,7 +16,7 @@ class Line {
   // Set a new line pattern
   bool setPattern(uint8_t number, const uint8_t *pattern, bool isLast);
   // Get the needle value for the given position
-  bool getNeedleValue(uint8_t position);
+  bool getNeedleValue(int16_t position);
   // Return the next line number
   uint8_t getNextLineNumber();
   // Return true if the current line is the last one

@@ -106,7 +106,7 @@ class API {
   // Send message to indicate machine state
   void _apiIndicateState(KnitterState state, uint16_t hallValueLeft,
                          uint16_t hallValueRight, CarriageType carriageType,
-                         uint8_t carriagePosition, Direction carriageDirection,
+                         int16_t carriagePosition, Direction carriageDirection,
                          MachineSide hallActive, BeltShift beltshift);
   // Reply to init request message (set machne type)
   void _apiConfirmInit();

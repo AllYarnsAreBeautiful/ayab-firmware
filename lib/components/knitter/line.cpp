@@ -44,12 +44,12 @@ bool Line::setPattern(uint8_t number, const uint8_t *line, bool isLast) {
   return false;
 }
 
-bool Line::getNeedleValue(uint8_t position) {
+bool Line::getNeedleValue(int16_t position) {
   bool state = true;
-  uint8_t byteIndex = position >> 3;
+  uint8_t byteIndex = position / 8;
   uint8_t bitIndex = position % 8;
 
-  if ((byteIndex < sizeof(_pattern))) {
+  if ((byteIndex >= 0) && (byteIndex < sizeof(_pattern))) {
     // lsb = leftmost (check)
     state = _pattern[byteIndex] & (1 << bitIndex) ? false : true;
   }

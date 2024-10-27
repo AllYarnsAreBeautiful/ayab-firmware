@@ -34,7 +34,7 @@ class HallSensor {
   uint8_t getSensorPosition();
 
   // Return encoder position when carriage was detected
-  uint8_t getDetectedPosition();
+  int16_t getDetectedPosition();
   // Return detected carriage type
   CarriageType getDetectedCarriage();
   // Return detected belt phase
@@ -47,7 +47,7 @@ class HallSensor {
   class Extremum {
    public:
     uint16_t value;
-    uint8_t position;
+    int16_t position;
     bool isFirst;
   };
 
@@ -69,14 +69,14 @@ class HallSensor {
   uint16_t _thresholdHigh;
   bool _isKasG;
 
-  uint8_t _detectedPosition;
+  int16_t _detectedPosition;
   CarriageType _detectedCarriage;
   bool _detectedBeltPhase;
 
   uint8_t _state;
   Extremum _minimum;
   Extremum _maximum;
-  int _needlesToGo;
+  uint8_t _needlesToGo;
 };
 
 #endif

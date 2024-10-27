@@ -218,10 +218,10 @@ void Knitter::_checkHallSensors() {
 
 void Knitter::_runMachine() {
   if (_machine->isDefined()) {
-    uint8_t newPosition = _encoder->getPosition();
+    int16_t newPosition = _encoder->getPosition();
     if (newPosition != _carriage->getPosition()) {
       // Infer current direction and update carriage position
-      _direction = ((uint8_t)(newPosition - _carriage->getPosition()) < 128)
+      _direction = ((newPosition - _carriage->getPosition()) > 0)
                        ? Direction::Right
                        : Direction::Left;
       _carriage->setPosition(newPosition);
@@ -229,7 +229,7 @@ void Knitter::_runMachine() {
       _checkHallSensors();
 
       // Get needle to set given current carriage position/type/direction
-      uint8_t selectPosition = _carriage->getSelectPosition(_direction);
+      int16_t selectPosition = _carriage->getSelectPosition(_direction);
       // Map needle to set to solenoid
       uint8_t solenoidToSet = _machine->solenoidToSet(selectPosition);
       // Set solenoid according to current machine state
@@ -249,8 +249,8 @@ void Knitter::_runMachine() {
 #ifdef DEBUG
         uint8_t message[] = {(uint8_t)AYAB_API::debugBase,
                              (uint8_t)_hal->digitalRead(ENC_PIN_C) != 0,
-                             selectPosition, solenoidToSet,
-                             _currentLine.getNeedleValue(selectPosition)};
+                             (uint8_t) (selectPosition & 0xff), solenoidToSet,
+                             (uint8_t) _currentLine.getNeedleValue(selectPosition)};
         _hal->packetSerial->send(message, sizeof(message));
 #endif
         // Set solenoid

@@ -138,7 +138,7 @@ void API::rxMessageHandler(const uint8_t *buffer, size_t size) {
 
 void API::_apiIndicateState(KnitterState state, uint16_t hallValueLeft,
                             uint16_t hallValueRight, CarriageType carriageType,
-                            uint8_t carriagePosition,
+                            int16_t carriagePosition,
                             Direction carriageDirection, MachineSide hallActive,
                             BeltShift beltshift) {
   uint8_t message[] = {(uint8_t)AYAB_API::indicateState,
@@ -149,7 +149,7 @@ void API::_apiIndicateState(KnitterState state, uint16_t hallValueLeft,
                        (uint8_t)((hallValueRight >> 8) & 0xff),
                        (uint8_t)(hallValueRight & 0xff),
                        (uint8_t)carriageType,
-                       carriagePosition,
+                       (uint8_t)(carriagePosition & 0xff),
                        (uint8_t)carriageDirection,
                        (uint8_t)hallActive,
                        (uint8_t)beltshift,

@@ -49,12 +49,12 @@ HallSensor::Config *Machine::getSensorConfig(MachineSide side) {
   return sensorConfig;
 }
 
-uint8_t Machine::solenoidToSet(uint8_t needleToSet) {
+uint8_t Machine::solenoidToSet(int16_t needleToSet) {
   switch (_type) {
     case MachineType::Kh270:
-      return (needleToSet + 4) % 12;
+      return (uint8_t) ((needleToSet + 4) % 12);
     default:
-      return needleToSet % 16;
+      return (uint8_t) (needleToSet % 16);
   }
 }
 

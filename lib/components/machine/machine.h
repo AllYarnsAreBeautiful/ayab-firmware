@@ -24,7 +24,7 @@ class Machine {
   // Return characteristics of the left or right sensor
   HallSensor::Config* getSensorConfig(MachineSide side);
   // Compute solenoid to set for a given needle position
-  uint8_t solenoidToSet(uint8_t needleToSet);
+  uint8_t solenoidToSet(int16_t needleToSet);
   // Shift solenoid bank
   void solenoidShift(uint8_t& solenoid);
   // Map solenoids to driver outputs

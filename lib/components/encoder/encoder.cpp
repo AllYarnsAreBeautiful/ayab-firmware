@@ -36,14 +36,14 @@ void Encoder::interruptHandler() {
   }
 }
 
-void Encoder::setPosition(uint8_t position) {
+void Encoder::setPosition(int16_t position) {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     _isr_position = position;
     _position = position;
   }
 }
 
-uint8_t Encoder::getPosition() { return _position; }
+int16_t Encoder::getPosition() { return _position; }
 
 void Encoder::schedule() {
   if (_isr_doorbell) {

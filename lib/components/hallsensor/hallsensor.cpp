@@ -14,7 +14,7 @@ HallSensor::HallSensor(hardwareAbstraction::HalInterface *hal, uint8_t pin) {
 
   _hal->pinMode(_pin, INPUT);  // TODO: INPUT_PULLUP for KH910 right sensor
 
-  _detectedPosition = 255;
+  _detectedPosition = 0;
   _detectedCarriage = CarriageType::NoCarriage;
   _detectedBeltPhase = false;
 
@@ -34,7 +34,7 @@ bool HallSensor::isActive() {
 
 uint8_t HallSensor::getSensorPosition() { return _config->position; }
 
-uint8_t HallSensor::getDetectedPosition() { return _detectedPosition; }
+int16_t HallSensor::getDetectedPosition() { return _detectedPosition; }
 
 CarriageType HallSensor::getDetectedCarriage() { return _detectedCarriage; }
 
@@ -42,7 +42,7 @@ bool HallSensor::getDetectedBeltPhase() { return _detectedBeltPhase; }
 
 bool HallSensor::isDetected(Encoder *encoder, bool beltPhase) {
   bool isDetected = false;
-  uint8_t encoder_position = encoder->getPosition();
+  int16_t encoder_position = encoder->getPosition();
 
   _readSensor();
 
@@ -147,10 +147,7 @@ bool HallSensor::_detectCarriage() {
   } else if (_minimum.isFirst) {
     // G Carriage (minimum/South followed by maximum/North poles)
     _detectedCarriage = CarriageType::Gartner;
-    _detectedPosition = (uint8_t)((((uint16_t)_minimum.position +
-                                    (uint16_t)_maximum.position) >>
-                                   1) &
-                                  0xff);
+    _detectedPosition = (_minimum.position + _maximum.position) / 2;
   } else {
     isDetected = false;
   }
