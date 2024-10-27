@@ -12,7 +12,7 @@
 #include "solenoids.h"
 
 #define BEEPER_INIT 3
-#define BEEPER_READY 2
+#define BEEPER_CARRIAGE 2
 #define BEEPER_NEXT_LINE 1
 
 #define LED_SLOW_ON 500

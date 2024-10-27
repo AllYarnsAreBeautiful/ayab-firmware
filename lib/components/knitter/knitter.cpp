@@ -80,7 +80,6 @@ void Knitter::schedule() {
     case KnitterState::Ready:
       if (isStateChange) {
         _led_a->blink(LED_FAST_ON, LED_FAST_OFF);
-        _beeper->beep(BEEPER_READY);
       }
       if (_config.valid) {
         _state = KnitterState::Operate;
@@ -198,7 +197,7 @@ void Knitter::_checkHallSensors() {
         _beltShift = _hall_left->getDetectedBeltPhase() ? BeltShift::Regular
                                                         : BeltShift::Shifted;
       }
-      _beeper->beep(BEEPER_READY);
+      _beeper->beep(BEEPER_CARRIAGE);
     }
   } else if (_hall_right->isDetected(_encoder, beltPhase)) {
     if (_carriage->isCrossing(_hall_right, Direction::Left)) {
@@ -212,7 +211,7 @@ void Knitter::_checkHallSensors() {
         _beltShift = _hall_right->getDetectedBeltPhase() ? BeltShift::Regular
                                                          : BeltShift::Shifted;
       }
-      _beeper->beep(BEEPER_READY);
+      _beeper->beep(BEEPER_CARRIAGE);
     }
   }
 }
