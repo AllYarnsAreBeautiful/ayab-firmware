@@ -12,7 +12,7 @@ class Line {
   void reset();
 
   // Indicate if line is worked on
-  void workedOn(bool isWorkedOn, Direction direction);
+  void workedOn(MachineSide side, Direction direction);
   // Set a new line pattern
   bool setPattern(uint8_t number, const uint8_t *pattern, bool isLast);
   // Get the needle value for the given position
@@ -29,7 +29,8 @@ class Line {
   uint8_t _number;
   uint8_t _pattern[25];
   bool _isLast;
-  Direction _enterDirection;
+  bool _isWorking;
+  MachineSide _enterSide;
   uint8_t _carriageOverflow;
 };
 

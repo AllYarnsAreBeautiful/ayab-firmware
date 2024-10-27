@@ -258,11 +258,15 @@ void Knitter::_runMachine() {
             (selectPosition <= _config.stopNeedle)) {
           _solenoids->set(solenoidToSet,
                           _currentLine.getNeedleValue(selectPosition));
-          _currentLine.workedOn(true, _direction);
+          _currentLine.workedOn(MachineSide::None, _direction);
         } else {
           _solenoids->reset(solenoidToSet);
           // Set _currentLine.finished once last needle selected
-          _currentLine.workedOn(false, _direction);
+          if (selectPosition < _config.startNeedle) {
+            _currentLine.workedOn(MachineSide::Left, _direction);    
+          } else { // can only be > _config.stopNeedle
+            _currentLine.workedOn(MachineSide::Right, _direction);       
+          }
         }
       } else {
         _solenoids->reset(solenoidToSet);
