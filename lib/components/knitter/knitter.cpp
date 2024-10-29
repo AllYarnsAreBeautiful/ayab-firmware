@@ -24,6 +24,8 @@ Knitter::Knitter(hardwareAbstraction::HalInterface *hal) : API(hal) {
   // Knitter objects
   _machine = new Machine();
   _carriage = new Carriage();
+  _beltShift = BeltShift::Unknown;
+  _direction = Direction::Unknown;
 
   // Ayab hardware
   _beeper = new Beeper(_hal, PIEZO_PIN);
