@@ -27,9 +27,14 @@ void Line::workedOn(MachineSide side, Direction direction) {
     if (_carriageOverflow == 0) {
       finished = true;
       _isWorking = false;
+      _enterSide = MachineSide::None;
     }
   } else {
-    if ((side == MachineSide::None) && (_enterSide != MachineSide::None)) {
+    if (side == MachineSide::None) {
+      // Handle case were active window is already entered when carriage is detected
+      if (_enterSide == MachineSide::None) {
+        _enterSide = (direction == Direction::Right) ? MachineSide::Left : MachineSide:: Right;
+      }
       _carriageOverflow = CARRIAGE_OVERFLOW;
       _isWorking = true;
     } else {
