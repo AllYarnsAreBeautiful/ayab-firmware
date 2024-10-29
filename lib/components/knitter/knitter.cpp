@@ -242,19 +242,14 @@ void Knitter::_runMachine() {
         ){
           _machine->solenoidShift(solenoidToSet);
         }
+        
         // Special handling for the L carriage
         if ((_carriage->getType() == CarriageType::Lace) &&
             (_direction == Direction::Left)) {
           _machine->solenoidShift(solenoidToSet);
         }
         _machine->solenoidMap(solenoidToSet);
-#ifdef DEBUG
-        uint8_t message[] = {(uint8_t)AYAB_API::debugBase,
-                             (uint8_t)_hal->digitalRead(ENC_PIN_C) != 0,
-                             (uint8_t) (selectPosition & 0xff), solenoidToSet,
-                             (uint8_t) _currentLine.getNeedleValue(selectPosition)};
-        _hal->packetSerial->send(message, sizeof(message));
-#endif
+
         // Set solenoid
         if ((selectPosition >= _config.startNeedle) &&
             (selectPosition <= _config.stopNeedle)) {
