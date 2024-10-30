@@ -144,10 +144,10 @@ void Encoders::encA_rising() {
     }
   }
 
-  // In front of Left Hall Sensor?
+  // In front of Left Hall Sensor and headed to the right?
   uint16_t hallValue = analogRead(EOL_PIN_L);
-  if ((hallValue < FILTER_L_MIN[static_cast<uint8_t>(m_machineType)]) ||
-      (hallValue > FILTER_L_MAX[static_cast<uint8_t>(m_machineType)])) {
+  if (Direction_t::Right == m_direction && ((hallValue < FILTER_L_MIN[static_cast<uint8_t>(m_machineType)]) ||
+      (hallValue > FILTER_L_MAX[static_cast<uint8_t>(m_machineType)]))) {
     m_hallActive = Direction_t::Left;
 
     // Only set the belt shift the first time a magnet passes the turn mark.
