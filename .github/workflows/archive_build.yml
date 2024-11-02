@@ -4,17 +4,10 @@ jobs:
   archive:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repo and submodules
-        uses: actions/checkout@v3
-        with:
-          submodules: recursive
-          fetch-depth: 0
-      - name: Build Firmware
-        uses: ./.github/actions/build
-        with:
-          BUILD_WRAPPER_OUT_DIR: build_wrapper_out_dir
+      - name: Fetch binary
+        run: wget https://github.com/jpcornil-git/ayabAsync-firmware/releases/download/v1.1.0/firmware_uno_1_1_0.hex
       - name: Archive build
         uses: actions/upload-artifact@v3
         with:
           name: ${{format('{0}-{1}',github.sha,github.run_number)}}
-          path: build/*.hex
+          path: ./*.hex
