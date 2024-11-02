@@ -230,19 +230,17 @@ void Knitter::_runMachine() {
 
       _checkHallSensors();
 
-      // Get needle to set given current carriage position/type/direction
-      int16_t selectPosition = _carriage->getSelectPosition(_direction);
-      // Map needle to set to solenoid
-      uint8_t solenoidToSet = _machine->solenoidToSet(selectPosition);
-      // Set solenoid according to current machine state
-      if (_carriage->isDefined() && (!_currentLine.finished)) {
+      if (_carriage->isDefined()) {
+        // Get needle to set given current carriage position/type/direction
+        int16_t selectPosition = _carriage->getSelectPosition(_direction);
+        // Map needle to set to solenoid
+        uint8_t solenoidToSet = _machine->solenoidToSet(selectPosition);
         // Belt shift handling
         if ((_beltShift == BeltShift::Shifted) ||
           ((_machine->getType() == MachineType::Kh270) && (_direction == Direction::Left))
         ){
           _machine->solenoidShift(solenoidToSet);
-        }
-        
+        }      
         // Special handling for the L carriage
         if ((_carriage->getType() == CarriageType::Lace) &&
             (_direction == Direction::Left)) {
@@ -250,25 +248,27 @@ void Knitter::_runMachine() {
         }
         _machine->solenoidMap(solenoidToSet);
 
-        // Set solenoid
-        if ((selectPosition >= _config.startNeedle) &&
-            (selectPosition <= _config.stopNeedle)) {
-          _solenoids->set(solenoidToSet,
-                          _currentLine.getNeedleValue(selectPosition));
-          _currentLine.workedOn(MachineSide::None, _direction);
+        // Set solenoid according to current machine state
+        if (!_currentLine.finished) {
+          // Set solenoid
+          if ((selectPosition >= _config.startNeedle) &&
+              (selectPosition <= _config.stopNeedle)) {
+            _solenoids->set(solenoidToSet,
+                            _currentLine.getNeedleValue(selectPosition));
+            _currentLine.workedOn(MachineSide::None, _direction);
+          } else {
+            _solenoids->reset(solenoidToSet);
+            // Delay _currentLine.finished until safe 
+            if (selectPosition < _config.startNeedle) {
+              _currentLine.workedOn(MachineSide::Left, _direction);    
+            } else { // equivalent to > _config.stopNeedle
+              _currentLine.workedOn(MachineSide::Right, _direction);       
+            }
+          }
         } else {
           _solenoids->reset(solenoidToSet);
-          // Set _currentLine.finished once last needle selected
-          if (selectPosition < _config.startNeedle) {
-            _currentLine.workedOn(MachineSide::Left, _direction);    
-          } else { // can only be > _config.stopNeedle
-            _currentLine.workedOn(MachineSide::Right, _direction);       
-          }
         }
-      } else {
-        _solenoids->reset(solenoidToSet);
       }
-
       // Update host SW
       if (_config.continuousReporting) {
         _apiRxIndicateState();
