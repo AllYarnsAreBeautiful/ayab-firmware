@@ -96,6 +96,7 @@ class Knitter : protected API {
   KnitterState _state, _lastState;
   Config _config;
   Line _currentLine;
+  bool _resetFromOperate;
 };
 
 #endif

@@ -33,6 +33,7 @@ Knitter::Knitter(hardwareAbstraction::HalInterface *hal) : API(hal) {
   _led_a = new Led(_hal, LED_A_PIN, HIGH, LOW);
   _led_b = new Led(_hal, LED_B_PIN, HIGH, LOW);
 
+  _resetFromOperate = false;
   reset();
 }
 
@@ -52,7 +53,12 @@ void Knitter::schedule() {
   _lastState = _state;
   switch (_state) {
     case KnitterState::Reset:
-      _machine->reset();
+      // Skip machine reset when initiated from reqInit
+      if (_resetFromOperate) {
+        _resetFromOperate = false;
+      } else {
+        _machine->reset();
+      }
       _carriage->reset();
       _carriage->setPosition(_encoder->getPosition());
 
@@ -120,10 +126,18 @@ void Knitter::_apiTxTrafficIndication() { _led_b->flash(LED_FLASH_DURATION); }
 void Knitter::_apiRequestReset() { reset(); }
 
 ErrorCode Knitter::_apiRequestInit(MachineType machine) {
-  if (_state == KnitterState::Init) {
+  if (_state == KnitterState::Init || _state == KnitterState::Operate) {
     _machine->setType(machine);
     _hall_left->config(_machine->getSensorConfig(MachineSide::Left));
     _hall_right->config(_machine->getSensorConfig(MachineSide::Right));
+    // Reset machine upon reception of a new reqInit while in Operate state
+    // because there is no reqReset API call from ayab-desktop as of today
+    // and there is no hardware reset when the serial is open on all platforms
+    // e.g. UNO R4
+    if (_state == KnitterState::Operate) {
+      _resetFromOperate = true;
+      reset();
+    }
     return ErrorCode::Success;
   }
   return ErrorCode::MachineInvalidState;
