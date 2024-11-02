@@ -11,12 +11,10 @@ Solenoids::Solenoids(hardwareAbstraction::HalInterface *hal,
 
 void Solenoids::reset() {
   set(SOLENOID_RESET_STATE);
-  _updateDevices();
 }
 
 void Solenoids::reset(uint8_t solenoid) {
   set(solenoid, (bool)SOLENOID_RESET_STATE);
-  _updateDevices();
 }
 
 void Solenoids::set(uint16_t states) {
