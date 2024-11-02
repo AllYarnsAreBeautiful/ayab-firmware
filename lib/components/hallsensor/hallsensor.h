@@ -41,9 +41,11 @@ class HallSensor {
   bool getDetectedBeltPhase();
 
   // Run internal detection state machine and return its status
-  bool isDetected(Encoder *encoder, bool beltPhase);
+  bool isDetected(Encoder *encoder, Direction direction, bool beltPhase);
 
  private:
+  enum class State { ST_IDLE, ST_HUNT, ST_ESCAPE };
+
   class Extremum {
    public:
     uint16_t value;
@@ -72,8 +74,9 @@ class HallSensor {
   int16_t _detectedPosition;
   CarriageType _detectedCarriage;
   bool _detectedBeltPhase;
+  Direction _detectedDirection;
 
-  uint8_t _state;
+  State _state;
   Extremum _minimum;
   Extremum _maximum;
   uint8_t _needlesToGo;
