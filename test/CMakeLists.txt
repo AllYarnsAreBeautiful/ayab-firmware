@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.18.0)
 project(ayab_test)
 
-set(CMAKE_CXX_STANDARD 11 CACHE STRING "Set the C++ standard to be used for compiling")
+set(CMAKE_CXX_STANDARD 20 CACHE STRING "Set the C++ standard to be used for compiling")
 
 if(false)
     set(CMAKE_CXX_CLANG_TIDY
