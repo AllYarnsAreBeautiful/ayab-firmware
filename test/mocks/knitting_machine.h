@@ -143,6 +143,13 @@ public:
   void setNeedleCount(int count);
 
   /**
+   * Initialize the solenoids with the given solenoid count
+   *
+   * \param count Count of solenoids
+   */
+  void setSolenoidCount(int count);
+
+  /**
    * Needle positions
    *
    * Position "C" is not indicated on the machine nor referenced
@@ -160,6 +167,14 @@ public:
   void setNeedlePosition(int needle, NeedlePosition position);
 
   /**
+   * Set consecutive needle positions
+   *
+   * \param startNeedle the start needle index (e.g. 0 to 199 on a KH-9xx)
+   * \param positions the needle positions as a string, e.g. "AABBB"
+   */
+  void setNeedlePositions(int startNeedle, std::string positions);
+
+  /**
    * Get a needle's position
    *
    * \param needle the needle index (e.g. 0 to 199 on a KH-9xx)
@@ -168,11 +183,22 @@ public:
   NeedlePosition getNeedlePosition(int needle);
 
   /**
+   * Get consecutive needle positions
+   *
+   * \param startNeedle the first needle index (e.g. 0 to 199 on a KH-9xx)
+   *    Omit to start at 0
+   * \param needleCount the count of needles (ex. 5)
+   *    Omit to include all needles to the right of the first
+   * \returns a string representing the needle positions (e.g. "AADAA")
+   */
+  std::string getNeedlePositions(int startNeedle = 0, int needleCount = -1);
+
+  /**
    * Set a solenoid's state
    *
-   * \param state the solenoid's power state (true = powered)
+   * \param isEnergized the solenoid's power state
    */
-  void setSolenoid(int solenoid, bool state);
+  void setSolenoid(int solenoid, bool isEnergized);
 
 private:
   static constexpr int STEPS_PER_NEEDLE = 4;
@@ -216,6 +242,36 @@ private:
     }
     static qneedle_t fromNeedle(float needle) {
       return {(int)std::round(needle * STEPS_PER_NEEDLE)};
+    }
+  };
+
+  struct modular_t {
+    int value;
+    const int period;
+
+    modular_t(int v, int p) : period(p) {
+      value = v % p;
+      if (value < 0) {
+        value += p;
+      }
+    }
+
+    modular_t operator+(const int &n) const {
+      return modular_t(value + n, period);
+    }
+
+    operator int() const {
+      return value;
+    }
+
+    modular_t &operator++() {
+      value = value < (period - 1) ? value + 1 : 0;
+      return *this;
+    }
+
+    modular_t &operator--() {
+      value = value > 0 ? value - 1 : period - 1;
+      return *this;
     }
   };
 
@@ -276,34 +332,140 @@ private:
    * A belt position of 0 represents a belt position where an
    * elongated hole is in front of the left position sensor.
    */
-  std::uint8_t m_beltPosition = 0;
+  modular_t m_beltPosition = modular_t(0, beltPeriod());
 
   /**
-   * The carriage position in 1/4 needles.
-   *
-   * Position 0 is when the carriage center is over needle 0.
+   * Represents the active carriage
    */
-  qneedle_t m_carriagePosition = qneedle_t::fromNeedle(-32);
+  struct Carriage {
+    // Prevent copies
+    Carriage(const Carriage &) = delete;
+
+    /**
+     * The carriage position in 1/4 needles.
+     *
+     * Position 0 is when the carriage center is over needle 0.
+     */
+    qneedle_t m_position;
+
+    /**
+     * A list of carriage magnets, defined by their offset from the carriage
+     * center and their polarity. \see addCarriageMagnet()
+     */
+    std::vector<std::pair<float, bool>> m_magnets;
+
+    /**
+     * Selection cams configuration
+     *
+     * Simplified to a single value which is the distance from the carriage
+     * center where a needle is either held down by the selector plate so
+     * that it will end up in position D, or allowed to spring back up to
+     * hit a cam that will push it to B.
+     */
+    int m_needleTestDistance;
+
+    /**
+     * Internal movement methods
+     */
+    void moveLeft();
+    void moveRight();
+  };
+
+  Carriage m_carriage{.m_position = qneedle_t::fromNeedle(-32),
+                      // TODO move this to actual distance (~24) once proper
+                      // solenoid grabbing is implemented
+                      .m_needleTestDistance = 12};
 
   /**
-   * A list of carriage magnets, defined by their offset from the carriage
-   * center and their polarity. \see addCarriageMagnet()
+   * A single solenoid assembly
+   * Handles armature, rotary cam and plate-pushing rod
    */
-  std::vector<std::pair<float, bool>> m_carriageMagnets;
+  struct Solenoid {
+    // Prevent copies, allow moves
+    Solenoid(const Solenoid &) = delete;
+    Solenoid(Solenoid &&) = default;
+
+    /**
+     * Solenoid index (0 to solenoid count - 1)
+     */
+    int m_index;
+
+    /**
+     * Current power status (true = energized)
+     */
+    bool m_isEnergized;
+
+    /**
+     * Current phase of the rotary cam, changes as the
+     * belt moves.
+     */
+    modular_t m_phase;
+
+    /**
+     * Is the attached rotary cam pushing its selector plate?
+     */
+    bool isPushingPlate() const;
+  };
+
+  /**
+   * A needle selector plate
+   * These are the 8 (6) plates running the length of the bed.
+   * Each has hooks for 1 needle out of 8 (6), and can be pushed
+   * laterally by one of two rotary cams attached to solenoids.
+   */
+  struct SelectorPlate {
+    // Prevent copies, allow moves
+    SelectorPlate(const SelectorPlate &) = delete;
+    SelectorPlate(SelectorPlate &&) = default;
+
+    /**
+     * Selector plate index (0 to solenoid count / 2 - 1)
+     */
+    const int m_index;
+
+    /**
+     * Solenoids connected to the plate
+     */
+    const Solenoid &m_solenoid1;
+    const Solenoid &m_solenoid2;
+
+    /**
+     * Is this plate currently shifted so that it grabs needles?
+     */
+    bool isHookingNeedles() const;
+  };
 
   /**
    * A single needle
    */
   struct Needle {
+    // Prevent copies, allow moves
+    Needle(const Needle &) = delete;
+    Needle(Needle &&) = default;
+
     /**
      * Needle index (0 to needle count - 1)
      */
-    int index;
+    const int m_index;
+
     /**
      * Current needle position (A, B…)
      */
-    NeedlePosition position;
+    NeedlePosition m_position;
 
+    /**
+     * Associated selector plate
+     */
+    const SelectorPlate &m_selectorPlate;
+
+    /**
+     * Carriage
+     */
+    const Carriage &m_carriage;
+
+    /**
+     * Update function, called after every move
+     */
     void update();
   };
 
@@ -311,6 +473,16 @@ private:
    * Needles on the bed
    */
   std::vector<Needle> m_needles;
+
+  /**
+   * Needle Selector Plates
+   */
+  std::vector<SelectorPlate> m_selectorPlates;
+
+  /**
+   * Solenoids
+   */
+  std::vector<Solenoid> m_solenoids;
 
   /**
    * Update the state of all the needles.

@@ -264,27 +264,89 @@ TEST(KnittingMachine, KCarriageScanBed) {
   doBedScan(km);
 }
 
-TEST(KnittingMachine, NeedleSelection) {
+TEST(KnittingMachine, NeedleSelectionTurningSolenoidsOn) {
   KnittingMachine km;
 
-  const int testNeedle = 47;
-  const int testSolenoid = 0;
-
+  km.setSolenoidCount(16);
   km.setNeedleCount(200);
-  EXPECT_EQ(km.getNeedlePosition(testNeedle), KnittingMachine::A);
 
-  km.setNeedlePosition(testNeedle, KnittingMachine::B);
-  EXPECT_EQ(km.getNeedlePosition(testNeedle), KnittingMachine::B);
-  km.setSolenoid(testSolenoid, true);
-  km.putCarriageCenterInFrontOfNeedle(0);
-  while (km.moveCarriageCenterTowardsNeedle(100)) {
-  }
+  km.setNeedlePositions(0, "BBBBBBBBBBBBBBBB"
+                           "BBBBBBBBBBBBBBBB");
 
-  for (int n = 0; n < 100; n++) {
-    if (n == testNeedle) {
-      EXPECT_EQ(km.getNeedlePosition(n), KnittingMachine::D);
-    } else {
-      EXPECT_EQ(km.getNeedlePosition(n), KnittingMachine::A);
-    }
-  }
+  // insert carriage at left of left turn mark
+  km.putCarriageCenterInFrontOfNeedle(-32);
+
+  // slide carriage until its left edge is on the left turn mark
+  while (km.moveCarriageCenterTowardsNeedle(32))
+    ;
+
+  // now turn some solenoids on
+  for (int i = 0; i < 16; i += 2)
+    km.setSolenoid(i, true);
+
+  // slide carriage some more
+  while (km.moveCarriageCenterTowardsNeedle(100))
+    ;
+
+  // needles that the selector passed before solenoid activation
+  // remain unselected
+  // TODO: check exact behavior on machine
+  EXPECT_THAT(km.getNeedlePositions(), StartsWith("DDDDDDDDDDDDDDDD"
+                                                  "DDDDBDBDBDBDBDBD"));
+
+  // move carriage back to outside at left
+  while (km.moveCarriageCenterTowardsNeedle(-32))
+    ;
+
+  // everything now selected
+  EXPECT_THAT(km.getNeedlePositions(), StartsWith("BDBDBDBDBDBDBDBD"
+                                                  "BDBDBDBDBDBDBDBD"));
+}
+
+TEST(KnittingMachine, NeedleSelectionBeltPhaseNormal) {
+  KnittingMachine km;
+
+  km.setSolenoidCount(16);
+  km.setNeedleCount(200);
+
+  km.setNeedlePositions(0, "BBBBBBBBBBBBBBBB"
+                           "BBBBBBBBBBBBBBBB");
+
+  // insert carriage at left of left turn mark, with normal belt engagement
+  km.putCarriageCenterInFrontOfNeedle(-32);
+
+  // turn solenoid 0 on
+  km.setSolenoid(0, true);
+
+  // slide carriage over
+  while (km.moveCarriageCenterTowardsNeedle(64))
+    ;
+
+  // only needles 0+16*n are affected
+  EXPECT_THAT(km.getNeedlePositions(), StartsWith("BDDDDDDDDDDDDDDD"
+                                                  "BDDDDDDDDDDDDDDD"));
+}
+
+TEST(KnittingMachine, NeedleSelectionBeltPhaseShifted) {
+  KnittingMachine km;
+
+  km.setSolenoidCount(16);
+  km.setNeedleCount(200);
+
+  km.setNeedlePositions(0, "BBBBBBBBBBBBBBBB"
+                           "BBBBBBBBBBBBBBBB");
+
+  // insert carriage at left of left turn mark, with shifted belt engagement
+  km.putCarriageCenterInFrontOfNeedle(-32 + 8);
+
+  // turn solenoid 0 on
+  km.setSolenoid(0, true);
+
+  // slide carriage over
+  while (km.moveCarriageCenterTowardsNeedle(64))
+    ;
+
+  // only needles 8+16*n are affected
+  EXPECT_THAT(km.getNeedlePositions(), StartsWith("DDDDDDDDBDDDDDDD"
+                                                  "DDDDDDDDBDDDDDDD"));
 }
