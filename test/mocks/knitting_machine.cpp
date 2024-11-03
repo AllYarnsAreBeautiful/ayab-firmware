@@ -23,6 +23,7 @@
 #include <string>
 #include <tuple>
 #include <vector>
+#include <algorithm>
 
 #include "knitting_machine.h"
 

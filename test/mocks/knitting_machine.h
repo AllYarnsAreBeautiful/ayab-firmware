@@ -338,8 +338,12 @@ private:
    * Represents the active carriage
    */
   struct Carriage {
-    // Prevent copies
-    Carriage(const Carriage &) = delete;
+    Carriage()
+        : m_position(qneedle_t::fromNeedle(-32)),
+          // TODO move this to actual distance (~24) once proper
+          // solenoid grabbing is implemented
+          m_needleTestDistance(12) {
+    }
 
     /**
      * The carriage position in 1/4 needles.
@@ -371,20 +375,11 @@ private:
     void moveRight();
   };
 
-  Carriage m_carriage{.m_position = qneedle_t::fromNeedle(-32),
-                      // TODO move this to actual distance (~24) once proper
-                      // solenoid grabbing is implemented
-                      .m_needleTestDistance = 12};
-
   /**
    * A single solenoid assembly
    * Handles armature, rotary cam and plate-pushing rod
    */
   struct Solenoid {
-    // Prevent copies, allow moves
-    Solenoid(const Solenoid &) = delete;
-    Solenoid(Solenoid &&) = default;
-
     /**
      * Solenoid index (0 to solenoid count - 1)
      */
@@ -414,10 +409,6 @@ private:
    * laterally by one of two rotary cams attached to solenoids.
    */
   struct SelectorPlate {
-    // Prevent copies, allow moves
-    SelectorPlate(const SelectorPlate &) = delete;
-    SelectorPlate(SelectorPlate &&) = default;
-
     /**
      * Selector plate index (0 to solenoid count / 2 - 1)
      */
@@ -439,10 +430,6 @@ private:
    * A single needle
    */
   struct Needle {
-    // Prevent copies, allow moves
-    Needle(const Needle &) = delete;
-    Needle(Needle &&) = default;
-
     /**
      * Needle index (0 to needle count - 1)
      */
@@ -468,6 +455,11 @@ private:
      */
     void update();
   };
+
+  /**
+   * The carriage in use
+   */
+  Carriage m_carriage;
 
   /**
    * Needles on the bed
