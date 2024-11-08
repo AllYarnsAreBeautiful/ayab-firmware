@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo and submodules
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           submodules: recursive
           fetch-depth: 0
@@ -24,15 +24,15 @@ jobs:
           tag: ${{ github.ref_name }}
           name: Release ${{ github.ref_name }}
           commit: ${{ github.sha }}
-          body: "" # release message, alternative to body_path
-          # body_path: release_text.md  # uncomment if not used
+          # Avoid overwriting body that may have been manually edited
+          omitBodyDuringUpdate: true
           draft: ${{ startsWith(github.ref_name,'test')}}
           prerelease: false
           allowUpdates: true
           artifacts: build/*.hex
           replacesArtifacts: true
       - name: Deploy source code documentation to pages
-        uses: DenverCoder1/doxygen-github-pages-action@v1.3.0
+        uses: DenverCoder1/doxygen-github-pages-action@v1.3.1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: gh-pages

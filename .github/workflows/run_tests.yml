@@ -11,7 +11,7 @@ jobs:
     if: ${{!github.event.pull_request.draft}}
     steps:
       - name: Checkout repo and submodules
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           submodules: recursive
           fetch-depth: 0
@@ -20,7 +20,7 @@ jobs:
         with:
           BUILD_WRAPPER_OUT_DIR: build_wrapper_out_dir
       - name: Cache test setup
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             ./test/build
