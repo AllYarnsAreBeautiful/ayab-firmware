@@ -5,7 +5,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo and submodules
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           submodules: recursive
           fetch-depth: 0
@@ -14,7 +14,7 @@ jobs:
         with:
           BUILD_WRAPPER_OUT_DIR: build_wrapper_out_dir
       - name: Archive build
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{format('{0}-{1}',github.sha,github.run_number)}}
           path: build/*.hex
