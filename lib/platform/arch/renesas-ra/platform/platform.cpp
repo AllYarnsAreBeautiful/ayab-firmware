@@ -1,5 +1,5 @@
 #include "platform.h"
-#include "packetSerial.h"
+#include "hal_packetserial.h"
 #include "i2c.h"
 
 namespace hardwareAbstraction {

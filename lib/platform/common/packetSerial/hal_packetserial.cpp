@@ -1,4 +1,4 @@
-#include "packetSerial.h"
+#include "hal_packetserial.h"
 
 namespace hardwareAbstraction {
 
