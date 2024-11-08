@@ -209,7 +209,7 @@ void Knitter::_checkHallSensors() {
                                                         : BeltShift::Regular;
       } else if (_carriage->getType() == CarriageType::Knit270) {
         _beltShift = BeltShift::Regular;
-      } else {  // CarriageType::Lace and CarriageType::Gartner
+      } else {  // CarriageType::Lace and CarriageType::Garter
         _beltShift = _hall_left->getDetectedBeltPhase() ? BeltShift::Regular
                                                         : BeltShift::Shifted;
       }
@@ -223,7 +223,7 @@ void Knitter::_checkHallSensors() {
                                                          : BeltShift::Regular;
       } else if (_carriage->getType() == CarriageType::Knit270) {
         _beltShift = BeltShift::Regular;
-      } else {  // CarriageType::Knit and CarriageType::Gartner
+      } else {  // CarriageType::Knit and CarriageType::Garter
         _beltShift = _hall_right->getDetectedBeltPhase() ? BeltShift::Regular
                                                          : BeltShift::Shifted;
       }

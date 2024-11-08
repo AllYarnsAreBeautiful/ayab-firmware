@@ -18,7 +18,7 @@ bool Carriage::isCrossing(HallSensor *sensor, Direction requestedDirection) {
   if ((direction == requestedDirection) && (_type != CarriageType::Knit270)) {
     _type = sensor->getDetectedCarriage();
     _position = (int16_t) sensor->getSensorPosition() + offset;
-    if (_type == CarriageType::Gartner) {
+    if (_type == CarriageType::Garter) {
       // Inner magnets are +/-12 needles from the center
       _position = direction == Direction::Left ? _position  + 12 : _position - 12;
      } else if (_type == CarriageType::Knit270) {
@@ -42,7 +42,7 @@ int16_t Carriage::getSelectPosition(Direction direction) {
   // Selection you take place 12 before, 4 after the needle checker (NC)
   // position
   switch (_type) {
-    case CarriageType::Gartner:
+    case CarriageType::Garter:
       // G: NC @ +0/Left, -0/Right and magnets @-12 and +12
       // selection @ -12/Left, +12/Right NOK as it may overlap with
       // carriage detection for wide patterns using needles -100/-99/99/100

@@ -134,9 +134,6 @@ bool HallSensor::_detectCarriage() {
     if ((_config->flags & HALLSENSOR_K270_K) != 0) {
     // 'K' carriage on KH270 (left/K magnet enabled)
       _detectedCarriage = CarriageType::Knit270;
-    } else if ((_config->flags & HALLSENSOR_K270_L) != 0) {
-    // 'K' carriage on KH270 (right/L magnet enabled)
-      isDetected = false;
     } else if ((_config->flags & HALLSENSOR_L_HIGH) != 0) {
       // Digital signal for L is active high (KH910 RHS)
       _detectedCarriage = CarriageType::Lace;
@@ -145,20 +142,14 @@ bool HallSensor::_detectCarriage() {
     // L Carriage (only a minimum/South pole)
     _detectedCarriage = CarriageType::Lace;
     _detectedPosition = _minimum.position;
-    if ((_config->flags & HALLSENSOR_K270_L) != 0) {
-    // 'K' carriage on KH270 (right/K magnet enabled)
-      _detectedCarriage = CarriageType::Knit270;
-    } else if ((_config->flags & HALLSENSOR_K270_K) != 0) {
-    // 'K' carriage on KH270 (left/L magnet enabled)
-      isDetected = false;
-    } else if ((_config->flags & HALLSENSOR_K_LOW) != 0) {
+    if ((_config->flags & HALLSENSOR_K_LOW) != 0) {
       // Digital signal for K is active Low (KH910 RHS)
       _detectedCarriage = CarriageType::Knit;
     }
   } else if (_minimum.isFirst) {
     // G Carriage (minimum/South followed by maximum/North poles)
-    _detectedCarriage = CarriageType::Gartner;
-    _detectedPosition = (_minimum.position + _maximum.position) / 2;
+    _detectedCarriage = CarriageType::Garter;
+    _detectedPosition = _minimum.position;
   } else {
     isDetected = false;
   }

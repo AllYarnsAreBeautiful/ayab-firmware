@@ -38,7 +38,7 @@ enum class CarriageType : uint8_t {
   NoCarriage = 0xff,
   Knit = 0,
   Lace = 1,
-  Gartner = 2,
+  Garter = 2,
   Knit270 = 3
 };
 
