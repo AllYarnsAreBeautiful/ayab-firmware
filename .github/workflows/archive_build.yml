@@ -1,4 +1,4 @@
-name: Archive Build
+name: Archive Build (update)
 on: [push, pull_request]
 env:
   AYAB_VERSION: v1.1.1
