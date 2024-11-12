@@ -80,7 +80,6 @@ void Knitter::schedule() {
       }
       if (_machine->isDefined() && _carriage->isDefined()) {
         _state = KnitterState::Ready;
-        _apiRxIndicateState();
         _config.valid = false;
       }
       break;
@@ -213,6 +212,7 @@ void Knitter::_checkHallSensors() {
         _beltShift = _hall_left->getDetectedBeltPhase() ? BeltShift::Regular
                                                         : BeltShift::Shifted;
       }
+      _apiRxIndicateState();
       _beeper->beep(BEEPER_CARRIAGE);
     }
   } else if (_hall_right->isDetected(_encoder, _direction, beltPhase)) {
@@ -227,6 +227,7 @@ void Knitter::_checkHallSensors() {
         _beltShift = _hall_right->getDetectedBeltPhase() ? BeltShift::Regular
                                                          : BeltShift::Shifted;
       }
+      _apiRxIndicateState();
       _beeper->beep(BEEPER_CARRIAGE);
     }
   }
