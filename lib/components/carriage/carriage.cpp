@@ -22,7 +22,7 @@ bool Carriage::isCrossing(HallSensor *sensor, Direction requestedDirection) {
       // Inner magnets are +/-12 needles from the center
       _position = direction == Direction::Left ? _position  + 12 : _position - 12;
      } else if (_type == CarriageType::Knit270) {
-      // Inner magnet is +/-3 needles from the center, sensors are at -3 and 114
+      // Inner magnets are +/-3 needles from the center, sensors are at -3 and 114
       _position = direction == Direction::Left ? _position  + 6 : _position - 6;
     }
     return true;
@@ -44,28 +44,23 @@ int16_t Carriage::getSelectPosition(Direction direction) {
   switch (_type) {
     case CarriageType::Garter:
       // G: NC @ +0/Left, -0/Right and magnets @-12 and +12
-      // selection @ -12/Left, +12/Right NOK as it may overlap with
-      // carriage detection for wide patterns using needles -100/-99/99/100
-      // 8 looks marginal => selection @ -6/Left, +6/Right (head/6 tail/10)
-      return (direction == Direction::Left) ? _position - 6 : _position + 6;
+      // solenoid selection @ -8/Left, +8/Right 
+      return (direction == Direction::Left) ? _position - 8 : _position + 8;
       break;
     case CarriageType::Lace:
       // L: NC @ +12/Left, -12/Right and magnet @ 0
-      // selection @ -0/Left, +0/Right NOK as it may overlap with
-      // carriage detection for wide patterns using needles -100/-99/99/100
-      // => selection @ +4/Left, -4/Right (head/8 tail/8)
+      // solenoid selection @ +4/Left, -4/Right       
       return (direction == Direction::Left) ? _position + 4 : _position - 4;
       break;
     case CarriageType::Knit270:
-      // K on KH270: NC @ +12/Left, -12/Right and magnets active @0
-      // selection @ -8/Left, +8/Right (or same as G ? ... TBC)
+      // K on KH270: NC @ +12/Left, -12/Right and magnets @-3 and +3
+      // solenoid selection @ +6/Left, -6/Right       
       return (direction == Direction::Left) ? _position + 6 : _position - 6;
       break;
     default:  // CarriageType::Knit
       // K: NC @ +24/Left, -24/Right and magnet @ 0
-      // carriage detection always far away from NC
-      // => selection @ +12/Left, -12/Right (head/12 tail/4)
-      return (direction == Direction::Left) ? _position + 12: _position - 12;
+      // solenoid selection @ +16/Left, -16/Right
+      return (direction == Direction::Left) ? _position + 16: _position - 16;
       break;
   }
 }

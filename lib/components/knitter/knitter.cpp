@@ -250,14 +250,13 @@ void Knitter::_runMachine() {
         // Map needle to set to solenoid
         uint8_t solenoidToSet = _machine->solenoidToSet(selectPosition);
         // Belt shift handling
-        if ((_beltShift == BeltShift::Shifted) ||
-          ((_machine->getType() == MachineType::Kh270) && (_direction == Direction::Left))
-        ){
+        if (_beltShift == BeltShift::Shifted) {
           _machine->solenoidShift(solenoidToSet);
         }      
-        // Special handling for the L carriage
-        if ((_carriage->getType() == CarriageType::Lace) &&
-            (_direction == Direction::Left)) {
+        // For the Lace and KH270, carriage's center is not aligned with belt's elongated holes.
+        if (((_carriage->getType() == CarriageType::Lace) ||
+              (_carriage->getType() == CarriageType::Knit270)) &&
+              (_direction == Direction::Left)) {
           _machine->solenoidShift(solenoidToSet);
         }
         _machine->solenoidMap(solenoidToSet);
