@@ -6,7 +6,7 @@ jobs:
   archive:
     runs-on: ubuntu-latest
     steps:
-      - name: Fetch binary
+      - name: Fetch binary from ayabAsync
         env:
           FIRMWARE_URL : "https://github.com/jpcornil-git/ayabAsync-firmware/releases/download/${{ env.AYAB_VERSION }}/firmware_uno_1_1_2.hex"
         run: |
