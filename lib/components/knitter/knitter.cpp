@@ -264,21 +264,22 @@ void Knitter::_runMachine() {
 
         // Set solenoid according to current machine state
         if (!_currentLine.finished) {
+          MachineSide machineSide = MachineSide::None;
           // Set solenoid
           if ((selectPosition >= _config.startNeedle) &&
               (selectPosition <= _config.stopNeedle)) {
             _solenoids->set(solenoidToSet,
                             _currentLine.getNeedleValue(selectPosition));
-            _currentLine.workedOn(MachineSide::None, _direction);
           } else {
             _solenoids->reset(solenoidToSet);
             // Delay _currentLine.finished until safe 
             if (selectPosition < _config.startNeedle) {
-              _currentLine.workedOn(MachineSide::Left, _direction);    
+              machineSide = MachineSide::Left;    
             } else { // equivalent to > _config.stopNeedle
-              _currentLine.workedOn(MachineSide::Right, _direction);       
+              machineSide = MachineSide::Right;       
             }
           }
+          _currentLine.finished = _carriage->workFinished(machineSide, _direction);
         } else {
           _solenoids->reset(solenoidToSet);
         }

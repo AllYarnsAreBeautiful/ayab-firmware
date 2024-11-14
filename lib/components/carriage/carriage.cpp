@@ -5,6 +5,42 @@ Carriage::Carriage() { reset(); }
 void Carriage::reset() {
   _type = CarriageType::NoCarriage;
   _position = 0;  // doesn't matter a priori
+  _isWorking = false;
+  _enterSide = MachineSide::None;
+}
+
+bool Carriage::workFinished(MachineSide side, Direction direction) {
+
+  bool finished = false;
+
+  if (_isWorking) {
+    // Exit direction at the opposite end
+    if ((_enterSide == MachineSide::Left) && (side == MachineSide::Right)) {
+      _carriageOverflow = (direction == Direction::Right) ? _carriageOverflow-1 : _carriageOverflow+1;
+    } else if ((_enterSide == MachineSide::Right) && (side == MachineSide::Left)) {
+      _carriageOverflow = (direction == Direction::Left) ? _carriageOverflow-1 : _carriageOverflow+1;
+    }
+    // Extend carriage travel to make secure turnaround
+    if (_carriageOverflow == 0) {
+      finished = true;
+      _isWorking = false;
+      _enterSide = MachineSide::None;
+    }
+  } else {
+    if (side == MachineSide::None) {
+      // Handle case were active window is already entered when carriage is detected
+      if (_enterSide == MachineSide::None) {
+        _enterSide = (direction == Direction::Right) ? MachineSide::Left : MachineSide:: Right;
+      }
+      _carriageOverflow = getExtension();
+      _isWorking = true;
+    } else {
+      // Register direction before entering the active needle window
+      _enterSide = side;
+    }
+  }
+
+  return finished;
 }
 
 bool Carriage::isCrossing(HallSensor *sensor, Direction requestedDirection) {
@@ -16,6 +52,7 @@ bool Carriage::isCrossing(HallSensor *sensor, Direction requestedDirection) {
   // Update carriage type & position if sensor is passed in the requested direction
   // and type is not KH270 (only detected once - FIXME: remove this constraint)
   if ((direction == requestedDirection) && (_type != CarriageType::Knit270)) {
+    reset();
     _type = sensor->getDetectedCarriage();
     _position = (int16_t) sensor->getSensorPosition() + offset;
     if (_type == CarriageType::Garter) {
@@ -37,6 +74,26 @@ CarriageType Carriage::getType() { return _type; }
 void Carriage::setPosition(int16_t position) { _position = position; }
 
 int16_t Carriage::getPosition() { return _position; }
+
+uint8_t Carriage::getExtension() {
+  // Minimum extension is 8 needles (distance from last solenoid selection
+  // to corresponding needle selection), 16 for G (8 more needles have
+  // to pass to reselect the same one in the other direction) and 6 for K270
+  switch (_type) {
+    case CarriageType::Garter:
+      return 18; // 16 + 2 needles margin
+      break;
+    case CarriageType::Lace:
+      return 12; // 8 + 4 (18mm/72mm [4+12] after needle selection/carriage center)
+      break;
+    case CarriageType::Knit270:
+      return 8; // 6 + 2 (54mm/153mm [9+8] after needle selection/carriage center) FIXME: TBC
+      break;
+    default:  // CarriageType::Knit
+      return 12; // 8 + 4 (18mm/126mm [16+12] after needle selection/carriage center)
+      break;
+  }    
+}
 
 int16_t Carriage::getSelectPosition(Direction direction) {
   // Selection you take place 12 before, 4 after the needle checker (NC)

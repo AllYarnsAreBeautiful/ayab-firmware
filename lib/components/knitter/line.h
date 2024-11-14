@@ -29,9 +29,6 @@ class Line {
   uint8_t _number;
   uint8_t _pattern[25];
   bool _isLast;
-  bool _isWorking;
-  MachineSide _enterSide;
-  uint8_t _carriageOverflow;
 };
 
 #endif
