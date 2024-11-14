@@ -13,7 +13,7 @@ class HallSensor {
  public:
   class Config {
    public:
-    uint8_t position;
+    int16_t position;
     uint16_t thresholdLow;
     uint16_t thresholdHigh;
     uint8_t flags;
@@ -30,7 +30,7 @@ class HallSensor {
   // Return true when a threshold has been crossed
   bool isActive();
   // Return sensor (needle) position
-  uint8_t getSensorPosition();
+  int16_t getSensorPosition();
 
   // Return encoder position when carriage was detected
   int16_t getDetectedPosition();

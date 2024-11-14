@@ -29,7 +29,7 @@ bool HallSensor::isActive() {
   return (_minimum.value != NONE) || (_maximum.value != NONE);
 }
 
-uint8_t HallSensor::getSensorPosition() { return _config->position; }
+int16_t HallSensor::getSensorPosition() { return _config->position; }
 
 int16_t HallSensor::getDetectedPosition() { return _detectedPosition; }
 

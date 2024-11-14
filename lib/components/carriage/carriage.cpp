@@ -54,13 +54,13 @@ bool Carriage::isCrossing(HallSensor *sensor, Direction requestedDirection) {
   if ((direction == requestedDirection) && (_type != CarriageType::Knit270)) {
     reset();
     _type = sensor->getDetectedCarriage();
-    _position = (int16_t) sensor->getSensorPosition() + offset;
+    _position = sensor->getSensorPosition() + offset;
     if (_type == CarriageType::Garter) {
       // Inner magnets are +/-12 needles from the center
       _position = direction == Direction::Left ? _position  + 12 : _position - 12;
-     } else if (_type == CarriageType::Knit270) {
+    } else if (_type == CarriageType::Knit270) {
       // Inner magnets are +/-3 needles from the center, sensors are at -3 and 114
-      _position = direction == Direction::Left ? _position  + 6 : _position - 6;
+      _position = direction == Direction::Left ? _position  + 3 : _position - 3;
     }
     return true;
   }
@@ -110,9 +110,9 @@ int16_t Carriage::getSelectPosition(Direction direction) {
       return (direction == Direction::Left) ? _position + 4 : _position - 4;
       break;
     case CarriageType::Knit270:
-      // K on KH270: NC @ +12/Left, -12/Right and magnets @-3 and +3
-      // solenoid selection @ +6/Left, -6/Right       
-      return (direction == Direction::Left) ? _position + 6 : _position - 6;
+      // K on KH270: NC @ +15/Left, -15/Right and magnets @-3 and +3
+      // solenoid selection @ +9/Left, -9/Right       
+      return (direction == Direction::Left) ? _position + 9 : _position - 9;
       break;
     default:  // CarriageType::Knit
       // K: NC @ +24/Left, -24/Right and magnet @ 0

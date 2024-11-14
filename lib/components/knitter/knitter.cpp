@@ -260,7 +260,9 @@ void Knitter::_runMachine() {
         if (_beltShift == BeltShift::Shifted) {
           _machine->solenoidShift(solenoidToSet);
         }      
-        // For the Lace and KH270, carriage's center is not aligned with belt's elongated holes.
+        // For the Lace and K270 carriages, the solenoid to set when moving
+        // to the left is offset by 8 and 6 needles (half the number of solenoids)
+        // compared to a movement to the right.
         if (((_carriage->getType() == CarriageType::Lace) ||
               (_carriage->getType() == CarriageType::Knit270)) &&
               (_direction == Direction::Left)) {
