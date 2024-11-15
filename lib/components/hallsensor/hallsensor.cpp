@@ -82,7 +82,7 @@ bool HallSensor::isDetected(Encoder *encoder, Direction direction, bool beltPhas
           if (abs(encoder_position - _detectedPosition) == MAX_DET_NEEDLES) {
             isDetected = _detectCarriage();
           } 
-          _resetDetector();
+          _state = State::ST_ESCAPE;
         }
       } else {
         // Detection not reliable, move out
@@ -91,7 +91,7 @@ bool HallSensor::isDetected(Encoder *encoder, Direction direction, bool beltPhas
       }
     case State::ST_ESCAPE:
       // Hide until clearly out of the magnet window (at least 4 needles for G)
-      if (abs(encoder_position - _detectedPosition) > 4) {
+      if (abs(encoder_position - _detectedPosition) > 8) {
         _resetDetector();
       }
       break;
