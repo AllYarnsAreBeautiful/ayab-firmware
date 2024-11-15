@@ -200,6 +200,8 @@ void Knitter::_checkHallSensors() {
   // When crossing left/right sensors towards the center, update carriage
   // (via isCrossing), encoder and beltshift states
   bool beltPhase = _hal->digitalRead(ENC_PIN_C) != 0;
+  CarriageType lastCarriageType = _carriage->getType();
+
   if (_hall_left->isDetected(_encoder, _direction, beltPhase)) {
     if (_carriage->isCrossing(_hall_left, Direction::Right)) {
       _encoder->setPosition(_carriage->getPosition());
@@ -213,7 +215,9 @@ void Knitter::_checkHallSensors() {
                                                         : BeltShift::Shifted;
       }
       _apiRxIndicateState();
-      _beeper->beep(BEEPER_CARRIAGE);
+      if (_carriage->getType() != lastCarriageType ) {
+        _beeper->beep(BEEPER_CARRIAGE);
+      }
     }
   } else if (_hall_right->isDetected(_encoder, _direction, beltPhase)) {
     if (_carriage->isCrossing(_hall_right, Direction::Left)) {
@@ -228,7 +232,9 @@ void Knitter::_checkHallSensors() {
                                                          : BeltShift::Shifted;
       }
       _apiRxIndicateState();
-      _beeper->beep(BEEPER_CARRIAGE);
+      if (_carriage->getType() != lastCarriageType ) {
+        _beeper->beep(BEEPER_CARRIAGE);
+      }
     }
   }
 }
