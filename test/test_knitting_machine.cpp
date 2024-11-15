@@ -288,11 +288,12 @@ TEST(KnittingMachine, NeedleSelectionTurningSolenoidsOn) {
   while (km.moveCarriageCenterTowardsNeedle(100))
     ;
 
-  // needles that the selector passed before solenoid activation
-  // remain unselected
-  // TODO: check exact behavior on machine
-  EXPECT_THAT(km.getNeedlePositions(), StartsWith("DDDDDDDDDDDDDDDD"
-                                                  "DDDDBDBDBDBDBDBD"));
+  // Needles that the selector passed before solenoid activation
+  // move to D as if the solenoids were never powered.
+  // Machine test (KH910, K carriage) shows 14/15 first needles remain in D
+  // (same result on the right side).
+  EXPECT_THAT(km.getNeedlePositions(), StartsWith("DDDDDDDDDDDDDDBD"
+                                                  "BDBDBDBDBDBDBDBD"));
 
   // move carriage back to outside at left
   while (km.moveCarriageCenterTowardsNeedle(-32))

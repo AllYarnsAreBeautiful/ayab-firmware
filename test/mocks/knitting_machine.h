@@ -256,12 +256,16 @@ private:
       }
     }
 
+    operator int() const {
+      return value;
+    }
+
     modular_t operator+(const int &n) const {
       return modular_t(value + n, period);
     }
 
-    operator int() const {
-      return value;
+    modular_t operator-(const int &n) const {
+      return modular_t(value - n, period);
     }
 
     modular_t &operator++() {
@@ -271,6 +275,16 @@ private:
 
     modular_t &operator--() {
       value = value > 0 ? value - 1 : period - 1;
+      return *this;
+    }
+
+    modular_t &operator+=(int increment) {
+      value = (*this + increment).value;
+      return *this;
+    }
+
+    modular_t &operator-=(int increment) {
+      value = (*this - increment).value;
       return *this;
     }
   };
@@ -340,9 +354,8 @@ private:
   struct Carriage {
     Carriage()
         : m_position(qneedle_t::fromNeedle(-32)),
-          // TODO move this to actual distance (~24) once proper
-          // solenoid grabbing is implemented
-          m_needleTestDistance(12) {
+          // TODO vary distance depending on carriage type
+          m_needleTestDistance(24) {
     }
 
     /**
@@ -397,9 +410,24 @@ private:
     modular_t m_phase;
 
     /**
+     * Is the solenoid holding the selecting rod away from the cam?
+     */
+    bool m_isHoldingRodDown;
+
+    /**
      * Is the attached rotary cam pushing its selector plate?
      */
     bool isPushingPlate() const;
+
+    /**
+     * Is the attached rotary cam pushing its rod down?
+     */
+    bool isPushingRodDown() const;
+
+    /**
+     * Update function, called after every move
+     */
+    void update();
   };
 
   /**
@@ -475,6 +503,12 @@ private:
    * Solenoids
    */
   std::vector<Solenoid> m_solenoids;
+
+  /**
+   * Update the state of all the solenoids.
+   * Called after every carriage movement.
+   */
+  void updateSolenoids();
 
   /**
    * Update the state of all the needles.

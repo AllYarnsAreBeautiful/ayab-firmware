@@ -19,11 +19,11 @@
  *    Original Work Copyright 2013 Christian Obersteiner, Andreas Müller
  *    http://ayab-knitting.com
  */
+#include <algorithm>
 #include <cmath>
 #include <string>
 #include <tuple>
 #include <vector>
-#include <algorithm>
 
 #include "knitting_machine.h"
 
@@ -108,7 +108,7 @@ bool KnittingMachine::carriageEngagesBelt() const {
   // TODO simulate carriage belt hooks (currently simulates
   //      a single hook at carriage center)
   // TODO simulate belt slack
-  int period = STEPS_PER_NEEDLE * m_solenoidCount;
+  int period = m_beltPosition.period;
   if (m_hasBeltShift) {
     period /= 2;
   }
@@ -122,6 +122,7 @@ void KnittingMachine::moveCarriageRight() {
   }
   m_carriage.moveRight();
 
+  updateSolenoids();
   updateNeedles();
 }
 
@@ -131,6 +132,7 @@ void KnittingMachine::moveCarriageLeft() {
   }
   m_carriage.moveLeft();
 
+  updateSolenoids();
   updateNeedles();
 }
 
@@ -154,10 +156,21 @@ bool KnittingMachine::moveCarriageCenterTowardsNeedle(int position) {
 void KnittingMachine::setSolenoidCount(int count) {
   m_solenoids.clear();
   m_solenoidCount = count;
+  modular_t phase(0, count * STEPS_PER_NEEDLE);
   for (int n = 0; n < count; n++) {
-    auto phase = modular_t(n * STEPS_PER_NEEDLE, count * STEPS_PER_NEEDLE);
-    m_solenoids.push_back(
-        Solenoid{.m_index = n, .m_isEnergized = false, .m_phase = phase});
+    m_solenoids.push_back(Solenoid{.m_index = n,
+                                   .m_isEnergized = false,
+                                   .m_phase = phase,
+                                   .m_isHoldingRodDown = false});
+
+    // If solenoid 0 drives needle 0, solenoid 1 drives needle 1.
+    // Solenoid (cam) phases will be increased by STEPS_PER_NEEDLE as the
+    // carriage moves one needle to the right. When the carriage gets to needle
+    // 1, the cam phase for solenoid 1 should be equal to the cam phase for
+    // solenoid 0 back when the carriage was at needle 0.
+    // So the phase for solenoid 1 should always be STEPS_PER_NEEDLE "behind"
+    // the phase for solenoid 0.
+    phase -= STEPS_PER_NEEDLE;
   }
   // each plate is connected to two solenoids count/2 apart
   for (int n = 0; n < count / 2; n++) {
@@ -231,6 +244,12 @@ void KnittingMachine::setSolenoid(int solenoid, bool isEnergized) {
   m_solenoids[solenoid].m_isEnergized = isEnergized;
 }
 
+void KnittingMachine::updateSolenoids() {
+  for (auto &solenoid : m_solenoids) {
+    solenoid.update();
+  }
+}
+
 void KnittingMachine::updateNeedles() {
   for (auto &needle : m_needles) {
     needle.update();
@@ -245,9 +264,34 @@ void KnittingMachine::Carriage::moveLeft() {
   --m_position;
 }
 
+bool KnittingMachine::Solenoid::isPushingRodDown() const {
+  // The rotary cam is only pushing the rod down at the start and end of its
+  // cycle
+  return m_phase < (1 * m_phase.period / 6) ||
+         m_phase > (5 * m_phase.period / 6);
+}
+
+void KnittingMachine::Solenoid::update() {
+  // The rod can only start or stop following the cam while it is
+  // being pushed down by the cam — otherwise, the solenoid is not
+  // strong enough to pull it down if it is being powered on, and
+  // if it is being powered off, the rod will be released but won't
+  // start riding the side-pushing part of the cam until the next
+  // cycle.
+  if (isPushingRodDown()) {
+    m_isHoldingRodDown = m_isEnergized;
+  }
+}
+
 bool KnittingMachine::Solenoid::isPushingPlate() const {
-  // The rotary cam is only pusing the plate in the second half of its cycle
-  return !m_isEnergized && m_phase >= m_phase.period / 2;
+  // If the rod is being held away from the cam, the selecting plate
+  // won't be pushed.
+  if (m_isHoldingRodDown) {
+    return false;
+  }
+  // The rotary cam is only pushing the plate in the middle of its cycle
+  return m_phase > (2 * m_phase.period / 6) &&
+         m_phase < (4 * m_phase.period / 6);
 }
 
 bool KnittingMachine::SelectorPlate::isHookingNeedles() const {
@@ -259,18 +303,27 @@ void KnittingMachine::Needle::update() {
       std::abs(m_carriage.m_position.closestNeedle() - m_index);
 
   switch (m_position) {
-  case B: {
+  case B:
+  case D: {
     if (carriageOffset == 0) {
-      m_position = D;
+      // Simulate knitting cams by moving all needles to C
+      // at carriage center, before they encounter the selection cams.
+      // An actual carriage moves the needle through the knitting
+      // positions, but always leaves it (when in patterning mode)
+      // in the C position where the needle pressing cam lives.
+      m_position = C;
     }
     break;
   }
-  case D: {
+  case C: {
     // As the presser releases the needle…
     if (carriageOffset == m_carriage.m_needleTestDistance) {
-      // If the plate isn't hooking the needle…
-      if (!m_selectorPlate.isHookingNeedles()) {
-        // It goes back up into B
+      // If the plate is hooking the needle…
+      if (m_selectorPlate.isHookingNeedles()) {
+        // It ends up in D
+        m_position = D;
+      } else {
+        // Otherwise, it goes back up into B
         m_position = B;
       }
     }
