@@ -93,6 +93,31 @@ public:
   void addCarriageMagnet(float offsetFromCenter, bool polarity);
 
   /**
+   * Set the carriage's hook distance
+   *
+   * This is the distance, in needle widths, from the carriage center to the
+   * belt hooks on either side.
+   *
+   * Typical distances are, for a standard gauge machine:
+   *   - K and G carriage: 48 needle widths;
+   *   - L carriage: 40 needle widths;
+   */
+  void setCarriageHookDistance(int distance);
+
+  /**
+   * Set the carriage's "needle test distance"
+   *
+   * This is the distance, in needle widths, from the carriage center to the
+   * point where needles are tested, i.e. just at the exit of the presser cam.
+   *
+   * Typical distances are, for a standard gauge machine:
+   *   - K carriage: 24 needle widths;
+   *   - L carriage: 12 needle widths;
+   *   - G carriage: 0 needle widths (needles are tested at the center)
+   */
+  void setCarriageNeedleTestDistance(int distance);
+
+  /**
    * Helper to add all G-carriage magnets (as measured on a KG-89)
    */
   void addGCarriageMagnets();
@@ -353,9 +378,8 @@ private:
    */
   struct Carriage {
     Carriage()
-        : m_position(qneedle_t::fromNeedle(-32)),
-          // TODO vary distance depending on carriage type
-          m_needleTestDistance(24) {
+        : m_position(qneedle_t::fromNeedle(-32)), m_needleTestDistance(24),
+          m_hookDistance(24) {
     }
 
     /**
@@ -367,7 +391,7 @@ private:
 
     /**
      * A list of carriage magnets, defined by their offset from the carriage
-     * center and their polarity. \see addCarriageMagnet()
+     * center and their polarity. \see KnittingMachine::addCarriageMagnet()
      */
     std::vector<std::pair<float, bool>> m_magnets;
 
@@ -378,8 +402,15 @@ private:
      * center where a needle is either held down by the selector plate so
      * that it will end up in position D, or allowed to spring back up to
      * hit a cam that will push it to B.
+     * \see KnittingMachine::setCarriageNeedleTestDistance
      */
     int m_needleTestDistance;
+
+    /**
+     * Distance from carriage center to each belt hook
+     * \see KnittingMachine::setCarriageHookDistance
+     */
+    int m_hookDistance;
 
     /**
      * Internal movement methods

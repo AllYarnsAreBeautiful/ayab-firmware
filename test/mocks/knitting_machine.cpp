@@ -20,6 +20,7 @@
  *    http://ayab-knitting.com
  */
 #include <algorithm>
+#include <cassert>
 #include <cmath>
 #include <string>
 #include <tuple>
@@ -94,6 +95,16 @@ void KnittingMachine::addGCarriageMagnets() {
   addCarriageMagnet(-12.25, false);
 }
 
+void KnittingMachine::setCarriageHookDistance(int distance) {
+  assert(distance >= 0);
+  m_carriage.m_hookDistance = distance;
+}
+
+void KnittingMachine::setCarriageNeedleTestDistance(int distance) {
+  assert(distance >= 0);
+  m_carriage.m_needleTestDistance = distance;
+}
+
 void KnittingMachine::putCarriageCenterInFrontOfNeedle(int position) {
   m_carriage.m_position =
       qneedle_t::fromNeedle(position); // convert to 1/4 of needles
@@ -105,15 +116,15 @@ int KnittingMachine::getCarriageCenterNeedle() {
 
 bool KnittingMachine::carriageEngagesBelt() const {
   // TODO disengage carriage when it moves outside the bed
-  // TODO simulate carriage belt hooks (currently simulates
-  //      a single hook at carriage center)
   // TODO simulate belt slack
   int period = m_beltPosition.period;
   if (m_hasBeltShift) {
     period /= 2;
   }
   return modular_t(m_beltPosition, period) ==
-         modular_t(m_carriage.m_position.value, period);
+         modular_t(m_carriage.m_position.value +
+                       m_carriage.m_hookDistance * STEPS_PER_NEEDLE,
+                   period);
 }
 
 void KnittingMachine::moveCarriageRight() {
@@ -302,20 +313,20 @@ void KnittingMachine::Needle::update() {
   const int carriageOffset =
       std::abs(m_carriage.m_position.closestNeedle() - m_index);
 
-  switch (m_position) {
-  case B:
-  case D: {
-    if (carriageOffset == 0) {
-      // Simulate knitting cams by moving all needles to C
-      // at carriage center, before they encounter the selection cams.
-      // An actual carriage moves the needle through the knitting
-      // positions, but always leaves it (when in patterning mode)
-      // in the C position where the needle pressing cam lives.
-      m_position = C;
-    }
-    break;
+  if (carriageOffset == 0) {
+    // Simulate knitting cams by moving all needles to C
+    // at carriage center, before they encounter the selection cams.
+    // An actual carriage moves the needle through the knitting
+    // positions, but always leaves it (when in patterning mode)
+    // in the C position where the needle pressing cam lives.
+    m_position = C;
   }
-  case C: {
+
+  // Check if the needle is in the right position to be pressed by the
+  // presser cam (this serves to avoid needles going through
+  // the selector area "the wrong way", i.e. on the leading edge
+  // of carriage travel)
+  if (m_position == C) {
     // As the presser releases the needle…
     if (carriageOffset == m_carriage.m_needleTestDistance) {
       // If the plate is hooking the needle…
@@ -327,9 +338,5 @@ void KnittingMachine::Needle::update() {
         m_position = B;
       }
     }
-    break;
-  }
-  default:
-    break;
   }
 }

@@ -269,6 +269,7 @@ TEST(KnittingMachine, NeedleSelectionTurningSolenoidsOn) {
 
   km.setSolenoidCount(16);
   km.setNeedleCount(200);
+  km.setCarriageNeedleTestDistance(24);
 
   km.setNeedlePositions(0, "BBBBBBBBBBBBBBBB"
                            "BBBBBBBBBBBBBBBB");
@@ -293,6 +294,94 @@ TEST(KnittingMachine, NeedleSelectionTurningSolenoidsOn) {
   // Machine test (KH910, K carriage) shows 14/15 first needles remain in D
   // (same result on the right side).
   EXPECT_THAT(km.getNeedlePositions(), StartsWith("DDDDDDDDDDDDDDBD"
+                                                  "BDBDBDBDBDBDBDBD"));
+
+  // move carriage back to outside at left
+  while (km.moveCarriageCenterTowardsNeedle(-32))
+    ;
+
+  // everything now selected
+  EXPECT_THAT(km.getNeedlePositions(), StartsWith("BDBDBDBDBDBDBDBD"
+                                                  "BDBDBDBDBDBDBDBD"));
+}
+
+TEST(KnittingMachine, NeedleSelectionTurningSolenoidsOn_LCarriage) {
+  KnittingMachine km;
+
+  km.setSolenoidCount(16);
+  km.setNeedleCount(200);
+  km.setCarriageNeedleTestDistance(12);
+  km.setCarriageHookDistance(20);
+
+  km.setNeedlePositions(0, "BBBBBBBBBBBBBBBB"
+                           "BBBBBBBBBBBBBBBB");
+
+  // insert carriage at left of left turn mark
+  km.putCarriageCenterInFrontOfNeedle(-24);
+
+  // slide carriage until its left edge is on the left turn mark
+  while (km.moveCarriageCenterTowardsNeedle(24))
+    ;
+
+  // now turn some solenoids on
+  for (int i = 0; i < 16; i += 2)
+    km.setSolenoid(i, true);
+
+  // slide carriage some more
+  while (km.moveCarriageCenterTowardsNeedle(100))
+    ;
+
+  // Needles that the selector passed before solenoid activation
+  // move to D as if the solenoids were never powered.
+  // Machine test (KH910, L carriage) shows 18/19 first needles remain in D
+  // (same result on the right side).
+  EXPECT_THAT(km.getNeedlePositions(), StartsWith("DDDDDDDDDDDDDDDD"
+                                                  "DDBDBDBDBDBDBDBD"));
+
+  // move carriage back to outside at left
+  while (km.moveCarriageCenterTowardsNeedle(-32))
+    ;
+
+  // everything now selected
+  EXPECT_THAT(km.getNeedlePositions(), StartsWith("BDBDBDBDBDBDBDBD"
+                                                  "BDBDBDBDBDBDBDBD"));
+}
+
+TEST(KnittingMachine, NeedleSelectionTurningSolenoidsOn_GCarriage) {
+  KnittingMachine km;
+
+  km.setSolenoidCount(16);
+  km.setNeedleCount(200);
+  km.setCarriageNeedleTestDistance(0);
+  km.setCarriageHookDistance(24);
+
+  km.setNeedlePositions(0, "BBBBBBBBBBBBBBBB"
+                           "BBBBBBBBBBBBBBBB");
+
+  // insert carriage at left of left turn mark
+  km.putCarriageCenterInFrontOfNeedle(-28);
+
+  // slide carriage until its center is on the left turn mark
+  while (km.moveCarriageCenterTowardsNeedle(0))
+    ;
+
+  // now turn some solenoids on
+  for (int i = 0; i < 16; i += 2)
+    km.setSolenoid(i, true);
+
+  // slide carriage some more
+  while (km.moveCarriageCenterTowardsNeedle(32))
+    ;
+
+  // Needles that the selector passed before solenoid activation
+  // move to D as if the solenoids were never powered.
+  // Machine test (KH910, G carriage) shows 5/6 first needles
+  // are knit as if unselected.
+  // Note that for simplicity, we simulate the G carriage "selecting"
+  // needles to B or D when in reality it always leaves needles in B
+  // position and just does a different stitch based on what their
+  // selection would have been.
+  EXPECT_THAT(km.getNeedlePositions(), StartsWith("DDDDDDBDBDBDBDBD"
                                                   "BDBDBDBDBDBDBDBD"));
 
   // move carriage back to outside at left
