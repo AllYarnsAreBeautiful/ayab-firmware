@@ -76,6 +76,7 @@ void Knitter::init() {
   m_workedOnLine = false;
   m_lastHall = Direction_t::NoDirection;
   m_position = 0U;
+  m_carriage = Carriage_t::NoCarriage;
   m_hallActive = Direction_t::NoDirection;
   m_pixelToSet = 0;
 #ifdef DBG_NOMACHINE
@@ -216,10 +217,12 @@ bool Knitter::isReady() {
         (m_position > (END_LEFT_PLUS_OFFSET[static_cast<uint8_t>(m_machineType)] + GARTER_SLOP));
   bool passedRight = (Direction_t::Left == m_direction) && (Direction_t::Right == m_lastHall) &&
         (m_position < (END_RIGHT_MINUS_OFFSET[static_cast<uint8_t>(m_machineType)] - GARTER_SLOP));
-  // Machine is initialized when left Hall sensor is passed in Right direction
-  // New feature (August 2020): the machine is also initialized
-  // when the right Hall sensor is passed in Left direction.
-  if (passedLeft || passedRight) {
+  // Machine is initialized when the left Hall sensor is passed in Right
+  // direction, or the right Hall sensor is passed in Left direction. Or, as
+  // soon as we have detected a Garter carriage, because in that case we may
+  // need to start setting solenoids before the carriage center has crossed the
+  // turn mark.
+  if (passedLeft || passedRight || m_carriage == Carriage_t::Garter) {
 
 #endif // DBG_NOMACHINE
     GlobalSolenoids::setSolenoids(SOLENOIDS_BITMASK);
