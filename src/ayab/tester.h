@@ -50,9 +50,7 @@ public:
   virtual void autoTestCmd() = 0;
   virtual void stopCmd() = 0;
   virtual void quitCmd() = 0;
-#ifndef AYAB_TESTS
-  virtual void encoderChange();
-#endif
+  virtual void encoderChange() = 0;
 };
 
 // Container class for the static methods that implement the hardware test
@@ -83,9 +81,7 @@ public:
   static void autoTestCmd();
   static void stopCmd();
   static void quitCmd();
-#ifndef AYAB_TESTS
   static void encoderChange();
-#endif
 };
 
 class Tester : public TesterInterface {
@@ -103,9 +99,7 @@ public:
   void autoTestCmd() final;
   void stopCmd() final;
   void quitCmd() final;
-#ifndef AYAB_TESTS
   void encoderChange() final;
-#endif
 
 private:
   void setUp();

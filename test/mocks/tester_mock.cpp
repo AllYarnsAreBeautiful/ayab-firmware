@@ -103,3 +103,8 @@ void Tester::quitCmd() {
   assert(gTesterMock != nullptr);
   gTesterMock->quitCmd();
 }
+
+void Tester::encoderChange() {
+  assert(gTesterMock != nullptr);
+  gTesterMock->encoderChange();
+}

@@ -35,11 +35,9 @@ void GlobalKnitter::setUpInterrupt() {
   m_instance->setUpInterrupt();
 }
 
-#ifndef AYAB_TESTS
 void GlobalKnitter::isr() {
   m_instance->isr();
 }
-#endif
 
 Err_t GlobalKnitter::initMachine(Machine_t machine) {
   return m_instance->initMachine(machine);

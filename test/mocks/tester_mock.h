@@ -42,6 +42,7 @@ public:
   MOCK_METHOD0(autoTestCmd, void());
   MOCK_METHOD0(stopCmd, void());
   MOCK_METHOD0(quitCmd, void());
+  MOCK_METHOD0(encoderChange, void());
 };
 
 TesterMock *testerMockInstance();

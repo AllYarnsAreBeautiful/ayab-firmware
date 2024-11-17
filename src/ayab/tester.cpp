@@ -188,7 +188,6 @@ void Tester::loop() {
   }
 }
 
-#ifndef AYAB_TESTS
 /*!
  * \brief Interrupt service routine for encoder A.
  */
@@ -196,7 +195,6 @@ void Tester::encoderChange() {
   digitalWrite(LED_PIN_A, digitalRead(ENC_PIN_A));
   digitalWrite(LED_PIN_B, digitalRead(ENC_PIN_B));
 }
-#endif // AYAB_TESTS
 
 // Private member functions
 
@@ -216,11 +214,9 @@ void Tester::setUp() {
   GlobalCom::sendMsg(AYAB_API::testRes, buf);
   helpCmd();
 
-#ifndef AYAB_TESTS
   // Attach interrupts for both encoder pins
   attachInterrupt(digitalPinToInterrupt(ENC_PIN_A), GlobalTester::encoderChange, CHANGE);
   attachInterrupt(digitalPinToInterrupt(ENC_PIN_B), GlobalTester::encoderChange, CHANGE);
-#endif // AYAB_TESTS
 
   m_autoReadOn = false;
   m_autoTestOn = false;
