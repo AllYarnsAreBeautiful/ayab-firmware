@@ -8,19 +8,18 @@
 HallSensor::HallSensor(hardwareAbstraction::HalInterface *hal, uint8_t pin) {
   _hal = hal;
   _pin = pin;
+  _config = nullptr;
 
-  _hal->pinMode(_pin, INPUT);  // TODO: INPUT_PULLUP for KH910 right sensor
-
-  _detectedPosition = 0;
-  _detectedCarriage = CarriageType::NoCarriage;
-  _detectedBeltPhase = false;
+  _hal->pinMode(_pin, INPUT);
 
   _resetDetector();
   _readSensor();
 }
 
 void HallSensor::config(HallSensor::Config *config) {
+  _resetDetector();
   _config = config;
+  // TODO: INPUT_PULLUP for KH910 right sensor
 }
 
 uint16_t HallSensor::getSensorValue() { return _sensorValue; }
@@ -29,7 +28,12 @@ bool HallSensor::isActive() {
   return (_minimum.value != NONE) || (_maximum.value != NONE);
 }
 
-int16_t HallSensor::getSensorPosition() { return _config->position; }
+int16_t HallSensor::getSensorPosition() {
+  if( _config == nullptr) {
+    return NONE;
+  }
+  return _config->position;
+}
 
 int16_t HallSensor::getDetectedPosition() { return _detectedPosition; }
 
@@ -39,6 +43,10 @@ bool HallSensor::getDetectedBeltPhase() { return _detectedBeltPhase; }
 
 bool HallSensor::isDetected(Encoder *encoder, Direction direction, bool beltPhase) {
   bool isDetected = false;
+  if( _config == nullptr) {
+    return isDetected;
+  }
+
   int16_t encoder_position = encoder->getPosition();
 
   _readSensor();

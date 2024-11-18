@@ -24,21 +24,18 @@ class HallSensor {
 
   // Config sensor's position and thresholds
   void config(Config *config);
-
   // Return last sensor value
   uint16_t getSensorValue();
   // Return true when a threshold has been crossed
   bool isActive();
   // Return sensor (needle) position
   int16_t getSensorPosition();
-
   // Return encoder position when carriage was detected
   int16_t getDetectedPosition();
   // Return detected carriage type
   CarriageType getDetectedCarriage();
   // Return detected belt phase
   bool getDetectedBeltPhase();
-
   // Run internal detection state machine and return its status
   bool isDetected(Encoder *encoder, Direction direction, bool beltPhase);
 
