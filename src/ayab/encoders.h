@@ -82,24 +82,39 @@ constexpr uint8_t ALL_MAGNETS_CLEARED_RIGHT[NUM_MACHINES] = {199U, 199U, 130U};
 // For the garter carriage we need to see both magnets.
 constexpr uint8_t GARTER_SLOP = 2U;
 
+// How much earlier than theoretically ideal should we switch solenoids (in needles)
+constexpr int TIMING_ADVANCE_9XX = 4;
+constexpr int TIMING_ADVANCE_270 = 4;
+
+constexpr uint8_t MAGNET_DISTANCE_270 = 12U;
+
 constexpr uint8_t START_OFFSET[NUM_MACHINES][NUM_DIRECTIONS][NUM_CARRIAGES] = {
-    // KH910
+    // KH910: 16 solenoids, half-cycle is 8 needles
+    //  - K: selectors 24 needles away from center -> solenoid activation points 16 needles away from center
+    //  - L: selectors 12 needles away from center -> solenoid activation points 4 needles away from center
+    //  - G: selector at center -> solenoid activation points 8 needles away from center
+    //  — add END_OFFSET
+    //  - for G add magnet distance from center (12)
     {
-        // K,   L,   G
-        {42U, 32U, 32U}, // Left
-        {16U, 32U, 50U} // Right
+        // K,                           L,                            G
+        {END_OFFSET[0] + (16 - TIMING_ADVANCE_9XX), END_OFFSET[0] + (4 - TIMING_ADVANCE_9XX), END_OFFSET[0] - (8 - TIMING_ADVANCE_9XX) + 12}, // Left
+        {END_OFFSET[0] - (16 - TIMING_ADVANCE_9XX), END_OFFSET[0] - (4 - TIMING_ADVANCE_9XX), END_OFFSET[0] + (8 - TIMING_ADVANCE_9XX) + 12} // Right
     },
-    // KH930
+    // KH930: same as KH910
     {
-        // K,   L,   G
-        {42U, 32U, 32U}, // Left
-        {16U, 32U, 50U} // Right
+        // K,                           L,                            G
+        {END_OFFSET[1] + (16 - TIMING_ADVANCE_9XX), END_OFFSET[1] + (4 - TIMING_ADVANCE_9XX), END_OFFSET[1] - (8 - TIMING_ADVANCE_9XX) + 12}, // Left
+        {END_OFFSET[1] - (16 - TIMING_ADVANCE_9XX), END_OFFSET[1] - (4 - TIMING_ADVANCE_9XX), END_OFFSET[1] + (8 - TIMING_ADVANCE_9XX) + 12} // Right
     },
-    // KH270
+    // KH270: 12 solenoids, half-cycle is 6 needles
+    //  - K: selectors 15 needles away from center -> solenoid activation points 9 needles away
+    //  - add END_OFFSET
+    //  - add MAGNET_DISTANCE_270
+    //  - add actual magnet distance from center (3)
     {
         // K
-        {28U, 0U, 0U}, // Left
-        {16U, 0U, 0U} // Right
+        {END_OFFSET[2] + (9 - TIMING_ADVANCE_270) + MAGNET_DISTANCE_270 + 3}, // Left
+        {END_OFFSET[2] - (9 - TIMING_ADVANCE_270) + MAGNET_DISTANCE_270 + 3} // Right
     }};
 
 // Should be calibrated to each device
@@ -112,8 +127,6 @@ constexpr uint16_t FILTER_R_MIN[NUM_MACHINES] = { 200U,   0U,   0U};
 constexpr uint16_t FILTER_R_MAX[NUM_MACHINES] = {1023U, 600U, 600U};
 
 constexpr uint16_t SOLENOIDS_BITMASK = 0xFFFFU;
-
-constexpr uint8_t MAGNET_DISTANCE_270 = 12U;
 
 /*!
  * \brief Encoder interface.
