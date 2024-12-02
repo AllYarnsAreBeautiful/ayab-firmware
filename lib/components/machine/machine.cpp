@@ -2,6 +2,14 @@
 
 HallSensor::Config leftSensorConfig, rightSensorConfig;
 
+int16_t positiveModulo(int16_t dividend, int16_t divisor) {
+  int16_t remainder = dividend % divisor;
+  if (remainder < 0) {
+    remainder += divisor;
+  }
+  return remainder;
+}
+
 Machine::Machine() { reset(); }
 
 void Machine::reset() { _type = MachineType::NoMachine; }
@@ -53,9 +61,9 @@ HallSensor::Config *Machine::getSensorConfig(MachineSide side) {
 uint8_t Machine::solenoidToSet(int16_t needleToSet) {
   switch (_type) {
     case MachineType::Kh270:
-      return (uint8_t) ((needleToSet + 4) % 12);
+      return (uint8_t) positiveModulo(needleToSet + 4, 12);
     default:
-      return (uint8_t) (needleToSet % 16);
+      return (uint8_t) positiveModulo(needleToSet, 16);
   }
 }
 
