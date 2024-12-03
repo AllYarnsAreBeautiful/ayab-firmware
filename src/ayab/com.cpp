@@ -297,7 +297,10 @@ void Com::h_cnfLine(const uint8_t *buffer, size_t size) {
 
   if (GlobalKnitter::setNextLine(lineNumber)) {
     // Line was accepted
-    bool flagLastLine = bitRead(flags, 0U);
+
+    // A Python bool is represented as a byte 
+    // so read the second bit to get the value
+    bool flagLastLine = bitRead(flags, 1U);
     if (flagLastLine) {
       GlobalKnitter::setLastLine();
     }
