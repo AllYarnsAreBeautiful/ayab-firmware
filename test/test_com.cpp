@@ -276,7 +276,7 @@ TEST_F(ComTest, test_cnfline_kh910) {
   uint8_t buffer[30] = {static_cast<uint8_t>(AYAB_API::cnfLine) /* 0x42 */,
                         0,
                         0,
-                        1,
+                        0x01,
                         0xDE,
                         0xAD,
                         0xBE,
