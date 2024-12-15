@@ -74,6 +74,7 @@ void Encoders::init(Machine_t machineType) {
   m_hallActive = Direction_t::NoDirection;
   m_beltShift = BeltShift::Unknown;
   m_carriage = Carriage_t::NoCarriage;
+  m_previousDetectedCarriageLeft = detectCarriageLeft();
   m_oldState = false;
   m_passedLeft = false;
   m_passedRight = false;
@@ -123,6 +124,16 @@ Machine_t Encoders::getMachineType() {
 
 // Private Methods
 
+Carriage_t Encoders::detectCarriageLeft() {
+  uint16_t hallValue = analogRead(EOL_PIN_L);
+  if (hallValue > FILTER_L_MAX[static_cast<uint8_t>(m_machineType)]) {
+    return Carriage_t::Knit;
+  } else if (hallValue < FILTER_L_MIN[static_cast<uint8_t>(m_machineType)]){
+    return Carriage_t::Lace;
+  }
+  return Carriage_t::NoCarriage;
+}
+
 /*!
  * \brief Interrupt service subroutine.
  *
@@ -144,10 +155,15 @@ void Encoders::encA_rising() {
     }
   }
 
-  // In front of Left Hall Sensor and headed to the right?
-  uint16_t hallValue = analogRead(EOL_PIN_L);
-  if (Direction_t::Right == m_direction && ((hallValue < FILTER_L_MIN[static_cast<uint8_t>(m_machineType)]) ||
-      (hallValue > FILTER_L_MAX[static_cast<uint8_t>(m_machineType)]))) {
+  // Scan for carriage in front of left Hall sensor
+  Carriage_t detected_carriage = detectCarriageLeft();
+  Carriage_t previous_detected_carriage = m_previousDetectedCarriageLeft;
+  m_previousDetectedCarriageLeft = detected_carriage;
+
+  // New carriage detected and headed to the right?
+  if (Direction_t::Right == m_direction &&
+      detected_carriage != Carriage_t::NoCarriage &&
+      detected_carriage != previous_detected_carriage) {
     m_hallActive = Direction_t::Left;
 
     // Only set the belt shift the first time a magnet passes the turn mark.
@@ -182,14 +198,7 @@ void Encoders::encA_rising() {
       return;
     }
 
-    Carriage detected_carriage = Carriage_t::NoCarriage;
     uint8_t start_position = END_LEFT_PLUS_OFFSET[static_cast<uint8_t>(m_machineType)];
-
-    if (hallValue >= FILTER_L_MIN[static_cast<uint8_t>(m_machineType)]) {
-      detected_carriage = Carriage_t::Knit;
-    } else {
-      detected_carriage = Carriage_t::Lace;
-    }
 
     if (m_machineType == Machine_t::Kh270) {
       m_carriage = Carriage_t::Knit;
