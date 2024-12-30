@@ -435,7 +435,22 @@ bool Knitter::calculatePixelAndSolenoid() {
     return false;
   }
 
-  m_pixelToSet = m_position - startOffset;
+  // Unsigned 8-bit arithmetic computes modulo 256 — this is not
+  // appropriate when you have 12 solenoids, it causes pixel -1 to
+  // have more than 1 solenoid of difference from pixel 0.
+  // So instead we use a 16-bit int to compute the pixel, then
+  // convert it back to an unsigned 8-bit integer using a multiple
+  // of the number of solenoids as the modulus.
+  // We only handle the underflow case, because the machine with 12
+  // solenoids (KH270) has only 112 needles and can therefore never
+  // have positions that cause an 8-bit overflow.
+  int pixelToSet = (int)m_position - startOffset;
+
+  if (pixelToSet < 0) {
+    pixelToSet += Machine_t::Kh270 == m_machineType ? 252 : 256;
+  }
+
+  m_pixelToSet = pixelToSet;
 
   if (!beltShift) {
     m_solenoidToSet = (m_pixelToSet + bulkyOffset) % SOLENOIDS_NUM[static_cast<uint8_t>(m_machineType)];
