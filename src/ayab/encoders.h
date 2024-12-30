@@ -66,16 +66,16 @@ constexpr uint8_t END_OF_LINE_OFFSET_L[NUM_MACHINES] = {12U, 12U, 6U};
 constexpr uint8_t END_OF_LINE_OFFSET_R[NUM_MACHINES] = {12U, 12U, 6U};
 
 constexpr uint8_t END_LEFT[NUM_MACHINES] = {0U, 0U, 0U};
-constexpr uint8_t END_RIGHT[NUM_MACHINES] = {255U, 255U, 140U};
-constexpr uint8_t END_OFFSET[NUM_MACHINES] = {28U, 28U, 5U};
+constexpr uint8_t END_RIGHT[NUM_MACHINES] = {255U, 255U, 167U};
+constexpr uint8_t END_OFFSET[NUM_MACHINES] = {28U, 28U, 28U};
 
 // The following two arrays are created by combining, respectively,
 // the arrays END_LEFT and END_RIGHT with END_OFFSET
-constexpr uint8_t END_LEFT_PLUS_OFFSET[NUM_MACHINES] = {28U, 28U, 5U};
-constexpr uint8_t END_RIGHT_MINUS_OFFSET[NUM_MACHINES] = {227U, 227U, 135U};
+constexpr uint8_t END_LEFT_PLUS_OFFSET[NUM_MACHINES] = {28U, 28U, 28U};
+constexpr uint8_t END_RIGHT_MINUS_OFFSET[NUM_MACHINES] = {227U, 227U, 139U};
 
-constexpr uint8_t ALL_MAGNETS_CLEARED_LEFT[NUM_MACHINES] = {56U, 56U, 10U};
-constexpr uint8_t ALL_MAGNETS_CLEARED_RIGHT[NUM_MACHINES] = {199U, 199U, 130U};
+constexpr uint8_t ALL_MAGNETS_CLEARED_LEFT[NUM_MACHINES] = {56U, 56U, 38U};
+constexpr uint8_t ALL_MAGNETS_CLEARED_RIGHT[NUM_MACHINES] = {199U, 199U, 129U};
 
 // The garter slop is needed to determine whether or not we have a garter carriage.
 // If we didn't have it, we'd decide which carriage we had when the first magnet passed the sensor.
@@ -102,8 +102,8 @@ constexpr uint8_t START_OFFSET[NUM_MACHINES][NUM_DIRECTIONS][NUM_CARRIAGES] = {
     // KH270
     {
         // K
-        {28U, 0U, 0U}, // Left
-        {16U, 0U, 0U} // Right
+        {28U + 6U, 0U, 0U}, // Left
+        {28U - 6U, 0U, 0U} // Right
     }};
 
 // Should be calibrated to each device
@@ -116,8 +116,6 @@ constexpr uint16_t FILTER_R_MIN[NUM_MACHINES] = { 200U, 200U, 200U};
 constexpr uint16_t FILTER_R_MAX[NUM_MACHINES] = {1023U, 600U, 600U};
 
 constexpr uint16_t SOLENOIDS_BITMASK = 0xFFFFU;
-
-constexpr uint8_t MAGNET_DISTANCE_270 = 12U;
 
 /*!
  * \brief Encoder interface.
