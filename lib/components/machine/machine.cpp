@@ -34,11 +34,10 @@ HallSensor::Config *Machine::getSensorConfig(MachineSide side) {
 
   if (side == MachineSide::Left) {
     sensorConfig = &leftSensorConfig;
-    sensorConfig->position = _type == MachineType::Kh270 ? -3 : 0;
+    sensorConfig->position = 0;
   } else {
     sensorConfig = &rightSensorConfig;
-    sensorConfig->position = _type == MachineType::Kh270 ?
-      getNumberofNeedles() + 2 : getNumberofNeedles() - 1;
+    sensorConfig->position = getNumberofNeedles() - 1;
   }
 
   // Default threshold settings
