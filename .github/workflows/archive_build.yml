@@ -1,14 +1,14 @@
 name: Archive Build
 on: [push, pull_request]
 env:
-  AYAB_VERSION: v1.1.3
+  AYAB_VERSION: v1.1.4
 jobs:
   archive:
     runs-on: ubuntu-latest
     steps:
       - name: Fetch binary from ayabAsync
         env:
-          FIRMWARE_URL : "https://github.com/jpcornil-git/ayabAsync-firmware/releases/download/${{ env.AYAB_VERSION }}/firmware_uno_1_1_3.hex"
+          FIRMWARE_URL : "https://github.com/jpcornil-git/ayabAsync-firmware/releases/download/${{ env.AYAB_VERSION }}/firmware_uno_1_1_4.hex"
         run: |
           set -e
           if ! wget --spider ${FIRMWARE_URL}; then
