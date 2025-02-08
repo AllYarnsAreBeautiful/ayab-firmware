@@ -1,6 +1,9 @@
 <map id="Beeper::beep" name="Beeper::beep">
-<area shape="rect" id="node1" title=" " alt="" coords="208,56,316,83"/>
-<area shape="rect" id="node2" href="$class_beeper.html#a57ce68053466bf5956e463a709a35c2c" title=" " alt="" coords="16,5,149,32"/>
-<area shape="rect" id="node3" href="$class_beeper.html#a8c7bd6ecd048ab8f21858302da26cf55" title=" " alt="" coords="5,56,160,83"/>
-<area shape="rect" id="node4" href="$class_beeper.html#ada6d0ae8e4ca9ec3d41c5c86b9bbc598" title=" " alt="" coords="26,107,139,133"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="208,55,316,80"/>
+<area shape="rect" id="Node000002" href="$class_beeper.html#a57ce68053466bf5956e463a709a35c2c" title=" " alt="" coords="16,5,149,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="201,53,129,33,131,28,203,48"/>
+<area shape="rect" id="Node000003" href="$class_beeper.html#a8c7bd6ecd048ab8f21858302da26cf55" title=" " alt="" coords="5,55,160,80"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="194,70,160,70,160,65,194,65"/>
+<area shape="rect" id="Node000004" href="$class_beeper.html#ada6d0ae8e4ca9ec3d41c5c86b9bbc598" title=" " alt="" coords="26,104,139,129"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="203,86,131,106,129,101,201,81"/>
 </map>

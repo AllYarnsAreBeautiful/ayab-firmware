@@ -1,5 +1,7 @@
 <map id="GlobalCom" name="GlobalCom">
-<area shape="rect" id="node1" title=" " alt="" coords="145,380,311,560"/>
-<area shape="rect" id="node2" href="$class_packet_serial__.html" title="A template class enabling packet&#45;based Serial communication." alt="" coords="5,5,232,317"/>
-<area shape="rect" id="node3" href="$class_com_interface.html" title=" " alt="" coords="256,71,421,251"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="112,448,269,653"/>
+<area shape="rect" id="Node000002" href="$class_com_interface.html" title=" " alt="" coords="5,93,163,298"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="117,297,158,431,153,433,112,299"/>
+<area shape="rect" id="Node000003" href="$class_packet_serial__.html" title="A template class enabling packet&#45;based Serial communication." alt="" coords="187,5,411,385"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="261,386,249,425,246,433,241,432,244,423,256,385"/>
 </map>

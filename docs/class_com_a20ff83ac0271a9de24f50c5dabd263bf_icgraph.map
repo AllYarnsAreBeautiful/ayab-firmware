@@ -1,0 +1,13 @@
+<map id="Com::CRC8" name="Com::CRC8">
+<area shape="rect" id="Node000001" title="Calculate CRC8 of a buffer." alt="" coords="407,55,501,80"/>
+<area shape="rect" id="Node000002" href="$class_com.html#ac1d4bba86838d956e175b0ad7928eadb" title="Handle cnfLine (configure line) command." alt="" coords="234,5,357,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="399,53,336,33,338,28,400,48"/>
+<area shape="rect" id="Node000004" href="$class_com.html#acfc16b1d2dd1f78fc640fa579be0212a" title="Handle reqInit (request initialization) command." alt="" coords="237,55,354,80"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="393,70,354,70,354,65,393,65"/>
+<area shape="rect" id="Node000005" href="$class_com.html#aa83ebbfb8cb446069c39af4fada13f57" title="Handle reqStart (start request) command." alt="" coords="232,104,359,129"/>
+<area shape="poly" id="edge5_Node000001_Node000005" title=" " alt="" coords="400,87,338,106,336,101,399,82"/>
+<area shape="rect" id="Node000003" href="$class_com.html#a4aa2f1cac782b180cf8914017f764328" title="Callback for PacketSerial." alt="" coords="5,55,184,80"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="230,37,148,57,147,52,229,31"/>
+<area shape="poly" id="edge4_Node000004_Node000003" title=" " alt="" coords="223,70,184,70,184,65,223,65"/>
+<area shape="poly" id="edge6_Node000005_Node000003" title=" " alt="" coords="229,103,147,83,148,77,230,98"/>
+</map>

@@ -1,13 +1,26 @@
 <map id="test/mocks/solenoids_mock.h" name="test/mocks/solenoids_mock.h">
-<area shape="rect" id="node1" title=" " alt="" coords="143,5,303,47"/>
-<area shape="rect" id="node2" title=" " alt="" coords="91,95,218,121"/>
-<area shape="rect" id="node3" href="$solenoids_8h.html" title=" " alt="" coords="243,95,339,121"/>
-<area shape="rect" id="node4" href="$board_8h.html" title=" " alt="" coords="98,169,169,196"/>
-<area shape="rect" id="node5" href="$_arduino_8h.html" title=" " alt="" coords="165,244,249,271"/>
-<area shape="rect" id="node8" href="$encoders_8h.html" title=" " alt="" coords="244,169,337,196"/>
-<area shape="rect" id="node9" href="$_adafruit___m_c_p23008_8h_source.html" title=" " alt="" coords="361,169,524,196"/>
-<area shape="rect" id="node10" href="$_wire_8h.html" title=" " alt="" coords="469,244,533,271"/>
-<area shape="rect" id="node6" title=" " alt="" coords="5,319,184,345"/>
-<area shape="rect" id="node7" title=" " alt="" coords="208,319,373,345"/>
-<area shape="rect" id="node11" title=" " alt="" coords="422,319,581,345"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="143,5,303,45"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="91,93,218,119"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="208,47,176,84,172,81,204,44"/>
+<area shape="rect" id="Node000003" href="$solenoids_8h.html" title=" " alt="" coords="243,93,339,119"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="241,44,274,81,270,84,237,47"/>
+<area shape="rect" id="Node000004" href="$board_8h.html" title=" " alt="" coords="98,167,169,192"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="266,121,172,163,170,159,264,116"/>
+<area shape="rect" id="Node000005" href="$_arduino_8h.html" title=" " alt="" coords="165,240,249,265"/>
+<area shape="poly" id="edge9_Node000003_Node000005" title=" " alt="" coords="277,121,255,142,234,168,221,198,213,227,208,225,216,196,230,165,251,138,274,117"/>
+<area shape="rect" id="Node000008" href="$encoders_8h.html" title=" " alt="" coords="244,167,337,192"/>
+<area shape="poly" id="edge7_Node000003_Node000008" title=" " alt="" coords="293,119,293,153,288,153,288,119"/>
+<area shape="rect" id="Node000009" href="$_adafruit___m_c_p23008_8h_source.html" title=" " alt="" coords="361,167,524,192"/>
+<area shape="poly" id="edge10_Node000003_Node000009" title=" " alt="" coords="316,116,407,158,405,163,314,121"/>
+<area shape="rect" id="Node000010" href="$_wire_8h.html" title=" " alt="" coords="469,240,533,265"/>
+<area shape="poly" id="edge13_Node000003_Node000010" title=" " alt="" coords="339,109,453,128,505,144,525,154,538,165,545,182,542,199,524,231,519,228,537,198,539,182,534,168,522,158,503,149,452,133,339,115"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="147,190,187,228,183,232,144,194"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="5,313,184,339"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="190,268,126,308,123,303,187,263"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="208,313,373,339"/>
+<area shape="poly" id="edge6_Node000005_Node000007" title=" " alt="" coords="222,263,268,302,265,306,218,267"/>
+<area shape="poly" id="edge8_Node000008_Node000005" title=" " alt="" coords="279,194,233,233,229,229,275,190"/>
+<area shape="poly" id="edge11_Node000009_Node000010" title=" " alt="" coords="454,191,485,228,481,231,450,194"/>
+<area shape="rect" id="Node000011" title=" " alt="" coords="422,313,581,339"/>
+<area shape="poly" id="edge12_Node000010_Node000011" title=" " alt="" coords="504,266,504,300,499,300,499,266"/>
 </map>

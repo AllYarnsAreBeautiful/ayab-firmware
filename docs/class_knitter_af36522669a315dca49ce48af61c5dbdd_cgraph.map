@@ -1,6 +1,9 @@
 <map id="Knitter::encodePosition" name="Knitter::encodePosition">
-<area shape="rect" id="node1" title="Record current encoder position." alt="" coords="5,42,179,69"/>
-<area shape="rect" id="node2" href="$class_knitter.html#a5cc38250cabe7a19332b0ad0fbacf3cc" title="Calculate the solenoid and pixel to be set." alt="" coords="227,5,416,47"/>
-<area shape="rect" id="node4" href="$class_knitter.html#a92edc0570fa4e718302aa8fa2e36c482" title="Send indState message." alt="" coords="257,71,385,98"/>
-<area shape="rect" id="node3" href="$class_knitter.html#ad00d6b246c74e1d7cc9c78ffaa2684fc" title="Get start offset." alt="" coords="464,13,629,39"/>
+<area shape="rect" id="Node000001" title="Record current encoder position." alt="" coords="5,42,179,67"/>
+<area shape="rect" id="Node000002" href="$class_knitter.html#a5cc38250cabe7a19332b0ad0fbacf3cc" title="Calculate the solenoid and pixel to be set." alt="" coords="227,5,416,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="179,41,213,37,214,42,179,46"/>
+<area shape="rect" id="Node000004" href="$class_knitter.html#a92edc0570fa4e718302aa8fa2e36c482" title="Send indState message." alt="" coords="257,70,385,95"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="179,63,244,71,243,76,179,68"/>
+<area shape="rect" id="Node000003" href="$class_knitter.html#ad00d6b246c74e1d7cc9c78ffaa2684fc" title="Get start offset." alt="" coords="464,13,629,38"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="416,23,450,23,450,28,416,28"/>
 </map>

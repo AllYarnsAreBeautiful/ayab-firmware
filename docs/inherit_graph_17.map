@@ -1,3 +1,7 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$class_s_l_i_p.html" title="A Serial Line IP (SLIP) Encoder." alt="" coords="5,5,55,32"/>
+<area shape="rect" id="Node000000" href="$class_solenoids_interface.html" title=" " alt="" coords="5,31,148,56"/>
+<area shape="rect" id="Node000001" href="$class_solenoids.html" title=" " alt="" coords="213,5,299,31"/>
+<area shape="poly" id="edge11_Node000000_Node000001" title=" " alt="" coords="161,29,213,21,213,27,162,34"/>
+<area shape="rect" id="Node000002" href="$class_solenoids_mock.html" title=" " alt="" coords="196,55,316,80"/>
+<area shape="poly" id="edge12_Node000000_Node000002" title=" " alt="" coords="162,52,196,57,196,62,161,57"/>
 </map>

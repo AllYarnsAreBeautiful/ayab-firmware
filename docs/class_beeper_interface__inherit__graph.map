@@ -1,5 +1,7 @@
 <map id="BeeperInterface" name="BeeperInterface">
-<area shape="rect" id="node1" title=" " alt="" coords="73,5,236,200"/>
-<area shape="rect" id="node2" href="$class_beeper.html" title="Class to actuate a beeper connected to PIEZO_PIN." alt="" coords="5,248,136,501"/>
-<area shape="rect" id="node3" href="$class_beeper_mock.html" title=" " alt="" coords="160,285,320,465"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="76,5,229,231"/>
+<area shape="rect" id="Node000002" href="$class_beeper.html" title="Class to actuate a beeper connected to PIEZO_PIN." alt="" coords="5,279,135,584"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="122,245,113,279,108,277,117,243"/>
+<area shape="rect" id="Node000003" href="$class_beeper_mock.html" title=" " alt="" coords="159,329,311,534"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="188,244,211,328,206,329,183,245"/>
 </map>

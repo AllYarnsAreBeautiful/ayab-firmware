@@ -1,5 +1,7 @@
 <map id="TesterInterface" name="TesterInterface">
-<area shape="rect" id="node1" title=" " alt="" coords="103,5,284,288"/>
-<area shape="rect" id="node2" href="$class_tester.html" title=" " alt="" coords="5,336,187,780"/>
-<area shape="rect" id="node3" href="$class_tester_mock.html" title=" " alt="" coords="211,431,371,685"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="99,5,272,351"/>
+<area shape="rect" id="Node000002" href="$class_tester.html" title=" " alt="" coords="5,399,179,964"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="154,365,147,399,142,398,148,364"/>
+<area shape="rect" id="Node000003" href="$class_tester_mock.html" title=" " alt="" coords="203,529,355,834"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="222,364,253,528,248,529,217,365"/>
 </map>

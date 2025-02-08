@@ -1,5 +1,7 @@
 <map id="test/mocks/fsm_mock.h" name="test/mocks/fsm_mock.h">
-<area shape="rect" id="node1" title=" " alt="" coords="5,5,184,32"/>
-<area shape="rect" id="node2" href="$fsm_8h.html" title=" " alt="" coords="7,80,65,107"/>
-<area shape="rect" id="node3" title=" " alt="" coords="90,80,217,107"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,5,184,31"/>
+<area shape="rect" id="Node000002" href="$fsm_8h.html" title=" " alt="" coords="7,79,65,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="87,33,56,70,52,67,83,29"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="90,79,217,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="106,29,137,67,133,70,102,33"/>
 </map>

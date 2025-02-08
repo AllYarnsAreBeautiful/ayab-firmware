@@ -1,0 +1,5 @@
+<map id="Com::update" name="Com::update">
+<area shape="rect" id="Node000001" title="Service the serial connection." alt="" coords="5,5,111,31"/>
+<area shape="rect" id="Node000002" href="$class_packet_serial__.html#ad4b5219e164972a2758e58175af69dbb" title="The update function services the serial connection." alt="" coords="159,5,320,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="111,15,145,15,145,21,111,21"/>
+</map>

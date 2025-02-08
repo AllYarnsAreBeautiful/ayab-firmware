@@ -1,0 +1,5 @@
+<map id="Tester::readEncodersCmd" name="Tester::readEncodersCmd">
+<area shape="rect" id="Node000001" title="Read encoders command handler." alt="" coords="5,5,192,31"/>
+<area shape="rect" id="Node000002" href="$class_tester.html#a07f302da1ea93e4e104aa93f7bebd805" title="Read the Hall sensors that determine which carriage is in use." alt="" coords="240,5,397,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="192,15,226,15,226,21,192,21"/>
+</map>

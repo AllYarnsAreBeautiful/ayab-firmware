@@ -1,5 +1,34 @@
 <map id="Com::onPacketReceived" name="Com::onPacketReceived">
-<area shape="rect" id="node1" title="Callback for PacketSerial." alt="" coords="5,5,184,32"/>
-<area shape="rect" id="node2" href="$class_com.html#acfc16b1d2dd1f78fc640fa579be0212a" title="Handle reqInit (request initialization) command." alt="" coords="232,5,349,32"/>
-<area shape="rect" id="node3" href="$class_com.html#a07cf8deeffc4e477612fe838accf323b" title="Send cnfInit message." alt="" coords="397,5,536,32"/>
+<area shape="rect" id="Node000001" title="Callback for PacketSerial." alt="" coords="5,129,184,155"/>
+<area shape="rect" id="Node000002" href="$class_com.html#ac1d4bba86838d956e175b0ad7928eadb" title="Handle cnfLine (configure line) command." alt="" coords="252,104,375,129"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="184,129,238,123,238,128,185,134"/>
+<area shape="rect" id="Node000004" href="$class_com.html#abb72f5c8bc005165869e038108161347" title="Handle reqInfo (request information) command." alt="" coords="253,5,374,31"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="108,127,160,85,194,61,231,40,247,33,249,38,233,44,197,65,163,89,112,131"/>
+<area shape="rect" id="Node000008" href="$class_com.html#acfc16b1d2dd1f78fc640fa579be0212a" title="Handle reqInit (request initialization) command." alt="" coords="255,55,372,80"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="127,127,231,89,254,81,256,86,233,94,129,132"/>
+<area shape="rect" id="Node000010" href="$class_com.html#aa83ebbfb8cb446069c39af4fada13f57" title="Handle reqStart (start request) command." alt="" coords="250,153,377,179"/>
+<area shape="poly" id="edge11_Node000001_Node000010" title=" " alt="" coords="185,149,236,155,236,160,184,154"/>
+<area shape="rect" id="Node000012" href="$class_com.html#a1d3d495721248e2e1cb3029a73c3d69a" title="Handle reqTest (request hardware test) command." alt="" coords="252,203,375,228"/>
+<area shape="poly" id="edge15_Node000001_Node000012" title=" " alt="" coords="132,152,233,187,258,196,257,201,231,193,130,157"/>
+<area shape="rect" id="Node000014" href="$class_com.html#a51295f2cdf145f494c2a50611bea6503" title="Handle unrecognized command." alt="" coords="232,252,395,277"/>
+<area shape="poly" id="edge18_Node000001_Node000014" title=" " alt="" coords="112,153,163,194,197,218,233,238,249,245,247,250,231,243,194,222,160,199,108,157"/>
+<area shape="rect" id="Node000003" href="$class_com.html#a20ff83ac0271a9de24f50c5dabd263bf" title="Calculate CRC8 of a buffer." alt="" coords="470,104,565,129"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="375,114,456,114,456,119,375,119"/>
+<area shape="rect" id="Node000005" href="$class_com.html#a90e6cd56b23d66cbfd5b1eb42e76d362" title="Send cnfInfo message." alt="" coords="446,5,589,31"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="375,15,432,15,432,21,375,21"/>
+<area shape="rect" id="Node000006" href="$class_com.html#a26feaec90f04f0920d5969abf529705b" title="Send a packet of data." alt="" coords="640,104,731,129"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="567,28,593,40,632,65,663,92,660,96,628,70,591,44,565,33"/>
+<area shape="rect" id="Node000007" href="$class_packet_serial__.html#aa3386c597cbf0a0a287e5a084c85f399" title="Set a packet of data." alt="" coords="779,104,925,129"/>
+<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="731,114,765,114,765,119,731,119"/>
+<area shape="poly" id="edge8_Node000008_Node000003" title=" " alt="" coords="367,77,457,100,456,105,366,83"/>
+<area shape="rect" id="Node000009" href="$class_com.html#a07cf8deeffc4e477612fe838accf323b" title="Send cnfInit message." alt="" coords="448,55,587,80"/>
+<area shape="poly" id="edge9_Node000008_Node000009" title=" " alt="" coords="372,65,434,65,434,70,372,70"/>
+<area shape="poly" id="edge10_Node000009_Node000006" title=" " alt="" coords="562,77,629,97,627,102,560,83"/>
+<area shape="poly" id="edge12_Node000010_Node000003" title=" " alt="" coords="366,151,456,129,457,134,367,156"/>
+<area shape="rect" id="Node000011" href="$class_com.html#a67700ec3aca945af09e786587b5174bb" title="Send cnfStart message." alt="" coords="443,153,592,179"/>
+<area shape="poly" id="edge13_Node000010_Node000011" title=" " alt="" coords="377,163,429,163,429,169,377,169"/>
+<area shape="poly" id="edge14_Node000011_Node000006" title=" " alt="" coords="560,151,627,131,629,136,562,156"/>
+<area shape="rect" id="Node000013" href="$class_com.html#afcf93b7606c1d106e60f01d4d2fdb400" title="Send cnfTest message." alt="" coords="445,203,589,228"/>
+<area shape="poly" id="edge16_Node000012_Node000013" title=" " alt="" coords="375,213,431,213,431,218,375,218"/>
+<area shape="poly" id="edge17_Node000013_Node000006" title=" " alt="" coords="562,200,591,188,628,163,659,137,663,141,631,167,593,192,565,205"/>
 </map>

@@ -1,4 +1,5 @@
 <map id="Knitter" name="Knitter">
-<area shape="rect" id="node1" title=" " alt="" coords="5,336,243,795"/>
-<area shape="rect" id="node2" href="$class_knitter_interface.html" title=" " alt="" coords="44,5,204,288"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,399,240,984"/>
+<area shape="rect" id="Node000002" href="$class_knitter_interface.html" title=" " alt="" coords="47,5,199,351"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="125,364,125,398,120,398,120,364"/>
 </map>

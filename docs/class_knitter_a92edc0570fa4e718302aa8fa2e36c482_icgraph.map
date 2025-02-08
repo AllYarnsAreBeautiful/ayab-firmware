@@ -1,5 +1,9 @@
 <map id="Knitter::indState" name="Knitter::indState">
-<area shape="rect" id="node1" title="Send indState message." alt="" coords="227,31,355,57"/>
-<area shape="rect" id="node2" href="$class_knitter.html#af36522669a315dca49ce48af61c5dbdd" title="Record current encoder position." alt="" coords="5,5,179,32"/>
-<area shape="rect" id="node3" href="$class_knitter.html#a8edb0e49c22e0b38345a24ddbd31fd81" title="Function that is repeatedly called during state OpState::knit" alt="" coords="43,56,141,83"/>
+<area shape="rect" id="Node000001" title="Send indState message." alt="" coords="227,55,355,80"/>
+<area shape="rect" id="Node000002" href="$class_knitter.html#af36522669a315dca49ce48af61c5dbdd" title="Record current encoder position." alt="" coords="5,5,179,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="225,54,143,33,145,28,226,49"/>
+<area shape="rect" id="Node000003" href="$class_knitter.html#ade911f1f980a950767272ce81860eb9b" title="Assess whether the Finite State Machine is ready to move from state OpState::init to OpState::ready." alt="" coords="29,55,155,80"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="213,70,156,70,156,65,213,65"/>
+<area shape="rect" id="Node000004" href="$class_knitter.html#a8edb0e49c22e0b38345a24ddbd31fd81" title="Function that is repeatedly called during state OpState::knit" alt="" coords="43,104,141,129"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="226,86,142,107,141,102,225,81"/>
 </map>

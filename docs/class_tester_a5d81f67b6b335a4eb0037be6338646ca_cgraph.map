@@ -1,0 +1,15 @@
+<map id="Tester::loop" name="Tester::loop">
+<area shape="rect" id="Node000001" title="Main loop for hardware tests." alt="" coords="5,79,103,104"/>
+<area shape="rect" id="Node000002" href="$class_tester.html#a2f4e999c635ddcb9caf373eb7e80cc19" title="Timer event every 500ms to handle auto functions." alt="" coords="151,79,339,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="103,89,137,89,137,94,103,94"/>
+<area shape="rect" id="Node000003" href="$class_tester.html#a63712edb5a8dba52772fd478adf9967c" title="Read both carriage sensors and End of Line sensors." alt="" coords="399,29,530,55"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="301,76,393,55,394,60,303,81"/>
+<area shape="rect" id="Node000006" href="$class_tester.html#acea886b988227a11673a74b76844d000" title="Set even&#45;numbered solenoids." alt="" coords="387,79,543,104"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="339,89,373,89,373,94,339,94"/>
+<area shape="rect" id="Node000007" href="$class_tester.html#aac8b1d69f6a5817592c12d63a0af56c3" title="Set odd&#45;numbered solenoids." alt="" coords="389,128,540,153"/>
+<area shape="poly" id="edge6_Node000002_Node000007" title=" " alt="" coords="303,101,394,122,393,128,301,107"/>
+<area shape="rect" id="Node000004" href="$class_tester.html#a07f302da1ea93e4e104aa93f7bebd805" title="Read the Hall sensors that determine which carriage is in use." alt="" coords="599,5,756,31"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="530,32,585,26,586,31,530,37"/>
+<area shape="rect" id="Node000005" href="$class_tester.html#abd1c75071b3ab00dc069065684d62225" title="Read the End of Line sensors." alt="" coords="591,55,764,80"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="530,47,578,53,577,58,530,52"/>
+</map>

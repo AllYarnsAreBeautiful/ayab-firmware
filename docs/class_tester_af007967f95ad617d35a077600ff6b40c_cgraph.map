@@ -1,0 +1,5 @@
+<map id="Tester::readEOLsensorsCmd" name="Tester::readEOLsensorsCmd">
+<area shape="rect" id="Node000001" title="Read EOL sensors command handler." alt="" coords="5,5,208,31"/>
+<area shape="rect" id="Node000002" href="$class_tester.html#abd1c75071b3ab00dc069065684d62225" title="Read the End of Line sensors." alt="" coords="256,5,429,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="208,15,242,15,242,21,208,21"/>
+</map>

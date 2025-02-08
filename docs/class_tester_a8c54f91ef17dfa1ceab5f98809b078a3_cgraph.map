@@ -1,0 +1,5 @@
+<map id="Tester::beepCmd" name="Tester::beepCmd">
+<area shape="rect" id="Node000001" title="Beep command handler." alt="" coords="5,5,136,31"/>
+<area shape="rect" id="Node000002" href="$class_tester.html#a79718383fe929c06ab2931fa301f9627" title="Make a beep." alt="" coords="184,5,285,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="136,15,170,15,170,21,136,21"/>
+</map>

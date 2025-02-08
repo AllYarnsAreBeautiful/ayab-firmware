@@ -1,0 +1,13 @@
+<map id="Knitter::knit" name="Knitter::knit">
+<area shape="rect" id="Node000001" title="Function that is repeatedly called during state OpState::knit" alt="" coords="5,95,104,121"/>
+<area shape="rect" id="Node000002" href="$class_knitter.html#a5cc38250cabe7a19332b0ad0fbacf3cc" title="Calculate the solenoid and pixel to be set." alt="" coords="152,5,341,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="77,93,151,55,169,48,171,53,153,60,79,97"/>
+<area shape="rect" id="Node000004" href="$class_knitter.html#a92edc0570fa4e718302aa8fa2e36c482" title="Send indState message." alt="" coords="183,70,311,95"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="104,99,169,90,169,96,105,104"/>
+<area shape="rect" id="Node000005" href="$class_knitter.html#ac369fe67f9d546a9a1546b4b5e0d9d86" title="Send reqLine message." alt="" coords="185,119,308,145"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="105,111,172,120,171,125,104,117"/>
+<area shape="rect" id="Node000006" href="$class_knitter.html#a2131cebe8b25d9f84300a851a95044ac" title="Finish knitting procedure." alt="" coords="170,169,323,194"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="79,118,153,154,179,162,178,167,151,158,77,123"/>
+<area shape="rect" id="Node000003" href="$class_knitter.html#ad00d6b246c74e1d7cc9c78ffaa2684fc" title="Get start offset." alt="" coords="389,13,555,38"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="342,23,376,23,376,28,342,28"/>
+</map>

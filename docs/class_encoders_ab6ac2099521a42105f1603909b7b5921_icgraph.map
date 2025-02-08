@@ -1,0 +1,5 @@
+<map id="Encoders::encA_falling" name="Encoders::encA_falling">
+<area shape="rect" id="Node000001" title="Interrupt service subroutine." alt="" coords="237,5,407,31"/>
+<area shape="rect" id="Node000002" href="$class_encoders.html#ab19ce666e39c2b19f42c63f913858028" title="Service encoder A interrupt routine." alt="" coords="5,5,189,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="223,21,189,21,189,15,223,15"/>
+</map>

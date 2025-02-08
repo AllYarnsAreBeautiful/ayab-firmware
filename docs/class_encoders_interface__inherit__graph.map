@@ -1,5 +1,7 @@
 <map id="EncodersInterface" name="EncodersInterface">
-<area shape="rect" id="node1" title="Encoder interface." alt="" coords="85,5,260,215"/>
-<area shape="rect" id="node2" href="$class_encoders.html" title=" " alt="" coords="5,263,159,619"/>
-<area shape="rect" id="node3" href="$class_encoders_mock.html" title=" " alt="" coords="183,343,343,538"/>
+<area shape="rect" id="Node000001" title="Encoder interface." alt="" coords="154,5,321,251"/>
+<area shape="rect" id="Node000002" href="$class_encoders.html" title=" " alt="" coords="5,299,248,839"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="206,264,197,299,192,298,201,263"/>
+<area shape="rect" id="Node000003" href="$class_encoders_mock.html" title=" " alt="" coords="272,456,424,681"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="274,263,322,455,317,456,269,264"/>
 </map>

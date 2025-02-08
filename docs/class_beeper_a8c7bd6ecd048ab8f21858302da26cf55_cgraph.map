@@ -1,4 +1,5 @@
 <map id="Beeper::finishedLine" name="Beeper::finishedLine">
-<area shape="rect" id="node1" title=" " alt="" coords="5,5,160,32"/>
-<area shape="rect" id="node2" href="$class_beeper.html#a3ac21e30910ef9ece6f1a1451255f9ac" title=" " alt="" coords="208,5,316,32"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,5,160,31"/>
+<area shape="rect" id="Node000002" href="$class_beeper.html#a3ac21e30910ef9ece6f1a1451255f9ac" title=" " alt="" coords="208,5,316,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="160,15,194,15,194,21,160,21"/>
 </map>

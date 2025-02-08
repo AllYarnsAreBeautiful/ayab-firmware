@@ -1,4 +1,5 @@
 <map id="ComMock" name="ComMock">
-<area shape="rect" id="node1" title=" " alt="" coords="5,233,217,399"/>
-<area shape="rect" id="node2" href="$class_com_interface.html" title=" " alt="" coords="29,5,194,185"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,259,209,444"/>
+<area shape="rect" id="Node000002" href="$class_com_interface.html" title=" " alt="" coords="29,5,186,211"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="110,224,110,258,105,258,105,224"/>
 </map>

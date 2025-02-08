@@ -1,8 +1,13 @@
 <map id="test/mocks/beeper_mock.h" name="test/mocks/beeper_mock.h">
-<area shape="rect" id="node1" title=" " alt="" coords="32,5,231,32"/>
-<area shape="rect" id="node2" title=" " alt="" coords="5,80,132,107"/>
-<area shape="rect" id="node3" href="$beeper_8h.html" title=" " alt="" coords="156,80,235,107"/>
-<area shape="rect" id="node4" href="$_arduino_8h.html" title=" " alt="" coords="153,155,237,181"/>
-<area shape="rect" id="node5" title=" " alt="" coords="9,229,187,256"/>
-<area shape="rect" id="node6" title=" " alt="" coords="211,229,377,256"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="32,5,231,31"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,79,132,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="123,33,90,70,86,66,119,29"/>
+<area shape="rect" id="Node000003" href="$beeper_8h.html" title=" " alt="" coords="156,79,235,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="144,29,178,67,174,70,140,33"/>
+<area shape="rect" id="Node000004" href="$_arduino_8h.html" title=" " alt="" coords="153,152,237,177"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="198,104,198,138,193,138,193,104"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="9,225,187,251"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="181,180,127,219,124,215,178,175"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="211,225,377,251"/>
+<area shape="poly" id="edge5_Node000004_Node000006" title=" " alt="" coords="213,175,268,215,265,219,210,180"/>
 </map>

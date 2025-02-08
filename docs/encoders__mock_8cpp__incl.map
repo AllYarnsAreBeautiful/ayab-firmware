@@ -1,9 +1,16 @@
 <map id="test/mocks/encoders_mock.cpp" name="test/mocks/encoders_mock.cpp">
-<area shape="rect" id="node1" title=" " alt="" coords="165,5,323,47"/>
-<area shape="rect" id="node2" href="$encoders_8h.html" title=" " alt="" coords="145,169,239,196"/>
-<area shape="rect" id="node6" href="$encoders__mock_8h.html" title=" " alt="" coords="229,95,365,121"/>
-<area shape="rect" id="node3" href="$_arduino_8h.html" title=" " alt="" coords="150,244,234,271"/>
-<area shape="rect" id="node4" title=" " alt="" coords="5,319,184,345"/>
-<area shape="rect" id="node5" title=" " alt="" coords="208,319,373,345"/>
-<area shape="rect" id="node7" title=" " alt="" coords="263,169,390,196"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="165,5,323,45"/>
+<area shape="rect" id="Node000002" href="$encoders_8h.html" title=" " alt="" coords="145,167,239,192"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="238,47,220,94,201,154,196,152,215,92,233,45"/>
+<area shape="rect" id="Node000006" href="$encoders__mock_8h.html" title=" " alt="" coords="229,93,365,119"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="259,44,284,80,279,83,255,47"/>
+<area shape="rect" id="Node000003" href="$_arduino_8h.html" title=" " alt="" coords="150,240,234,265"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="195,192,195,226,189,226,189,192"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="5,313,184,339"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="178,268,123,307,120,303,175,263"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="208,313,373,339"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="209,263,265,303,262,307,206,268"/>
+<area shape="poly" id="edge6_Node000006_Node000002" title=" " alt="" coords="282,121,222,161,219,157,279,116"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="263,167,390,192"/>
+<area shape="poly" id="edge7_Node000006_Node000007" title=" " alt="" coords="305,118,319,153,314,155,300,120"/>
 </map>

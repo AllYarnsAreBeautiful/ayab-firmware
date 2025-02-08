@@ -1,4 +1,5 @@
 <map id="GlobalEncoders" name="GlobalEncoders">
-<area shape="rect" id="node1" title=" " alt="" coords="16,277,169,487"/>
-<area shape="rect" id="node2" href="$class_encoders_interface.html" title="Encoder interface." alt="" coords="5,5,180,215"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="16,313,161,559"/>
+<area shape="rect" id="Node000002" href="$class_encoders_interface.html" title="Encoder interface." alt="" coords="5,5,172,251"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="91,251,91,297,86,297,86,251"/>
 </map>

@@ -21,10 +21,5 @@ var class_tester =
     [ "setSingleCmd", "class_tester.html#ae482e585704095ee989119bef361f1af", null ],
     [ "setUp", "class_tester.html#a59a6f18df5c48936c33783cb8638d335", null ],
     [ "startTest", "class_tester.html#aabb9fe62d51be3840fad441522cc5dc1", null ],
-    [ "stopCmd", "class_tester.html#a70df238d51c49b90932aeb8ad70ac1bd", null ],
-    [ "buf", "class_tester.html#a342ef41d59162445c3bcba69d8f7928b", null ],
-    [ "m_autoReadOn", "class_tester.html#a0eb342b2f8bef9b785de44c7e260276b", null ],
-    [ "m_autoTestOn", "class_tester.html#a3164379110ee960f61e992f68e2323a8", null ],
-    [ "m_lastTime", "class_tester.html#af8a332ca451fe867052aba3088a167fb", null ],
-    [ "m_timerEventOdd", "class_tester.html#a3bd42df7381ad5dcf440ccd05f76e4de", null ]
+    [ "stopCmd", "class_tester.html#a70df238d51c49b90932aeb8ad70ac1bd", null ]
 ];

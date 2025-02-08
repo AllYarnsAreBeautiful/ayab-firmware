@@ -1,5 +1,7 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$class_solenoids_interface.html" title=" " alt="" coords="5,31,148,57"/>
-<area shape="rect" id="node2" href="$class_solenoids.html" title=" " alt="" coords="213,5,299,32"/>
-<area shape="rect" id="node3" href="$class_solenoids_mock.html" title=" " alt="" coords="196,56,316,83"/>
+<area shape="rect" id="Node000000" href="$class_tester_interface.html" title=" " alt="" coords="5,31,124,56"/>
+<area shape="rect" id="Node000001" href="$class_tester.html" title=" " alt="" coords="189,5,251,31"/>
+<area shape="poly" id="edge13_Node000000_Node000001" title=" " alt="" coords="137,29,189,20,190,26,138,34"/>
+<area shape="rect" id="Node000002" href="$class_tester_mock.html" title=" " alt="" coords="172,55,268,80"/>
+<area shape="poly" id="edge14_Node000000_Node000002" title=" " alt="" coords="138,52,172,57,171,63,137,57"/>
 </map>

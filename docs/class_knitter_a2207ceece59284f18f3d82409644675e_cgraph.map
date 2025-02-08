@@ -1,4 +1,5 @@
 <map id="Knitter::setNextLine" name="Knitter::setNextLine">
-<area shape="rect" id="node1" title="Set line number of next row to be knitted." alt="" coords="5,5,157,32"/>
-<area shape="rect" id="node2" href="$class_knitter.html#ac369fe67f9d546a9a1546b4b5e0d9d86" title="Send reqLine message." alt="" coords="205,5,328,32"/>
+<area shape="rect" id="Node000001" title="Set line number of next row to be knitted." alt="" coords="5,5,157,31"/>
+<area shape="rect" id="Node000002" href="$class_knitter.html#ac369fe67f9d546a9a1546b4b5e0d9d86" title="Send reqLine message." alt="" coords="205,5,328,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="157,15,191,15,191,21,157,21"/>
 </map>

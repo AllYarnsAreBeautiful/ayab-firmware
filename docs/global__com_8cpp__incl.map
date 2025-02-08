@@ -1,13 +1,27 @@
 <map id="src/ayab/global_com.cpp" name="src/ayab/global_com.cpp">
-<area shape="rect" id="node1" title="Singleton class containing methods for serial communication." alt="" coords="195,5,378,32"/>
-<area shape="rect" id="node2" href="$com_8h.html" title=" " alt="" coords="255,80,318,107"/>
-<area shape="rect" id="node3" href="$_arduino_8h.html" title=" " alt="" coords="150,304,234,331"/>
-<area shape="rect" id="node6" href="$_packet_serial_8h_source.html" title=" " alt="" coords="135,155,249,181"/>
-<area shape="rect" id="node9" href="$encoders_8h.html" title=" " alt="" coords="429,229,523,256"/>
-<area shape="rect" id="node10" href="$fsm_8h.html" title=" " alt="" coords="324,155,383,181"/>
-<area shape="rect" id="node11" title=" " alt="" coords="407,155,489,181"/>
-<area shape="rect" id="node4" title=" " alt="" coords="5,379,184,405"/>
-<area shape="rect" id="node5" title=" " alt="" coords="208,379,373,405"/>
-<area shape="rect" id="node7" href="$_c_o_b_s_8h_source.html" title=" " alt="" coords="125,229,259,256"/>
-<area shape="rect" id="node8" href="$_s_l_i_p_8h_source.html" title=" " alt="" coords="283,229,405,256"/>
+<area shape="rect" id="Node000001" title="Singleton class containing methods for serial communication." alt="" coords="195,5,378,31"/>
+<area shape="rect" id="Node000002" href="$com_8h.html" title=" " alt="" coords="255,79,318,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="289,31,289,65,284,65,284,31"/>
+<area shape="rect" id="Node000003" href="$_arduino_8h.html" title=" " alt="" coords="150,299,234,324"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="255,98,224,104,190,114,155,130,126,154,107,177,97,199,97,223,106,249,126,273,151,290,148,294,122,277,102,252,91,224,92,198,103,174,122,150,152,126,188,109,223,99,255,93"/>
+<area shape="rect" id="Node000006" href="$_packet_serial_8h_source.html" title=" " alt="" coords="135,152,249,177"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="273,106,220,146,217,141,270,102"/>
+<area shape="rect" id="Node000009" href="$encoders_8h.html" title=" " alt="" coords="429,225,523,251"/>
+<area shape="poly" id="edge11_Node000002_Node000009" title=" " alt="" coords="290,104,295,139,302,159,314,175,330,187,356,199,419,219,417,224,354,204,328,192,310,179,298,161,290,140,284,105"/>
+<area shape="rect" id="Node000010" href="$fsm_8h.html" title=" " alt="" coords="324,152,383,177"/>
+<area shape="poly" id="edge13_Node000002_Node000010" title=" " alt="" coords="300,103,335,140,331,144,296,106"/>
+<area shape="rect" id="Node000011" title=" " alt="" coords="407,152,489,177"/>
+<area shape="poly" id="edge14_Node000002_Node000011" title=" " alt="" coords="314,102,410,144,408,149,312,106"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="5,372,184,397"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="178,326,123,366,120,361,175,322"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="208,372,373,397"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="209,322,265,362,262,366,206,326"/>
+<area shape="poly" id="edge6_Node000006_Node000003" title=" " alt="" coords="169,180,146,193,126,210,114,229,113,239,116,249,133,272,156,290,153,294,129,276,111,252,107,239,109,227,122,206,143,189,166,175"/>
+<area shape="rect" id="Node000007" href="$_c_o_b_s_8h_source.html" title=" " alt="" coords="125,225,259,251"/>
+<area shape="poly" id="edge7_Node000006_Node000007" title=" " alt="" coords="195,178,195,212,189,212,189,178"/>
+<area shape="rect" id="Node000008" href="$_s_l_i_p_8h_source.html" title=" " alt="" coords="283,225,405,251"/>
+<area shape="poly" id="edge9_Node000006_Node000008" title=" " alt="" coords="218,175,308,217,306,222,215,180"/>
+<area shape="poly" id="edge8_Node000007_Node000003" title=" " alt="" coords="195,251,195,285,189,285,189,251"/>
+<area shape="poly" id="edge10_Node000008_Node000003" title=" " alt="" coords="321,253,230,295,228,290,318,248"/>
+<area shape="poly" id="edge12_Node000009_Node000003" title=" " alt="" coords="431,253,248,299,247,294,430,248"/>
 </map>

@@ -1,4 +1,5 @@
 <map id="TesterMock" name="TesterMock">
-<area shape="rect" id="node1" title=" " alt="" coords="16,336,176,589"/>
-<area shape="rect" id="node2" href="$class_tester_interface.html" title=" " alt="" coords="5,5,187,288"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="16,399,168,704"/>
+<area shape="rect" id="Node000002" href="$class_tester_interface.html" title=" " alt="" coords="5,5,179,351"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="95,365,95,398,89,398,89,365"/>
 </map>

@@ -1,0 +1,5 @@
+<map id="PacketSerial_::setPacketHandler" name="PacketSerial_::setPacketHandler">
+<area shape="rect" id="Node000001" title="Set the function that will receive decoded packets." alt="" coords="135,5,313,45"/>
+<area shape="rect" id="Node000002" href="$class_com.html#a81bced9fe4b7f19298cf45c61ac82824" title="Initialize serial communication." alt="" coords="5,13,87,38"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="121,28,87,28,87,23,121,23"/>
+</map>

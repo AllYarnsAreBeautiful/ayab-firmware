@@ -1,0 +1,17 @@
+<map id="Fsm::dispatch" name="Fsm::dispatch">
+<area shape="rect" id="Node000001" title="Dispatch on machine state." alt="" coords="5,129,119,155"/>
+<area shape="rect" id="Node000002" href="$class_fsm.html#a9b7d32779885e32cb1a2123356ecd7bb" title="Action of machine in state OpState::error." alt="" coords="177,5,307,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="71,127,110,85,136,61,165,40,177,33,180,38,168,44,139,65,113,88,75,131"/>
+<area shape="rect" id="Node000003" href="$class_fsm.html#a4b259eca0e7ffbad352a00c4b8b4c11a" title="Action of machine in state OpState::init." alt="" coords="183,55,301,80"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="86,127,166,89,184,82,186,87,168,94,88,132"/>
+<area shape="rect" id="Node000005" href="$class_fsm.html#ac0c3ad71700dce40c30a4223934982e0" title="Action of machine in state OpState::knit." alt="" coords="181,104,303,129"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="119,131,167,125,167,130,119,137"/>
+<area shape="rect" id="Node000006" href="$class_fsm.html#a65dcbbad9e605e19d4d11a6cec9f410f" title="Action of machine in state OpState::ready." alt="" coords="175,153,309,179"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="119,147,161,153,160,158,119,152"/>
+<area shape="rect" id="Node000007" href="$class_fsm.html#af3902e8e7914eb0e374d622c806fa4eb" title="Action of machine in state OpState::test." alt="" coords="181,203,303,228"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="90,152,168,188,189,196,187,201,166,192,88,157"/>
+<area shape="rect" id="Node000008" href="$class_fsm.html#a14e60224ccc124277ee07894c244ae0a" title="Action of machine in state wait_for_machine." alt="" coords="167,253,317,293"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="76,153,115,193,168,237,179,244,177,249,165,242,111,197,72,157"/>
+<area shape="rect" id="Node000004" href="$class_fsm.html#a6626d9d5e004f33766855f5ee767754c" title="Set machine state." alt="" coords="365,55,477,80"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="302,65,352,65,352,70,302,70"/>
+</map>

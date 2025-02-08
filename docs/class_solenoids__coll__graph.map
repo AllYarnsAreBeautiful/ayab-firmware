@@ -1,5 +1,7 @@
 <map id="Solenoids" name="Solenoids">
-<area shape="rect" id="node1" title=" " alt="" coords="124,292,255,428"/>
-<area shape="rect" id="node2" href="$class_solenoids_interface.html" title=" " alt="" coords="5,49,184,171"/>
-<area shape="rect" id="node3" href="$class_adafruit___m_c_p23008.html" title=" " alt="" coords="209,5,359,215"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="121,328,242,473"/>
+<area shape="rect" id="Node000002" href="$class_solenoids_interface.html" title=" " alt="" coords="5,65,176,191"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="118,203,160,327,155,329,113,205"/>
+<area shape="rect" id="Node000003" href="$class_adafruit___m_c_p23008.html" title=" " alt="" coords="201,5,343,251"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="234,252,213,313,208,312,229,250"/>
 </map>

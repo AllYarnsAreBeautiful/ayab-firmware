@@ -1,0 +1,7 @@
+<map id="Fsm::setState" name="Fsm::setState">
+<area shape="rect" id="Node000001" title="Set machine state." alt="" coords="333,5,445,31"/>
+<area shape="rect" id="Node000002" href="$class_fsm.html#a4b259eca0e7ffbad352a00c4b8b4c11a" title="Action of machine in state OpState::init." alt="" coords="167,5,285,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="320,21,286,21,286,15,320,15"/>
+<area shape="rect" id="Node000003" href="$class_fsm.html#a9515ece111ce6c930908a2c819d28793" title="Dispatch on machine state." alt="" coords="5,5,119,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="153,21,119,21,119,15,153,15"/>
+</map>

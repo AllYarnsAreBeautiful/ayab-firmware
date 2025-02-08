@@ -1,8 +1,15 @@
 <map id="src/ayab/encoders.cpp" name="src/ayab/encoders.cpp">
-<area shape="rect" id="node1" title="Class containing methods governing encoders for BeltShift, Direction, Active Hall sensor and Carriage..." alt="" coords="109,5,275,32"/>
-<area shape="rect" id="node2" href="$board_8h.html" title=" " alt="" coords="83,80,154,107"/>
-<area shape="rect" id="node3" href="$_arduino_8h.html" title=" " alt="" coords="150,155,234,181"/>
-<area shape="rect" id="node6" href="$encoders_8h.html" title=" " alt="" coords="229,80,323,107"/>
-<area shape="rect" id="node4" title=" " alt="" coords="5,229,184,256"/>
-<area shape="rect" id="node5" title=" " alt="" coords="208,229,373,256"/>
+<area shape="rect" id="Node000001" title="Class containing methods governing encoders for BeltShift, Direction, Active Hall sensor and Carriage..." alt="" coords="109,5,275,31"/>
+<area shape="rect" id="Node000002" href="$board_8h.html" title=" " alt="" coords="83,79,154,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="182,33,142,71,139,67,178,29"/>
+<area shape="rect" id="Node000003" href="$_arduino_8h.html" title=" " alt="" coords="150,152,234,177"/>
+<area shape="poly" id="edge5_Node000001_Node000003" title=" " alt="" coords="195,31,195,138,189,138,189,31"/>
+<area shape="rect" id="Node000006" href="$encoders_8h.html" title=" " alt="" coords="229,79,323,104"/>
+<area shape="poly" id="edge6_Node000001_Node000006" title=" " alt="" coords="207,29,253,67,250,72,204,33"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="133,102,172,140,168,144,129,106"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="5,225,184,251"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="178,180,123,219,120,215,175,175"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="208,225,373,251"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="209,175,265,215,262,219,206,180"/>
+<area shape="poly" id="edge7_Node000006_Node000003" title=" " alt="" coords="264,106,218,145,215,141,261,102"/>
 </map>

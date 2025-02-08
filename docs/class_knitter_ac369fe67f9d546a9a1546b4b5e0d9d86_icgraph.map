@@ -1,5 +1,7 @@
 <map id="Knitter::reqLine" name="Knitter::reqLine">
-<area shape="rect" id="node1" title="Send reqLine message." alt="" coords="205,31,328,57"/>
-<area shape="rect" id="node2" href="$class_knitter.html#a8edb0e49c22e0b38345a24ddbd31fd81" title="Function that is repeatedly called during state OpState::knit" alt="" coords="32,5,131,32"/>
-<area shape="rect" id="node3" href="$class_knitter.html#a2207ceece59284f18f3d82409644675e" title="Set line number of next row to be knitted." alt="" coords="5,56,157,83"/>
+<area shape="rect" id="Node000001" title="Send reqLine message." alt="" coords="205,31,328,56"/>
+<area shape="rect" id="Node000002" href="$class_knitter.html#a8edb0e49c22e0b38345a24ddbd31fd81" title="Function that is repeatedly called during state OpState::knit" alt="" coords="32,5,131,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="191,36,130,27,131,22,192,30"/>
+<area shape="rect" id="Node000003" href="$class_knitter.html#a2207ceece59284f18f3d82409644675e" title="Set line number of next row to be knitted." alt="" coords="5,55,157,80"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="192,56,158,60,157,55,191,50"/>
 </map>

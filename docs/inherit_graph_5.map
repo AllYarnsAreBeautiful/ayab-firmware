@@ -1,5 +1,7 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$class_encoders_interface.html" title="Encoder interface." alt="" coords="5,31,144,57"/>
-<area shape="rect" id="node2" href="$class_encoders.html" title=" " alt="" coords="209,5,291,32"/>
-<area shape="rect" id="node3" href="$class_encoders_mock.html" title=" " alt="" coords="192,56,308,83"/>
+<area shape="rect" id="Node000000" href="$class_fsm_interface.html" title=" " alt="" coords="5,31,113,56"/>
+<area shape="rect" id="Node000001" href="$class_fsm.html" title=" " alt="" coords="179,5,229,31"/>
+<area shape="poly" id="edge7_Node000000_Node000001" title=" " alt="" coords="126,29,178,20,179,25,127,34"/>
+<area shape="rect" id="Node000002" href="$class_fsm_mock.html" title=" " alt="" coords="161,55,247,80"/>
+<area shape="poly" id="edge8_Node000000_Node000002" title=" " alt="" coords="127,52,162,58,161,63,126,57"/>
 </map>

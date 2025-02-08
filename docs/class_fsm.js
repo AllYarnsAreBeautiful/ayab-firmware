@@ -9,10 +9,5 @@ var class_fsm =
     [ "state_knit", "class_fsm.html#ac0c3ad71700dce40c30a4223934982e0", null ],
     [ "state_ready", "class_fsm.html#a65dcbbad9e605e19d4d11a6cec9f410f", null ],
     [ "state_test", "class_fsm.html#af3902e8e7914eb0e374d622c806fa4eb", null ],
-    [ "state_wait_for_machine", "class_fsm.html#a14e60224ccc124277ee07894c244ae0a", null ],
-    [ "m_currentState", "class_fsm.html#a42ea48bac4d5f8eb029132bab0df4e43", null ],
-    [ "m_error", "class_fsm.html#ae61ebfd83e2fdaf26f7cac66db0e8044", null ],
-    [ "m_flash", "class_fsm.html#a46d872fbf30d76f6025375679c58e6b6", null ],
-    [ "m_flashTime", "class_fsm.html#ae006ce41658a349efc0d8a41705010aa", null ],
-    [ "m_nextState", "class_fsm.html#afb811b220ef73f0d6ebdbb8568ab90fc", null ]
+    [ "state_wait_for_machine", "class_fsm.html#a14e60224ccc124277ee07894c244ae0a", null ]
 ];

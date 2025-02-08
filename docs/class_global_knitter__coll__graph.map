@@ -1,4 +1,5 @@
 <map id="GlobalKnitter" name="GlobalKnitter">
-<area shape="rect" id="node1" title=" " alt="" coords="9,351,162,633"/>
-<area shape="rect" id="node2" href="$class_knitter_interface.html" title=" " alt="" coords="5,5,165,288"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="9,413,154,759"/>
+<area shape="rect" id="Node000002" href="$class_knitter_interface.html" title=" " alt="" coords="5,5,157,351"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="84,351,84,397,79,397,79,351"/>
 </map>

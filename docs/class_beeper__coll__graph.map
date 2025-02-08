@@ -1,4 +1,5 @@
 <map id="Beeper" name="Beeper">
-<area shape="rect" id="node1" title="Class to actuate a beeper connected to PIEZO_PIN." alt="" coords="21,248,152,501"/>
-<area shape="rect" id="node2" href="$class_beeper_interface.html" title=" " alt="" coords="5,5,168,200"/>
+<area shape="rect" id="Node000001" title="Class to actuate a beeper connected to PIEZO_PIN." alt="" coords="17,279,147,584"/>
+<area shape="rect" id="Node000002" href="$class_beeper_interface.html" title=" " alt="" coords="5,5,159,231"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="85,244,85,278,79,278,79,244"/>
 </map>

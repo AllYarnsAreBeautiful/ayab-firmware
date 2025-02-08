@@ -1,14 +1,25 @@
 <map id="FsmTest" name="FsmTest">
-<area shape="rect" id="node1" title=" " alt="" coords="414,653,583,892"/>
-<area shape="rect" id="node2" title=" " alt="" coords="5,425,107,503"/>
-<area shape="rect" id="node3" href="$class_solenoids_mock.html" title=" " alt="" coords="131,411,291,517"/>
-<area shape="rect" id="node4" href="$class_solenoids_interface.html" title=" " alt="" coords="112,86,291,207"/>
-<area shape="rect" id="node5" href="$class_encoders_mock.html" title=" " alt="" coords="315,367,475,561"/>
-<area shape="rect" id="node6" href="$class_encoders_interface.html" title="Encoder interface." alt="" coords="315,42,490,251"/>
-<area shape="rect" id="node7" href="$class_com_mock.html" title=" " alt="" coords="499,381,711,547"/>
-<area shape="rect" id="node8" href="$class_com_interface.html" title=" " alt="" coords="523,57,688,237"/>
-<area shape="rect" id="node9" href="$class_beeper_mock.html" title=" " alt="" coords="735,374,895,554"/>
-<area shape="rect" id="node10" href="$class_beeper_interface.html" title=" " alt="" coords="729,49,892,244"/>
-<area shape="rect" id="node11" href="$class_tester_mock.html" title=" " alt="" coords="924,337,1084,591"/>
-<area shape="rect" id="node12" href="$class_tester_interface.html" title=" " alt="" coords="916,5,1097,288"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="418,768,579,1053"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,520,99,585"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="63,598,81,652,95,679,113,704,146,737,183,767,264,817,346,856,419,883,417,888,344,861,262,822,180,771,142,741,109,707,90,682,76,654,58,600"/>
+<area shape="rect" id="Node000003" href="$class_beeper_mock.html" title=" " alt="" coords="123,450,275,655"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="255,654,289,704,347,769,408,829,404,832,343,773,285,707,250,657"/>
+<area shape="rect" id="Node000004" href="$class_beeper_interface.html" title=" " alt="" coords="122,65,275,291"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="201,305,201,450,196,450,196,305"/>
+<area shape="rect" id="Node000005" href="$class_com_mock.html" title=" " alt="" coords="299,460,503,645"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="429,645,458,752,453,753,424,646"/>
+<area shape="rect" id="Node000006" href="$class_com_interface.html" title=" " alt="" coords="321,75,479,281"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="403,295,404,460,398,460,398,295"/>
+<area shape="rect" id="Node000007" href="$class_encoders_mock.html" title=" " alt="" coords="528,440,680,665"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="574,666,548,753,543,751,568,665"/>
+<area shape="rect" id="Node000008" href="$class_encoders_interface.html" title="Encoder interface." alt="" coords="503,55,670,301"/>
+<area shape="poly" id="edge7_Node000007_Node000008" title=" " alt="" coords="596,315,601,440,596,440,590,315"/>
+<area shape="rect" id="Node000009" href="$class_solenoids_mock.html" title=" " alt="" coords="704,500,856,605"/>
+<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="753,607,694,707,669,746,593,827,589,823,665,742,690,704,749,604"/>
+<area shape="rect" id="Node000010" href="$class_solenoids_interface.html" title=" " alt="" coords="695,115,865,241"/>
+<area shape="poly" id="edge9_Node000009_Node000010" title=" " alt="" coords="783,254,783,499,777,499,777,254"/>
+<area shape="rect" id="Node000011" href="$class_tester_mock.html" title=" " alt="" coords="891,400,1043,705"/>
+<area shape="poly" id="edge10_Node000001_Node000011" title=" " alt="" coords="892,683,870,707,804,760,732,806,661,844,596,874,594,869,659,839,730,801,801,756,866,703,888,680"/>
+<area shape="rect" id="Node000012" href="$class_tester_interface.html" title=" " alt="" coords="889,5,1063,351"/>
+<area shape="poly" id="edge11_Node000011_Node000012" title=" " alt="" coords="974,365,973,400,968,400,969,365"/>
 </map>

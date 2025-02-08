@@ -18,11 +18,7 @@ var dir_438f4a02a1d99eec8e3376e0c84be64f =
     [ "global_solenoids.cpp", "global__solenoids_8cpp.html", null ],
     [ "global_tester.cpp", "global__tester_8cpp.html", null ],
     [ "knitter.cpp", "knitter_8cpp.html", null ],
-    [ "knitter.h", "knitter_8h.html", [
-      [ "KnitterInterface", "class_knitter_interface.html", "class_knitter_interface" ],
-      [ "GlobalKnitter", "class_global_knitter.html", "class_global_knitter" ],
-      [ "Knitter", "class_knitter.html", "class_knitter" ]
-    ] ],
+    [ "knitter.h", "knitter_8h.html", "knitter_8h" ],
     [ "main.cpp", "main_8cpp.html", "main_8cpp" ],
     [ "solenoids.cpp", "solenoids_8cpp.html", null ],
     [ "solenoids.h", "solenoids_8h.html", "solenoids_8h" ],

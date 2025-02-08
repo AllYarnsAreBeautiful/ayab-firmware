@@ -1,5 +1,7 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$class_beeper_interface.html" title=" " alt="" coords="5,31,132,57"/>
-<area shape="rect" id="node2" href="$class_beeper.html" title="Class to actuate a beeper connected to PIEZO_PIN." alt="" coords="197,5,265,32"/>
-<area shape="rect" id="node3" href="$class_beeper_mock.html" title=" " alt="" coords="180,56,283,83"/>
+<area shape="rect" id="Node000000" href="$class_beeper_interface.html" title=" " alt="" coords="5,31,132,56"/>
+<area shape="rect" id="Node000001" href="$class_beeper.html" title="Class to actuate a beeper connected to PIEZO_PIN." alt="" coords="197,5,265,31"/>
+<area shape="poly" id="edge1_Node000000_Node000001" title=" " alt="" coords="146,29,197,21,198,26,146,34"/>
+<area shape="rect" id="Node000002" href="$class_beeper_mock.html" title=" " alt="" coords="180,55,283,80"/>
+<area shape="poly" id="edge2_Node000000_Node000002" title=" " alt="" coords="146,52,180,57,180,62,145,57"/>
 </map>

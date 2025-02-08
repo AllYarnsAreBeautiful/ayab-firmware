@@ -1,4 +1,5 @@
 <map id="PacketSerial_::update" name="PacketSerial_::update">
-<area shape="rect" id="node1" title="The update function services the serial connection." alt="" coords="159,5,320,32"/>
-<area shape="rect" id="node2" href="$class_com.html#aaec04d044e5752da37024e9b3285113d" title="Service the serial connection." alt="" coords="5,5,111,32"/>
+<area shape="rect" id="Node000001" title="The update function services the serial connection." alt="" coords="159,5,320,31"/>
+<area shape="rect" id="Node000002" href="$class_com.html#aaec04d044e5752da37024e9b3285113d" title="Service the serial connection." alt="" coords="5,5,111,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="145,21,111,21,111,15,145,15"/>
 </map>

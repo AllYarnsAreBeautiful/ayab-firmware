@@ -1,4 +1,5 @@
 <map id="Encoders" name="Encoders">
-<area shape="rect" id="node1" title=" " alt="" coords="16,263,169,619"/>
-<area shape="rect" id="node2" href="$class_encoders_interface.html" title="Encoder interface." alt="" coords="5,5,180,215"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,299,248,839"/>
+<area shape="rect" id="Node000002" href="$class_encoders_interface.html" title="Encoder interface." alt="" coords="43,5,210,251"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="129,264,129,298,124,298,124,264"/>
 </map>

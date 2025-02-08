@@ -1,21 +1,44 @@
 <map id="src/ayab/solenoids.h" name="src/ayab/solenoids.h">
-<area shape="rect" id="node1" title=" " alt="" coords="1097,5,1252,32"/>
-<area shape="rect" id="node2" href="$global__solenoids_8cpp.html" title="Singleton class containing methods that control the needles via solenoids connected to IO expanders o..." alt="" coords="655,87,873,114"/>
-<area shape="rect" id="node3" href="$knitter_8h.html" title=" " alt="" coords="949,87,1083,114"/>
-<area shape="rect" id="node8" href="$main_8cpp.html" title="Main entry point for AYAB firmware." alt="" coords="5,177,147,203"/>
-<area shape="rect" id="node16" href="$solenoids_8cpp.html" title="Class containing methods that control the needles via solenoids connected to IO expanders on the devi..." alt="" coords="1439,87,1609,114"/>
-<area shape="rect" id="node17" href="$solenoids__mock_8h.html" title=" " alt="" coords="1255,80,1415,121"/>
-<area shape="rect" id="node19" href="$test__solenoids_8cpp.html" title=" " alt="" coords="1634,87,1806,114"/>
-<area shape="rect" id="node4" href="$com_8cpp.html" title="Class containing methods for serial communication." alt="" coords="1111,177,1247,203"/>
-<area shape="rect" id="node5" href="$fsm_8cpp.html" title="Singleton class containing methods for the finite state machine that co&#45;ordinates the AYAB firmware." alt="" coords="171,177,304,203"/>
-<area shape="rect" id="node6" href="$global__knitter_8cpp.html" title="Singleton class containing methods for the finite state machine that co&#45;ordinates the AYAB firmware." alt="" coords="328,177,525,203"/>
-<area shape="rect" id="node7" href="$knitter_8cpp.html" title="Class containing methods for the finite state machine that co&#45;ordinates the AYAB firmware." alt="" coords="550,177,701,203"/>
-<area shape="rect" id="node9" href="$tester_8cpp.html" title="Class containing methods for hardware testing." alt="" coords="725,177,870,203"/>
-<area shape="rect" id="node10" href="$knitter__mock_8cpp.html" title=" " alt="" coords="837,259,979,300"/>
-<area shape="rect" id="node11" href="$knitter__mock_8h.html" title=" " alt="" coords="945,169,1087,211"/>
-<area shape="rect" id="node13" href="$test__all_8cpp.html" title=" " alt="" coords="1271,177,1398,203"/>
-<area shape="rect" id="node14" href="$test__fsm_8cpp.html" title=" " alt="" coords="1422,177,1557,203"/>
-<area shape="rect" id="node15" href="$test__knitter_8cpp.html" title=" " alt="" coords="1581,177,1733,203"/>
-<area shape="rect" id="node12" href="$test__tester_8cpp.html" title=" " alt="" coords="1003,266,1149,293"/>
-<area shape="rect" id="node18" href="$solenoids__mock_8cpp.html" title=" " alt="" coords="1757,169,1917,211"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="1097,5,1252,31"/>
+<area shape="rect" id="Node000002" href="$global__solenoids_8cpp.html" title="Singleton class containing methods that control the needles via solenoids connected to IO expanders o..." alt="" coords="655,86,873,111"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="1102,36,824,89,823,83,1101,31"/>
+<area shape="rect" id="Node000003" href="$knitter_8h.html" title=" " alt="" coords="949,86,1083,111"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="1141,39,1040,88,1038,84,1138,34"/>
+<area shape="rect" id="Node000008" href="$main_8cpp.html" title="Main entry point for AYAB firmware." alt="" coords="5,174,147,199"/>
+<area shape="poly" id="edge16_Node000001_Node000008" title=" " alt="" coords="1085,35,1011,53,937,81,922,91,912,101,902,112,885,121,816,139,730,150,630,155,525,158,318,160,230,163,159,169,121,177,120,171,158,164,229,158,318,155,525,153,630,150,729,144,816,134,883,116,898,108,908,98,919,87,935,76,1009,48,1083,30"/>
+<area shape="rect" id="Node000016" href="$solenoids_8cpp.html" title="Class containing methods that control the needles via solenoids connected to IO expanders on the devi..." alt="" coords="1439,86,1609,111"/>
+<area shape="poly" id="edge17_Node000001_Node000016" title=" " alt="" coords="1239,31,1474,83,1473,89,1238,36"/>
+<area shape="rect" id="Node000017" href="$solenoids__mock_8h.html" title=" " alt="" coords="1255,79,1415,119"/>
+<area shape="poly" id="edge18_Node000001_Node000017" title=" " alt="" coords="1211,34,1297,76,1295,81,1209,39"/>
+<area shape="rect" id="Node000019" href="$test__solenoids_8cpp.html" title=" " alt="" coords="1634,86,1806,111"/>
+<area shape="poly" id="edge23_Node000001_Node000019" title=" " alt="" coords="1266,27,1432,48,1622,76,1663,83,1662,89,1621,81,1431,54,1265,33"/>
+<area shape="rect" id="Node000004" href="$com_8cpp.html" title="Class containing methods for serial communication." alt="" coords="1111,174,1247,199"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="1051,115,1158,171,1155,176,1049,120"/>
+<area shape="rect" id="Node000005" href="$fsm_8cpp.html" title="Singleton class containing methods for the finite state machine that co&#45;ordinates the AYAB firmware." alt="" coords="171,174,304,199"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="956,117,930,121,837,133,758,140,623,144,488,150,409,157,316,169,280,177,279,171,316,164,409,151,488,144,622,139,757,134,836,128,929,116,955,112"/>
+<area shape="rect" id="Node000006" href="$global__knitter_8cpp.html" title="Singleton class containing methods for the finite state machine that co&#45;ordinates the AYAB firmware." alt="" coords="328,174,525,199"/>
+<area shape="poly" id="edge5_Node000003_Node000006" title=" " alt="" coords="954,117,930,121,820,138,734,147,538,169,491,177,491,171,537,164,733,141,819,132,929,116,953,112"/>
+<area shape="rect" id="Node000007" href="$knitter_8cpp.html" title="Class containing methods for the finite state machine that co&#45;ordinates the AYAB firmware." alt="" coords="550,174,701,199"/>
+<area shape="poly" id="edge6_Node000003_Node000007" title=" " alt="" coords="951,117,678,177,677,171,950,112"/>
+<area shape="poly" id="edge7_Node000003_Node000008" title=" " alt="" coords="956,117,930,121,813,135,713,142,544,145,375,148,276,155,159,169,121,177,120,171,158,164,275,150,374,143,544,139,713,136,812,130,929,116,955,112"/>
+<area shape="rect" id="Node000009" href="$tester_8cpp.html" title="Class containing methods for hardware testing." alt="" coords="725,174,870,199"/>
+<area shape="poly" id="edge8_Node000003_Node000009" title=" " alt="" coords="975,119,828,176,826,171,973,114"/>
+<area shape="rect" id="Node000010" href="$knitter__mock_8cpp.html" title=" " alt="" coords="837,255,979,295"/>
+<area shape="poly" id="edge9_Node000003_Node000010" title=" " alt="" coords="985,121,958,142,936,168,925,190,918,213,911,255,906,254,913,212,920,188,931,165,955,138,982,117"/>
+<area shape="rect" id="Node000011" href="$knitter__mock_8h.html" title=" " alt="" coords="945,167,1087,207"/>
+<area shape="poly" id="edge10_Node000003_Node000011" title=" " alt="" coords="1019,125,1019,166,1013,166,1013,125"/>
+<area shape="rect" id="Node000013" href="$test__all_8cpp.html" title=" " alt="" coords="1271,174,1398,199"/>
+<area shape="poly" id="edge13_Node000003_Node000013" title=" " alt="" coords="1073,112,1293,171,1291,176,1071,118"/>
+<area shape="rect" id="Node000014" href="$test__fsm_8cpp.html" title=" " alt="" coords="1422,174,1557,199"/>
+<area shape="poly" id="edge14_Node000003_Node000014" title=" " alt="" coords="1097,109,1244,133,1411,164,1444,171,1443,177,1410,169,1243,138,1097,115"/>
+<area shape="rect" id="Node000015" href="$test__knitter_8cpp.html" title=" " alt="" coords="1581,174,1733,199"/>
+<area shape="poly" id="edge15_Node000003_Node000015" title=" " alt="" coords="1097,105,1311,128,1570,164,1608,171,1607,177,1569,169,1311,133,1097,110"/>
+<area shape="poly" id="edge11_Node000011_Node000010" title=" " alt="" coords="983,217,934,257,930,252,980,213"/>
+<area shape="rect" id="Node000012" href="$test__tester_8cpp.html" title=" " alt="" coords="1003,262,1149,287"/>
+<area shape="poly" id="edge12_Node000011_Node000012" title=" " alt="" coords="1039,216,1070,260,1066,263,1035,219"/>
+<area shape="poly" id="edge20_Node000017_Node000013" title=" " alt="" coords="1337,133,1337,174,1332,174,1332,133"/>
+<area shape="poly" id="edge21_Node000017_Node000014" title=" " alt="" coords="1382,123,1470,172,1467,176,1379,128"/>
+<area shape="poly" id="edge22_Node000017_Node000015" title=" " alt="" coords="1419,120,1615,171,1614,177,1418,125"/>
+<area shape="rect" id="Node000018" href="$solenoids__mock_8cpp.html" title=" " alt="" coords="1757,167,1917,207"/>
+<area shape="poly" id="edge19_Node000017_Node000018" title=" " alt="" coords="1428,116,1589,140,1746,164,1758,166,1757,171,1745,169,1588,146,1428,121"/>
 </map>

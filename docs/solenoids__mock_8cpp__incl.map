@@ -1,14 +1,28 @@
 <map id="test/mocks/solenoids_mock.cpp" name="test/mocks/solenoids_mock.cpp">
-<area shape="rect" id="node1" title=" " alt="" coords="143,5,303,47"/>
-<area shape="rect" id="node2" href="$solenoids__mock_8h.html" title=" " alt="" coords="153,95,292,121"/>
-<area shape="rect" id="node3" title=" " alt="" coords="91,169,218,196"/>
-<area shape="rect" id="node4" href="$solenoids_8h.html" title=" " alt="" coords="243,169,339,196"/>
-<area shape="rect" id="node5" href="$board_8h.html" title=" " alt="" coords="98,244,169,271"/>
-<area shape="rect" id="node6" href="$_arduino_8h.html" title=" " alt="" coords="165,319,249,345"/>
-<area shape="rect" id="node9" href="$encoders_8h.html" title=" " alt="" coords="244,244,337,271"/>
-<area shape="rect" id="node10" href="$_adafruit___m_c_p23008_8h_source.html" title=" " alt="" coords="361,244,524,271"/>
-<area shape="rect" id="node11" href="$_wire_8h.html" title=" " alt="" coords="469,319,533,345"/>
-<area shape="rect" id="node7" title=" " alt="" coords="5,393,184,420"/>
-<area shape="rect" id="node8" title=" " alt="" coords="208,393,373,420"/>
-<area shape="rect" id="node12" title=" " alt="" coords="422,393,581,420"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="143,5,303,45"/>
+<area shape="rect" id="Node000002" href="$solenoids__mock_8h.html" title=" " alt="" coords="153,93,292,119"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="225,46,225,79,220,79,220,46"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="91,167,218,192"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="213,121,177,158,173,155,210,117"/>
+<area shape="rect" id="Node000004" href="$solenoids_8h.html" title=" " alt="" coords="243,167,339,192"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="236,117,272,155,268,158,232,121"/>
+<area shape="rect" id="Node000005" href="$board_8h.html" title=" " alt="" coords="98,240,169,265"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="266,194,172,237,170,232,264,190"/>
+<area shape="rect" id="Node000006" href="$_arduino_8h.html" title=" " alt="" coords="165,313,249,339"/>
+<area shape="poly" id="edge10_Node000004_Node000006" title=" " alt="" coords="277,194,255,215,234,241,221,271,213,300,208,299,216,269,230,239,251,211,274,190"/>
+<area shape="rect" id="Node000009" href="$encoders_8h.html" title=" " alt="" coords="244,240,337,265"/>
+<area shape="poly" id="edge8_Node000004_Node000009" title=" " alt="" coords="293,192,293,226,288,226,288,192"/>
+<area shape="rect" id="Node000010" href="$_adafruit___m_c_p23008_8h_source.html" title=" " alt="" coords="361,240,524,265"/>
+<area shape="poly" id="edge11_Node000004_Node000010" title=" " alt="" coords="316,190,407,232,405,237,314,194"/>
+<area shape="rect" id="Node000011" href="$_wire_8h.html" title=" " alt="" coords="469,313,533,339"/>
+<area shape="poly" id="edge14_Node000004_Node000011" title=" " alt="" coords="339,183,453,201,505,217,525,227,538,238,545,255,542,273,524,304,519,302,537,271,539,256,534,242,522,231,503,222,452,207,339,188"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="147,264,187,302,183,306,144,268"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="5,387,184,412"/>
+<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="190,341,126,381,123,377,187,336"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="208,387,373,412"/>
+<area shape="poly" id="edge7_Node000006_Node000008" title=" " alt="" coords="222,337,268,375,265,380,218,341"/>
+<area shape="poly" id="edge9_Node000009_Node000006" title=" " alt="" coords="279,267,233,306,229,302,275,263"/>
+<area shape="poly" id="edge12_Node000010_Node000011" title=" " alt="" coords="454,264,485,301,481,305,450,267"/>
+<area shape="rect" id="Node000012" title=" " alt="" coords="422,387,581,412"/>
+<area shape="poly" id="edge13_Node000011_Node000012" title=" " alt="" coords="504,339,504,373,499,373,499,339"/>
 </map>

@@ -1,0 +1,5 @@
+<map id="Com::h_reqInfo" name="Com::h_reqInfo">
+<area shape="rect" id="Node000001" title="Handle reqInfo (request information) command." alt="" coords="232,5,353,31"/>
+<area shape="rect" id="Node000002" href="$class_com.html#a4aa2f1cac782b180cf8914017f764328" title="Callback for PacketSerial." alt="" coords="5,5,184,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="218,21,184,21,184,15,218,15"/>
+</map>

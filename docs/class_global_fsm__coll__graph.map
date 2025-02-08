@@ -1,4 +1,5 @@
 <map id="GlobalFsm" name="GlobalFsm">
-<area shape="rect" id="node1" title=" " alt="" coords="22,204,133,340"/>
-<area shape="rect" id="node2" href="$class_fsm_interface.html" title=" " alt="" coords="5,5,149,141"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="19,213,128,359"/>
+<area shape="rect" id="Node000002" href="$class_fsm_interface.html" title=" " alt="" coords="5,5,141,151"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="76,151,76,197,71,197,71,151"/>
 </map>

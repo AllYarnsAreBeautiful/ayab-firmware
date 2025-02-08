@@ -1,0 +1,5 @@
+<map id="Knitter::isReady" name="Knitter::isReady">
+<area shape="rect" id="Node000001" title="Assess whether the Finite State Machine is ready to move from state OpState::init to OpState::ready." alt="" coords="5,5,132,31"/>
+<area shape="rect" id="Node000002" href="$class_knitter.html#a92edc0570fa4e718302aa8fa2e36c482" title="Send indState message." alt="" coords="180,5,308,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="132,15,166,15,166,21,132,21"/>
+</map>

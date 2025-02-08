@@ -1,8 +1,13 @@
 <map id="test/mocks/encoders_mock.h" name="test/mocks/encoders_mock.h">
-<area shape="rect" id="node1" title=" " alt="" coords="180,5,337,47"/>
-<area shape="rect" id="node2" href="$encoders_8h.html" title=" " alt="" coords="145,95,239,121"/>
-<area shape="rect" id="node6" title=" " alt="" coords="263,95,390,121"/>
-<area shape="rect" id="node3" href="$_arduino_8h.html" title=" " alt="" coords="150,169,234,196"/>
-<area shape="rect" id="node4" title=" " alt="" coords="5,244,184,271"/>
-<area shape="rect" id="node5" title=" " alt="" coords="208,244,373,271"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="180,5,337,45"/>
+<area shape="rect" id="Node000002" href="$encoders_8h.html" title=" " alt="" coords="145,93,239,119"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="245,47,213,84,209,81,241,44"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="263,93,390,119"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="277,44,310,81,306,84,273,47"/>
+<area shape="rect" id="Node000003" href="$_arduino_8h.html" title=" " alt="" coords="150,167,234,192"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="195,119,195,153,189,153,189,119"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="5,240,184,265"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="178,194,123,234,120,229,175,190"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="208,240,373,265"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="209,190,265,230,262,234,206,194"/>
 </map>

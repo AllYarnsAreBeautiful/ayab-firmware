@@ -1,6 +1,9 @@
 <map id="src/ayab/beeper.h" name="src/ayab/beeper.h">
-<area shape="rect" id="node1" title=" " alt="" coords="123,5,261,32"/>
-<area shape="rect" id="node2" href="$_arduino_8h.html" title=" " alt="" coords="150,80,234,107"/>
-<area shape="rect" id="node3" title=" " alt="" coords="5,155,184,181"/>
-<area shape="rect" id="node4" title=" " alt="" coords="208,155,373,181"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="123,5,261,31"/>
+<area shape="rect" id="Node000002" href="$_arduino_8h.html" title=" " alt="" coords="150,79,234,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="195,31,195,65,189,65,189,31"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="5,152,184,177"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="178,106,123,146,120,141,175,102"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="208,152,373,177"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="209,102,265,142,262,146,206,106"/>
 </map>

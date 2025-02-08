@@ -1,6 +1,10 @@
 <map id="PacketSerial_::setStream" name="PacketSerial_::setStream">
-<area shape="rect" id="node1" title="Attach PacketSerial to an existing Arduino Stream." alt="" coords="405,31,588,57"/>
-<area shape="rect" id="node2" href="$class_packet_serial__.html#a306f8ad3ad4b64fd172080d7a1d6183c" title="Begin a default serial connection with the given speed." alt="" coords="205,31,357,57"/>
-<area shape="rect" id="node3" href="$class_packet_serial__.html#a5ce0f36dd94b8ab87ae6319e9ab75a69" title="Deprecated. Use setStream() to configure a non&#45;default port." alt="" coords="5,5,157,32"/>
-<area shape="rect" id="node4" href="$class_com.html#a81bced9fe4b7f19298cf45c61ac82824" title="Initialize serial communication." alt="" coords="41,56,122,83"/>
+<area shape="rect" id="Node000001" title="Attach PacketSerial to an existing Arduino Stream." alt="" coords="405,29,588,55"/>
+<area shape="rect" id="Node000002" href="$class_packet_serial__.html#a306f8ad3ad4b64fd172080d7a1d6183c" title="Begin a default serial connection with the given speed." alt="" coords="205,55,357,80"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="392,57,358,61,357,56,391,52"/>
+<area shape="rect" id="Node000003" href="$class_packet_serial__.html#a5ce0f36dd94b8ab87ae6319e9ab75a69" title="Deprecated. Use setStream() to configure a non&#45;default port." alt="" coords="5,5,157,31"/>
+<area shape="poly" id="edge4_Node000001_Node000003" title=" " alt="" coords="392,39,157,25,158,20,392,33"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="215,54,133,33,134,28,217,49"/>
+<area shape="rect" id="Node000004" href="$class_com.html#a81bced9fe4b7f19298cf45c61ac82824" title="Initialize serial communication." alt="" coords="41,55,122,80"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="191,70,122,70,122,65,191,65"/>
 </map>

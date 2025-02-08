@@ -1,5 +1,7 @@
 <map id="FsmInterface" name="FsmInterface">
-<area shape="rect" id="node1" title=" " alt="" coords="133,5,277,141"/>
-<area shape="rect" id="node2" href="$class_fsm.html" title=" " alt="" coords="5,189,203,457"/>
-<area shape="rect" id="node3" href="$class_fsm_mock.html" title=" " alt="" coords="227,263,387,384"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="133,5,269,151"/>
+<area shape="rect" id="Node000002" href="$class_fsm.html" title=" " alt="" coords="5,199,200,524"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="174,165,162,199,157,197,169,163"/>
+<area shape="rect" id="Node000003" href="$class_fsm_mock.html" title=" " alt="" coords="224,299,376,424"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="233,163,281,298,276,299,228,164"/>
 </map>

@@ -1,0 +1,9 @@
+<map id="Com::init" name="Com::init">
+<area shape="rect" id="Node000001" title="Initialize serial communication." alt="" coords="5,35,87,60"/>
+<area shape="rect" id="Node000002" href="$class_packet_serial__.html#a306f8ad3ad4b64fd172080d7a1d6183c" title="Begin a default serial connection with the given speed." alt="" coords="148,5,300,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="86,38,134,30,135,35,87,43"/>
+<area shape="rect" id="Node000004" href="$class_packet_serial__.html#afded83a3f05b4d2d80ec311938a45f9c" title="Set the function that will receive decoded packets." alt="" coords="135,55,313,95"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="87,51,121,56,121,62,86,56"/>
+<area shape="rect" id="Node000003" href="$class_packet_serial__.html#abacc92df1cb6dc433d861caba6d097f9" title="Attach PacketSerial to an existing Arduino Stream." alt="" coords="361,5,544,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="301,15,347,15,347,21,301,21"/>
+</map>

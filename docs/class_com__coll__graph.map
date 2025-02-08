@@ -1,5 +1,7 @@
 <map id="Com" name="Com">
-<area shape="rect" id="node1" title=" " alt="" coords="115,395,280,736"/>
-<area shape="rect" id="node2" href="$class_com_interface.html" title=" " alt="" coords="5,79,171,259"/>
-<area shape="rect" id="node3" href="$class_packet_serial__.html" title=" " alt="" coords="195,5,421,332"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="112,463,269,888"/>
+<area shape="rect" id="Node000002" href="$class_com_interface.html" title=" " alt="" coords="5,100,163,305"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="113,318,145,462,140,463,107,319"/>
+<area shape="rect" id="Node000003" href="$class_packet_serial__.html" title=" " alt="" coords="187,5,411,400"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="256,401,246,447,240,446,251,400"/>
 </map>

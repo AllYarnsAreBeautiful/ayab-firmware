@@ -1,0 +1,7 @@
+<map id="Com::send_cnfInit" name="Com::send_cnfInit">
+<area shape="rect" id="Node000001" title="Send cnfInit message." alt="" coords="5,5,144,31"/>
+<area shape="rect" id="Node000002" href="$class_com.html#a26feaec90f04f0920d5969abf529705b" title="Send a packet of data." alt="" coords="192,5,283,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="144,15,178,15,178,21,144,21"/>
+<area shape="rect" id="Node000003" href="$class_packet_serial__.html#aa3386c597cbf0a0a287e5a084c85f399" title="Set a packet of data." alt="" coords="331,5,477,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="283,15,317,15,317,21,283,21"/>
+</map>

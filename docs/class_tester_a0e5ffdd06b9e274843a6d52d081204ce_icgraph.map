@@ -1,0 +1,7 @@
+<map id="Tester::helpCmd" name="Tester::helpCmd">
+<area shape="rect" id="Node000001" title="Help command handler." alt="" coords="333,5,460,31"/>
+<area shape="rect" id="Node000002" href="$class_tester.html#a59a6f18df5c48936c33783cb8638d335" title="Setup for hardware tests." alt="" coords="179,5,285,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="320,21,286,21,286,15,320,15"/>
+<area shape="rect" id="Node000003" href="$class_tester.html#aabb9fe62d51be3840fad441522cc5dc1" title="Start hardware test." alt="" coords="5,5,131,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="165,21,131,21,131,15,165,15"/>
+</map>

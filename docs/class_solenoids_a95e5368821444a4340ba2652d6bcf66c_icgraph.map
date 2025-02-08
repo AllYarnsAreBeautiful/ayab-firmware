@@ -1,4 +1,7 @@
 <map id="Solenoids::write" name="Solenoids::write">
-<area shape="rect" id="node1" title=" " alt="" coords="229,5,356,32"/>
-<area shape="rect" id="node2" href="$class_solenoids.html#a3642dba4c6f9a8b327bf8b59a179a2cd" title="Set the state of all the solenoids." alt="" coords="5,5,181,32"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="229,31,356,56"/>
+<area shape="rect" id="Node000002" href="$class_solenoids.html#abd60ee380a8f8a4607fc48afe64869f1" title="Set the state of a solenoid." alt="" coords="9,5,178,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="215,36,178,31,178,26,216,31"/>
+<area shape="rect" id="Node000003" href="$class_solenoids.html#a3642dba4c6f9a8b327bf8b59a179a2cd" title="Set the state of all the solenoids." alt="" coords="5,55,181,80"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="216,55,182,59,181,54,215,50"/>
 </map>

@@ -1,5 +1,7 @@
 <map id="SolenoidsInterface" name="SolenoidsInterface">
-<area shape="rect" id="node1" title=" " alt="" coords="65,5,244,127"/>
-<area shape="rect" id="node2" href="$class_solenoids.html" title=" " alt="" coords="5,175,136,340"/>
-<area shape="rect" id="node3" href="$class_solenoids_mock.html" title=" " alt="" coords="160,204,320,311"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="61,5,231,131"/>
+<area shape="rect" id="Node000002" href="$class_solenoids.html" title=" " alt="" coords="5,179,127,364"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="119,145,105,179,100,177,114,143"/>
+<area shape="rect" id="Node000003" href="$class_solenoids_mock.html" title=" " alt="" coords="151,219,303,324"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="179,143,209,217,204,219,174,145"/>
 </map>

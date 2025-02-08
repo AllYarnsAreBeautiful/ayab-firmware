@@ -1,12 +1,24 @@
 <map id="src/ayab/global_solenoids.cpp" name="src/ayab/global_solenoids.cpp">
-<area shape="rect" id="node1" title="Singleton class containing methods that control the needles via solenoids connected to IO expanders o..." alt="" coords="182,5,399,32"/>
-<area shape="rect" id="node2" href="$solenoids_8h.html" title=" " alt="" coords="243,80,339,107"/>
-<area shape="rect" id="node3" href="$board_8h.html" title=" " alt="" coords="98,155,169,181"/>
-<area shape="rect" id="node4" href="$_arduino_8h.html" title=" " alt="" coords="165,229,249,256"/>
-<area shape="rect" id="node7" href="$encoders_8h.html" title=" " alt="" coords="244,155,337,181"/>
-<area shape="rect" id="node8" href="$_adafruit___m_c_p23008_8h_source.html" title=" " alt="" coords="361,155,524,181"/>
-<area shape="rect" id="node9" href="$_wire_8h.html" title=" " alt="" coords="469,229,533,256"/>
-<area shape="rect" id="node5" title=" " alt="" coords="5,304,184,331"/>
-<area shape="rect" id="node6" title=" " alt="" coords="208,304,373,331"/>
-<area shape="rect" id="node10" title=" " alt="" coords="422,304,581,331"/>
+<area shape="rect" id="Node000001" title="Singleton class containing methods that control the needles via solenoids connected to IO expanders o..." alt="" coords="182,5,399,31"/>
+<area shape="rect" id="Node000002" href="$solenoids_8h.html" title=" " alt="" coords="243,79,339,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="293,31,293,65,288,65,288,31"/>
+<area shape="rect" id="Node000003" href="$board_8h.html" title=" " alt="" coords="98,152,169,177"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="266,106,172,149,170,144,264,102"/>
+<area shape="rect" id="Node000004" href="$_arduino_8h.html" title=" " alt="" coords="165,225,249,251"/>
+<area shape="poly" id="edge8_Node000002_Node000004" title=" " alt="" coords="277,106,255,127,234,153,221,183,213,212,208,211,216,181,230,151,251,123,274,102"/>
+<area shape="rect" id="Node000007" href="$encoders_8h.html" title=" " alt="" coords="244,152,337,177"/>
+<area shape="poly" id="edge6_Node000002_Node000007" title=" " alt="" coords="293,104,293,138,288,138,288,104"/>
+<area shape="rect" id="Node000008" href="$_adafruit___m_c_p23008_8h_source.html" title=" " alt="" coords="361,152,524,177"/>
+<area shape="poly" id="edge9_Node000002_Node000008" title=" " alt="" coords="316,102,407,144,405,149,314,106"/>
+<area shape="rect" id="Node000009" href="$_wire_8h.html" title=" " alt="" coords="469,225,533,251"/>
+<area shape="poly" id="edge12_Node000002_Node000009" title=" " alt="" coords="339,95,453,113,505,129,525,139,538,150,545,167,542,185,524,216,519,214,537,183,539,168,534,154,522,143,503,134,452,119,339,100"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="147,176,187,214,183,218,144,180"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="5,299,184,324"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="190,253,126,293,123,289,187,248"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="208,299,373,324"/>
+<area shape="poly" id="edge5_Node000004_Node000006" title=" " alt="" coords="222,249,268,287,265,292,218,253"/>
+<area shape="poly" id="edge7_Node000007_Node000004" title=" " alt="" coords="279,179,233,218,229,214,275,175"/>
+<area shape="poly" id="edge10_Node000008_Node000009" title=" " alt="" coords="454,176,485,213,481,217,450,179"/>
+<area shape="rect" id="Node000010" title=" " alt="" coords="422,299,581,324"/>
+<area shape="poly" id="edge11_Node000009_Node000010" title=" " alt="" coords="504,251,504,285,499,285,499,251"/>
 </map>
