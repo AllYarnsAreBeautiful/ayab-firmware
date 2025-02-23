@@ -2,7 +2,9 @@ name: Create Release
 on:
   push:
     tags:
-    - 'v?[0-9]+.[0-9]+.[0-9]+-?[a-zA-Z0-9]*'
+      # Not a regex! See https://docs.github.com/en/actions/writing-workflows/workflow-syntax-for-github-actions#filter-pattern-cheat-sheet
+      - 'v?[0-9]+.[0-9]+.[0-9]+'
+      - 'v?[0-9]+.[0-9]+.[0-9]+-[a-zA-Z0-9]+'
 
 jobs:
   release:
