@@ -27,10 +27,10 @@ static const uint8_t CRC8_TABLE[256] = {
 	116, 42,200,150, 21, 75,169,247,182,232, 10, 84,215,137,107, 53
 };
 
-uint8_t crc8(const uint8_t *buffer, size_t lenght) {
+uint8_t crc8(const uint8_t *buffer, size_t length) {
     uint8_t crc = 0x00;
 
-    while (lenght--) {
+    while (length--) {
         crc = CRC8_TABLE[crc ^ *buffer++];
     }
     return crc;
