@@ -29,6 +29,8 @@
 // Pin Assignments
 constexpr uint8_t EOL_PIN_R = A0; // Analog
 constexpr uint8_t EOL_PIN_L = A1; // Analog
+constexpr uint8_t EOL_PIN_R_L = 7;
+constexpr uint8_t EOL_PIN_R_DETECT = 8;
 
 constexpr uint8_t ENC_PIN_A = 2;
 constexpr uint8_t ENC_PIN_B = 3;

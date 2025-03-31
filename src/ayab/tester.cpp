@@ -170,6 +170,7 @@ Err_t Tester::startTest(Machine_t machineType) {
   OpState_t currentState = GlobalFsm::getState();
   if (OpState::wait_for_machine == currentState || OpState::init == currentState || OpState::ready == currentState) {
     GlobalFsm::setState(OpState::test);
+    m_machineType = machineType;
     GlobalKnitter::setMachineType(machineType);
     setUp();
     return ErrorCode::success;
@@ -260,9 +261,29 @@ void Tester::readEOLsensors() {
   auto hallSensor = static_cast<uint16_t>(analogRead(EOL_PIN_L));
   snprintf(buf, BUFFER_LEN, "  EOL_L: %hu", hallSensor);
   GlobalCom::sendMsg(AYAB_API::testRes, buf);
-  hallSensor = static_cast<uint16_t>(analogRead(EOL_PIN_R));
-  snprintf(buf, BUFFER_LEN, "  EOL_R: %hu", hallSensor);
-  GlobalCom::sendMsg(AYAB_API::testRes, buf);
+  if (m_machineType == Machine_t::Kh910) {
+    pinMode(EOL_PIN_R, INPUT_PULLUP);
+    pinMode(EOL_PIN_R_L, INPUT_PULLUP);
+    snprintf(buf, BUFFER_LEN, "  EOL_R_K: %s", digitalRead(EOL_PIN_R) ? "HIGH" : "LOW");
+    GlobalCom::sendMsg(AYAB_API::testRes, buf);
+
+    // Set EOL_PIN_R_DETECT to LOW to detect if it is connected to EOL_PIN_R_L
+    pinMode(EOL_PIN_R_DETECT, OUTPUT);
+    digitalWrite(EOL_PIN_R_DETECT, LOW);
+    // If pins EOL_PIN_R_DETECT and EOL_PIN_R_L are shorted,
+    // it means the lace signal is connected
+    snprintf(buf, BUFFER_LEN, " EOL_PIN_R_DETECT: %s", digitalRead(EOL_PIN_R_DETECT) ? "HIGH" : "LOW");
+    GlobalCom::sendMsg(AYAB_API::testRes, buf);
+
+    pinMode(EOL_PIN_R_DETECT, INPUT);
+    snprintf(buf, BUFFER_LEN, " EOL_R_L: %s", digitalRead(EOL_PIN_R_L) ? "HIGH" : "LOW");
+    GlobalCom::sendMsg(AYAB_API::testRes, buf);
+  } else {
+    pinMode(EOL_PIN_R, INPUT);
+    hallSensor = static_cast<uint16_t>(analogRead(EOL_PIN_R));
+    snprintf(buf, BUFFER_LEN, "  EOL_R: %hu", hallSensor);
+    GlobalCom::sendMsg(AYAB_API::testRes, buf);
+  }
 }
 
 /*!

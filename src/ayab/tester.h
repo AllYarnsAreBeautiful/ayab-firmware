@@ -117,6 +117,7 @@ private:
   void autoTestOdd() const;
   void handleTimerEvent();
 
+  Machine_t m_machineType = Machine_t::NoMachine;
   bool m_autoReadOn = false;
   bool m_autoTestOn = false;
   unsigned long m_lastTime = 0U;

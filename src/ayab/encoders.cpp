@@ -136,15 +136,32 @@ Carriage_t Encoders::detectCarriageLeft() {
 }
 
 Carriage_t Encoders::detectCarriageRight() {
-  uint16_t hallValue = analogRead(EOL_PIN_R);
   if (m_machineType == MachineType::Kh910) {
-    // Due to an error in wiring on the shield, the KH910/KH950 right sensor
-    // only triggers for the K carriage, and with a low voltage so we can't 
-    // use the same logic as for other machines.
-    if (hallValue < FILTER_R_MIN[static_cast<uint8_t>(m_machineType)]) {
+    pinMode(EOL_PIN_R_L, INPUT_PULLUP);
+    // Set EOL_PIN_R_DETECT to LOW to detect if it is connected to EOL_PIN_R_L
+    pinMode(EOL_PIN_R_DETECT, OUTPUT);
+    digitalWrite(EOL_PIN_R_DETECT, LOW);
+    delayMicroseconds(10);
+    // If pins EOL_PIN_R_DETECT and EOL_PIN_R_L are shorted,
+    // it means the lace signal is connected
+    if (digitalRead(EOL_PIN_R_L) == LOW) {
+      // Release EOL_PIN_R_DETECT
+      pinMode(EOL_PIN_R_DETECT, INPUT);
+      delayMicroseconds(10);
+      // If the lace signal goes high, it means the lace carriage is detected
+      if (digitalRead(EOL_PIN_R_L) == HIGH) {
+        return Carriage_t::Lace;
+      }
+    }
+
+    // The knit signal is active-low
+    pinMode(EOL_PIN_R, INPUT_PULLUP);
+    if (digitalRead(EOL_PIN_R) == LOW) {
       return Carriage_t::Knit;
     }
   } else {
+    pinMode(EOL_PIN_R, INPUT);
+    uint16_t hallValue = analogRead(EOL_PIN_R);
     if (hallValue > FILTER_R_MAX[static_cast<uint8_t>(m_machineType)]) {
       return Carriage_t::Knit;
     } else if (hallValue < FILTER_R_MIN[static_cast<uint8_t>(m_machineType)]){
