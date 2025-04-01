@@ -1,3 +1,6 @@
+#ifndef HAL_PACKETSERIAL_H
+#define HAL_PACKETSERIAL_H
+
 #include <Arduino.h>
 #include <PacketSerial.h>
 
@@ -19,3 +22,5 @@ class PacketSerial : public PacketSerialInterface {
   SLIPPacketSerial myPacketSerial;
 };
 }  // namespace hardwareAbstraction
+
+#endif
