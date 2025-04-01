@@ -1,7 +1,7 @@
 #include "crc8.h"
 
 // CRC 8 lookup table
-// Maxim/Dallas 1-wire devices called ("Dow CRC")
+// Maxim/Dallas 1-wire CRC ("Dow CRC")
 // Polynom = x^8 + x^5 + x^4 + 1
 // +---------------------+--------+------------------------+
 // |                     |        |                        |
