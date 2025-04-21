@@ -83,7 +83,7 @@ set(COMMON_LINKER_FLAGS
     ${ARDUINO_MOCK_LIBS_DIR}/dist/lib/libarduino_mock.a
     ${ARDUINO_MOCK_LIBS_DIR}/lib/gtest/gtest/src/gtest-build/lib/libgmock.a
     ${CMAKE_THREAD_LIBS_INIT}
-    -lgcov
+    --coverage
     )
 set(HARD_I2C_LIB
     ${LIBRARY_DIRECTORY}/Adafruit_MCP23008/Adafruit_MCP23008.cpp
