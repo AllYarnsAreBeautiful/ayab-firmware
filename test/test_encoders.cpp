@@ -26,7 +26,7 @@
 #include <board.h>
 #include <encoders.h>
 
-using ::testing::Return;
+using namespace ::testing;
 
 extern Encoders *encoders;
 
@@ -37,7 +37,7 @@ protected:
   void SetUp() override {
     arduinoMock = arduinoMockInstance();
 
-    encoders->init(Machine_t::Kh910);
+    encoders->init(Machine_t::Kh930);
   }
 
   void TearDown() override {
@@ -69,7 +69,7 @@ TEST_F(EncodersTest, test_encA_rising_not_in_front) {
 }
 
 TEST_F(EncodersTest, test_encA_rising_in_front_notKH270) {
-  encoders->init(Machine_t::Kh910);
+  encoders->init(Machine_t::Kh930);
   ASSERT_EQ(encoders->getCarriage(), Carriage_t::NoCarriage);
   // Not in front of Right Hall Sensor
   EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_R))
@@ -79,16 +79,14 @@ TEST_F(EncodersTest, test_encA_rising_in_front_notKH270) {
       .WillRepeatedly(Return(FILTER_L_MIN[static_cast<int8_t>(encoders->getMachineType())] - 1));
   // BeltShift is shifted
   EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_C)).WillRepeatedly(Return(HIGH));
+
   // Create two rising edges (the initial state of A is assumed to be low)
   EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_A))
-    .WillOnce(Return(HIGH))
-    .WillOnce(Return(LOW))
-    .WillOnce(Return(HIGH));
+    .WillRepeatedly(ReturnRoundRobin({ HIGH, LOW }));
+    
   // Always moving to the right: A == B
   EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_B))
-    .WillOnce(Return(HIGH))
-    .WillOnce(Return(LOW))
-    .WillOnce(Return(HIGH));
+    .WillRepeatedly(ReturnRoundRobin({ HIGH, LOW }));
 
   // Process rising edge
   encoders->encA_interrupt();
@@ -122,16 +120,14 @@ TEST_F(EncodersTest, test_encA_rising_in_front_KH270) {
       .WillRepeatedly(Return(FILTER_L_MIN[static_cast<int8_t>(encoders->getMachineType())] - 1));
   // KH270 has no belt shift
   EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_C)).WillRepeatedly(Return(HIGH));
+
   // Create two rising edges (the initial state of A is assumed to be low)
   EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_A))
-    .WillOnce(Return(HIGH))
-    .WillOnce(Return(LOW))
-    .WillOnce(Return(HIGH));
+    .WillRepeatedly(ReturnRoundRobin({ HIGH, LOW }));
+
   // Always moving to the right: A == B
   EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_B))
-    .WillOnce(Return(HIGH))
-    .WillOnce(Return(LOW))
-    .WillOnce(Return(HIGH));
+    .WillRepeatedly(ReturnRoundRobin({ HIGH, LOW }));
 
   // Process rising edge
   encoders->encA_interrupt();
@@ -225,18 +221,14 @@ TEST_F(EncodersTest, test_encA_falling_in_front) {
       .WillRepeatedly(Return(FILTER_R_MIN[static_cast<int8_t>(encoders->getMachineType())] - 1));
   // BeltShift is shifted
   EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_C)).WillRepeatedly(Return(LOW));
+
   // Create two falling edges (the initial state of A is assumed to be low)
   EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_A))
-    .WillOnce(Return(HIGH))
-    .WillOnce(Return(LOW))
-    .WillOnce(Return(HIGH))
-    .WillOnce(Return(LOW));
+    .WillRepeatedly(ReturnRoundRobin({ HIGH, LOW }));
+    
   // Always moving to the left: A != B
   EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_B))
-    .WillOnce(Return(LOW))
-    .WillOnce(Return(HIGH))
-    .WillOnce(Return(LOW))
-    .WillOnce(Return(HIGH));
+    .WillRepeatedly(ReturnRoundRobin({ LOW, HIGH }));
 
   // Process rising edge
   encoders->encA_interrupt();
@@ -262,30 +254,33 @@ TEST_F(EncodersTest, test_encA_falling_in_front) {
   ASSERT_EQ(encoders->getPosition(), startPosition - 1);
 }
 
-TEST_F(EncodersTest, test_encA_falling_in_front_KH910) {
+TEST_F(EncodersTest, test_encA_falling_in_front_KH910_unfixed_K) {
   encoders->init(Machine_t::Kh910);
   ASSERT_EQ(encoders->getCarriage(), Carriage_t::NoCarriage);
+
+  // Unfixed shield: lace signal is always high
+  EXPECT_CALL(*arduinoMock, digitalRead(EOL_PIN_R_L))
+    .WillRepeatedly(Return(HIGH));
+
   // Not in front of Left Hall Sensor
   EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_L))
       .WillRepeatedly(Return(MID_SENSOR_VALUE));
+
   // K carriage in front of Right Hall Sensor: on a 910, the right sensor only
   // triggers for the K carriage and with a low voltage
-  EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_R))
-      .WillRepeatedly(Return(0));
+  EXPECT_CALL(*arduinoMock, digitalRead(EOL_PIN_R))
+      .WillRepeatedly(Return(LOW));
+
   // BeltShift is shifted
   EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_C)).WillRepeatedly(Return(LOW));
+
   // Create two falling edges (the initial state of A is assumed to be low)
   EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_A))
-    .WillOnce(Return(HIGH))
-    .WillOnce(Return(LOW))
-    .WillOnce(Return(HIGH))
-    .WillOnce(Return(LOW));
+    .WillRepeatedly(ReturnRoundRobin({ HIGH, LOW }));
+    
   // Always moving to the left: A != B
   EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_B))
-    .WillOnce(Return(LOW))
-    .WillOnce(Return(HIGH))
-    .WillOnce(Return(LOW))
-    .WillOnce(Return(HIGH));
+    .WillRepeatedly(ReturnRoundRobin({ LOW, HIGH }));
 
   // Process rising edge
   encoders->encA_interrupt();
@@ -311,6 +306,68 @@ TEST_F(EncodersTest, test_encA_falling_in_front_KH910) {
   ASSERT_EQ(encoders->getPosition(), startPosition - 1);
 }
 
+TEST_F(EncodersTest, test_encA_falling_in_front_KH910_fixed_L) {
+  encoders->init(Machine_t::Kh910);
+  ASSERT_EQ(encoders->getCarriage(), Carriage_t::NoCarriage);
+
+  uint8_t detectPinLevel = HIGH;
+  uint8_t detectPinMode = INPUT;
+
+  // Record writes to fix detection pin (8) to reflect them on pin 7 (lace signal)
+  EXPECT_CALL(*arduinoMock, pinMode(EOL_PIN_R_DETECT, _))
+    .WillRepeatedly(SaveArg<1>(&detectPinMode));
+  EXPECT_CALL(*arduinoMock, digitalWrite(EOL_PIN_R_DETECT, _))
+    .WillRepeatedly(SaveArg<1>(&detectPinLevel));
+
+  EXPECT_CALL(*arduinoMock, pinMode(EOL_PIN_R_L, INPUT_PULLUP))
+    .Times(AtLeast(1));
+
+  // Fixed shield: lace signal (pin 7) is low if pin 8 is pulled down,
+  // and high if pin 8 is left floating which happens when the L carriage
+  // is in front of the right Hall sensor
+  EXPECT_CALL(*arduinoMock, digitalRead(EOL_PIN_R_L))
+    .WillRepeatedly([&] {
+      return (detectPinMode == OUTPUT && detectPinLevel == LOW) ? LOW : HIGH;
+    });
+
+  // Not in front of Left Hall Sensor
+  EXPECT_CALL(*arduinoMock, analogRead(EOL_PIN_L))
+      .WillRepeatedly(Return(MID_SENSOR_VALUE));
+
+  // BeltShift is shifted
+  EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_C)).WillRepeatedly(Return(LOW));
+
+  // Create two falling edges (the initial state of A is assumed to be low)
+  EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_A))
+    .WillRepeatedly(ReturnRoundRobin({ HIGH, LOW }));
+    
+  // Always moving to the left: A != B
+  EXPECT_CALL(*arduinoMock, digitalRead(ENC_PIN_B))
+    .WillRepeatedly(ReturnRoundRobin({ LOW, HIGH }));
+
+  // Process rising edge
+  encoders->encA_interrupt();
+
+  // Process falling edge
+  encoders->encA_interrupt();
+
+  uint8_t startPosition = END_RIGHT_MINUS_OFFSET[static_cast<int8_t>(encoders->getMachineType())];
+
+  ASSERT_EQ(encoders->getDirection(), Direction_t::Left);
+  ASSERT_EQ(encoders->getHallActive(), Direction_t::Right);
+  ASSERT_EQ(encoders->getCarriage(), Carriage_t::Lace);
+  ASSERT_EQ(encoders->getBeltShift(), BeltShift::Shifted);
+  ASSERT_EQ(encoders->getPosition(), startPosition);
+
+  // Process rising edge
+  encoders->encA_interrupt();
+
+  // Process falling edge
+  encoders->encA_interrupt();
+
+  // Should have moved and not reset position
+  ASSERT_EQ(encoders->getPosition(), startPosition - 1);
+}
 TEST_F(EncodersTest, test_getPosition) {
   uint8_t p = encoders->getPosition();
   ASSERT_EQ(p, 0x00);
@@ -338,7 +395,7 @@ TEST_F(EncodersTest, test_getCarriage) {
 
 TEST_F(EncodersTest, test_getMachineType) {
   Machine_t m = encoders->getMachineType();
-  ASSERT_EQ(m, Machine_t::Kh910);
+  ASSERT_EQ(m, Machine_t::Kh930);
 }
 
 TEST_F(EncodersTest, test_getHallValue) {
