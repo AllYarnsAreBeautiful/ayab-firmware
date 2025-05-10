@@ -244,9 +244,13 @@ void Knitter::_runMachine() {
     int16_t newPosition = _encoder->getPosition();
     if (newPosition != _carriage->getPosition()) {
       // Infer current direction and update carriage position
-      _direction = ((newPosition - _carriage->getPosition()) > 0)
+      Direction newDirection = ((newPosition - _carriage->getPosition()) > 0)
                        ? Direction::Right
                        : Direction::Left;
+      
+      bool carriageChangeDirection = this->_direction != newDirection;
+      this->_direction = newDirection;
+      
       _carriage->setPosition(newPosition);
 
       _checkHallSensors();
@@ -274,20 +278,17 @@ void Knitter::_runMachine() {
         if (!_currentLine.finished) {
           MachineSide machineSide = MachineSide::None;
           // Set solenoid
-          if ((selectPosition >= _config.startNeedle) &&
-              (selectPosition <= _config.stopNeedle)) {
-            _solenoids->set(solenoidToSet,
-                            _currentLine.getNeedleValue(selectPosition));
-          } else {
+          _solenoids->set(solenoidToSet, _currentLine.getNeedleValue(selectPosition));
+          if (carriageChangeDirection) { // todo check needles number
             _solenoids->reset(solenoidToSet);
-            // Delay _currentLine.finished until safe 
-            if (selectPosition < _config.startNeedle) {
-              machineSide = MachineSide::Left;    
-            } else { // equivalent to > _config.stopNeedle
-              machineSide = MachineSide::Right;       
+            if (_direction == Direction::Left){
+              machineSide = MachineSide::Right;
+            } else {
+              machineSide = MachineSide::Left;
             }
+            _currentLine.finished = true;
           }
-          _currentLine.finished = _carriage->workFinished(machineSide, _direction);
+          //_currentLine.finished = _carriage->workFinished(machineSide, _direction);
         } else {
           _solenoids->reset(solenoidToSet);
         }
