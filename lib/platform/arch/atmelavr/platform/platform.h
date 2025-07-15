@@ -18,6 +18,7 @@ class Platform : public HalInterface {
   void analogWrite(uint8_t pin, uint8_t value) override;
   int analogRead(uint8_t pin) override;
   unsigned long millis() override;
+  void delayMicroseconds(unsigned int us) override;
   void attachInterrupt(uint8_t interruptNum, void (*userFunc)(),
                        int mode) override;
 };
