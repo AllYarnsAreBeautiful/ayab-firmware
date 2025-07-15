@@ -68,7 +68,10 @@ class HallSensor {
   uint16_t _sensorValue;
   uint16_t _thresholdLow;
   uint16_t _thresholdHigh;
-  bool _isPin2Wired; // KH910 HW fix for RHS sensor is present
+  /// Indicate if the second sensor pin is wired to a hall sensor
+  /// or not (used for KH910 right sensor which has two digital
+  /// outputs for K and L but L is not wired on all hardware versions)
+  bool _isPin2Wired;
 
   int16_t _detectedPosition;
   CarriageType _detectedCarriage;

@@ -17,15 +17,19 @@ HallSensor::HallSensor(hardwareAbstraction::HalInterface *hal, uint8_t sensorPin
   _hal->pinMode(_sensorPin1, INPUT);
   _hal->pinMode(_sensorPin2, INPUT_PULLUP);
 
+  // HW fix rewires EOL_R_L signal (previously grounded) to sensorPin2 and detectPin.
+  // Firmware uses detectPin to check presence of the fix during the initialiation phase:
+  // - sensorPin2 is configured as input with a pull-up
+  // - detectPin is configured as output and driving LOW (safe as EOL_R_L from the machine is only driving low)
+  // -> with the fix sensorPin2 follows detectPin and goes LOW and _isPin2Wired is set to true
+  // -> without the fix sensorPin2 is not connected and is pulled HIGH and _isPin2Wired is set to false
+  // After detection detectPin is configured as INPUT to avoid loading or driving the EOL_R_L signal.
   if((sensorPin2 != PIN_NONE) && (detectPin != PIN_NONE)) {
     _hal->digitalWrite(detectPin, LOW);
     _hal->pinMode(detectPin, OUTPUT);
     _hal->delayMicroseconds(PULLUP_DELAY);
-    if (_hal->digitalRead(_sensorPin2) == LOW) {
-      // detectPin is wired to sensorPin2, i.e. HW fix for KH910 RHS sensor is present
-      _hal->pinMode(detectPin, INPUT);
-      _isPin2Wired = true;
-    }
+    _isPin2Wired = (_hal->digitalRead(_sensorPin2) == LOW);
+    _hal->pinMode(detectPin, INPUT);
   }
 
   _resetDetector();
