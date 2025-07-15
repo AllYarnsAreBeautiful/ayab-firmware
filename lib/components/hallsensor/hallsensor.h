@@ -5,9 +5,12 @@
 #include "encoder.h"
 #include "hal.h"
 
-#define HALLSENSOR_K_LOW  (1<<0)
-#define HALLSENSOR_L_HIGH (1<<1)
-#define HALLSENSOR_K270_K (1<<2)
+// No pin indication
+#define PIN_NONE 0xff
+
+// Hall sensor flags
+#define HALLSENSOR_DIGITAL (1<<0)
+#define HALLSENSOR_K270_K  (1<<1)
 
 class HallSensor {
  public:
@@ -19,7 +22,7 @@ class HallSensor {
     uint8_t flags;
   };
 
-  HallSensor(hardwareAbstraction::HalInterface *hal, uint8_t pin);
+  HallSensor(hardwareAbstraction::HalInterface *hal, uint8_t sensorPin1, uint8_t sensorPin2 = PIN_NONE, uint8_t detectPin = PIN_NONE);
   ~HallSensor() = default;
 
   // Config sensor's position and thresholds
@@ -58,14 +61,14 @@ class HallSensor {
 
   hardwareAbstraction::HalInterface *_hal;
 
-  uint8_t _pin;
+  uint8_t _sensorPin1, _sensorPin2;
 
   Config *_config;
 
   uint16_t _sensorValue;
   uint16_t _thresholdLow;
   uint16_t _thresholdHigh;
-  bool _isKasG;
+  bool _isPin2Wired; // KH910 HW fix for RHS sensor is present
 
   int16_t _detectedPosition;
   CarriageType _detectedCarriage;

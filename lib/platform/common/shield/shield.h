@@ -14,6 +14,10 @@
 #define EOL_R_PIN 0  // Right
 #define EOL_L_PIN 1  // Left
 
+// Hall detectors (digital, KH910 RHS)
+#define EOL_R_L_PIN 7
+#define EOL_R_DETECT_PIN 8
+
 // MCP23008
 #define MCP23008_ADD0 0x20
 #define MCP23008_ADD1 0x21

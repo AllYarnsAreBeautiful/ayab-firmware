@@ -44,6 +44,7 @@ namespace hardwareAbstraction {
         virtual void analogWrite(uint8_t pin, uint8_t value) = 0;
         virtual int analogRead(uint8_t pin) = 0;
         virtual unsigned long millis() = 0;
+        virtual void delayMicroseconds(unsigned int us) = 0;
         virtual void attachInterrupt(uint8_t interruptNum, void (*userFunc)(), int mode) = 0;
 
         I2cInterface *i2c;
