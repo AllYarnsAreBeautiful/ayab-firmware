@@ -33,6 +33,10 @@ namespace hardwareAbstraction {
         return ::millis();
     }
 
+    void Platform::delayMicroseconds(unsigned int us) {
+        ::delayMicroseconds(us);
+    }
+
     void Platform::attachInterrupt(uint8_t interruptNum, void (*userFunc)(), int mode) {
         // Interrupt modes appended to PinStatus and shifted by 1 compared to AVR
         ::attachInterrupt(digitalPinToInterrupt(interruptNum), userFunc, (::PinStatus) (mode+1));

@@ -33,6 +33,10 @@ namespace hardwareAbstraction {
         return ::millis();
     }
 
+    void Platform::delayMicroseconds(unsigned int us) {
+        ::delayMicroseconds(us);
+    }
+
     void Platform::attachInterrupt(uint8_t interruptNum, void (*userFunc)(), int mode) {
         ::attachInterrupt(digitalPinToInterrupt(interruptNum), userFunc, mode);
     }
