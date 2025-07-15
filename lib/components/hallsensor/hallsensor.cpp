@@ -3,14 +3,34 @@
 
 #define MAX_DET_NEEDLES 3
 #define NONE 0xffff
+#define PULLUP_DELAY 10 // Microseconds to wait for pull-up to settle
 
-// TODO: Add interfce for a "digital" type (ESP32 & KH910 issue)
-HallSensor::HallSensor(hardwareAbstraction::HalInterface *hal, uint8_t pin) {
+HallSensor::HallSensor(hardwareAbstraction::HalInterface *hal, uint8_t sensorPin1, uint8_t sensorPin2, uint8_t detectPin) {
   _hal = hal;
-  _pin = pin;
+  _sensorPin1 = sensorPin1;
+  _sensorPin2 = sensorPin2;
+  _isPin2Wired = false;
+
   _config = nullptr;
 
-  _hal->pinMode(_pin, INPUT);
+  // Default pin mode (analog/digital for pin1/2 respectively)
+  _hal->pinMode(_sensorPin1, INPUT);
+  _hal->pinMode(_sensorPin2, INPUT_PULLUP);
+
+  // HW fix rewires EOL_R_L signal (previously grounded) to sensorPin2 and detectPin.
+  // Firmware uses detectPin to check presence of the fix during the initialiation phase:
+  // - sensorPin2 is configured as input with a pull-up
+  // - detectPin is configured as output and driving LOW (safe as EOL_R_L from the machine is only driving low)
+  // -> with the fix sensorPin2 follows detectPin and goes LOW and _isPin2Wired is set to true
+  // -> without the fix sensorPin2 is not connected and is pulled HIGH and _isPin2Wired is set to false
+  // After detection detectPin is configured as INPUT to avoid loading or driving the EOL_R_L signal.
+  if((sensorPin2 != PIN_NONE) && (detectPin != PIN_NONE)) {
+    _hal->digitalWrite(detectPin, LOW);
+    _hal->pinMode(detectPin, OUTPUT);
+    _hal->delayMicroseconds(PULLUP_DELAY);
+    _isPin2Wired = (_hal->digitalRead(_sensorPin2) == LOW);
+    _hal->pinMode(detectPin, INPUT);
+  }
 
   _resetDetector();
   _readSensor();
@@ -19,7 +39,10 @@ HallSensor::HallSensor(hardwareAbstraction::HalInterface *hal, uint8_t pin) {
 void HallSensor::config(HallSensor::Config *config) {
   _resetDetector();
   _config = config;
-  // TODO: INPUT_PULLUP for KH910 right sensor
+  if(_config->flags & HALLSENSOR_DIGITAL) {
+    // KH910 right sensor, digital mode for K input
+    _hal->pinMode(_sensorPin1, INPUT_PULLUP);
+  }
 }
 
 uint16_t HallSensor::getSensorValue() { return _sensorValue; }
@@ -142,18 +165,11 @@ bool HallSensor::_detectCarriage() {
     if ((_config->flags & HALLSENSOR_K270_K) != 0) {
     // 'K' carriage on KH270 (left/K magnet enabled)
       _detectedCarriage = CarriageType::Knit270;
-    } else if ((_config->flags & HALLSENSOR_L_HIGH) != 0) {
-      // Digital signal for L is active high (KH910 RHS)
-      _detectedCarriage = CarriageType::Lace;
     }
   } else if (_maximum.value == NONE) {
     // L Carriage (only a minimum/South pole)
     _detectedCarriage = CarriageType::Lace;
     _detectedPosition = _minimum.position;
-    if ((_config->flags & HALLSENSOR_K_LOW) != 0) {
-      // Digital signal for K is active Low (KH910 RHS)
-      _detectedCarriage = CarriageType::Knit;
-    }
   } else if (_minimum.isFirst) {
     // G Carriage (minimum/South followed by maximum/North poles)
     _detectedCarriage = CarriageType::Garter;
@@ -165,5 +181,20 @@ bool HallSensor::_detectCarriage() {
   return isDetected;
 }
 
-//TODO: Move analog or single/dual digital read here
-void HallSensor::_readSensor() { _sensorValue = _hal->analogRead(_pin); }
+void HallSensor::_readSensor() {
+  if (_config->flags & HALLSENSOR_DIGITAL) {
+    int kValue = _hal->digitalRead(_sensorPin1);
+    int lValue = _hal->digitalRead(_sensorPin2);
+    // Mimic analogRead() for digital sensors
+    if (kValue == LOW) {
+      _sensorValue = 1023; // K magnet detected
+    } else if ((lValue == HIGH) && _isPin2Wired) {
+      _sensorValue = 0; // L magnet detected
+    } else {
+      _sensorValue = 512; // No magnet detected
+    }
+  } else {
+    // Analog sensor, read voltage
+    _sensorValue = _hal->analogRead(_sensorPin1);
+  }
+}
