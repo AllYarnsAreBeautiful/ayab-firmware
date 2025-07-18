@@ -17,8 +17,8 @@ runs:
     - run: |
         pip install --upgrade platformio
       shell: bash
-    # Install sonar-scanner and build-wrapper
-    - uses: SonarSource/sonarcloud-github-c-cpp@v3
+    # Install Sonar build wrapper
+    - uses: SonarSource/sonarqube-scan-action/install-build-wrapper@v5
     # Build for Arduino UNO
     - run: |
         build-wrapper-linux-x86-64 --out-dir ${{ inputs.BUILD_WRAPPER_OUT_DIR }} platformio run --environment uno
