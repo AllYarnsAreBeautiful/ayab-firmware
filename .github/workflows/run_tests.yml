@@ -9,6 +9,8 @@ jobs:
   run-test:
     runs-on: ubuntu-latest
     if: ${{!github.event.pull_request.draft}}
+    env:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
     steps:
       - name: Checkout repo and submodules
         uses: actions/checkout@v4
@@ -41,9 +43,8 @@ jobs:
           files: |
             ./test/build/xml_out/*
       - name: Analyze with SonarCloud
-        if: github.repository == 'AllYarnsAreBeautiful/ayab-firmware' && ( ( github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == 'AllYarnsAreBeautiful/ayab-firmware' ) || github.event_name == 'push' )
+        if: ${{ env.SONAR_TOKEN != '' }}
         env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BUILD_WRAPPER_OUT_DIR: build_wrapper_out_dir
         run: |
