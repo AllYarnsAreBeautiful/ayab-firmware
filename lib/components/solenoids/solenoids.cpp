@@ -18,10 +18,10 @@ Solenoids::Solenoids(hardwareAbstraction::HalInterface *hal,
     // MCP23008 IOCON.0 always reads as 0 while PCF8574 will latch the last written value
     hal->i2c->write(i2cAddress[i2C_address_set][i], MCP23008_IOCON, 0x01);
     if ((hal->i2c->read(i2cAddress[i2C_address_set][i], MCP23008_IOCON) & 0x01) == 0x00) {
-      _gpio_expander[i] = (GpioExpander *) new Mcp23008(hal, i2cAddress[i][0]);  
+      _gpio_expander[i] = (GpioExpander *) new Mcp23008(hal, i2cAddress[i2C_address_set][i]);  
       _gpio_expander[i]->write(MCP23008_IODIR, 0);  // Configure as output
     } else {
-      _gpio_expander[i] = (GpioExpander *) new Pcf8574(hal, i2cAddress[i][1]);
+      _gpio_expander[i] = (GpioExpander *) new Pcf8574(hal, i2cAddress[i2C_address_set][i]);
     }
   }
   reset();
