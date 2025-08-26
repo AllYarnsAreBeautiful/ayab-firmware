@@ -20,7 +20,6 @@ Knitter::Knitter(hardwareAbstraction::HalInterface *hal) : API(hal) {
 
   const uint8_t gpio_expander_i2c_addresses[][2] = {
     {MCP23008_ADD0, MCP23008_ADD1},
-    {PCF8574_ADD0, PCF8574_ADD1},
     {PCF8574A_ADD0, PCF8574A_ADD1},
     {0, 0}  // End of list
   };
