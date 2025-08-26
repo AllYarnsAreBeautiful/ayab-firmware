@@ -8,9 +8,9 @@
 #define MCP23008_IOCON 0x05
 #define MCP23008_OLAT 0x0a
 
-class Mcp23008 : GpioExpander {
+class Mcp23008 : public GpioExpander {
  public:
-  Mcp23008(hardwareAbstraction::HalInterface *hal, const uint8_t i2cAddress): GpioExpander(hal, i2cAddress) {};
+  Mcp23008(hardwareAbstraction::HalInterface *hal, uint8_t i2cAddress): GpioExpander(hal, i2cAddress) {};
   ~Mcp23008() = default;
 
   // Write a MCP23008 register

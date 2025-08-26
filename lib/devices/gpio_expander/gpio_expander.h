@@ -6,7 +6,7 @@
 class GpioExpander {
  public:
   GpioExpander(hardwareAbstraction::HalInterface *hal, const uint8_t i2cAddress);
-  ~GpioExpander() = default;
+  virtual ~GpioExpander() = default;
 
   // Virtual method for derived classes to implement
   virtual void write(uint8_t address, uint8_t value) = 0;
