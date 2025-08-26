@@ -11,15 +11,14 @@ bool I2c::detect(uint8_t device) {
 }
 
 uint8_t I2c::read(uint8_t device, uint8_t address) {
-  uint8_t value;
+  uint8_t value = 0;
   ::Wire.beginTransmission(device);
-  ::Wire.write(address);  
-  ::Wire.endTransmission(false);  
-  ::Wire.requestFrom(address, 1);
-  if (Wire.available()) {
-    value = ::Wire.read();
-  } // FIXME: should signal an error to the desktop app otherwise ?
-  ::Wire.endTransmission();
+  ::Wire.write(address);
+  if (::Wire.endTransmission(false) == 0) { // false = restart 
+    if (::Wire.requestFrom(device, (uint8_t) 1) == 1) {
+      value = ::Wire.read();
+    }
+  } // TODO: signal I2C errors to the desktop app
   return value;
 }
 
