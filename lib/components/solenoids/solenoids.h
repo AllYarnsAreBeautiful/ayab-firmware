@@ -3,13 +3,14 @@
 
 #include "hal.h"
 #include "mcp23008.h"
+#include "pcf8574.h"
 
 #define SOLENOID_RESET_STATE 0xffff
 
 class Solenoids {
  public:
   Solenoids(hardwareAbstraction::HalInterface *hal,
-            const uint8_t i2cAddress[2]);
+            const uint8_t i2cAddress[][2]);
   ~Solenoids() = default;
 
   // Reset all solenoids
@@ -22,7 +23,7 @@ class Solenoids {
   void set(uint8_t solenoid, bool state);
 
  private:
-  Mcp23008 *_mcp23008[2];
+  GpioExpander *_gpio_expander[2];
   uint16_t _states;
 
   // Update devices with current object state

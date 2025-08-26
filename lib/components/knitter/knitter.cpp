@@ -18,8 +18,13 @@ Knitter::Knitter(hardwareAbstraction::HalInterface *hal) : API(hal) {
   _hall_left = new HallSensor(_hal, EOL_L_PIN);
   _hall_right = new HallSensor(_hal, EOL_R_PIN);
 
-  const uint8_t mcp23008_i2c_addresses[2] = {MCP23008_ADD0, MCP23008_ADD1};
-  _solenoids = new Solenoids(_hal, mcp23008_i2c_addresses);
+  const uint8_t gpio_expander_i2c_addresses[][2] = {
+    {MCP23008_ADD0, MCP23008_ADD1},
+    {PCF8574_ADD0, PCF8574_ADD1},
+    {PCF8574A_ADD0, PCF8574A_ADD1},
+    {0, 0}  // End of list
+  };
+  _solenoids = new Solenoids(_hal, gpio_expander_i2c_addresses);
 
   // Knitter objects
   _machine = new Machine();
