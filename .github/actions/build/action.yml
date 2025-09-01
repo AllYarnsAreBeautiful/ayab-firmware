@@ -1,0 +1,15 @@
+name: Build AYAB
+description: Builds AYAB
+runs:
+  using: composite
+  steps:
+    - name: Install PlatformIO Core
+      shell: bash
+      run: |
+        pip install --upgrade platformio
+    - name: Build for Arduino UNO
+      shell: bash
+      run: |
+        platformio run --environment uno
+        mkdir -p build
+        mv .pio/build/uno/firmware.hex build/ayab_monolithic_uno.hex
