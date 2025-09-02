@@ -39,7 +39,7 @@ namespace Shield {
 
     // GPIO expanders
     namespace GpioExpanders {
-        // I2C addresses declaration
+        // I2C addresses declaration, ends with a sentinel row {0, 0}.
         extern const uint8_t I2C_ADDRESSES[][2];
     };
 

@@ -2,15 +2,14 @@
 #define SOLENOIDS_H
 
 #include "hal.h"
-#include "mcp23008.h"
-#include "pcf8574.h"
+#include "gpio_expander.h"
 
 #define SOLENOID_RESET_STATE 0xffff
 
 class Solenoids {
  public:
   Solenoids(hardwareAbstraction::HalInterface *hal,
-            GpioExpander *gpio_expander[2]);
+            GpioExpander* const gpio_expander[2]);
   ~Solenoids() = default;
 
   // Reset all solenoids

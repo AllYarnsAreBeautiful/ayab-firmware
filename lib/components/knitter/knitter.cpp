@@ -2,6 +2,8 @@
 
 #include "api.h"
 #include "shield.h"
+#include "mcp23008.h"
+#include "pcf8574.h"
 
 //----------------------------------------------------------------------------
 // Knitter class
@@ -121,10 +123,10 @@ void Knitter::schedule() {
 
 void Knitter::_detectGpioExpanders(hardwareAbstraction::HalInterface *hal, const uint8_t i2cAddress[][2], GpioExpander* gpio_expander[2]) {
   // FIXME: First one is selected when none are detected -> should raise an error towards desktop app instead
-  int i2C_address_set = 0;
+  int i2c_address_set = 0;
   for (int id = 0; (i2cAddress[id][0] != 0) || (i2cAddress[id][1] != 0); id++) {
     if (hal->i2c->detect(i2cAddress[id][0]) && hal->i2c->detect(i2cAddress[id][1])) {
-      i2C_address_set = id;
+      i2c_address_set = id;
       break;
     };
   }
@@ -132,13 +134,13 @@ void Knitter::_detectGpioExpanders(hardwareAbstraction::HalInterface *hal, const
   for (int i = 0; i < 2; i++) {
     // Detect GPIO expander type
     // MCP23008 IOCON.0 always reads as 0 while PCF8574 will latch the last written value
-    hal->i2c->write(i2cAddress[i2C_address_set][i], MCP23008_IOCON, 0x01);
-    if ((hal->i2c->read(i2cAddress[i2C_address_set][i], MCP23008_IOCON) & 0x01) == 0x00) {
-      Mcp23008 *mcp23008 = new Mcp23008(hal, i2cAddress[i2C_address_set][i]);  
+    hal->i2c->write(i2cAddress[i2c_address_set][i], MCP23008_IOCON, 0x01);
+    if ((hal->i2c->read(i2cAddress[i2c_address_set][i], MCP23008_IOCON) & 0x01) == 0x00) {
+      Mcp23008 *mcp23008 = new Mcp23008(hal, i2cAddress[i2c_address_set][i]);
       mcp23008->write(MCP23008_IODIR, 0);  // Configure as output
-      gpio_expander[i] = (GpioExpander *) mcp23008;
+      gpio_expander[i] = mcp23008;
     } else {
-      gpio_expander[i] = (GpioExpander *) new Pcf8574(hal, i2cAddress[i2C_address_set][i]);
+      gpio_expander[i] = new Pcf8574(hal, i2cAddress[i2c_address_set][i]);
     }
   }
 }
