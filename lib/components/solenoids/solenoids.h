@@ -10,7 +10,7 @@
 class Solenoids {
  public:
   Solenoids(hardwareAbstraction::HalInterface *hal,
-            const uint8_t i2cAddress[][2]);
+            GpioExpander *gpio_expander[2]);
   ~Solenoids() = default;
 
   // Reset all solenoids
@@ -23,7 +23,7 @@ class Solenoids {
   void set(uint8_t solenoid, bool state);
 
  private:
-  GpioExpander *_gpio_expander[2];
+  GpioExpander* _gpio_expander[2];
   uint16_t _states;
 
   // Update devices with current object state

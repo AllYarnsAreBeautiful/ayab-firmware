@@ -13,8 +13,10 @@ class Mcp23008 : public GpioExpander {
   Mcp23008(hardwareAbstraction::HalInterface *hal, uint8_t i2cAddress): GpioExpander(hal, i2cAddress) {};
   ~Mcp23008() = default;
 
+  // Update output latch register
+  void update(uint8_t value) override;
   // Write a MCP23008 register
-  void write(uint8_t address, uint8_t value) override;
+  void write(uint8_t address, uint8_t value);
 };
 
 #endif
