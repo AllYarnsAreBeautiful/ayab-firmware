@@ -10,6 +10,6 @@ namespace Shield {
             {0x38, 0x39}, // PCF8574A
             {0, 0}        // End of list
         };
-    };
+    } // namespace GpioExpanders
 
-};    
+} // namespace Shield
