@@ -48,6 +48,8 @@ class Knitter : protected API {
   void schedule();
 
  private:
+  // Detect addresses and type of both GPIO expanders
+  void _detectGpioExpanders(hardwareAbstraction::HalInterface *hal, const uint8_t i2cAddress[][2], GpioExpander* gpio_expander[2]);
   // (Re)set carriage type/position and beltshift when crossing one sensor
   void _checkHallSensors();
   // Set solenoids based on current machine state

@@ -9,8 +9,8 @@ class Pcf8574: public GpioExpander {
   Pcf8574(hardwareAbstraction::HalInterface *hal, uint8_t i2cAddress): GpioExpander(hal, i2cAddress) {};
   ~Pcf8574() = default;
 
-  // Write Pcf8574 output register (address is ignored)
-  void write(uint8_t address, uint8_t value) override;
+  // Update output latch register
+  void update(uint8_t value) override;
 };
 
 #endif
