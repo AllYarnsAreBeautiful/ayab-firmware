@@ -1,12 +1,16 @@
 #include "mcp23008.h"
 
+void Mcp23008::update(uint8_t value) {
+  write(MCP23008_OLAT, value);
+}
+
 void Mcp23008::write(uint8_t address, uint8_t value) {
   if (address == MCP23008_OLAT) {
-    if ((value == _olat_cache) && (!_olat_cache_invalid)) {
+    if ((value == _output_latch_cache) && (!_cache_invalid)) {
       return;
     }
-    _olat_cache = value;
-    _olat_cache_invalid = false;
+    _output_latch_cache = value;
+    _cache_invalid = false;
   }
 
   _hal->i2c->write(_i2cAddress, address, value);
