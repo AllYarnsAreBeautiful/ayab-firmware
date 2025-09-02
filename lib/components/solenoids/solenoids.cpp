@@ -1,7 +1,7 @@
 #include "solenoids.h"
 
 Solenoids::Solenoids(hardwareAbstraction::HalInterface *hal,
-                     GpioExpander* gpio_expander[2]) {
+                      GpioExpander* const gpio_expander[2]) {
   _gpio_expander[0] = gpio_expander[0];
   _gpio_expander[1] = gpio_expander[1];
   reset();
@@ -32,7 +32,9 @@ void Solenoids::set(uint8_t solenoid, bool state) {
 void Solenoids::_updateDevices() {
   uint16_t values = _states;
   for (int i = 0; i < 2; i++) {
-    _gpio_expander[i]->update((uint8_t)(values & 0xff));
+    if (_gpio_expander[i]) {
+      _gpio_expander[i]->update((uint8_t)(values & 0xff));
+    }
     values >>= 8;
   }
 }
