@@ -1,20 +1,31 @@
 name: Archive Build
 on: [push, pull_request]
+env:
+  AYAB_VERSION: v1.1.5
 jobs:
   archive:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repo and submodules
-        uses: actions/checkout@v4
-        with:
-          submodules: recursive
-          fetch-depth: 0
-      - name: Build Firmware
-        uses: ./.github/actions/build
-        with:
-          BUILD_WRAPPER_OUT_DIR: build_wrapper_out_dir
+      - name: Fetch binary from ayabAsync
+        env:
+          FIRMWARE_URL : "https://github.com/jpcornil-git/ayabAsync-firmware/releases/download/${{ env.AYAB_VERSION }}/firmware_uno_1_1_5.hex
+"
+        run: |
+          set -e
+          if ! wget --spider ${FIRMWARE_URL}; then
+            echo "Error: Firmware file not found at ${FIRMWARE_URL}"
+            exit 1
+          fi
+          wget ${FIRMWARE_URL}
+      - name: Verify hex file presence
+        run: |
+          hex_files=( *.hex )
+          if [ ${#hex_files[@]} -eq 0 ] || [ ! -f "${hex_files[0]}" ]; then
+            echo "Error: No hex files found in $(pwd)"
+            exit 1
+          fi
       - name: Archive build
         uses: actions/upload-artifact@v4
         with:
           name: ${{format('{0}-{1}',github.sha,github.run_number)}}
-          path: build/*.hex
+          path: ./*.hex
