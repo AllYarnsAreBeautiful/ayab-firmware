@@ -139,10 +139,10 @@ void Knitter::_detectGpioExpanders(hardwareAbstraction::HalInterface *hal, const
   for (int i = 0; i < 2; i++) {
     // Detect GPIO expander type
     // MCP23008 IOCON.0 always reads as 0 while PCF8574 will latch the last written value
-    hal->i2c->write(i2cAddress[i2c_address_set][i], MCP23008_IOCON, 0x01);
-    if ((hal->i2c->read(i2cAddress[i2c_address_set][i], MCP23008_IOCON) & 0x01) == 0x00) {
+    hal->i2c->write(i2cAddress[i2c_address_set][i], Mcp23008::IOCON, 0x01);
+    if ((hal->i2c->read(i2cAddress[i2c_address_set][i], Mcp23008::IOCON) & 0x01) == 0x00) {
       Mcp23008 *mcp23008 = new Mcp23008(hal, i2cAddress[i2c_address_set][i]);
-      mcp23008->write(MCP23008_IODIR, 0);  // Configure as output
+      mcp23008->write(Mcp23008::IODIR, 0);  // Configure as output
       gpio_expander[i] = mcp23008;
     } else {
       gpio_expander[i] = new Pcf8574(hal, i2cAddress[i2c_address_set][i]);
