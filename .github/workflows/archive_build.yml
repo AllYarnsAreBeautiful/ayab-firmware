@@ -15,4 +15,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{format('{0}-{1}',github.sha,github.run_number)}}
-          path: build/*.hex
+          path: |
+            build/*.hex
+            build/*.bin
