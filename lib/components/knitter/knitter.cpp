@@ -2,6 +2,8 @@
 
 #include "api.h"
 #include "shield.h"
+#include "mcp23008.h"
+#include "pcf8574.h"
 
 //----------------------------------------------------------------------------
 // Knitter class
@@ -12,14 +14,15 @@ Knitter::Knitter(hardwareAbstraction::HalInterface *hal) : API(hal) {
   _hal = hal;
 
   // Knitter hardware
-  _encoder = new Encoder(_hal, ENC_PIN_A, ENC_PIN_B);
-  _hal->pinMode(ENC_PIN_C, INPUT);
+  _encoder = new Encoder(_hal, Shield::Encoder::ENC_A_PIN, Shield::Encoder::ENC_B_PIN);
+  _hal->pinMode(Shield::Encoder::ENC_C_PIN, INPUT);
 
-  _hall_left = new HallSensor(_hal, EOL_L_PIN);
-  _hall_right = new HallSensor(_hal, EOL_R_PIN);
+  _hall_left = new HallSensor(_hal, Shield::HallDetectors::Analog::EOL_L_PIN);
+  _hall_right = new HallSensor(_hal, Shield::HallDetectors::Analog::EOL_R_PIN);
 
-  const uint8_t mcp23008_i2c_addresses[2] = {MCP23008_ADD0, MCP23008_ADD1};
-  _solenoids = new Solenoids(_hal, mcp23008_i2c_addresses);
+  GpioExpander* gpio_expander[2];
+  _detectGpioExpanders(_hal, Shield::GpioExpanders::I2C_ADDRESSES, gpio_expander);
+  _solenoids = new Solenoids(_hal, gpio_expander);
 
   // Knitter objects
   _machine = new Machine();
@@ -28,10 +31,10 @@ Knitter::Knitter(hardwareAbstraction::HalInterface *hal) : API(hal) {
   _direction = Direction::Unknown;
 
   // Ayab hardware
-  _beeper = new Beeper(_hal, PIEZO_PIN);
+  _beeper = new Beeper(_hal, Shield::Piezo::PIEZO_PIN);
 
-  _led_a = new Led(_hal, LED_A_PIN, HIGH, LOW);
-  _led_b = new Led(_hal, LED_B_PIN, HIGH, LOW);
+  _led_a = new Led(_hal, Shield::Leds::LED_A_PIN, HIGH, LOW);
+  _led_b = new Led(_hal, Shield::Leds::LED_B_PIN, HIGH, LOW);
 
   _resetFromOperate = false;
   reset();
@@ -118,6 +121,30 @@ void Knitter::schedule() {
   }
 }
 
+void Knitter::_detectGpioExpanders(hardwareAbstraction::HalInterface *hal, const uint8_t i2cAddress[][2], GpioExpander* gpio_expander[2]) {
+  // FIXME: First one is selected when none are detected -> should raise an error towards desktop app instead
+  int i2c_address_set = 0;
+  for (int id = 0; (i2cAddress[id][0] != 0) || (i2cAddress[id][1] != 0); id++) {
+    if (hal->i2c->detect(i2cAddress[id][0]) && hal->i2c->detect(i2cAddress[id][1])) {
+      i2c_address_set = id;
+      break;
+    };
+  }
+
+  for (int i = 0; i < 2; i++) {
+    // Detect GPIO expander type
+    // MCP23008 IOCON.0 always reads as 0 while PCF8574 will latch the last written value
+    hal->i2c->write(i2cAddress[i2c_address_set][i], MCP23008_IOCON, 0x01);
+    if ((hal->i2c->read(i2cAddress[i2c_address_set][i], MCP23008_IOCON) & 0x01) == 0x00) {
+      Mcp23008 *mcp23008 = new Mcp23008(hal, i2cAddress[i2c_address_set][i]);
+      mcp23008->write(MCP23008_IODIR, 0);  // Configure as output
+      gpio_expander[i] = mcp23008;
+    } else {
+      gpio_expander[i] = new Pcf8574(hal, i2cAddress[i2c_address_set][i]);
+    }
+  }
+}
+
 void Knitter::_apiRxTrafficIndication() { _led_a->flash(LED_FLASH_DURATION); }
 
 void Knitter::_apiTxTrafficIndication() { _led_b->flash(LED_FLASH_DURATION); }
@@ -199,7 +226,7 @@ void Knitter::_apiRxIndicateState() {
 void Knitter::_checkHallSensors() {
   // When crossing left/right sensors towards the center, update carriage
   // (via isCrossing), encoder and beltshift states
-  bool beltPhase = _hal->digitalRead(ENC_PIN_C) != 0;
+  bool beltPhase = _hal->digitalRead(Shield::Encoder::ENC_C_PIN) != 0;
   CarriageType lastCarriageType = _carriage->getType();
 
   if (_hall_left->isDetected(_encoder, _direction, beltPhase)) {

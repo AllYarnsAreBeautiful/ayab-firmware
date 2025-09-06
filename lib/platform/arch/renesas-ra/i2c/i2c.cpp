@@ -5,6 +5,29 @@ namespace hardwareAbstraction {
 
 I2c::I2c() { ::Wire.begin(); }
 
+bool I2c::detect(uint8_t device) {
+  ::Wire.beginTransmission(device);
+  return ::Wire.endTransmission() == 0;
+}
+
+uint8_t I2c::read(uint8_t device, uint8_t address) {
+  uint8_t value = 0;
+  ::Wire.beginTransmission(device);
+  ::Wire.write(address);
+  if (::Wire.endTransmission(false) == 0) { // false = restart 
+    if (::Wire.requestFrom(device, (uint8_t) 1) == 1) {
+      value = ::Wire.read();
+    }
+  } // TODO: signal I2C errors to the desktop app
+  return value;
+}
+
+void I2c::write(uint8_t device, uint8_t value) {
+  ::Wire.beginTransmission(device);
+  ::Wire.write(value);
+  ::Wire.endTransmission();
+}
+
 void I2c::write(uint8_t device, uint8_t address, uint8_t value) {
   ::Wire.beginTransmission(device);
   ::Wire.write(address);

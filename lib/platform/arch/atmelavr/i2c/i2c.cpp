@@ -21,6 +21,28 @@ namespace hardwareAbstraction {
 
 I2c::I2c() { ::i2c_init(); }
 
+bool I2c::detect(uint8_t device) {
+  bool is_detected = ::i2c_start((device << 1) | I2C_WRITE);
+  ::i2c_stop();
+  return is_detected;
+}
+
+uint8_t I2c::read(uint8_t device, uint8_t address) {
+  uint8_t value;
+  ::i2c_start((device << 1) | I2C_WRITE);
+  ::i2c_write(address);
+  ::i2c_rep_start((device << 1) | I2C_READ);
+  value = ::i2c_read(true); // Block forever unless I2C_TIMEOUT is defined
+  ::i2c_stop();
+  return value;
+}
+
+void I2c::write(uint8_t device, uint8_t value) {
+  ::i2c_start((device << 1) | I2C_WRITE);
+  ::i2c_write(value);
+  ::i2c_stop();
+}
+
 void I2c::write(uint8_t device, uint8_t address, uint8_t value) {
   ::i2c_start((device << 1) | I2C_WRITE);
   ::i2c_write(address);
