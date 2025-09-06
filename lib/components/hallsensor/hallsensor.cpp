@@ -13,9 +13,8 @@ HallSensor::HallSensor(hardwareAbstraction::HalInterface *hal, uint8_t sensorPin
 
   _config = nullptr;
 
-  // Default pin mode (analog/digital for pin1/2 respectively)
+  // Default pin mode for sensorPin1 (analog)
   _hal->pinMode(_sensorPin1, INPUT);
-  _hal->pinMode(_sensorPin2, INPUT_PULLUP);
 
   // HW fix rewires EOL_R_L signal (previously grounded) to sensorPin2 and detectPin.
   // Firmware uses detectPin to check presence of the fix during the initialiation phase:
@@ -25,11 +24,14 @@ HallSensor::HallSensor(hardwareAbstraction::HalInterface *hal, uint8_t sensorPin
   // -> without the fix sensorPin2 is not connected and is pulled HIGH and _isPin2Wired is set to false
   // After detection detectPin is configured as INPUT to avoid loading or driving the EOL_R_L signal.
   if((sensorPin2 != PIN_NONE) && (detectPin != PIN_NONE)) {
+    _hal->pinMode(_sensorPin2, INPUT_PULLUP);
     _hal->digitalWrite(detectPin, LOW);
     _hal->pinMode(detectPin, OUTPUT);
     _hal->delayMicroseconds(PULLUP_DELAY);
     _isPin2Wired = (_hal->digitalRead(_sensorPin2) == LOW);
+    // Restore both pins to input state (no pull-up)
     _hal->pinMode(detectPin, INPUT);
+    _hal->pinMode(_sensorPin2, INPUT);
   }
 
   _resetDetector();
@@ -42,6 +44,10 @@ void HallSensor::config(HallSensor::Config *config) {
   if(_config->flags & HALLSENSOR_DIGITAL) {
     // KH910 right sensor, digital mode for K input
     _hal->pinMode(_sensorPin1, INPUT_PULLUP);
+    if(_isPin2Wired) {
+      // L input also wired, use pull-up/digital mode
+      _hal->pinMode(_sensorPin2, INPUT_PULLUP);
+    }
   }
 }
 
