@@ -25,16 +25,15 @@ namespace Shield {
 
     // Hall detectors
     struct HallDetectors {
-        // Analog
-        struct Analog {
-            static constexpr uint8_t EOL_R_PIN = 0;  // Right
-            static constexpr uint8_t EOL_L_PIN = 1;  // Left
-        };
-        // Digital (KH910 RHS)
-        struct Digital {
-            static constexpr uint8_t EOL_R_L_PIN = 7;
-            static constexpr uint8_t EOL_R_DETECT_PIN = 8;
-        };
+        #if defined(ARDUINO_AVR_UNO) || defined(ARDUINO_UNOR4_WIFI) || defined(ARDUINO_UNOR4_MINIMA)
+            static constexpr uint8_t EOL_R_PIN = 14; // AN0/D14: Right (K digital input for KH910)
+            static constexpr uint8_t EOL_L_PIN = 15; // AN1/D15: Left
+        #elif defined(ARDUINO_AVR_MEGA2560)
+            static constexpr uint8_t EOL_R_PIN = 54; // AN0/D54: Right (K digital input for KH910)
+            static constexpr uint8_t EOL_L_PIN = 55; // AN1/D55: Left
+        #endif
+        static constexpr uint8_t EOL_R_L_PIN = 7; // Right L digital input for KH910
+        static constexpr uint8_t EOL_R_DETECT_PIN = 8; // Shorted to EOL_R_L_PIN to detect HW fix
     };
 
     // GPIO expanders

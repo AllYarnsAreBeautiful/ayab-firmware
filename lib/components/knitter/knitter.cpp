@@ -17,12 +17,12 @@ Knitter::Knitter(hardwareAbstraction::HalInterface *hal) : API(hal) {
   _encoder = new Encoder(_hal, Shield::Encoder::ENC_A_PIN, Shield::Encoder::ENC_B_PIN);
   _hal->pinMode(Shield::Encoder::ENC_C_PIN, INPUT);
 
-  _hall_left = new HallSensor(_hal, Shield::HallDetectors::Analog::EOL_L_PIN);
+  _hall_left = new HallSensor(_hal, Shield::HallDetectors::EOL_L_PIN);
   _hall_right = new HallSensor(
                   _hal,
-                  Shield::HallDetectors::Analog::EOL_R_PIN,
-                  Shield::HallDetectors::Digital::EOL_R_L_PIN,
-                  Shield::HallDetectors::Digital::EOL_R_DETECT_PIN
+                  Shield::HallDetectors::EOL_R_PIN,
+                  Shield::HallDetectors::EOL_R_L_PIN,
+                  Shield::HallDetectors::EOL_R_DETECT_PIN
                 );
 
   GpioExpander* gpio_expander[2];
