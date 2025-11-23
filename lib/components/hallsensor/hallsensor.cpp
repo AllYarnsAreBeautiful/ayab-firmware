@@ -192,10 +192,9 @@ void HallSensor::_readSensor() {
     _sensorValue = 512; // Mid-scale
   } else {
     if (_config->flags & HALLSENSOR_DIGITAL) {
-      int kValue = _hal->digitalRead(_sensorPin1);
+      int kValue = _hal->analogRead(_sensorPin1);
       int lValue = _hal->digitalRead(_sensorPin2);
-      // Mimic analogRead() for digital sensors
-      if (kValue == LOW) {
+      if (kValue < _config->thresholdLow) {
         _sensorValue = 1023; // K magnet detected
       } else if ((lValue == HIGH) && _isPin2Wired) {
         _sensorValue = 0; // L magnet detected
