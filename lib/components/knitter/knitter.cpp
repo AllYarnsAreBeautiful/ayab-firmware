@@ -128,12 +128,18 @@ void Knitter::schedule() {
 
 void Knitter::_detectGpioExpanders(hardwareAbstraction::HalInterface *hal, const uint8_t i2cAddress[][2], GpioExpander* gpio_expander[2]) {
   // FIXME: First one is selected when none are detected -> should raise an error towards desktop app instead
-  int i2c_address_set = 0;
+  int i2c_address_set = -1;
   for (int id = 0; (i2cAddress[id][0] != 0) || (i2cAddress[id][1] != 0); id++) {
     if (hal->i2c->detect(i2cAddress[id][0]) && hal->i2c->detect(i2cAddress[id][1])) {
       i2c_address_set = id;
       break;
     };
+  }
+
+  if (i2c_address_set == -1) {
+    gpio_expander[0] = new DummyExpander(hal, 0);
+    gpio_expander[1] = new DummyExpander(hal, 1);
+    return;
   }
 
   for (int i = 0; i < 2; i++) {

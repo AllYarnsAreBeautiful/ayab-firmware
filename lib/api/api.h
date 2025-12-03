@@ -60,9 +60,14 @@ enum class AYAB_API : uint8_t {
   indicateState = 0x84,
 
   debugBase = 0xf0,
+  debugPrint = 0xf1,
   debugRequestPeek = 0xf8,
   debugConfirmPeek = 0xf9,
   debugRequestPoke = 0xfa
+};
+
+enum class debugPrintMessageType : uint8_t {
+  i2cWrite = 0x00
 };
 
 class API {
