@@ -35,13 +35,13 @@ def git_version():
         print(version_string)
 
         # Check if string matches the version format 0.0.0-...
-        regex = r'\d{,3}[.]\d{1,3}[.]\d{1,3}'
+        regex = r'v\d{,3}[.]\d{1,3}[.]\d{1,3}'
 
         pattern = re.compile(regex)
         match = pattern.match(version_string)
 
         if match:
-            fw_maj, fw_min, tail = version_string.split('.')
+            fw_maj, fw_min, tail = version_string[1:].split('.')
             tail = tail.split('-', 1)
             fw_patch = tail[0]
             if len(tail) > 1:
@@ -55,7 +55,7 @@ def git_version():
 fw_maj, fw_min, fw_patch, fw_suffix = git_version()
 print("GIT Version: " + fw_maj + "." + fw_min + "." + fw_patch + "-" + fw_suffix)
 
-with open("src/ayab/version.h", "w") as text_file:
+with open("include/version.h", "w") as text_file:
     text_file.write("constexpr uint8_t FW_VERSION_MAJ = {0}U;\n".format(fw_maj))
     text_file.write("constexpr uint8_t FW_VERSION_MIN = {0}U;\n".format(fw_min))
     text_file.write("constexpr uint8_t FW_VERSION_PATCH = {0}U;\n".format(fw_patch))

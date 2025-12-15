@@ -1,6 +1,0 @@
-[submodule "libraries/PacketSerial"]
-	path = lib/PacketSerial
-	url = https://github.com/bakercp/PacketSerial.git
-[submodule "libraries/Adafruit_MCP23008"]
-	url = https://github.com/adafruit/Adafruit-MCP23008-library.git
-	path = lib/Adafruit_MCP23008
