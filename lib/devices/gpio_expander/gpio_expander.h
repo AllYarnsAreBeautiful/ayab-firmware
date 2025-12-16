@@ -17,4 +17,15 @@ class GpioExpander {
   bool _cache_invalid;
 };
 
+class DummyExpander final : public GpioExpander {
+ public:
+
+  DummyExpander(hardwareAbstraction::HalInterface *hal, uint8_t i2cAddress)
+      : GpioExpander(hal, i2cAddress) {};
+  ~DummyExpander() = default;
+
+  // Update output latch register
+  void update(uint8_t value) override;
+};
+
 #endif
