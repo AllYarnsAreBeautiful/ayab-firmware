@@ -279,7 +279,7 @@ void Com::h_cnfLine(const uint8_t *buffer, size_t size) {
   }
 
   uint8_t lineNumber = buffer[1];
-  /* uint8_t color = buffer[2];  */ // currently unused
+  uint8_t color = buffer[2];
   uint8_t flags = buffer[3];
 
   for (uint8_t i = 0U; i < lenLineBuffer; i++) {
@@ -296,6 +296,10 @@ void Com::h_cnfLine(const uint8_t *buffer, size_t size) {
   }
 
   if (GlobalKnitter::setNextLine(lineNumber)) {
+    Wire.beginTransmission(COLOR_CHANGER_I2C_ADDRESS);
+    Wire.write(1 << color);
+    Wire.endTransmission();
+
     // Line was accepted
     bool flagLastLine = bitRead(flags, 0U);
     if (flagLastLine) {
