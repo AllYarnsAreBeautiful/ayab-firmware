@@ -10,6 +10,8 @@ Encoder::Encoder(hardwareAbstraction::HalInterface *hal, uint8_t pin_v1,
   _pin_v1 = pin_v1;
   _pin_v2 = pin_v2;
 
+  _pin_v1_previous_state = UNDEFINED;
+
   _hal->pinMode(_pin_v1, INPUT);
   _hal->pinMode(_pin_v2, INPUT);
 
@@ -23,10 +25,19 @@ Encoder::Encoder(hardwareAbstraction::HalInterface *hal, uint8_t pin_v1,
 }
 
 void Encoder::interruptHandler() {
+  // Read current V1 & V2 states
+  uint8_t pin_v1_current_state = _hal->digitalRead(_pin_v1);
+  uint8_t pin_v2_current_state = _hal->digitalRead(_pin_v2);
+
+  if (_pin_v1_previous_state == pin_v1_current_state) {
+    // Spurious interrupt, ignore
+    return;
+  }
+
   // Update state when V2 is high
-  if (_hal->digitalRead(_pin_v2) == HIGH) {
+  if (pin_v2_current_state == HIGH) {
     _isr_doorbell = true;
-    if (_hal->digitalRead(_pin_v1) == HIGH) {
+    if (pin_v1_current_state == HIGH) {
       // Rising edge
       _isr_position += 1;
     } else {
@@ -34,6 +45,8 @@ void Encoder::interruptHandler() {
       _isr_position -= 1;
     }
   }
+
+  _pin_v1_previous_state = pin_v1_current_state;
 }
 
 void Encoder::setPosition(int16_t position) {

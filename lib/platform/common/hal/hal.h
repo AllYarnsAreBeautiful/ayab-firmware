@@ -7,6 +7,7 @@
 // digital pin levels
 #define LOW 0x0
 #define HIGH 0x1
+#define UNDEFINED 0xFF
 
 // pin mode
 #define INPUT 0x0

@@ -21,6 +21,7 @@ class Encoder {
  private:
   hardwareAbstraction::HalInterface *_hal;
   uint8_t _pin_v1, _pin_v2;
+  uint8_t _pin_v1_previous_state;
   int16_t _position, _isr_position;
   bool _isr_doorbell;
 };
