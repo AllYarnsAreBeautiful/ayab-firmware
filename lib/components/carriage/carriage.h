@@ -21,6 +21,7 @@ class Carriage {
   bool isDefined();
   // Return current carriage type
   CarriageType getType();
+  void setType(CarriageType type) { _type = type; }
   // Define carriage position
   void setPosition(int16_t position);
   // Return current carriage position
