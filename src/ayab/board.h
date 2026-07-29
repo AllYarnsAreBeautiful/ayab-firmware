@@ -42,6 +42,8 @@ constexpr uint8_t LED_PIN_B = 6; // yellow LED
 
 constexpr uint8_t PIEZO_PIN = 9;
 
+constexpr uint8_t COLOR_CHANGER_I2C_ADDRESS = 0x22;
+
 #ifdef DBG_NOMACHINE               // Turn on to use DBG_BTN_PIN as EOL Trigger
 constexpr uint8_t DBG_BTN_PIN = 7; // DEBUG BUTTON
 #endif
