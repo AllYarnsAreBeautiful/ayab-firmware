@@ -203,3 +203,26 @@ void API::_apiConfirmPeek(uint8_t returnValue) {
   _hal->packetSerial->send(message, size);
   _apiTxTrafficIndication();
 }
+
+void API::_apiDebugLog(const char *msg)
+{
+  uint8_t message[64] = {(uint8_t)AYAB_API::debugLog, 0};
+  size_t max_size = sizeof(message);
+  size_t msg_len = strlen(msg);
+  if (msg_len > max_size - 2) {
+    msg_len = max_size - 2;
+  }
+  memcpy(message + 1, (const uint8_t *)msg, msg_len);
+  message[msg_len + 1] = crc8(message, msg_len + 1);
+  _hal->packetSerial->send(message, msg_len + 2);
+  _apiTxTrafficIndication();
+}
+
+void API::_apiRowCounterHit()
+{
+  uint8_t message[] = {(uint8_t)AYAB_API::rowCounterHit, 0, 0};
+  size_t size = sizeof(message);
+  message[size - 1] = crc8(message, size - 1);
+  _hal->packetSerial->send(message, size);
+  _apiTxTrafficIndication();
+}
