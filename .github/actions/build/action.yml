@@ -13,3 +13,15 @@ runs:
         platformio run --environment uno
         mkdir -p build
         mv .pio/build/uno/firmware.hex build/ayab_monolithic_uno.hex
+    - name: Build for Arduino Mega 2560
+      shell: bash
+      run: |
+        platformio run --environment mega2560
+        mkdir -p build
+        mv .pio/build/mega2560/firmware.hex build/ayab_monolithic_mega.hex
+    - name: Build for Arduino UNO R4
+      shell: bash
+      run: |
+        platformio run --environment uno_r4_wifi
+        mkdir -p build
+        mv .pio/build/uno_r4_wifi/firmware.bin build/ayab_monolithic_unor4.bin
