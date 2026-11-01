@@ -14,6 +14,9 @@ public:
 
 class I2c_mock : public hardwareAbstraction::I2cInterface {
 public:
+    MOCK_METHOD(bool, detect, (uint8_t device), (override));
+    MOCK_METHOD(uint8_t, read, (uint8_t device, uint8_t address), (override));
+    MOCK_METHOD(void, write, (uint8_t device, uint8_t value), (override));
     MOCK_METHOD(void, write,(uint8_t device, uint8_t address, uint8_t value), (override));
 };
 
@@ -27,6 +30,7 @@ public:
     MOCK_METHOD(void, analogWrite, (uint8_t pin, uint8_t value), (override));
     MOCK_METHOD(int, analogRead, (uint8_t pin), (override));
     MOCK_METHOD(unsigned long, millis, (), (override));
+    MOCK_METHOD(void, delayMicroseconds, (unsigned int us), (override));
     MOCK_METHOD(void, attachInterrupt, (uint8_t interruptNum, void (*userFunc)(), int mode), (override));
 
     I2c_mock *i2c;
