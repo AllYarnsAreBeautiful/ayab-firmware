@@ -48,6 +48,13 @@ void HallSensor::config(HallSensor::Config *config) {
       // L input also wired, use pull-up/digital mode
       _hal->pinMode(_sensorPin2, INPUT_PULLUP);
     }
+  } else {
+    // A new desktop session can change the configured machine. Restore the
+    // analog sensor pin modes after a KH910 digital configuration.
+    _hal->pinMode(_sensorPin1, INPUT);
+    if (_sensorPin2 != PIN_NONE) {
+      _hal->pinMode(_sensorPin2, INPUT);
+    }
   }
 }
 
