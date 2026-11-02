@@ -200,7 +200,8 @@ ErrorCode Knitter::_apiRxSetLine(uint8_t lineNumber, const uint8_t *pattern,
     if (size != _machine->getNumberofNeedles() >> 3) {
       return ErrorCode::MessageIncorrectLenght;
     }
-    success = _currentLine.setPattern(lineNumber, pattern, isLastLine);
+    success =
+        _currentLine.setPattern(lineNumber, pattern, size, isLastLine);
     if (success) {
       _beeper->beep(BEEPER_NEXT_LINE);
       return ErrorCode::Success;

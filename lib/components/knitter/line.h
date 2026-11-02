@@ -14,7 +14,8 @@ class Line {
   // Indicate if line is worked on
   void workedOn(MachineSide side, Direction direction);
   // Set a new line pattern
-  bool setPattern(uint8_t number, const uint8_t *pattern, bool isLast);
+  bool setPattern(uint8_t number, const uint8_t *pattern, uint8_t size,
+                  bool isLast);
   // Get the needle value for the given position
   bool getNeedleValue(int16_t position);
   // Return the next line number

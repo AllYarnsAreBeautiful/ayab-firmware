@@ -48,6 +48,13 @@ void HallSensor::config(HallSensor::Config *config) {
       // L input also wired, use pull-up/digital mode
       _hal->pinMode(_sensorPin2, INPUT_PULLUP);
     }
+  } else {
+    // A new desktop session can change the configured machine. Restore the
+    // analog sensor pin modes after a KH910 digital configuration.
+    _hal->pinMode(_sensorPin1, INPUT);
+    if (_sensorPin2 != PIN_NONE) {
+      _hal->pinMode(_sensorPin2, INPUT);
+    }
   }
 }
 
@@ -192,10 +199,9 @@ void HallSensor::_readSensor() {
     _sensorValue = 512; // Mid-scale
   } else {
     if (_config->flags & HALLSENSOR_DIGITAL) {
-      int kValue = _hal->digitalRead(_sensorPin1);
+      int kValue = _hal->analogRead(_sensorPin1);
       int lValue = _hal->digitalRead(_sensorPin2);
-      // Mimic analogRead() for digital sensors
-      if (kValue == LOW) {
+      if (kValue < _config->thresholdLow) {
         _sensorValue = 1023; // K magnet detected
       } else if ((lValue == HIGH) && _isPin2Wired) {
         _sensorValue = 0; // L magnet detected

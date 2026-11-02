@@ -35,11 +35,11 @@ protected:
       ON_CALL(*_hal_mock, millis()).WillByDefault(ReturnPointee(&currentTime));
 
       // Check Constructor
-      EXPECT_CALL(*_hal_mock, digitalWrite(LED_A_PIN, 0x0)).Times(1);
+      EXPECT_CALL(*_hal_mock, digitalWrite(Shield::Leds::LED_A_PIN, 0x0)).Times(1);
       EXPECT_CALL(*_hal_mock, millis()).Times(1);
-      EXPECT_CALL(*_hal_mock, pinMode(LED_A_PIN, OUTPUT)).Times(1);
+      EXPECT_CALL(*_hal_mock, pinMode(Shield::Leds::LED_A_PIN, OUTPUT)).Times(1);
 
-      _led = new Led(_hal_mock, LED_A_PIN);
+      _led = new Led(_hal_mock, Shield::Leds::LED_A_PIN);
     }
 
     virtual void TearDown() {
@@ -52,59 +52,59 @@ TEST_F(ledTest, constructor2) {
    delete _led;
 
    // Check 2nd Constructor
-   EXPECT_CALL(*_hal_mock, digitalWrite(LED_A_PIN, 0x1)).Times(1);
+   EXPECT_CALL(*_hal_mock, digitalWrite(Shield::Leds::LED_A_PIN, 0x1)).Times(1);
    EXPECT_CALL(*_hal_mock, millis()).Times(1);
-   EXPECT_CALL(*_hal_mock, pinMode(LED_A_PIN, OUTPUT)).Times(1);
+   EXPECT_CALL(*_hal_mock, pinMode(Shield::Leds::LED_A_PIN, OUTPUT)).Times(1);
 
-   _led = new Led(_hal_mock, LED_A_PIN, 0x1, 0x0);
+   _led = new Led(_hal_mock, Shield::Leds::LED_A_PIN, 0x1, 0x0);
 }
 
 TEST_F(ledTest, led_onoff) {
     // Configure on mode and check state change
     currentTime = 1000;
-    EXPECT_CALL(*_hal_mock, digitalWrite(LED_A_PIN, 0x1)).Times(1);
+    EXPECT_CALL(*_hal_mock, digitalWrite(Shield::Leds::LED_A_PIN, 0x1)).Times(1);
     EXPECT_CALL(*_hal_mock, millis()).Times(1);
     _led->on();
 
     // Check that there are no state changes anymore
     currentTime = 10000;
-    ledExpectNoToggle(_hal_mock, LED_A_PIN);
+    ledExpectNoToggle(_hal_mock, Shield::Leds::LED_A_PIN);
     _led->schedule();
 
     // Configure off mode and check state change
     currentTime = 20000;
-    EXPECT_CALL(*_hal_mock, digitalWrite(LED_A_PIN, 0x0)).Times(1);
+    EXPECT_CALL(*_hal_mock, digitalWrite(Shield::Leds::LED_A_PIN, 0x0)).Times(1);
     EXPECT_CALL(*_hal_mock, millis()).Times(1);
     _led->off();
 
     // Check that there are no state changes anymore
     currentTime = 30000;
-    ledExpectNoToggle(_hal_mock, LED_A_PIN);
+    ledExpectNoToggle(_hal_mock, Shield::Leds::LED_A_PIN);
     _led->schedule();
 }
 
 TEST_F(ledTest, led_blink) {
     // Configure blink mode and check state change
     currentTime = 1000;
-    EXPECT_CALL(*_hal_mock, digitalWrite(LED_A_PIN, 0x1)).Times(1);
+    EXPECT_CALL(*_hal_mock, digitalWrite(Shield::Leds::LED_A_PIN, 0x1)).Times(1);
     EXPECT_CALL(*_hal_mock, millis()).Times(1);
     _led->blink(100, 1000);
 
     // Check state change after timeOn
     currentTime = 2000;
-    ledExpectToggle(_hal_mock, LED_A_PIN, 0x0);
+    ledExpectToggle(_hal_mock, Shield::Leds::LED_A_PIN, 0x0);
     _led->schedule();
 
     // Check state change after timeOff
     currentTime = 2100;
-    ledExpectToggle(_hal_mock, LED_A_PIN, 0x1);
+    ledExpectToggle(_hal_mock, Shield::Leds::LED_A_PIN, 0x1);
     _led->schedule();
 
     // Check that there are no state changes within timeOn
     list<unsigned long> timeSamples = {2200, 2300, 3099};
     for(auto it = timeSamples.begin();it != timeSamples.end(); it++) {
       currentTime = *it;
-      ledExpectNoToggle(_hal_mock, LED_A_PIN);
+      ledExpectNoToggle(_hal_mock, Shield::Leds::LED_A_PIN);
       _led->schedule();
     }
 }
@@ -112,20 +112,20 @@ TEST_F(ledTest, led_blink) {
 TEST_F(ledTest, led_flash) {
     // Configure flash mode and check state change
     currentTime = 1000;
-    EXPECT_CALL(*_hal_mock, digitalWrite(LED_A_PIN, 0x1)).Times(1);
+    EXPECT_CALL(*_hal_mock, digitalWrite(Shield::Leds::LED_A_PIN, 0x1)).Times(1);
     EXPECT_CALL(*_hal_mock, millis()).Times(1);
     _led->flash(100);
 
     // Check state change after timeOn
     currentTime = 1100;
-    ledExpectToggle(_hal_mock, LED_A_PIN, 0x0);
+    ledExpectToggle(_hal_mock, Shield::Leds::LED_A_PIN, 0x0);
     _led->schedule();
 
     // Check that there are no state changes anymore
     list<unsigned long> timeSamples = {1200, 1200, 10000};
     for(auto it = timeSamples.begin();it != timeSamples.end(); it++) {
       currentTime = *it;
-      ledExpectNoToggle(_hal_mock, LED_A_PIN);
+      ledExpectNoToggle(_hal_mock, Shield::Leds::LED_A_PIN);
       _led->schedule();
     }
 }
